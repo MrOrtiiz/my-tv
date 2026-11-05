@@ -540,7 +540,7 @@
   function gridCount() { return Math.min(shelf.length, GRID_MAX); }
 
   function renderGrid() {
-    var n = gridCount(), rows = Math.max(1, Math.ceil(n / GRID_COLS)), d = 132, cell = 230, rowH = 206;
+    var n = gridCount(), rows = Math.max(1, Math.ceil(n / GRID_COLS)), d = 104, cell = 176, rowH = 168;
     if (n > 3 && rows < 2) rows = 2;   // rows, not one long line
     gridCols = Math.max(1, Math.ceil(n / rows));
     $('platter').style.display = 'none';
@@ -563,17 +563,42 @@
     st.shelf = Math.min(st.shelf, Math.max(0, n - 1));
   }
 
-  /** A round icon: the TV's own icon fills the circle (its background too), as an iPhone's icons do; its name on the
-   *  brand's color when the TV has no icon, or it doesn't load. */
+  /** Does an icon reach its edges (a full square, maybe with rounded corners), or is it a logo on a clear background?
+   *  Eight points along its edges, a little inside: opaque on most of them means it fills its square. */
+  function iconBleeds(img) {
+    var c = document.createElement('canvas'), n = 32;
+    c.width = n; c.height = n;
+    try {
+      var g = c.getContext('2d');
+      g.drawImage(img, 0, 0, n, n);
+      var px = g.getImageData(0, 0, n, n).data, pts = [[16, 1], [16, 30], [1, 16], [30, 16], [7, 1], [24, 30], [1, 24], [30, 7]], hit = 0;
+      for (var i = 0; i < pts.length; i++) if (px[(pts[i][1] * n + pts[i][0]) * 4 + 3] > 200) hit++;
+      return hit >= 6;
+    } catch (e) {
+      return false;   // can't read it: shown whole, inside the icon
+    }
+  }
+
+  /** An iPhone-style icon: a rounded square. An icon that fills its square fills it, as SkyShowtime's or Viaplay's on
+   *  an iPhone; a logo on a clear background sits inside, on dark glass, as iOS shows icons in dark mode. Without an
+   *  icon: the app's name on its brand's color. */
   function roundFace(app, box, d) {
     var k = shelfKey(app);
     paint(box, k ? k[3][0] : app.color ? darken(app.color, 0.92) : '#2A2A2E', k ? k[3][1] : app.color ? darken(app.color, 0.62) : '#161618');
     var word = el('div', 'word', box, app.title);
-    word.style.fontSize = wordFit(app.title, d * 0.8, 24) + 'px';
+    word.style.fontSize = wordFit(app.title, d * 0.8, 20) + 'px';
     if (!app.icon) return;
     var img = el('img', 'full', box);
-    word.style.visibility = 'hidden';
+    img.style.visibility = 'hidden';
     img.onerror = function () { if (img.parentNode) img.parentNode.removeChild(img); word.style.visibility = ''; };
+    img.onload = function () {
+      var bleed = iconBleeds(img);
+      setClass(box, 'bleed', bleed);
+      setClass(box, 'inset', !bleed);
+      if (!bleed) box.style.background = '';   // dark glass behind the logo (ios.css)
+      word.style.visibility = 'hidden';
+      img.style.visibility = '';
+    };
     img.src = app.icon;
   }
 
