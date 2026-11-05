@@ -582,8 +582,14 @@
   /** An iPhone-style icon: a rounded square. An icon that fills its square fills it, as SkyShowtime's or Viaplay's on
    *  an iPhone; a logo on a clear background sits inside, on dark glass, as iOS shows icons in dark mode. Without an
    *  icon: the app's name on its brand's color. */
+  // The logo's color on an iPhone in dark mode, for the TV's icons that carry a white logo on a clear background.
+  var IPHONE_INK = {netflix: '#E50914', prime: '#1A98FF', spotify: '#1ED760', disney: '#2E7BFF', hulu: '#1CE783',
+    paramount: '#0064FF', globoplay: '#FF5A1F'};
+  // Logos the TV draws to its icon's edges (Netflix's N): shown inside, smaller, not as a picture filling the square.
+  var LOGO_ONLY = {netflix: true};
+
   function roundFace(app, box, d) {
-    var k = shelfKey(app);
+    var k = shelfKey(app), brand = k ? k[0] : '';
     paint(box, k ? k[3][0] : app.color ? darken(app.color, 0.92) : '#2A2A2E', k ? k[3][1] : app.color ? darken(app.color, 0.62) : '#161618');
     var word = el('div', 'word', box, app.title);
     word.style.fontSize = wordFit(app.title, d * 0.8, 20) + 'px';
@@ -603,6 +609,7 @@
         var light = 0;
         for (var b = 5; b < 8; b++) light += lf.ink[b];
         var tint = light > 0.6 && lf.bg && colorful(lf.bg) ? 'rgb(' + lf.bg.join(',') + ')'
+          : light > 0.6 && IPHONE_INK[brand] ? IPHONE_INK[brand]   // a white logo on clear: the brand's color
           : unseen(lf.ink, 0.02) > 0.35 ? '#FFFFFF' : '';
         if (img.parentNode) img.parentNode.removeChild(img);
         if (tint) {
@@ -615,6 +622,13 @@
         return;
       }
       // A picture rather than a logo: it fills the square when it reaches its edges, else sits inside on dark glass.
+      if (LOGO_ONLY[brand]) {
+        setClass(box, 'inset', true);
+        box.style.background = '';
+        img.className = 'full mark';
+        img.style.visibility = '';
+        return;
+      }
       var bleed = iconBleeds(img);
       setClass(box, 'bleed', bleed);
       setClass(box, 'inset', !bleed);

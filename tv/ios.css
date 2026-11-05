@@ -235,3 +235,6 @@ body:not(.no-picks) #barca .crest { width: 34px; height: 34px; margin: 0; }
   -webkit-transform: none;
   transform: none;
 }
+
+/* A logo drawn to its icon's edges (Netflix's N): smaller, inside, as on an iPhone. */
+.ios .tile.circ img.full.mark { left: 26%; top: 22%; width: 48%; height: 56%; }
