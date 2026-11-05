@@ -73,6 +73,8 @@ var Prefs = (function () {
     weatherBg: function () { return pick('weatherBg', true) !== false; },
     /** The Barça box: FC Barcelona's coming matches on your IPTV channels (barca.js). */
     barca: function () { return pick('barca', true) !== false; },
+    /** The picks on the home screen (Home Settings → Film picks); off, the clock and the boxes take their place. */
+    picksOn: function () { return pick('picksOn', true) !== false; },
     /** OK on the screensaver opens the title it shows, in its app; any other key only closes it (off by default). */
     saverWatch: function () { return pick('saverWatch', false) === true; },
     /** What the screensaver shows: 'photos' (the picks' photos, as it always has) or 'clock' (a clock and the weather). */
