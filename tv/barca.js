@@ -5,7 +5,9 @@
  */
 var BarcaBox = (function () {
   'use strict';
-  var URL = 'https://raw.githubusercontent.com/MrOrtiiz/my-tv/main/data/barca.json';
+  // GitHub's API answers with the file as it is now; raw.githubusercontent.com can lag minutes behind (its cache).
+  var API = 'https://api.github.com/repos/MrOrtiiz/my-tv/contents/data/barca.json?ref=main';
+  var RAW = 'https://raw.githubusercontent.com/MrOrtiiz/my-tv/main/data/barca.json';
   var EVERY = 15 * 60000, SHOW = 3;
   var data = null, timer = 0;
   var DAYS = ['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör'];
@@ -69,14 +71,25 @@ var BarcaBox = (function () {
     clearTimeout(timer);
     timer = setTimeout(load, EVERY);
     if (!on()) { render(); return; }
+    get(API, {Accept: 'application/vnd.github.raw+json'}, function (ok) {
+      if (!ok) get(RAW + '?t=' + Date.now(), {}, function () {});
+    });
+  }
+
+  function get(url, headers, done) {
     var x = new XMLHttpRequest();
-    x.open('GET', URL + '?t=' + Math.floor(Date.now() / 300000), true);
+    x.open('GET', url, true);
     x.timeout = 15000;
+    for (var h in headers) if (headers.hasOwnProperty(h)) x.setRequestHeader(h, headers[h]);
     x.onload = function () {
-      if (x.status !== 200) return;
-      try { data = JSON.parse(x.responseText); } catch (e) { return; }
+      var d = null;
+      if (x.status === 200) { try { d = JSON.parse(x.responseText); } catch (e) {} }
+      if (!d || d.matches === undefined) { done(false); return; }
+      data = d;
       render();
+      done(true);
     };
+    x.onerror = x.ontimeout = function () { done(false); };
     x.send();
   }
 
