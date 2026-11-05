@@ -424,6 +424,7 @@
     var list = shown ? Data.picks(TAB_KIND[st.tab]) : [];
     var holder = $('cards');
     setClass(body, 'no-picks', !list.length);
+    if (wantGrid() !== gridMode && apps.length) renderShelf();
     setClass(body, 'no-key', !shown);   // as on Android: no title or tabs that could never show anything
     if (!shown && st.zone === Z.TOP && st.top < 3) st.top = 3;
     var same = list.length === cards.length;
@@ -522,7 +523,40 @@
 
   var shelfFirst = 0, tileStep = 0, tileLeft = 0;
 
+  // The iOS look without picks (ios.css): the favourite apps as round icons with their names, in rows, as on an iPhone's
+  // home screen, not a row that scrolls. Up to 2 rows of up to 6; the rest are in All Apps.
+  var GRID_MAX = 12, GRID_COLS = 6, gridMode = false, gridCols = 1;
+  function wantGrid() { return Prefs.ios() && hasClass(body, 'no-picks'); }
+  function gridCount() { return Math.min(shelf.length, GRID_MAX); }
+
+  function renderGrid() {
+    var n = gridCount(), rows = Math.max(1, Math.ceil(n / GRID_COLS)), d = 132, cell = 230, rowH = 206;
+    if (n > 3 && rows < 2) rows = 2;   // rows, not one long line
+    gridCols = Math.max(1, Math.ceil(n / rows));
+    $('platter').style.display = 'none';
+    var tiles = $('tiles');
+    tiles.innerHTML = '';
+    tiles.style.webkitTransform = tiles.style.transform = '';
+    var top0 = 1040 - rows * rowH + 6;
+    for (var i = 0; i < shelf.length; i++) {
+      var t = el('div', 'tile circ', tiles), r = Math.floor(i / gridCols), c = i % gridCols;
+      var inRow = Math.min(gridCols, n - r * gridCols), left = (1920 - inRow * cell) / 2 + c * cell + (cell - d) / 2;
+      t.style.left = left + 'px';
+      t.style.top = (top0 + r * rowH) + 'px';
+      t.style.width = d + 'px';
+      t.style.height = d + 'px';
+      t.setAttribute('data-label', shelf[i].title);
+      if (i >= n) { t.style.display = 'none'; continue; }
+      face(shelf[i], t, wordFit(shelf[i].title, d * 0.8, 24));
+      hover(t, Z.SHELF, i);
+    }
+    st.shelf = Math.min(st.shelf, Math.max(0, n - 1));
+  }
+
   function renderShelf() {
+    gridMode = wantGrid();
+    if (gridMode) { renderGrid(); return; }
+    $('tiles').style.webkitTransform = $('tiles').style.transform = '';
     var n = Math.min(shelf.length, SHELF_VISIBLE), gap = 48, pad = 40;
     // 16:9 tiles, as on Android: never taller than 126, and the glass keeps its bottom edge.
     var tw = Math.min(126 * 16 / 9, (1760 - Math.max(0, n - 1) * gap) / Math.max(1, n)), th = tw * 9 / 16;
@@ -562,6 +596,7 @@
 
   /** The row slides (a transform on #tiles, which old TVs animate), and the apps it takes past the glass fade out. */
   function placeTiles() {
+    if (gridMode) return;
     var row = $('tiles'), tiles = row.children, n = Math.min(shelf.length, SHELF_VISIBLE);
     for (var i = 0; i < shelf.length; i++) {
       var shown = i >= shelfFirst && i < shelfFirst + n;
@@ -577,6 +612,7 @@
 
   /** Scrolls the shelf, one app at a time, so the focused app is shown. */
   function revealShelf() {
+    if (gridMode) return;
     var n = Math.min(shelf.length, SHELF_VISIBLE);
     var first = Math.max(0, Math.min(Math.max(shelfFirst, st.shelf - n + 1), Math.min(st.shelf, shelf.length - n)));
     if (first === shelfFirst || !shelf.length) return;
@@ -725,10 +761,17 @@
     updateFocus();
   }
 
+  /** The picks are on screen: a TMDB key, and Home Settings → Film picks on. */
+  function picksShown() { return Data.hasKey() && Prefs.picksOn(); }
+
   function closeDrawer() {
     var keys = document.querySelectorAll('#drawer .key');
     st.zone = Z.SHELF;
-    if (shelf.length) st.shelf = nearest($('tiles').children, centerX(keys[st.drawer]));
+    if (shelf.length && gridMode) {   // back to the nearest icon in the bottom row
+      var all = $('tiles').children, n = gridCount(), firstLast = Math.floor((n - 1) / gridCols) * gridCols, last = [];
+      for (var q = firstLast; q < n; q++) last.push(all[q]);
+      st.shelf = firstLast + nearest(last, centerX(keys[st.drawer]));
+    } else if (shelf.length) st.shelf = nearest($('tiles').children, centerX(keys[st.drawer]));
     updateFocus();
   }
 
@@ -790,7 +833,7 @@
       {label: tr('Screensaver'), value: saverMode() === 'clock' ? tr('Clock') : tr('Photos'),
         step: function (d) { cycle('saver', ['photos', 'clock'], saverMode(), d); }},
       {label: tr('iOS look'), toggle: Prefs.ios(),
-        step: function () { Prefs.set('ios', !Prefs.ios()); checkNight(); }},
+        step: function () { Prefs.set('ios', !Prefs.ios()); checkNight(); renderShelf(); }},
       {label: tr('Film picks'), toggle: Prefs.picksOn(),
         step: function () { Prefs.set('picksOn', !Prefs.picksOn()); renderCards(); updateFocus(); }},
       {label: tr('Picks per tab'), value: String(Prefs.cards()),
@@ -1378,11 +1421,18 @@
     var tiles = $('tiles').children, cardNodes = $('cards').children;
     switch (st.zone) {
       case Z.SHELF:
+        if (gridMode) {   // rows of round icons: up and down move between the rows first
+          var gn = gridCount();
+          if (dx) { st.shelf = Math.max(0, Math.min(gn - 1, st.shelf + dx)); break; }
+          if (dy > 0 && st.shelf + gridCols < gn) { st.shelf += gridCols; break; }
+          if (dy > 0 && Math.floor(st.shelf / gridCols) < Math.floor((gn - 1) / gridCols)) { st.shelf = gn - 1; break; }
+          if (dy < 0 && st.shelf - gridCols >= 0) { st.shelf -= gridCols; break; }
+        }
         if (dx) st.shelf = Math.max(0, Math.min(shelf.length - 1, st.shelf + dx));
         else if (dy > 0) { openDrawer(); return; }
         else if (dy < 0) {
           if (cards.length) { st.zone = Z.CARDS; st.card = nearest(cardNodes, centerX(tiles[st.shelf])); }
-          else { st.zone = Z.TOP; st.top = Data.hasKey() ? st.tab : 3; }
+          else { st.zone = Z.TOP; st.top = picksShown() ? st.tab : 3; }
         }
         break;
       case Z.CARDS:
@@ -1392,7 +1442,7 @@
         break;
       case Z.TOP:
         if (dx) {
-          st.top = Math.max(Data.hasKey() ? 0 : 3, Math.min(5, st.top + dx));   // without the picks the tabs can't hold focus
+          st.top = Math.max(picksShown() ? 0 : 3, Math.min(5, st.top + dx));   // without the picks the tabs can't hold focus
           if (st.top < 3) selectTab(st.top);   // as on Apple TV: focusing a tab selects it
         } else if (dy > 0) {
           if (cards.length) { st.zone = Z.CARDS; st.card = Math.min(cards.length - 1, st.top < 3 ? 0 : cards.length - 1); }
@@ -1455,7 +1505,7 @@
       if (saverOn || (sheetOpen() !== (zone === Z.APPS || zone === Z.SETTINGS || zone === Z.EDIT || zone === Z.LANG || zone === Z.CITY || zone === Z.KEY || zone === Z.ABOUT))) return;
       if (zone === Z.DRAWER && st.zone !== Z.DRAWER) return;
       if (zone !== Z.DRAWER && st.zone === Z.DRAWER && zone !== Z.SHELF) return;
-      if (zone === Z.TOP && index < 3 && !Data.hasKey()) return;   // the tabs are hidden without the picks
+      if (zone === Z.TOP && index < 3 && !picksShown()) return;   // the tabs are hidden without the picks
       if (zone === Z.SHELF && st.zone === Z.DRAWER) closeDrawer();
       st.zone = zone;
       if (zone === Z.TOP) { st.top = index; if (index < 3) selectTab(index); }

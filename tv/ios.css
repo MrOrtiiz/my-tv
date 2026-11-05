@@ -71,7 +71,7 @@
   right: 0;
   top: 64px;
   text-align: center;
-  font-size: 236px;
+  font-size: 220px;
   font-weight: 200;
   letter-spacing: -0.02em;
   line-height: 1;
@@ -101,9 +101,9 @@
   color: rgba(255, 255, 255, 0.7);
   text-transform: none;
 }
-/* Under the clock: the weather on the left, Barça on the right, side by side. */
-.ios.no-picks #wxtop { top: 384px; left: 80px; }
-.ios.no-picks #barca { top: 384px; right: 80px; }
+/* Barça left of the clock, the weather centered under it, the apps in rows below. */
+.ios.no-picks #barca { top: 64px; left: 80px; right: auto; width: 470px; }
+.ios.no-picks #wxtop { top: 412px; left: 50%; -webkit-transform: translateX(-50%) scale(0.84); transform: translateX(-50%) scale(0.84); -webkit-transform-origin: 50% 0; transform-origin: 50% 0; }
 
 /* MARK: - With picks: the small clock in the same style */
 
@@ -145,3 +145,29 @@
 .ios .box .row.focus { background: rgba(255, 255, 255, 0.18); }
 .ios .toggle { background: rgba(120, 120, 128, 0.36); }
 .ios .toggle.on { background: #34C759; }
+
+/* MARK: - Favourite apps as round icons in rows (home.js renderGrid), their names under them */
+
+.ios .tile.circ { border-radius: 50%; overflow: visible; box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28), inset 0 2px 0 rgba(255, 255, 255, 0.3), inset 0 0 0 1.5px rgba(255, 255, 255, 0.16); }
+.ios .tile.circ::after { display: none; }
+.ios .tile.circ::before {
+  content: attr(data-label);
+  position: absolute;
+  left: -40px;
+  right: -40px;
+  top: 100%;
+  margin-top: 12px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 28px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+}
+.ios:not(.night) .tile.circ::before { color: #1D1D1F; text-shadow: 0 1px 4px rgba(255, 255, 255, 0.6); }
+.ios .tile.circ img.logo { width: 64%; height: 46%; }
+.ios .tile.circ .word { left: 12%; right: 12%; }
+.ios .tile.circ.focus { -webkit-transform: scale(1.14); transform: scale(1.14); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.42), 0 0 0 4px rgba(255, 255, 255, 0.75); }
