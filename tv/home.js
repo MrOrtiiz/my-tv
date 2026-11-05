@@ -514,8 +514,13 @@
     c.firstChild.textContent = formatDate('format|h:mm', d.getTime());
     // The Swedish calendar (festive.js): today's holiday or fun day, red on a red day, and the next release's count-down.
     var day = window.Festive ? Festive.today() : null, soon = window.Festive ? Festive.countdown() : '';
-    c.lastChild.textContent = formatDate('format|EEEE, MMMM d', d.getTime()) + (day ? '  ·  ' + day.name : '') + (soon ? '  ·  ' + soon : '');
+    c.lastChild.textContent = formatDate('format|EEEE, MMMM d', d.getTime()) + (day ? '  ·  ' + day.name : '');
     setClass(c, 'red', !!(day && day.red));
+    // The count-downs in their own line, under the clock and over the weather.
+    var cd = $('countdown');
+    if (!cd) { cd = el('div', '', $('top')); cd.id = 'countdown'; }
+    cd.textContent = soon;
+    cd.style.display = soon ? '' : 'none';
   }
 
   /** On the minute, so the clock never runs late (the 30-second refresh could, by up to 30 s). */

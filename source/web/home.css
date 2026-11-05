@@ -69,6 +69,10 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .night.drawer-open #sky .lift { opacity: 0.42; }
 /* The holiday's animation (festive.js): over the sky, under the home screen. */
 #sky #festive { left: 0; top: 0; width: 100%; height: 100%; -webkit-transition: opacity 1s; transition: opacity 1s; }
+/* The count-downs (festive.js), under the clock: under the big clock without picks, under the small one with them. */
+#countdown { position: absolute; left: 76px; top: 560px; font-size: 26px; font-weight: 600; white-space: nowrap; color: #6E6E73; }
+.night #countdown { color: rgba(245, 245, 247, 0.72); }
+body:not(.no-picks) #countdown { left: auto; right: 300px; top: 172px; font-size: 22px; font-weight: 600; padding: 0 20px; height: 40px; line-height: 40px; border-radius: 20px; background: rgba(127, 127, 140, 0.16); }
 #clock.red .date { color: #E0302A; }
 .night #clock.red .date { color: #FF6961; }
 /* The weather as the background (weatherbg.js): its two canvases over the plain sky, under a lighter veil. */
