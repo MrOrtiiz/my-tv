@@ -10,6 +10,7 @@ import os
 import re
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
@@ -38,12 +39,51 @@ def when(text):
     return t.replace(tzinfo=timezone(off))
 
 
-def guide(url):
+def fetch(url):
     req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (my-tv Barça box)', 'Accept-Encoding': 'gzip'})
     with urllib.request.urlopen(req, timeout=180) as r:
         raw = r.read()
     if raw[:2] == b'\x1f\x8b':
         raw = gzip.decompress(raw)
+    return raw
+
+
+def kind(raw):
+    """What an answer is, in words that never quote it (it may hold the link or the login)."""
+    head = raw[:2000].lstrip(b'\xef\xbb\xbf \t\r\n').lower()
+    if not head:
+        return 'an empty answer'
+    if head.startswith(b'#extm3u'):
+        return 'an M3U channel list'
+    if head.startswith(b'<!doctype html') or head.startswith(b'<html') or b'<body' in head:
+        return 'a web page'
+    if head[:1] in (b'{', b'['):
+        return 'JSON'
+    if head.startswith(b'<?xml') or head.startswith(b'<tv') or head.startswith(b'<!doctype tv'):
+        return 'XML'
+    return 'something else (%d bytes)' % len(raw)
+
+
+def guide(url):
+    """The XMLTV guide behind the link: as is, or found from an M3U list (its url-tvg, or an Xtream login's xmltv.php)."""
+    raw = fetch(url)
+    if kind(raw) == 'an M3U channel list':
+        first = raw[:4000].decode('utf-8', 'replace').splitlines()[0]
+        m = re.search(r'(?:x-tvg-url|url-tvg|tvg-url)\s*=\s*"([^"]+)"', first, re.I)
+        found = m.group(1).split(',')[0].strip() if m else ''
+        if not found:
+            u = urllib.parse.urlsplit(url)
+            q = urllib.parse.parse_qs(u.query)
+            if q.get('username') and q.get('password'):
+                found = urllib.parse.urlunsplit((u.scheme, u.netloc, '/xmltv.php', urllib.parse.urlencode(
+                    {'username': q['username'][0], 'password': q['password'][0]}), ''))
+        if not found:
+            raise ValueError('The link is an M3U channel list without a guide link in it.')
+        print('The link is an M3U list: reading the guide it points to.')
+        raw = fetch(found)
+    k = kind(raw)
+    if k != 'XML':
+        raise ValueError('The guide link gave %s, not an XMLTV guide.' % k)
     return io.BytesIO(raw)
 
 
@@ -72,6 +112,9 @@ def main():
         src = guide(url)
     except urllib.error.HTTPError as e:  # the message may hold the link: only the kind of failure
         fail(now, 'The guide answered HTTP %d.' % e.code)
+        return
+    except ValueError as e:  # our own messages, which never quote the link
+        fail(now, str(e))
         return
     except Exception as e:
         fail(now, 'Could not read the guide (%s).' % type(e).__name__)
