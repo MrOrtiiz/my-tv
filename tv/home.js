@@ -725,14 +725,17 @@
   // MARK: - Drawer
 
   var drawerItems = [], drawerInputs = 0;
+  // The HDMI ports by what's plugged into them: [name, symbol].
+  var OWN_INPUTS = {hdmi4: ['PS5', 'gamepad']};
 
   function renderDrawer() {
     var d = $('drawer');
     d.innerHTML = '';
     drawerItems = [];
     for (var i = 0; i < inputs.length; i++) {
-      var x = inputs[i];
-      drawerItems.push({label: x.label || tr('Live TV'), symbol: x.symbol, off: !x.connected, run: launcher(x.id, x.label)});
+      var x = inputs[i], own = OWN_INPUTS[x.key];   // what's plugged in, by its own name and symbol
+      var label = own ? own[0] : x.label || tr('Live TV');
+      drawerItems.push({label: label, symbol: own ? own[1] : x.symbol, off: !x.connected, run: launcher(x.id, label)});
     }
     drawerInputs = drawerItems.length;
     drawerItems.push({label: tr('All Apps'), symbol: 'apps', run: openApps});
