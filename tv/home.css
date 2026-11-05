@@ -502,6 +502,9 @@ body:not(.no-picks) #wxtop { top: 40px; -webkit-transform: scale(0.7); transform
 .night #barca .when { color: #FF6B9A; }
 .night #barca .live { background: #1E6FD9; }
 /* With picks: only the next match, in a short box between the weather and the round buttons. */
+/* With picks the clock stays too, small, at the right of the tabs' row, under the round buttons. */
+body:not(.no-picks) #clock { display: block; left: auto; right: 84px; top: 150px; font-size: 64px; font-weight: 300; text-align: right; }
+body:not(.no-picks) #clock .date { font-size: 22px; margin-top: 4px; }
 body:not(.no-picks) #barca { top: 40px; right: 340px; width: 560px; padding: 14px 24px 12px 66px; border-radius: 26px; }
 body:not(.no-picks) #barca .head { position: absolute; left: 22px; top: 50%; margin-top: -13px; }
 body:not(.no-picks) #barca .head .name { display: none; }
