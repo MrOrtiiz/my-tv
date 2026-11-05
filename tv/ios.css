@@ -171,3 +171,19 @@
 .ios .tile.circ img.logo { width: 64%; height: 46%; }
 .ios .tile.circ .word { left: 12%; right: 12%; }
 .ios .tile.circ.focus { -webkit-transform: scale(1.14); transform: scale(1.14); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.42), 0 0 0 4px rgba(255, 255, 255, 0.75); }
+/* The TV's own icon fills the circle (home.js roundFace), a little enlarged so the square icon's edges and rounded
+   corners fall outside it: the icon becomes round, not a square pasted inside a circle. */
+.ios .tile.circ img.full {
+  left: -9%;
+  top: -9%;
+  width: 118%;
+  height: 118%;
+  max-width: none;
+  max-height: none;
+  -o-object-fit: cover;
+  object-fit: cover;
+  -webkit-transform: none;
+  transform: none;
+  -webkit-clip-path: circle(42.4% at 50% 50%);
+  clip-path: circle(42.4% at 50% 50%);
+}

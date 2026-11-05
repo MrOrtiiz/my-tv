@@ -547,10 +547,24 @@
       t.style.height = d + 'px';
       t.setAttribute('data-label', shelf[i].title);
       if (i >= n) { t.style.display = 'none'; continue; }
-      face(shelf[i], t, wordFit(shelf[i].title, d * 0.8, 24));
+      roundFace(shelf[i], t, d);
       hover(t, Z.SHELF, i);
     }
     st.shelf = Math.min(st.shelf, Math.max(0, n - 1));
+  }
+
+  /** A round icon: the TV's own icon fills the circle (its background too), as an iPhone's icons do; its name on the
+   *  brand's color when the TV has no icon, or it doesn't load. */
+  function roundFace(app, box, d) {
+    var k = shelfKey(app);
+    paint(box, k ? k[3][0] : app.color ? darken(app.color, 0.92) : '#2A2A2E', k ? k[3][1] : app.color ? darken(app.color, 0.62) : '#161618');
+    var word = el('div', 'word', box, app.title);
+    word.style.fontSize = wordFit(app.title, d * 0.8, 24) + 'px';
+    if (!app.icon) return;
+    var img = el('img', 'full', box);
+    word.style.visibility = 'hidden';
+    img.onerror = function () { if (img.parentNode) img.parentNode.removeChild(img); word.style.visibility = ''; };
+    img.src = app.icon;
   }
 
   function renderShelf() {
