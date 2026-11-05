@@ -190,3 +190,8 @@
 
 .ios.no-picks #clock.red .date { color: #FF6961; }
 .ios.no-picks:not(.night) #clock.red .date { color: #D70015; }
+
+/* The date line can carry a holiday and a count-down: kept between the Barça box and the round buttons, on two lines
+   when it needs them. */
+.ios.no-picks #clock { left: 620px; right: 620px; }
+.ios.no-picks #clock .date { white-space: normal; line-height: 42px; max-width: 680px; text-align: center; }

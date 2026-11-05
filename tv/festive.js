@@ -85,6 +85,35 @@ var Festive = (function () {
   ];
   var COUNTDOWN = 30;   // days before
 
+  // Birthdays in the family, as [month, day, b(oy) or g(irl)] only: no names (this file is public). The balloons take
+  // their colors from it.
+  var BIRTHDAYS = [[11, 25, 'g'], [1, 6, 'b'], [1, 16, 'b'], [5, 11, 'g'], [6, 29, 'g'], [7, 16, 'g'], [10, 7, 'g']];
+  var BALLOONS = {
+    g: ['255,105,180', '255,69,140', '191,90,242', '255,182,213', '255,204,0', '230,130,255'],
+    b: ['10,132,255', '90,200,250', '52,199,89', '48,90,220', '0,199,190', '255,204,0']
+  };
+  var who = 'g';
+  var BIRTHDAY_SOON = 7;   // days before, for "Födelsedag om 3 dagar"
+
+  function birthday(t) {
+    for (var i = 0; i < BIRTHDAYS.length; i++) {
+      if (BIRTHDAYS[i][0] === t.getMonth() + 1 && BIRTHDAYS[i][1] === t.getDate()) { who = BIRTHDAYS[i][2]; return true; }
+    }
+    return false;
+  }
+
+  /** Days to the next birthday within BIRTHDAY_SOON (1…7), or 0. */
+  function birthdaySoon() {
+    var t = new Date(), today0 = new Date(t.getFullYear(), t.getMonth(), t.getDate()).getTime(), best = 0;
+    for (var i = 0; i < BIRTHDAYS.length; i++) {
+      for (var y = t.getFullYear(); y <= t.getFullYear() + 1; y++) {
+        var n = Math.round((new Date(y, BIRTHDAYS[i][0] - 1, BIRTHDAYS[i][1]).getTime() - today0) / 86400000);
+        if (n >= 1 && n <= BIRTHDAY_SOON && (!best || n < best)) best = n;
+      }
+    }
+    return best;
+  }
+
   function event(t) {
     for (var i = 0; i < EVENTS.length; i++) {
       var e = EVENTS[i];
@@ -100,15 +129,19 @@ var Festive = (function () {
       var e = EVENTS[i], n = Math.round((new Date(e[0], e[1] - 1, e[2]).getTime() - today0) / 86400000);
       if (n >= 1 && n <= COUNTDOWN && n < bestN) { best = e; bestN = n; }
     }
-    if (!best) return '';
-    return best[4] + (bestN === 1 ? ' i morgon' : ' om ' + bestN + ' dagar');
+    var b = birthdaySoon(), parts2 = [];
+    if (b) parts2.push('Födelsedag ' + (b === 1 ? 'i morgon' : 'om ' + b + ' dagar'));
+    if (best) parts2.push(best[4] + (bestN === 1 ? ' i morgon' : ' om ' + bestN + ' dagar'));
+    return parts2.join('  ·  ');
   }
 
   /** Today's day ({name, red, anim}): a holiday first, else a release day; or null. */
   function today() {
     if (forced) return forced;
-    var t = new Date();
-    return days(t.getFullYear())[key(t.getMonth() + 1, t.getDate())] || event(t) || null;
+    var t = new Date(), h = days(t.getFullYear())[key(t.getMonth() + 1, t.getDate())] || event(t) || null;
+    // A birthday comes first; on a holiday too, both names show and a red day stays red.
+    if (birthday(t)) return {name: 'Grattis på födelsedagen!' + (h ? '  ·  ' + h.name : ''), red: !!(h && h.red), anim: 'birthday'};
+    return h;
   }
 
   // MARK: - The animations
@@ -168,6 +201,12 @@ var Festive = (function () {
       for (var j = 0; j < 40; j++) parts.push({t: 'ember', x: rand(0, W), y: rand(H * 0.5, H + 20), v: rand(14, 30), p: rand(0, 6.3), life: rand(0, 1)});
     },
     sparkle: function () { for (var i = 0; i < 34; i++) parts.push({t: 'spark', x: rand(0, W), y: rand(0, H * 0.75), p: rand(0, 6.3)}); },
+    // Balloons rising, and confetti.
+    birthday: function () {
+      var pal = BALLOONS[who] || BALLOONS.g;
+      for (var i = 0; i < 16; i++) parts.push({t: 'balloon', x: rand(0, W), y: rand(H * 0.2, H + 200), v: rand(22, 42), p: rand(0, 6.3), r: rand(14, 22), c: pick(pal)});
+      for (var j = 0; j < 60; j++) parts.push({t: 'confetti', x: rand(0, W), y: rand(-H, H), v: rand(30, 60), a: rand(0, 6.3), va: rand(-4, 4), p: rand(0, 6.3), c: 'rgb(' + pick(pal) + ')'});
+    },
     // A neon sunset over the sea, pink and cyan streaks and a slow scan line: a night in a sunny city by the ocean.
     neon: function () {
       parts.push({t: 'sun'});
@@ -248,6 +287,18 @@ var Festive = (function () {
           g.globalAlpha = 0.85; g.fillStyle = '#15121C'; g.beginPath();
           g.moveTo(p.x, yy); g.quadraticCurveTo(p.x - p.s * 0.6, yy - flap, p.x - p.s, yy + 2); g.quadraticCurveTo(p.x - p.s * 0.5, yy + 1, p.x, yy + 4);
           g.quadraticCurveTo(p.x + p.s * 0.5, yy + 1, p.x + p.s, yy + 2); g.quadraticCurveTo(p.x + p.s * 0.6, yy - flap, p.x, yy); g.fill();
+          break;
+        case 'balloon':
+          p.y -= p.v * dt; p.p += dt; if (p.y < -p.r * 3) { p.y = H + p.r * 2 + rand(0, 120); p.x = rand(0, W); }
+          var bxx = p.x + Math.sin(p.p * 0.8) * 10;
+          g.globalAlpha = 0.5; g.strokeStyle = 'rgba(255,255,255,0.7)'; g.lineWidth = 0.8; g.beginPath(); g.moveTo(bxx, p.y + p.r * 1.2);
+          g.quadraticCurveTo(bxx + Math.sin(p.p * 2) * 6, p.y + p.r * 2.2, bxx, p.y + p.r * 3.2); g.stroke();
+          var bg2 = g.createRadialGradient(bxx - p.r * 0.35, p.y - p.r * 0.4, 1, bxx, p.y, p.r * 1.3);
+          bg2.addColorStop(0, 'rgba(255,255,255,0.9)'); bg2.addColorStop(0.25, 'rgba(' + p.c + ',0.95)'); bg2.addColorStop(1, 'rgba(' + p.c + ',0.8)');
+          g.globalAlpha = 0.9; g.fillStyle = bg2; g.beginPath();
+          if (g.ellipse) g.ellipse(bxx, p.y, p.r, p.r * 1.2, 0, 0, 6.283); else g.arc(bxx, p.y, p.r, 0, 6.283);
+          g.fill();
+          g.beginPath(); g.moveTo(bxx - 3, p.y + p.r * 1.25); g.lineTo(bxx + 3, p.y + p.r * 1.25); g.lineTo(bxx, p.y + p.r * 1.1); g.fill();
           break;
         case 'sun':
           var sy = H * 0.62, sr = 92, sx = W * 0.82;
@@ -348,7 +399,10 @@ var Festive = (function () {
     countdown: function () { return on() && !forced ? countdown() : ''; },
     update: update,
     /** For trying an animation: Festive.preview('newyear', 'Nyårsafton', false); Festive.preview() to stop. */
-    preview: function (anim, name, red) { forced = anim ? {anim: anim, name: name || anim, red: !!red} : null; update(); },
+    preview: function (anim, name, red) {
+      if (anim === 'birthday-b' || anim === 'birthday-g') { who = anim.slice(-1); anim = 'birthday'; kind = ''; }
+      forced = anim ? {anim: anim, name: name || anim, red: !!red} : null; update();
+    },
     days: days,
     /** Set by home.js: redraws the date line when the day changes. */
     onChange: null
