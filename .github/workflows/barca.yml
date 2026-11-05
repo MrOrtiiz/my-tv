@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: '17 */3 * * *'
   workflow_dispatch:
+  # And right after a change to how it reads the guide.
+  push:
+    branches: [main]
+    paths: ['.github/scripts/barca.py', '.github/workflows/barca.yml']
 permissions:
   contents: write
 concurrency: barca

@@ -56,9 +56,12 @@ var BarcaBox = (function () {
     for (i = 0; i < list.length && i < SHOW; i++) {
       var m = list[i], row = el('div', 'match', box), playing = m.start <= now && now < m.stop;
       var t = el('div', 'when' + (playing ? ' now' : ''), row, playing ? 'Pågår nu' : when(m.start));
+      if (m.competition) t.appendChild(document.createTextNode('  ·  ' + m.competition));
       if (m.live && !playing) el('span', 'live', t, 'Direkt');
       el('div', 'title', row, m.title);
-      el('div', 'channels', row, (m.channels || []).join('  ·  ') + (m.more ? '  ·  +' + m.more : ''));
+      var ch = m.channels || [];
+      el('div', 'channels' + (ch.length ? '' : ' soon'), row, ch.length ? ch.join('  ·  ') + (m.more ? '  ·  +' + m.more : '')
+        : 'Kanalerna visas när matchen kommer in i din tablå');
     }
   }
 

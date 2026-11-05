@@ -39,6 +39,79 @@ def when(text):
     return t.replace(tzinfo=timezone(off))
 
 
+# Barça's football fixtures, the truth the guide is checked against: ESPN's open schedule per competition, and
+# TheSportsDB as a second source. A listing counts only when it starts at a fixture's kick-off: no basketball, no replays.
+ESPN = 'https://site.api.espn.com/apis/site/v2/sports/soccer/%s/teams/83/schedule?fixture=true'
+LEAGUES = [('esp.1', 'LaLiga'), ('uefa.champions', 'Champions League'), ('esp.copa_del_rey', 'Copa del Rey'),
+           ('esp.super_cup', 'Supercopa'), ('club.friendly', 'Träningsmatch')]
+SPORTSDB = 'https://www.thesportsdb.com/api/v1/json/3/eventsnext.php?id=133739'
+OTHER_SPORT = re.compile(r'koszyk|basket|baloncesto|b[aà]squet|euroleague|euroliga|\bacb\b|handbal|futsal|hockey|'
+                         r'waterpolo|volley|siatk|r[eé]plica|repet|\b(19|20)\d\d/\d\d\b|\b\d\d/\d\d\b', re.I)
+
+
+def fold(text):
+    """Lower case without accents: "Alavés" and "ALAVES" alike."""
+    import unicodedata
+    return ''.join(c for c in unicodedata.normalize('NFKD', text or '') if not unicodedata.combining(c)).lower()
+
+
+def tokens(name):
+    """The words that tell a club apart: "Atlético Madrid" → atletico, madrid; not "fc", "cd", "real"..."""
+    common = {'club', 'real', 'deportivo', 'sporting', 'athletic', 'united', 'city', 'calcio', 'football', 'futbol', 'de', 'cf',
+              'fc', 'cd', 'sc', 'ac', 'ud', 'rc', 'sd', 'afc', 'the'}
+    return [w for w in re.findall(r'[a-z0-9]+', fold(name)) if len(w) >= 3 and w not in common]
+
+
+def fixtures(now, until):
+    out, used, errors = {}, [], []
+    for slug, comp in LEAGUES:
+        try:
+            data = json.loads(fetch(ESPN % slug))
+        except Exception as e:
+            errors.append('espn %s: %s' % (slug, type(e).__name__))
+            continue
+        for ev in data.get('events') or []:
+            try:
+                kick = datetime.fromisoformat(ev['date'].replace('Z', '+00:00'))
+            except Exception:
+                continue
+            if not now - timedelta(hours=2) <= kick <= until:
+                continue
+            teams = [c.get('team', {}).get('displayName', '') for c in (ev.get('competitions') or [{}])[0].get('competitors', [])]
+            home = next((c.get('team', {}).get('displayName', '') for c in (ev.get('competitions') or [{}])[0].get('competitors', [])
+                         if c.get('homeAway') == 'home'), teams[0] if teams else '')
+            rival = next((t for t in teams if 'barcelona' not in fold(t)), '')
+            if not rival:
+                continue
+            title = 'Barcelona – %s' % rival if 'barcelona' in fold(home) else '%s – Barcelona' % rival
+            out[kick.strftime('%Y%m%d%H')] = {'kick': kick, 'rival': rival, 'title': title, 'competition': comp}
+        used.append('espn ' + slug)
+    try:
+        data = json.loads(fetch(SPORTSDB))
+        for ev in data.get('events') or []:
+            if (ev.get('strSport') or 'Soccer') != 'Soccer':
+                continue
+            ts = ev.get('strTimestamp') or ''
+            try:
+                kick = datetime.fromisoformat(ts.replace('Z', '+00:00'))
+                if kick.tzinfo is None:
+                    kick = kick.replace(tzinfo=timezone.utc)
+            except Exception:
+                continue
+            if not now - timedelta(hours=2) <= kick <= until:
+                continue
+            home, away = ev.get('strHomeTeam') or '', ev.get('strAwayTeam') or ''
+            rival = away if 'barcelona' in fold(home) else home
+            key = kick.strftime('%Y%m%d%H')
+            if key not in out and rival:
+                out[key] = {'kick': kick, 'rival': rival, 'competition': ev.get('strLeague') or '',
+                            'title': 'Barcelona – %s' % rival if 'barcelona' in fold(home) else '%s – Barcelona' % rival}
+        used.append('thesportsdb')
+    except Exception as e:
+        errors.append('thesportsdb: %s' % type(e).__name__)
+    return sorted(out.values(), key=lambda f: f['kick']), used, errors
+
+
 def fetch(url):
     req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (my-tv Barça box)', 'Accept-Encoding': 'gzip'})
     with urllib.request.urlopen(req, timeout=180) as r:
@@ -145,16 +218,43 @@ def main():
                 continue
             if len(seen) < 25:
                 seen.append('%s | %s | %d min' % (start.strftime('%m-%d %H:%M'), text[:90], (stop - start).total_seconds() // 60))
-            if NOT_LIVE.search(' '.join((text, cats))):
+            if NOT_LIVE.search(' '.join((text, cats))) or OTHER_SPORT.search(' '.join((text, cats))):
                 continue
             if not timedelta(minutes=80) <= (stop - start) <= timedelta(hours=5):
                 continue
-            if not MATCH.search(' '.join((text, cats, desc[:200]))):
-                continue
             live = bool(re.search(r'\blive\b|\bdirekt\b|\bvivo\b|\bdirecto\b', ' '.join((text, cats, desc[:200])), re.I))
             found.append({'title': title or sub, 'start': start, 'stop': stop, 'channel': channel,
-                          'live': live, 'category': cats.strip()})
+                          'live': live, 'category': cats.strip(), 'football': bool(MATCH.search(' '.join((text, cats, desc[:200])))),
+                          'text': fold(' '.join((text, desc[:200])))})
     found.sort(key=lambda p: p['start'])
+    games, used, errors = fixtures(now, until)
+    if games:
+        out = []
+        for g in games[:MAX_MATCHES]:
+            words = tokens(g['rival'])
+            chans = []
+            for p in found:
+                if not -50 * 60 <= (p['start'] - g['kick']).total_seconds() <= 20 * 60:
+                    continue
+                # "Internazionale" is "Inter" in many guides, "Atlético" "Atletico" or "Atl.": the first five letters do.
+                if not (any(w in p['text'] or (len(w) > 5 and w[:5] in p['text']) for w in words) or (not words and p['football'])):
+                    continue
+                name = names.get(p['channel'], p['channel'])
+                if name and name not in chans:
+                    chans.append(name)
+            swedish = [c for c in chans if re.search(r'\b(se|swe|sverige|swedish|nordic)\b', c, re.I)]
+            rest = [c for c in chans if c not in swedish]
+            out.append({'title': g['title'], 'competition': g['competition'], 'start': int(g['kick'].timestamp() * 1000),
+                        'stop': int((g['kick'] + timedelta(hours=2)).timestamp() * 1000), 'live': bool(chans),
+                        'channels': (swedish + rest)[:MAX_CHANNELS], 'more': max(0, len(chans) - MAX_CHANNELS)})
+        save({'updated': int(now.timestamp() * 1000), 'status': 'ok', 'matches': out, 'source': used, 'source_errors': errors,
+              'guide': {'channels': len(names), 'programmes': programmes, 'barca_listings': len(found),
+                        'until': max(p['stop'] for p in found).isoformat() if found else None},
+              'barca_titles_seen': seen})
+        print('%d fixtures; %d with channels.' % (len(out), sum(1 for o in out if o['channels'])))
+        return
+    # No fixture list today: the guide alone, football only.
+    found = [p for p in found if p['football']]
     matches = []
     for p in found:
         name = names.get(p['channel'], p['channel'])
@@ -177,7 +277,7 @@ def main():
                     'live': m['live'], 'channels': (swedish + rest)[:MAX_CHANNELS], 'more': max(0, len(m['channels']) - MAX_CHANNELS)})
     data = {'updated': int(now.timestamp() * 1000), 'status': 'ok', 'matches': out,
             'guide': {'channels': len(names), 'programmes': programmes, 'barca_listings': len(found)},
-            'barca_titles_seen': seen}
+            'barca_titles_seen': seen, 'source': used, 'source_errors': errors}
     save(data)
     print('%d channels, %d programmes, %d Barça listings kept, %d matches.' % (len(names), programmes, len(found), len(out)))
 
