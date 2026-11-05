@@ -90,6 +90,7 @@ var BarcaBox = (function () {
       if (!d || d.matches === undefined) { done(false); return; }
       data = d;
       render();
+      if (window.Festive) Festive.update();   // a match day takes over the screen's theme
       done(true);
     };
     x.onerror = x.ontimeout = function () { done(false); };
@@ -101,5 +102,16 @@ var BarcaBox = (function () {
   // The time of each match ("I dag", "Pågår nu") moves on by itself.
   setInterval(render, 60000);
 
-  return {refresh: load};
+  /** Today's match: one that kicks off today, or is being played now; else null. */
+  function matchToday() {
+    if (!on() || !data || !data.matches) return null;
+    var now = new Date(), y = now.getFullYear(), m = now.getMonth(), d = now.getDate();
+    for (var i = 0; i < data.matches.length; i++) {
+      var x = data.matches[i], k = new Date(x.start);
+      if ((x.start <= now.getTime() && now.getTime() < x.stop) || (k.getFullYear() === y && k.getMonth() === m && k.getDate() === d && x.stop > now.getTime())) return x;
+    }
+    return null;
+  }
+
+  return {refresh: load, matchToday: matchToday};
 })();

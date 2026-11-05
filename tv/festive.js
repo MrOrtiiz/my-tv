@@ -147,6 +147,14 @@ var Festive = (function () {
   function today() {
     if (forced) return forced;
     var t = new Date(), h = days(t.getFullYear())[key(t.getMonth() + 1, t.getDate())] || event(t) || null;
+    // A Barça match day comes before everything: the screen goes blaugrana. The day's own name still shows after it.
+    var match = window.BarcaBox && BarcaBox.matchToday ? BarcaBox.matchToday() : null;
+    if (match) {
+      var k = new Date(match.start), hm = (k.getHours() < 10 ? '0' : '') + k.getHours() + ':' + (k.getMinutes() < 10 ? '0' : '') + k.getMinutes();
+      var bday = birthday(t) ? 'Grattis på födelsedagen!' : '';
+      var others = [bday, h ? h.name : ''].filter(function (x) { return x; });
+      return {name: 'Matchdag ' + hm + (others.length ? '  ·  ' + others.join('  ·  ') : ''), red: !!(h && h.red), anim: 'barca', theme: 'barca'};
+    }
     // A birthday comes first; on a holiday too, both names show and a red day stays red.
     if (birthday(t)) return {name: 'Grattis på födelsedagen!' + (h ? '  ·  ' + h.name : ''), red: !!(h && h.red), anim: 'birthday', theme: 'birthday-' + who};
     return h;
@@ -155,6 +163,7 @@ var Festive = (function () {
   // MARK: - The day's colors: the whole screen matches the day (festive.css), from two colors and a tint of the sky.
   // [accent, second color, tint at the top, tint at the bottom], as "r,g,b" and "r,g,b,a".
   var THEMES = {
+    barca: ['220,30,80', '237,187,0', '0,77,152,0.26', '165,0,68,0.26'],
     christmas: ['255,69,58', '255,214,10', '20,120,60,0.16', '170,20,30,0.22'],
     newyear: ['255,214,10', '210,215,255', '60,30,120,0.18', '255,190,60,0.12'],
     lucia: ['255,200,110', '255,240,210', '255,170,60,0.08', '255,150,40,0.2'],
@@ -256,6 +265,12 @@ var Festive = (function () {
       for (var j = 0; j < 40; j++) parts.push({t: 'ember', x: rand(0, W), y: rand(H * 0.5, H + 20), v: rand(14, 30), p: rand(0, 6.3), life: rand(0, 1)});
     },
     sparkle: function () { for (var i = 0; i < 34; i++) parts.push({t: 'spark', x: rand(0, W), y: rand(0, H * 0.75), p: rand(0, 6.3)}); },
+    // Match day: the kit's blue and garnet stripes glowing and drifting, gold sparks, and a ball now and then.
+    barca: function () {
+      for (var i = 0; i < 10; i++) parts.push({t: 'stripe', i: i, x: i * (W / 9) - 40, c: i % 2 ? '165,0,68' : '0,77,152', p: rand(0, 6.3)});
+      for (var j = 0; j < 40; j++) parts.push({t: 'gold', x: rand(0, W), y: rand(0, H), v: rand(10, 26), p: rand(0, 6.3)});
+      parts.push({t: 'balls', next: 1});
+    },
     // Balloons rising, and confetti.
     birthday: function () {
       var pal = BALLOONS[who] || BALLOONS.g;
@@ -342,6 +357,32 @@ var Festive = (function () {
           g.globalAlpha = 0.85; g.fillStyle = '#15121C'; g.beginPath();
           g.moveTo(p.x, yy); g.quadraticCurveTo(p.x - p.s * 0.6, yy - flap, p.x - p.s, yy + 2); g.quadraticCurveTo(p.x - p.s * 0.5, yy + 1, p.x, yy + 4);
           g.quadraticCurveTo(p.x + p.s * 0.5, yy + 1, p.x + p.s, yy + 2); g.quadraticCurveTo(p.x + p.s * 0.6, yy - flap, p.x, yy); g.fill();
+          break;
+        case 'stripe':
+          p.x += 8 * dt; p.p += dt * 0.6; if (p.x > W + 60) p.x -= W / 9 * 10;
+          var sgw = g.createLinearGradient(p.x - 46, 0, p.x + 46, 0), al = 0.13 + 0.06 * Math.sin(p.p);
+          sgw.addColorStop(0, 'rgba(' + p.c + ',0)'); sgw.addColorStop(0.5, 'rgba(' + p.c + ',' + al.toFixed(3) + ')'); sgw.addColorStop(1, 'rgba(' + p.c + ',0)');
+          g.globalAlpha = 1; g.fillStyle = sgw; g.fillRect(p.x - 46, 0, 92, H);
+          break;
+        case 'gold':
+          p.y -= p.v * dt; p.p += dt * 3; if (p.y < -6) { p.y = H + 6; p.x = rand(0, W); }
+          g.globalAlpha = 1; glow(p.x, p.y, 5, '237,187,0', 0.3 + 0.2 * Math.sin(p.p));
+          g.globalAlpha = 0.9; g.fillStyle = 'rgb(255,214,90)'; g.fillRect(p.x - 0.8, p.y - 0.8, 1.6, 1.6);
+          break;
+        case 'balls':
+          p.next -= dt;
+          if (p.next <= 0) { p.next = rand(4, 8); parts.push({t: 'ball', x: rand(W * 0.1, W * 0.9), y: H + 20, vx: rand(-40, 40), vy: rand(-260, -200), a: 0}); }
+          break;
+        case 'ball':
+          p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 110 * dt; p.a += dt * 4;
+          if (p.y > H + 30 && p.vy > 0) continue;
+          g.save(); g.translate(p.x, p.y); g.rotate(p.a);
+          g.globalAlpha = 0.85; g.fillStyle = '#F4F4F6'; g.beginPath(); g.arc(0, 0, 11, 0, 6.283); g.fill();
+          g.fillStyle = '#1C1C1E'; g.beginPath();
+          for (var q = 0; q < 5; q++) { var qa = q * 1.2566 - 1.5708; g.lineTo(Math.cos(qa) * 4.2, Math.sin(qa) * 4.2); }
+          g.closePath(); g.fill();
+          for (var q2 = 0; q2 < 5; q2++) { var qb = q2 * 1.2566 + 1.5708; g.beginPath(); g.arc(Math.cos(qb) * 9.5, Math.sin(qb) * 9.5, 2.6, 0, 6.283); g.fill(); }
+          g.restore();
           break;
         case 'balloon':
           p.y -= p.v * dt; p.p += dt; if (p.y < -p.r * 3) { p.y = H + p.r * 2 + rand(0, 120); p.x = rand(0, W); }
