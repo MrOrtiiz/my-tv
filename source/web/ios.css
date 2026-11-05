@@ -1,0 +1,147 @@
+/*
+ * iOS look (Home Settings → iOS look, body.ios): Apple's newest design language on the TV. Liquid-glass panels
+ * (translucent, a bright rim and a soft sheen, large rounded corners), the lock screen's large centered clock with the
+ * widgets under it, a glass dock for the apps and iOS-green switches. Everything here is scoped to body.ios, so turning
+ * it off brings back the original look. Blur (backdrop-filter) only where the TV has it.
+ */
+
+/* MARK: - Liquid glass */
+
+.ios .glass, .ios #platter, .ios .round {
+  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.16));
+  background: linear-gradient(rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.16));
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.16),
+    inset 0 2px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -2px 0 rgba(255, 255, 255, 0.18),
+    inset 2px 0 0 rgba(255, 255, 255, 0.28),
+    inset -2px 0 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.42),
+    inset 0 0 40px rgba(255, 255, 255, 0.12);
+}
+.ios.night .glass, .ios.night #platter, .ios.night .round {
+  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.05));
+  background: linear-gradient(rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.05));
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.38),
+    inset 0 2px 0 rgba(255, 255, 255, 0.36),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.08),
+    inset 2px 0 0 rgba(255, 255, 255, 0.12),
+    inset -2px 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.16),
+    inset 0 0 40px rgba(255, 255, 255, 0.05);
+}
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .ios .glass, .ios #platter {
+    -webkit-backdrop-filter: blur(26px) saturate(1.6);
+    backdrop-filter: blur(26px) saturate(1.6);
+  }
+}
+/* The sheen: a soft light across the top half, as light falls on curved glass. */
+.ios #wxtop::before, .ios #barca::before, .ios #platter::before {
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 0;
+  height: 46%;
+  border-radius: inherit;
+  background: -webkit-radial-gradient(50% 0%, ellipse, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 70%);
+  background: radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+}
+.ios.night #wxtop::before, .ios.night #barca::before, .ios.night #platter::before {
+  background: -webkit-radial-gradient(50% 0%, ellipse, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0) 70%);
+  background: radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0) 70%);
+}
+
+/* MARK: - Widgets: rounder, quieter labels */
+
+.ios #wxtop { border-radius: 46px; }
+.ios #barca { border-radius: 40px; }
+.ios #wxtop .meta, .ios #barca .head { letter-spacing: 0.01em; }
+.ios #barca .head .name { text-transform: uppercase; font-size: 18px; letter-spacing: 0.06em; }
+.ios #barca .when { color: #FF375F; }
+.ios.night #barca .when { color: #FF6482; }
+.ios #barca .live { background: #0A84FF; border-radius: 9px; }
+.ios #barca .match { border-top-color: rgba(127, 127, 140, 0.18); }
+
+/* MARK: - The lock screen: the date over a large clock, centered; the widgets under it */
+
+.ios.no-picks #clock {
+  left: 0;
+  right: 0;
+  top: 64px;
+  text-align: center;
+  font-size: 236px;
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: reverse;
+  -webkit-flex-direction: column-reverse;
+  flex-direction: column-reverse;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.ios.no-picks #clock .time {
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.25), 0 10px 40px rgba(0, 0, 0, 0.18);
+}
+/* By day the sky is pale: the clock takes a deep blue that still lets the sky show, as iOS tints it to the wallpaper. */
+.ios.no-picks:not(.night) #clock .time { color: rgba(14, 34, 66, 0.82); text-shadow: 0 2px 0 rgba(255, 255, 255, 0.45), 0 10px 40px rgba(255, 255, 255, 0.35); }
+.ios.no-picks:not(.night) #clock .date { color: rgba(14, 34, 66, 0.72); }
+.ios.no-picks #clock .date {
+  margin: 0 0 6px;
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.82);
+  text-transform: none;
+}
+/* Under the clock: the weather on the left, Barça on the right, side by side. */
+.ios.no-picks #wxtop { top: 384px; left: 80px; }
+.ios.no-picks #barca { top: 384px; right: 80px; }
+
+/* MARK: - With picks: the small clock in the same style */
+
+.ios:not(.no-picks) #clock { font-weight: 650; letter-spacing: -0.03em; }
+
+/* MARK: - The dock and its apps */
+
+.ios #platter { border-radius: 70px; }
+.ios .tile { border-radius: 32px; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18); }
+.ios .tile::after { background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0)); background: linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0)); opacity: 1; }
+.ios .tile.focus { -webkit-transform: scale(1.16) translateY(-6px); transform: scale(1.16) translateY(-6px); box-shadow: 0 22px 44px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(255, 255, 255, 0.55); }
+
+/* MARK: - Round buttons: glass circles, white when focused */
+
+.ios .round { color: #FFF; }
+.ios:not(.night) .round { color: #1D1D1F; }
+.ios .round.focus { background: #FFF; color: #1D1D1F; box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3); }
+
+/* MARK: - Picks: rounder cards */
+
+.ios .card .img { border-radius: 34px; }
+
+/* MARK: - Sheets: frosted glass, iOS switches */
+
+.ios .sheet { background: rgba(0, 0, 0, 0.42); }
+.ios #settings .box, .ios #shelfedit .box, .ios #langpick .box, .ios #citypick .box, .ios #keypick .box, .ios #about .box {
+  border-radius: 48px;
+  background: -webkit-linear-gradient(top, rgba(58, 60, 70, 0.82), rgba(28, 30, 36, 0.86));
+  background: linear-gradient(rgba(58, 60, 70, 0.82), rgba(28, 30, 36, 0.86));
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.28), inset 0 0 0 1.5px rgba(255, 255, 255, 0.12);
+}
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .ios #settings .box, .ios #shelfedit .box, .ios #langpick .box, .ios #citypick .box, .ios #keypick .box, .ios #about .box {
+    -webkit-backdrop-filter: blur(40px) saturate(1.8);
+    backdrop-filter: blur(40px) saturate(1.8);
+  }
+}
+.ios .box .row { border-radius: 24px; }
+.ios .box .row.focus { background: rgba(255, 255, 255, 0.18); }
+.ios .toggle { background: rgba(120, 120, 128, 0.36); }
+.ios .toggle.on { background: #34C759; }

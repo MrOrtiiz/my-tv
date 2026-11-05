@@ -789,6 +789,8 @@
         step: function (d) { cycle('dim', ['off', 'low', 'medium', 'high', 'auto'], Prefs.dim(), d); applyDim(); }},
       {label: tr('Screensaver'), value: saverMode() === 'clock' ? tr('Clock') : tr('Photos'),
         step: function (d) { cycle('saver', ['photos', 'clock'], saverMode(), d); }},
+      {label: tr('iOS look'), toggle: Prefs.ios(),
+        step: function () { Prefs.set('ios', !Prefs.ios()); checkNight(); }},
       {label: tr('Film picks'), toggle: Prefs.picksOn(),
         step: function () { Prefs.set('picksOn', !Prefs.picksOn()); renderCards(); updateFocus(); }},
       {label: tr('Picks per tab'), value: String(Prefs.cards()),
@@ -1489,6 +1491,7 @@
   function checkNight() {
     var night = Data.isNight(Date.now());
     setClass(body, 'night', night);
+    setClass(body, 'ios', Prefs.ios());
     var w = Data.weather;
     WeatherBg.update(Prefs.weatherBg(), w ? w.code : null, w ? w.isDay : !night, night);
     if (night === lastNight) return;

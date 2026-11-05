@@ -75,6 +75,8 @@ var Prefs = (function () {
     barca: function () { return pick('barca', true) !== false; },
     /** The picks on the home screen (Home Settings → Film picks); off, the clock and the boxes take their place. */
     picksOn: function () { return pick('picksOn', true) !== false; },
+    /** The iOS look (ios.css): liquid glass, the lock screen's clock (on unless turned off). */
+    ios: function () { return pick('ios', true) !== false; },
     /** OK on the screensaver opens the title it shows, in its app; any other key only closes it (off by default). */
     saverWatch: function () { return pick('saverWatch', false) === true; },
     /** What the screensaver shows: 'photos' (the picks' photos, as it always has) or 'clock' (a clock and the weather). */
