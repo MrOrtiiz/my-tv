@@ -45,6 +45,9 @@ var BarcaBox = (function () {
     var head = el('div', 'head', box);
     el('span', 'stripe', head);
     el('span', 'name', head, 'FC Barcelona');
+    // When the match list was made: shows at once whether the TV has the newest one.
+    var u = new Date(data.updated);
+    el('span', 'stamp', head, 'uppdaterad ' + two(u.getHours()) + ':' + two(u.getMinutes()));
     var now = Date.now(), list = [], i;
     for (i = 0; data.matches && i < data.matches.length; i++) if (data.matches[i].stop > now) list.push(data.matches[i]);
     if (data.status === 'error') {
