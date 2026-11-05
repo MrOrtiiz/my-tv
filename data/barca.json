@@ -1,4 +1,6 @@
 {
- "updated": 0,
+ "updated": 1793912521156,
+ "status": "error",
+ "error": "The guide is not XMLTV (syntax error: line 1, column 0).",
  "matches": []
 }
