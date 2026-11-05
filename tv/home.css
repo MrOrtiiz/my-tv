@@ -503,6 +503,9 @@ body:not(.no-picks) #wxtop { top: 40px; -webkit-transform: scale(0.7); transform
 #barca .live { display: inline-block; margin-left: 12px; padding: 0 10px; border-radius: 13px; font-size: 17px; line-height: 26px; vertical-align: 1px; color: #fff; background: #004D98; }
 #barca .title { font-size: 26px; font-weight: 600; line-height: 34px; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #barca .channels { font-size: 18px; font-weight: 500; line-height: 24px; color: #6E6E73; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#barca .crest { width: 34px; height: 34px; margin-right: 12px; vertical-align: -10px; -o-object-fit: contain; object-fit: contain; }
+#barca .title .rival { width: 30px; height: 30px; margin-right: 10px; vertical-align: -6px; -o-object-fit: contain; object-fit: contain; }
+body:not(.no-picks) #barca .title .rival { width: 24px; height: 24px; vertical-align: -4px; }
 #barca .stamp { float: right; font-size: 17px; font-weight: 500; opacity: 0.7; margin-top: 4px; }
 body:not(.no-picks) #barca .stamp { display: none; }
 #barca .channels.soon { font-style: italic; opacity: 0.8; }

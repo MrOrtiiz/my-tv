@@ -62,6 +62,17 @@ def tokens(name):
     return [w for w in re.findall(r'[a-z0-9]+', fold(name)) if len(w) >= 3 and w not in common]
 
 
+def logo(team):
+    """A team's crest as ESPN links it (its own image, never a copy of it), or ''."""
+    for l in team.get('logos') or []:
+        if l.get('href'):
+            return l['href']
+    return team.get('logo') or ''
+
+
+CREST = {'url': ''}
+
+
 def fixtures(now, until):
     out, used, errors = {}, [], []
     for slug, comp in LEAGUES:
@@ -77,14 +88,20 @@ def fixtures(now, until):
                 continue
             if not now - timedelta(hours=2) <= kick <= until:
                 continue
-            teams = [c.get('team', {}).get('displayName', '') for c in (ev.get('competitions') or [{}])[0].get('competitors', [])]
+            comps = (ev.get('competitions') or [{}])[0].get('competitors', [])
+            teams = [c.get('team', {}).get('displayName', '') for c in comps]
+            logos = {c.get('team', {}).get('displayName', ''): logo(c.get('team', {})) for c in comps}
+            for name, href in logos.items():
+                if 'barcelona' in fold(name) and href and not CREST['url']:
+                    CREST['url'] = href
             home = next((c.get('team', {}).get('displayName', '') for c in (ev.get('competitions') or [{}])[0].get('competitors', [])
                          if c.get('homeAway') == 'home'), teams[0] if teams else '')
             rival = next((t for t in teams if 'barcelona' not in fold(t)), '')
             if not rival:
                 continue
             title = 'Barcelona – %s' % rival if 'barcelona' in fold(home) else '%s – Barcelona' % rival
-            out[kick.strftime('%Y%m%d%H')] = {'kick': kick, 'rival': rival, 'title': title, 'competition': comp}
+            out[kick.strftime('%Y%m%d%H')] = {'kick': kick, 'rival': rival, 'title': title, 'competition': comp,
+                                              'rival_logo': logos.get(rival, '')}
         used.append('espn ' + slug)
     try:
         data = json.loads(fetch(SPORTSDB))
@@ -104,7 +121,7 @@ def fixtures(now, until):
             rival = away if 'barcelona' in fold(home) else home
             key = kick.strftime('%Y%m%d%H')
             if key not in out and rival:
-                out[key] = {'kick': kick, 'rival': rival, 'competition': ev.get('strLeague') or '',
+                out[key] = {'kick': kick, 'rival': rival, 'competition': ev.get('strLeague') or '', 'rival_logo': '',
                             'title': 'Barcelona – %s' % rival if 'barcelona' in fold(home) else '%s – Barcelona' % rival}
         used.append('thesportsdb')
     except Exception as e:
@@ -244,10 +261,11 @@ def main():
                     chans.append(name)
             swedish = [c for c in chans if re.search(r'\b(se|swe|sverige|swedish|nordic)\b', c, re.I)]
             rest = [c for c in chans if c not in swedish]
-            out.append({'title': g['title'], 'competition': g['competition'], 'start': int(g['kick'].timestamp() * 1000),
+            out.append({'title': g['title'], 'competition': g['competition'], 'rival_logo': g.get('rival_logo', ''),
+                        'start': int(g['kick'].timestamp() * 1000),
                         'stop': int((g['kick'] + timedelta(hours=2)).timestamp() * 1000), 'live': bool(chans),
                         'channels': (swedish + rest)[:MAX_CHANNELS], 'more': max(0, len(chans) - MAX_CHANNELS)})
-        save({'updated': int(now.timestamp() * 1000), 'status': 'ok', 'matches': out, 'source': used, 'source_errors': errors,
+        save({'updated': int(now.timestamp() * 1000), 'status': 'ok', 'crest': CREST['url'], 'matches': out, 'source': used, 'source_errors': errors,
               'guide': {'channels': len(names), 'programmes': programmes, 'barca_listings': len(found),
                         'until': max(p['stop'] for p in found).isoformat() if found else None},
               'barca_titles_seen': seen})

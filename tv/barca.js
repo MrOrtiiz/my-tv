@@ -9,6 +9,7 @@ var BarcaBox = (function () {
   var API = 'https://api.github.com/repos/MrOrtiiz/my-tv/contents/data/barca.json?ref=main';
   var RAW = 'https://raw.githubusercontent.com/MrOrtiiz/my-tv/main/data/barca.json';
   var EVERY = 15 * 60000, SHOW = 3;
+  var CREST = 'https://a.espncdn.com/i/teamlogos/soccer/500/83.png';
   var data = null, timer = 0;
   var DAYS = ['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör'];
   var MONTHS = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
@@ -43,7 +44,11 @@ var BarcaBox = (function () {
     if (!box) { box = el('div', 'glass', top); box.id = 'barca'; }
     box.innerHTML = '';
     var head = el('div', 'head', box);
-    el('span', 'stripe', head);
+    // The club's crest as ESPN links it (barca.json's crest, else ESPN's address for it); the blaugrana dot if it won't load.
+    var crest = el('img', 'crest', head), dot = el('span', 'stripe', head);
+    dot.style.display = 'none';
+    crest.onerror = function () { crest.style.display = 'none'; dot.style.display = ''; };
+    crest.src = data.crest || CREST;
     el('span', 'name', head, 'FC Barcelona');
     // When the match list was made: shows at once whether the TV has the newest one.
     var u = new Date(data.updated);
@@ -63,7 +68,13 @@ var BarcaBox = (function () {
       var t = el('div', 'when' + (playing ? ' now' : ''), row, playing ? 'Pågår nu' : when(m.start));
       if (m.competition) t.appendChild(document.createTextNode('  ·  ' + m.competition));
       if (m.live && !playing) el('span', 'live', t, 'Direkt');
-      el('div', 'title', row, m.title);
+      var title = el('div', 'title', row);
+      if (m.rival_logo) {
+        var rl = el('img', 'rival', title);
+        rl.onerror = function () { this.style.display = 'none'; };
+        rl.src = m.rival_logo;
+      }
+      title.appendChild(document.createTextNode(m.title));
       var ch = m.channels || [];
       el('div', 'channels' + (ch.length ? '' : ' soon'), row, ch.length ? ch.join('  ·  ') + (m.more ? '  ·  +' + m.more : '')
         : 'Kanalerna visas när matchen kommer in i din tablå');

@@ -211,3 +211,6 @@
 }
 .ios.no-picks:not(.night) #countdown { color: rgba(14, 34, 66, 0.82); background: rgba(255, 255, 255, 0.4); box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.5); }
 .ios.no-picks #wxtop { top: 440px; }
+
+/* With picks, the compact Barça box shows the crest at its left. */
+body:not(.no-picks) #barca .crest { width: 34px; height: 34px; margin: 0; }
