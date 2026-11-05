@@ -187,3 +187,6 @@
   -webkit-clip-path: circle(42.4% at 50% 50%);
   clip-path: circle(42.4% at 50% 50%);
 }
+
+.ios.no-picks #clock.red .date { color: #FF6961; }
+.ios.no-picks:not(.night) #clock.red .date { color: #D70015; }

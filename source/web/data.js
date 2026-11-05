@@ -77,6 +77,8 @@ var Prefs = (function () {
     picksOn: function () { return pick('picksOn', true) !== false; },
     /** The iOS look (ios.css): liquid glass, the lock screen's clock (on unless turned off). */
     ios: function () { return pick('ios', true) !== false; },
+    /** The Swedish calendar's holidays and fun days by the date, with their animations (festive.js). */
+    holidays: function () { return pick('holidays', true) !== false; },
     /** OK on the screensaver opens the title it shows, in its app; any other key only closes it (off by default). */
     saverWatch: function () { return pick('saverWatch', false) === true; },
     /** What the screensaver shows: 'photos' (the picks' photos, as it always has) or 'clock' (a clock and the weather). */

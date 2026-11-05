@@ -507,10 +507,15 @@
     }, BG_FOLLOW_MS);
   }
 
+  if (window.Festive) Festive.onChange = function () { renderClock(); };
+
   function renderClock() {
     var d = new Date(), c = $('clock');
     c.firstChild.textContent = formatDate('format|h:mm', d.getTime());
-    c.lastChild.textContent = formatDate('format|EEEE, MMMM d', d.getTime());
+    // The Swedish calendar (festive.js): today's holiday or fun day, red on a red day, and the next release's count-down.
+    var day = window.Festive ? Festive.today() : null, soon = window.Festive ? Festive.countdown() : '';
+    c.lastChild.textContent = formatDate('format|EEEE, MMMM d', d.getTime()) + (day ? '  ·  ' + day.name : '') + (soon ? '  ·  ' + soon : '');
+    setClass(c, 'red', !!(day && day.red));
   }
 
   /** On the minute, so the clock never runs late (the 30-second refresh could, by up to 30 s). */
@@ -846,6 +851,8 @@
         step: function (d) { cycle('dim', ['off', 'low', 'medium', 'high', 'auto'], Prefs.dim(), d); applyDim(); }},
       {label: tr('Screensaver'), value: saverMode() === 'clock' ? tr('Clock') : tr('Photos'),
         step: function (d) { cycle('saver', ['photos', 'clock'], saverMode(), d); }},
+      {label: tr('Holidays'), toggle: Prefs.holidays(),
+        step: function () { Prefs.set('holidays', !Prefs.holidays()); if (window.Festive) Festive.update(); renderClock(); }},
       {label: tr('iOS look'), toggle: Prefs.ios(),
         step: function () { Prefs.set('ios', !Prefs.ios()); checkNight(); renderShelf(); }},
       {label: tr('Film picks'), toggle: Prefs.picksOn(),

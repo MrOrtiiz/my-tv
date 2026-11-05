@@ -67,6 +67,10 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .night #sky .lift { background: #000; }
 .drawer-open #sky .lift { opacity: 0.32; }
 .night.drawer-open #sky .lift { opacity: 0.42; }
+/* The holiday's animation (festive.js): over the sky, under the home screen. */
+#sky #festive { left: 0; top: 0; width: 100%; height: 100%; -webkit-transition: opacity 1s; transition: opacity 1s; }
+#clock.red .date { color: #E0302A; }
+.night #clock.red .date { color: #FF6961; }
 /* The weather as the background (weatherbg.js): its two canvases over the plain sky, under a lighter veil. */
 #sky canvas.wx { left: 0; top: 0; width: 100%; height: 100%; opacity: 0; -webkit-transition: opacity 1.5s; transition: opacity 1.5s; }
 .wxbg #sky canvas.wx { opacity: 1; }
