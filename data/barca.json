@@ -1,62 +1,32 @@
 {
- "updated": 1793912634440,
+ "updated": 1793913118731,
  "status": "ok",
  "matches": [
   {
-   "title": "Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna",
-   "start": 1793911200000,
-   "stop": 1793918700000,
+   "title": "Atlético Madrid – Barcelona",
+   "competition": "LaLiga",
+   "start": 1794168000000,
+   "stop": 1794175200000,
    "live": false,
-   "channels": [
-    "Sport Klub Polska FHD PL"
-   ],
-   "more": 0
-  },
-  {
-   "title": "LaLiga 21/22: Barcelona v A Madrid",
-   "start": 1793923200000,
-   "stop": 1793930400000,
-   "live": false,
-   "channels": [
-    "SuperSport La Liga"
-   ],
-   "more": 0
-  },
-  {
-   "title": "UEFA Champions League: Barcelona - Aston Villa",
-   "start": 1793941200000,
-   "stop": 1793948400000,
-   "live": false,
-   "channels": [
-    "TV2 Sport 1 FHD NO"
-   ],
-   "more": 0
-  },
-  {
-   "title": "Unicaja vs. Barcelona",
-   "start": 1793971800000,
-   "stop": 1793979000000,
-   "live": false,
-   "channels": [
-    "CDO 2 (Basico) CL"
-   ],
-   "more": 0
-  },
-  {
-   "title": "Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca",
-   "start": 1793976600000,
-   "stop": 1793985600000,
-   "live": false,
-   "channels": [
-    "Sport Klub Polska FHD PL"
-   ],
+   "channels": [],
    "more": 0
   }
  ],
+ "source": [
+  "espn esp.1",
+  "espn uefa.champions",
+  "espn esp.copa_del_rey",
+  "espn esp.super_cup",
+  "espn club.friendly"
+ ],
+ "source_errors": [
+  "thesportsdb: HTTPError"
+ ],
  "guide": {
   "channels": 5627,
-  "programmes": 235201,
-  "barca_listings": 8
+  "programmes": 234554,
+  "barca_listings": 5,
+  "until": "2026-11-06T19:15:00+01:00"
  },
  "barca_titles_seen": [
   "11-06 17:00 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - CD Alaves  | 135 min",
