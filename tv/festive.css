@@ -1,0 +1,48 @@
+/*
+ * The day's colors (festive.js paintTheme): on a holiday, a theme day, a birthday or a release day the whole screen
+ * matches it, not just the animation. body.fest carries four colors as variables: --fa (the accent), --fb (a second
+ * color), --ft and --fd (the sky's tint at the top and at the bottom), as "r,g,b" and "r,g,b,a".
+ * Only for TVs with CSS variables (this one); older ones simply keep the usual look.
+ */
+
+/* The sky takes the day's tint, under the animation. */
+.fest #sky #festive {
+  background: -webkit-linear-gradient(top, rgba(var(--ft)), rgba(0, 0, 0, 0) 45%, rgba(var(--fd)));
+  background: linear-gradient(rgba(var(--ft)), rgba(0, 0, 0, 0) 45%, rgba(var(--fd)));
+}
+
+/* The clock: white that turns into the day's color toward its foot. */
+.fest.ios.no-picks #clock .time, .fest #clock .time {
+  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.8) 25%, rgba(var(--fa), 0.85));
+  background: linear-gradient(rgba(255, 255, 255, 0.8) 25%, rgba(var(--fa), 0.85));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+}
+.fest:not(.night) #clock .time {
+  background: -webkit-linear-gradient(top, rgba(14, 34, 66, 0.7) 25%, rgba(var(--fa), 0.95));
+  background: linear-gradient(rgba(14, 34, 66, 0.7) 25%, rgba(var(--fa), 0.95));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+/* The day's name by the date, in its color (a red day stays red). */
+.fest #clock:not(.red) .date { color: rgba(var(--fa), 0.95); }
+
+/* Glass in the day's colors: a colored rim and a faint glow. */
+.fest .glass, .fest #platter, .fest .round {
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.3),
+    0 0 34px rgba(var(--fa), 0.16),
+    inset 0 2px 0 rgba(255, 255, 255, 0.32),
+    inset 0 0 0 1.5px rgba(var(--fa), 0.42),
+    inset 0 -14px 30px rgba(var(--fb), 0.08);
+}
+.fest #barca .when { color: rgb(var(--fa)); }
+.fest #barca .live { background: rgba(var(--fb), 0.9); color: #111; }
+
+/* The count-down pill and the focus take the day's colors. */
+.fest #countdown { color: rgb(var(--fa)); box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.3), inset 0 0 0 1.5px rgba(var(--fa), 0.45); }
+.fest .tile.focus, .fest.ios .tile.circ.focus { box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45), 0 0 0 3px rgba(var(--fa), 0.95), 0 0 26px rgba(var(--fa), 0.45); }
+.fest .round.focus { box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(var(--fa), 0.9); }
+.fest .toggle.on { background: rgb(var(--fa)); }
+.fest .box .row.focus { box-shadow: inset 0 0 0 1.5px rgba(var(--fa), 0.6); }

@@ -31,35 +31,43 @@ var Festive = (function () {
   function days(y) {
     if (cache[y]) return cache[y];
     var out = {};
-    function put(date, name, red, anim) { out[key(date.getMonth() + 1, date.getDate())] = {name: name, red: !!red, anim: anim || 'sparkle'}; }
-    function fixed(m, d, name, red, anim) { put(new Date(y, m - 1, d), name, red, anim); }
+    // anim: the animation; theme: the colors the whole screen takes that day (THEMES), the animation's own by default.
+    function put(date, name, red, anim, theme) { out[key(date.getMonth() + 1, date.getDate())] = {name: name, red: !!red, anim: anim || 'sparkle', theme: theme || anim || 'gold'}; }
+    function fixed(m, d, name, red, anim, theme) { put(new Date(y, m - 1, d), name, red, anim, theme); }
     fixed(1, 1, 'Nyårsdagen', true, 'newyear');
-    fixed(1, 5, 'Trettondagsafton', false, 'sparkle');
-    fixed(1, 6, 'Trettondedag jul', true, 'sparkle');
+    fixed(1, 5, 'Trettondagsafton', false, 'sparkle', 'gold');
+    fixed(1, 6, 'Trettondedag jul', true, 'sparkle', 'gold');
+    fixed(2, 6, 'Samernas nationaldag', false, 'confetti', 'sami');
     fixed(2, 14, 'Alla hjärtans dag', false, 'hearts');
-    fixed(3, 25, 'Våffeldagen', false, 'sparkle');
+    fixed(3, 8, 'Internationella kvinnodagen', false, 'sparkle', 'purple');
+    fixed(3, 25, 'Våffeldagen', false, 'sparkle', 'warm');
+    fixed(4, 1, 'Första april', false, 'confetti', 'fun');
     fixed(4, 30, 'Valborgsmässoafton', false, 'valborg');
-    fixed(5, 1, 'Första maj', true, 'sparkle');
+    fixed(5, 1, 'Första maj', true, 'sparkle', 'red');
     fixed(6, 6, 'Sveriges nationaldag', true, 'flags');
-    fixed(10, 4, 'Kanelbullens dag', false, 'sparkle');
+    fixed(10, 4, 'Kanelbullens dag', false, 'sparkle', 'warm');
+    fixed(10, 24, 'FN-dagen', false, 'sparkle', 'sky');
     fixed(10, 31, 'Halloween', false, 'halloween');
-    fixed(11, 6, 'Gustav Adolfsdagen', false, 'sparkle');
-    fixed(12, 10, 'Nobeldagen', false, 'sparkle');
+    fixed(11, 6, 'Gustav Adolfsdagen', false, 'sparkle', 'warm');
+    fixed(11, 7, 'Kladdkakans dag', false, 'sparkle', 'warm');
+    fixed(11, 10, 'Mårtensafton', false, 'sparkle', 'warm');
+    fixed(12, 9, 'Pepparkakans dag', false, 'sparkle', 'warm');
+    fixed(12, 10, 'Nobeldagen', false, 'sparkle', 'gold');
     fixed(12, 13, 'Lucia', false, 'lucia');
     fixed(12, 24, 'Julafton', false, 'christmas');
     fixed(12, 25, 'Juldagen', true, 'christmas');
     fixed(12, 26, 'Annandag jul', true, 'christmas');
     fixed(12, 31, 'Nyårsafton', false, 'newyear');
     var e = easter(y);
-    put(add(e, -47), 'Fettisdagen', false, 'sparkle');
+    put(add(e, -47), 'Fettisdagen', false, 'sparkle', 'warm');
     put(add(e, -3), 'Skärtorsdagen', false, 'easter');
     put(add(e, -2), 'Långfredagen', true, 'easter');
     put(add(e, -1), 'Påskafton', false, 'easter');
     put(e, 'Påskdagen', true, 'easter');
     put(add(e, 1), 'Annandag påsk', true, 'easter');
-    put(add(e, 39), 'Kristi himmelsfärdsdag', true, 'sparkle');
-    put(add(e, 48), 'Pingstafton', false, 'sparkle');
-    put(add(e, 49), 'Pingstdagen', true, 'sparkle');
+    put(add(e, 39), 'Kristi himmelsfärdsdag', true, 'sparkle', 'sky');
+    put(add(e, 48), 'Pingstafton', false, 'sparkle', 'green');
+    put(add(e, 49), 'Pingstdagen', true, 'sparkle', 'green');
     var mid = onOrAfter(y, 6, 19, 5);
     put(mid, 'Midsommarafton', false, 'midsummer');
     put(add(mid, 1), 'Midsommardagen', true, 'midsummer');
@@ -117,7 +125,7 @@ var Festive = (function () {
   function event(t) {
     for (var i = 0; i < EVENTS.length; i++) {
       var e = EVENTS[i];
-      if (e[0] === t.getFullYear() && e[1] === t.getMonth() + 1 && e[2] === t.getDate()) return {name: e[3], red: false, anim: e[5]};
+      if (e[0] === t.getFullYear() && e[1] === t.getMonth() + 1 && e[2] === t.getDate()) return {name: e[3], red: false, anim: e[5], theme: e[5]};
     }
     return null;
   }
@@ -140,8 +148,50 @@ var Festive = (function () {
     if (forced) return forced;
     var t = new Date(), h = days(t.getFullYear())[key(t.getMonth() + 1, t.getDate())] || event(t) || null;
     // A birthday comes first; on a holiday too, both names show and a red day stays red.
-    if (birthday(t)) return {name: 'Grattis på födelsedagen!' + (h ? '  ·  ' + h.name : ''), red: !!(h && h.red), anim: 'birthday'};
+    if (birthday(t)) return {name: 'Grattis på födelsedagen!' + (h ? '  ·  ' + h.name : ''), red: !!(h && h.red), anim: 'birthday', theme: 'birthday-' + who};
     return h;
+  }
+
+  // MARK: - The day's colors: the whole screen matches the day (festive.css), from two colors and a tint of the sky.
+  // [accent, second color, tint at the top, tint at the bottom], as "r,g,b" and "r,g,b,a".
+  var THEMES = {
+    christmas: ['255,69,58', '255,214,10', '20,120,60,0.16', '170,20,30,0.22'],
+    newyear: ['255,214,10', '210,215,255', '60,30,120,0.18', '255,190,60,0.12'],
+    lucia: ['255,200,110', '255,240,210', '255,170,60,0.08', '255,150,40,0.2'],
+    advent: ['255,170,80', '255,69,58', '255,150,40,0.06', '200,40,40,0.14'],
+    candles: ['255,180,90', '255,230,190', '255,150,40,0.05', '255,140,40,0.16'],
+    hearts: ['255,59,107', '255,159,181', '255,60,110,0.1', '255,60,110,0.18'],
+    'hearts-pink': ['255,105,170', '255,194,216', '255,100,170,0.1', '255,120,180,0.18'],
+    'hearts-blue': ['79,141,255', '141,184,255', '60,120,255,0.12', '60,160,255,0.16'],
+    midsummer: ['255,214,10', '52,199,89', '255,240,150,0.1', '52,199,89,0.14'],
+    easter: ['255,214,0', '255,90,160', '255,230,80,0.12', '255,120,180,0.12'],
+    valborg: ['255,140,40', '255,69,58', '255,120,30,0.04', '255,90,20,0.24'],
+    flags: ['254,204,2', '0,106,167', '0,106,167,0.2', '254,204,2,0.12'],
+    sami: ['218,41,28', '0,122,201', '0,122,201,0.14', '255,206,0,0.1'],
+    halloween: ['255,140,0', '160,80,255', '120,40,180,0.16', '255,110,0,0.2'],
+    neon: ['255,60,180', '0,230,255', '120,0,160,0.2', '255,60,180,0.16'],
+    heroes: ['170,90,255', '255,200,80', '90,40,200,0.2', '255,180,60,0.1'],
+    'birthday-g': ['255,105,180', '255,214,10', '255,105,180,0.12', '191,90,242,0.14'],
+    'birthday-b': ['10,132,255', '255,214,10', '10,132,255,0.14', '52,199,89,0.1'],
+    gold: ['255,214,120', '255,240,200', '255,200,100,0.06', '255,190,80,0.1'],
+    warm: ['255,170,90', '200,120,60', '255,160,80,0.06', '180,100,40,0.14'],
+    red: ['255,69,58', '255,150,140', '255,60,50,0.06', '255,60,50,0.14'],
+    purple: ['191,90,242', '255,159,220', '160,80,240,0.12', '191,90,242,0.14'],
+    sky: ['90,200,250', '10,132,255', '90,200,250,0.1', '10,132,255,0.1'],
+    green: ['52,199,89', '200,240,120', '52,199,89,0.08', '120,220,90,0.12'],
+    fun: ['255,214,10', '255,69,140', '255,214,10,0.1', '10,132,255,0.12']
+  };
+  var theme = '';
+
+  /** The day's colors on the whole screen: body.fest and fest-<theme>, and the colors as CSS variables. */
+  function paintTheme(name) {
+    var body = document.body, t = THEMES[name];
+    body.className = body.className.replace(/\s*\bfest(-[\w-]+)?\b/g, '');
+    theme = t ? name : '';
+    var st = body.style;
+    if (!t) { st.removeProperty('--fa'); st.removeProperty('--fb'); st.removeProperty('--ft'); st.removeProperty('--fd'); return; }
+    body.className += ' fest fest-' + name;
+    st.setProperty('--fa', t[0]); st.setProperty('--fb', t[1]); st.setProperty('--ft', t[2]); st.setProperty('--fd', t[3]);
   }
 
   // MARK: - The animations
@@ -196,6 +246,11 @@ var Festive = (function () {
     easter: function () { for (var i = 0; i < 40; i++) parts.push({t: 'feather', x: rand(0, W), y: rand(-H, H), v: rand(12, 26), a: rand(0, 6.3), va: rand(-1, 1), p: rand(0, 6.3), c: pick(['255,214,0', '255,90,160', '90,200,255', '120,230,120', '255,140,40', '180,110,255'])}); },
     valborg: function () { for (var i = 0; i < 90; i++) parts.push({t: 'ember', x: rand(W * 0.1, W * 0.9), y: rand(H * 0.4, H + 20), v: rand(30, 70), p: rand(0, 6.3), life: rand(0, 1)}); },
     flags: function () { for (var i = 0; i < 90; i++) parts.push({t: 'confetti', x: rand(0, W), y: rand(-H, H), v: rand(30, 60), a: rand(0, 6.3), va: rand(-4, 4), p: rand(0, 6.3), c: i % 2 ? '#FECC02' : '#006AA7'}); },
+    // Confetti in the day's colors (the Sami flag's four on the Sami National Day).
+    confetti: function () {
+      var cols = theme === 'sami' ? ['#DA291C', '#007AC9', '#00A651', '#FFCE00'] : THEMES[theme] ? ['rgb(' + THEMES[theme][0] + ')', 'rgb(' + THEMES[theme][1] + ')', '#FFFFFF'] : ['#FFD60A', '#FF453A', '#0A84FF'];
+      for (var i = 0; i < 80; i++) parts.push({t: 'confetti', x: rand(0, W), y: rand(-H, H), v: rand(30, 60), a: rand(0, 6.3), va: rand(-4, 4), p: rand(0, 6.3), c: pick(cols)});
+    },
     halloween: function () {
       for (var i = 0; i < 7; i++) parts.push({t: 'bat', x: rand(-200, W), y: rand(30, H * 0.5), v: rand(40, 80), p: rand(0, 6.3), s: rand(10, 18)});
       for (var j = 0; j < 40; j++) parts.push({t: 'ember', x: rand(0, W), y: rand(H * 0.5, H + 20), v: rand(14, 30), p: rand(0, 6.3), life: rand(0, 1)});
@@ -379,9 +434,10 @@ var Festive = (function () {
   /** Starts, changes or stops the animation for today; checked again each minute (midnight changes the day). */
   function update() {
     if (!ensure()) return;
-    var d = on() ? today() : null, want = d ? d.anim : '';
-    if (want === kind) { run(); return; }
+    var d = on() ? today() : null, want = d ? d.anim : '', look = d ? (d.theme || d.anim) : '';
+    if (want === kind && look === theme) { run(); return; }
     stop();
+    paintTheme(look);
     kind = want; parts = [];
     if (api.onChange) api.onChange();   // the date line shows the day's name
     g.clearRect(0, 0, W, H);
@@ -401,7 +457,7 @@ var Festive = (function () {
     /** For trying an animation: Festive.preview('newyear', 'Nyårsafton', false); Festive.preview() to stop. */
     preview: function (anim, name, red) {
       if (anim === 'birthday-b' || anim === 'birthday-g') { who = anim.slice(-1); anim = 'birthday'; kind = ''; }
-      forced = anim ? {anim: anim, name: name || anim, red: !!red} : null; update();
+      forced = anim ? {anim: anim, name: name || anim, red: !!red, theme: anim === 'birthday' ? 'birthday-' + who : arguments[3] || anim} : null; update();
     },
     days: days,
     /** Set by home.js: redraws the date line when the day changes. */
