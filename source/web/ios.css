@@ -214,3 +214,24 @@
 
 /* With picks, the compact Barça box shows the crest at its left. */
 body:not(.no-picks) #barca .crest { width: 34px; height: 34px; margin: 0; }
+
+/* A lifted logo on the dark glass (home.js roundFace): fitted inside with room around it, as on an iPhone. */
+.ios .tile.circ .mark {
+  position: absolute;
+  left: 18%;
+  top: 24%;
+  width: 64%;
+  height: 52%;
+  -o-object-fit: contain;
+  object-fit: contain;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  max-width: none;
+  max-height: none;
+  -webkit-transform: none;
+  transform: none;
+}

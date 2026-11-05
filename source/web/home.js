@@ -592,11 +592,33 @@
     img.style.visibility = 'hidden';
     img.onerror = function () { if (img.parentNode) img.parentNode.removeChild(img); word.style.visibility = ''; };
     img.onload = function () {
+      word.style.visibility = 'hidden';
+      // As iOS draws icons in dark mode: the logo lifted off its background, on dark glass. A white logo on a brand
+      // color takes that color (Prime Video's blue, Disney+'s), a colored logo keeps its colors (Netflix's red N,
+      // Spotify's green), a dark one turns white so it shows.
+      var url = app.icon, lf = lifted[url] !== undefined ? lifted[url] : (lifted[url] = lift(img));
+      if (lf) {
+        setClass(box, 'inset', true);
+        box.style.background = '';
+        var light = 0;
+        for (var b = 5; b < 8; b++) light += lf.ink[b];
+        var tint = light > 0.6 && lf.bg && colorful(lf.bg) ? 'rgb(' + lf.bg.join(',') + ')'
+          : unseen(lf.ink, 0.02) > 0.35 ? '#FFFFFF' : '';
+        if (img.parentNode) img.parentNode.removeChild(img);
+        if (tint) {
+          var mark = el('div', 'mark', box);
+          mark.style.webkitMaskImage = mark.style.maskImage = 'url(' + lf.src + ')';
+          mark.style.backgroundColor = tint;
+        } else {
+          el('img', 'mark', box).src = lf.src;
+        }
+        return;
+      }
+      // A picture rather than a logo: it fills the square when it reaches its edges, else sits inside on dark glass.
       var bleed = iconBleeds(img);
       setClass(box, 'bleed', bleed);
       setClass(box, 'inset', !bleed);
-      if (!bleed) box.style.background = '';   // dark glass behind the logo (ios.css)
-      word.style.visibility = 'hidden';
+      if (!bleed) box.style.background = '';
       img.style.visibility = '';
     };
     img.src = app.icon;
