@@ -238,3 +238,12 @@ body:not(.no-picks) #barca .crest { width: 34px; height: 34px; margin: 0; }
 
 /* A logo drawn to its icon's edges (Netflix's N): smaller, inside, as on an iPhone. */
 .ios .tile.circ img.full.mark { left: 26%; top: 22%; width: 48%; height: 56%; }
+
+/* Spotify (home.js roundFace): a green layer in the icon's shape, the icon multiplied over it. */
+.ios .tile.circ .tintunder {
+  position: absolute; left: 17%; top: 17%; width: 66%; height: 66%;
+  background: #1ED760;
+  -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+}
+.ios .tile.circ img.full.multiply { mix-blend-mode: multiply; }

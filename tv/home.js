@@ -599,6 +599,32 @@
     img.onerror = function () { if (img.parentNode) img.parentNode.removeChild(img); word.style.visibility = ''; };
     img.onload = function () {
       word.style.visibility = 'hidden';
+      // Netflix: its N reaches the icon's edges; shown inside, smaller.
+      if (LOGO_ONLY[brand]) {
+        setClass(box, 'inset', true);
+        box.style.background = '';
+        img.className = 'full mark';
+        img.style.visibility = '';
+        return;
+      }
+      // Spotify: the TV's icon is its logo in white and black; on an iPhone it's green and black. A green layer cut to
+      // the icon's shape, and the icon multiplied over it: white turns green, black stays black.
+      if (brand === 'spotify') {
+        setClass(box, 'inset', true);
+        box.style.background = '';
+        var under = el('div', 'tintunder', box);
+        under.style.webkitMaskImage = under.style.maskImage = 'url(' + app.icon + ')';
+        box.appendChild(img);
+        img.className = 'full multiply';
+        img.style.visibility = '';
+        return;
+      }
+      // An icon that is a full picture to its edges (SkyShowtime, Disney+): it fills the square, as on an iPhone.
+      if (iconBleeds(img)) {
+        setClass(box, 'bleed', true);
+        img.style.visibility = '';
+        return;
+      }
       // As iOS draws icons in dark mode: the logo lifted off its background, on dark glass. A white logo on a brand
       // color takes that color (Prime Video's blue, Disney+'s), a colored logo keeps its colors (Netflix's red N,
       // Spotify's green), a dark one turns white so it shows.
@@ -621,18 +647,9 @@
         }
         return;
       }
-      // A picture rather than a logo: it fills the square when it reaches its edges, else sits inside on dark glass.
-      if (LOGO_ONLY[brand]) {
-        setClass(box, 'inset', true);
-        box.style.background = '';
-        img.className = 'full mark';
-        img.style.visibility = '';
-        return;
-      }
-      var bleed = iconBleeds(img);
-      setClass(box, 'bleed', bleed);
-      setClass(box, 'inset', !bleed);
-      if (!bleed) box.style.background = '';
+      // A picture that couldn't be lifted and doesn't reach its edges: inside, on dark glass.
+      setClass(box, 'inset', true);
+      box.style.background = '';
       img.style.visibility = '';
     };
     img.src = app.icon;
