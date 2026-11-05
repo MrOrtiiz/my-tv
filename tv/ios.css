@@ -72,8 +72,8 @@
   top: 64px;
   text-align: center;
   font-size: 236px;
-  font-weight: 650;
-  letter-spacing: -0.035em;
+  font-weight: 200;
+  letter-spacing: -0.02em;
   line-height: 1;
   display: -webkit-box;
   display: -webkit-flex;
@@ -87,18 +87,18 @@
   align-items: center;
 }
 .ios.no-picks #clock .time {
-  color: rgba(255, 255, 255, 0.92);
-  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.25), 0 10px 40px rgba(0, 0, 0, 0.18);
+  color: rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 30px rgba(255, 255, 255, 0.08);
 }
 /* By day the sky is pale: the clock takes a deep blue that still lets the sky show, as iOS tints it to the wallpaper. */
-.ios.no-picks:not(.night) #clock .time { color: rgba(14, 34, 66, 0.82); text-shadow: 0 2px 0 rgba(255, 255, 255, 0.45), 0 10px 40px rgba(255, 255, 255, 0.35); }
-.ios.no-picks:not(.night) #clock .date { color: rgba(14, 34, 66, 0.72); }
+.ios.no-picks:not(.night) #clock .time { color: rgba(14, 34, 66, 0.42); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55); }
+.ios.no-picks:not(.night) #clock .date { color: rgba(14, 34, 66, 0.6); }
 .ios.no-picks #clock .date {
   margin: 0 0 6px;
   font-size: 34px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.01em;
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.7);
   text-transform: none;
 }
 /* Under the clock: the weather on the left, Barça on the right, side by side. */
@@ -107,7 +107,7 @@
 
 /* MARK: - With picks: the small clock in the same style */
 
-.ios:not(.no-picks) #clock { font-weight: 650; letter-spacing: -0.03em; }
+.ios:not(.no-picks) #clock { font-weight: 250; letter-spacing: -0.01em; opacity: 0.75; }
 
 /* MARK: - The dock and its apps */
 
