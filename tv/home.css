@@ -456,17 +456,27 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .night #weather .split { background: rgba(255, 255, 255, 0.14); }
 
 /* The weather box at the top left (renderTopWeather). With picks on screen, the title and the tabs move right of it. */
-#wxtop { position: absolute; left: 76px; top: 56px; height: 150px; padding: 0 44px 0 34px; border-radius: 34px; white-space: nowrap; color: #1D1D1F; }
+#wxtop { position: absolute; left: 76px; top: 56px; height: 160px; padding: 0 44px 0 34px; border-radius: 34px; white-space: nowrap; color: #1D1D1F; }
 #wxtop .sym { display: inline-block; vertical-align: middle; width: 66px; height: 66px; margin-right: 20px; }
-#wxtop .temp { display: inline-block; vertical-align: middle; font-size: 88px; font-weight: 300; line-height: 150px; margin-right: 30px; -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
+#wxtop .temp { display: inline-block; vertical-align: middle; font-size: 88px; font-weight: 300; line-height: 160px; margin-right: 30px; -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
 #wxtop .info { display: inline-block; vertical-align: middle; }
 #wxtop .cond { font-size: 32px; font-weight: 600; line-height: 42px; }
 #wxtop .meta { font-size: 23px; font-weight: 500; line-height: 32px; color: #6E6E73; -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
 .night #wxtop { color: #F5F5F7; }
 .night #wxtop .meta { color: rgba(255, 255, 255, 0.68); }
-.wxtop #clock { top: 330px; }
-.wxtop #title { left: 760px; top: 70px; font-size: 64px; }
-.wxtop #tabs { left: 740px; top: 150px; }
+#wxtop .split { display: inline-block; vertical-align: middle; width: 2px; height: 104px; margin: 0 26px 0 40px; background: rgba(0, 0, 0, 0.1); }
+#wxtop .hours { display: inline-block; vertical-align: middle; }
+#wxtop .hour { display: inline-block; vertical-align: top; width: 92px; text-align: center; -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
+#wxtop .hour.day { width: 112px; }
+#wxtop .hour .t { font-size: 21px; font-weight: 500; line-height: 26px; color: #6E6E73; }
+#wxtop .hour .sym { display: block; width: 30px; height: 30px; margin: 10px auto 8px; }
+#wxtop .hour .d { font-size: 25px; font-weight: 500; line-height: 30px; }
+#wxtop .hour .low { margin-left: 6px; font-size: 21px; color: #6E6E73; }
+.night #wxtop .split { background: rgba(255, 255, 255, 0.14); }
+.night #wxtop .hour .t, .night #wxtop .hour .low { color: rgba(255, 255, 255, 0.68); }
+.wxtop #clock { top: 340px; }
+.wxtop #title { visibility: hidden; }
+.wxtop #tabs { top: 102px; }
 
 #prices .coin { position: absolute; left: 34px; right: 34px; height: 40px; font-size: 29px; font-weight: 500; white-space: nowrap; }
 #prices .coin svg { position: absolute; left: 2px; top: 6px; width: 26px; height: 26px; fill: #6E6E73; }

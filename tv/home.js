@@ -643,7 +643,7 @@
   function renderTopWeather(on) {
     var box = $('wxtop');
     setClass(body, 'wxtop', on);
-    if (!on) { if (box) box.parentNode.removeChild(box); return; }
+    if (!on) { if (box) box.parentNode.removeChild(box); if ($('tabs')) $('tabs').style.left = ''; return; }
     if (!box) { box = el('div', 'glass', $('top')); box.id = 'wxtop'; }
     box.innerHTML = '';
     var w = Data.weather;
@@ -656,6 +656,22 @@
     var info = el('span', 'info', box);
     el('div', 'cond', info, Data.condition(w.code, w.isDay));
     el('div', 'meta', info, (Data.city ? Data.city + '  ·  ' : '') + trf('H:{max}', {max: Data.degrees(w.max)}) + '  ' + trf('L:{min}', {min: Data.degrees(w.min)}));
+    // Home Settings → Forecast, as the drawer had it: the next 6 hours or the next 5 days (hours until there are days).
+    var days = Prefs.forecast() === 'days' && w.days && w.days.length > 0, list = days ? w.days : w.hours, n = days ? 5 : 6;
+    if (list && list.length) {
+      el('span', 'split', box);
+      var row = el('span', 'hours', box);
+      for (var i = 0; i < list.length && i < n; i++) {
+        var h = el('span', 'hour' + (days ? ' day' : ''), row), x = list[i];
+        el('div', 't', h, days ? Data.weekday(x.at) : Data.hour(x.at));
+        sym(Data.symbol(x.code, days || x.day), h);
+        var t = el('div', 'd', h, Data.degrees(days ? x.max : x.temp));
+        if (days) el('span', 'low', t, Data.degrees(x.min));
+      }
+    }
+    // With picks on screen, their tabs sit right of the box (the title would not fit; the tab says what it shows).
+    var tabs = $('tabs');
+    if (tabs) tabs.style.left = (box.offsetLeft + box.offsetWidth + 36) + 'px';
   }
 
   function renderWeather(card) {
