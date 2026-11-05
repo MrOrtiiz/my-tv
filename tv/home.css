@@ -474,29 +474,41 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 #wxtop .hour .low { margin-left: 6px; font-size: 21px; color: #6E6E73; }
 .night #wxtop .split { background: rgba(255, 255, 255, 0.14); }
 .night #wxtop .hour .t, .night #wxtop .hour .low { color: rgba(255, 255, 255, 0.68); }
-.wxtop #clock { top: 340px; }
+/* A little smaller than drawn, so the weather, the Barça box and the clock or the picks all fit side by side. */
+#wxtop { -webkit-transform: scale(0.84); transform: scale(0.84); -webkit-transform-origin: 0 0; transform-origin: 0 0; }
+.wxtop #clock { top: 300px; font-size: 150px; }
+.wxtop #clock .date { font-size: 34px; margin-top: 12px; }
+/* With picks: the weather smaller still, at the top; the tabs under it where the title was; the Barça box beside it. */
+body:not(.no-picks) #wxtop { top: 40px; -webkit-transform: scale(0.7); transform: scale(0.7); }
 .wxtop #title { visibility: hidden; }
-.wxtop #tabs { top: 102px; }
 
 /* The Barça box at the top right (barca.js): the coming matches and the channels that show them. */
-#barca { position: absolute; right: 80px; top: 246px; width: 620px; padding: 26px 34px 12px; border-radius: 34px; color: #1D1D1F; }
-#barca .head { font-size: 25px; font-weight: 600; color: #6E6E73; margin-bottom: 8px; white-space: nowrap; }
+#barca { position: absolute; right: 80px; top: 216px; width: 540px; padding: 20px 28px 8px; border-radius: 30px; color: #1D1D1F; }
+#barca .head { font-size: 22px; font-weight: 600; color: #6E6E73; margin-bottom: 4px; white-space: nowrap; }
 #barca .stripe { display: inline-block; width: 26px; height: 26px; border-radius: 13px; margin-right: 14px; vertical-align: -5px;
   background: -webkit-linear-gradient(left, #004D98 0%, #004D98 50%, #A50044 50%, #A50044 100%);
   background: linear-gradient(90deg, #004D98 0%, #004D98 50%, #A50044 50%, #A50044 100%); }
-#barca .match { padding: 14px 0 16px; border-top: 2px solid rgba(0, 0, 0, 0.08); }
+#barca .match { padding: 11px 0 12px; border-top: 2px solid rgba(0, 0, 0, 0.08); }
 #barca .match:first-of-type { border-top: 0; }
-#barca .when { font-size: 22px; font-weight: 600; color: #A50044; white-space: nowrap; }
+#barca .when { font-size: 19px; font-weight: 600; color: #A50044; white-space: nowrap; }
 #barca .when.now { color: #D70015; }
 #barca .live { display: inline-block; margin-left: 12px; padding: 0 10px; border-radius: 13px; font-size: 17px; line-height: 26px; vertical-align: 1px; color: #fff; background: #004D98; }
-#barca .title { font-size: 30px; font-weight: 600; line-height: 40px; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#barca .channels { font-size: 21px; font-weight: 500; line-height: 28px; color: #6E6E73; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#barca .title { font-size: 26px; font-weight: 600; line-height: 34px; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#barca .channels { font-size: 18px; font-weight: 500; line-height: 24px; color: #6E6E73; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #barca .none { font-size: 23px; font-weight: 500; color: #6E6E73; padding: 6px 0 18px; }
 .night #barca { color: #F5F5F7; }
 .night #barca .head, .night #barca .channels, .night #barca .none { color: rgba(255, 255, 255, 0.68); }
 .night #barca .match { border-top-color: rgba(255, 255, 255, 0.1); }
 .night #barca .when { color: #FF6B9A; }
 .night #barca .live { background: #1E6FD9; }
+/* With picks: only the next match, in a short box between the weather and the round buttons. */
+body:not(.no-picks) #barca { top: 40px; right: 340px; width: 560px; padding: 14px 24px 12px 66px; border-radius: 26px; }
+body:not(.no-picks) #barca .head { position: absolute; left: 22px; top: 50%; margin-top: -13px; }
+body:not(.no-picks) #barca .head .name { display: none; }
+body:not(.no-picks) #barca .match { padding: 0; border-top: 0; }
+body:not(.no-picks) #barca .match ~ .match { display: none; }
+body:not(.no-picks) #barca .title { font-size: 24px; line-height: 30px; margin-top: 2px; }
+body:not(.no-picks) #barca .none { padding: 8px 0; }
 
 #prices .coin { position: absolute; left: 34px; right: 34px; height: 40px; font-size: 29px; font-weight: 500; white-space: nowrap; }
 #prices .coin svg { position: absolute; left: 2px; top: 6px; width: 26px; height: 26px; fill: #6E6E73; }

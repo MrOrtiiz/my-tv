@@ -643,7 +643,7 @@
   function renderTopWeather(on) {
     var box = $('wxtop');
     setClass(body, 'wxtop', on);
-    if (!on) { if (box) box.parentNode.removeChild(box); if ($('tabs')) $('tabs').style.left = ''; return; }
+    if (!on) { if (box) box.parentNode.removeChild(box); return; }
     if (!box) { box = el('div', 'glass', $('top')); box.id = 'wxtop'; }
     box.innerHTML = '';
     var w = Data.weather;
@@ -669,9 +669,6 @@
         if (days) el('span', 'low', t, Data.degrees(x.min));
       }
     }
-    // With picks on screen, their tabs sit right of the box (the title would not fit; the tab says what it shows).
-    var tabs = $('tabs');
-    if (tabs) tabs.style.left = (box.offsetLeft + box.offsetWidth + 36) + 'px';
   }
 
   function renderWeather(card) {
