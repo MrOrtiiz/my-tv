@@ -625,14 +625,10 @@
     var old = d.querySelectorAll('.panel');
     for (var o = 0; o < old.length; o++) d.removeChild(old[o]);
     var wx = Prefs.weather(), coins = Data.activeCoins(), qt = coins.length > 0;
+    // The weather sits in its own box at the top left of the home screen (renderTopWeather), not in the drawer.
+    renderTopWeather(wx);
+    wx = false;
     var split = 80 + 1760 * 0.585;
-    if (wx) {
-      var w = el('div', 'panel glass', d);
-      w.id = 'weather';
-      w.style.left = '80px';
-      w.style.width = ((qt ? split - 16 : 1840) - 80) + 'px';
-      renderWeather(w);
-    }
     if (qt) {
       var q = el('div', 'panel glass', d);
       q.id = 'prices';
@@ -641,6 +637,25 @@
       q.style.width = (1840 - left) + 'px';
       renderPrices(q, coins);
     }
+  }
+
+  /** The weather in a glass box at the top left: the symbol and the temperature, the sky, the city, high and low. */
+  function renderTopWeather(on) {
+    var box = $('wxtop');
+    setClass(body, 'wxtop', on);
+    if (!on) { if (box) box.parentNode.removeChild(box); return; }
+    if (!box) { box = el('div', 'glass', $('top')); box.id = 'wxtop'; }
+    box.innerHTML = '';
+    var w = Data.weather;
+    if (!w) {
+      el('span', 'info', box).appendChild(el('div', 'cond', null, Data.city || tr('Weather')));
+      return;
+    }
+    sym(Data.symbol(w.code, w.isDay), box);
+    el('span', 'temp', box, Data.degrees(w.temp));
+    var info = el('span', 'info', box);
+    el('div', 'cond', info, Data.condition(w.code, w.isDay));
+    el('div', 'meta', info, (Data.city ? Data.city + '  ·  ' : '') + trf('H:{max}', {max: Data.degrees(w.max)}) + '  ' + trf('L:{min}', {min: Data.degrees(w.min)}));
   }
 
   function renderWeather(card) {
