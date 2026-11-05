@@ -45,8 +45,12 @@ var BarcaBox = (function () {
     el('span', 'name', head, 'FC Barcelona');
     var now = Date.now(), list = [], i;
     for (i = 0; data.matches && i < data.matches.length; i++) if (data.matches[i].stop > now) list.push(data.matches[i]);
+    if (data.status === 'error') {
+      el('div', 'none', box, 'Kunde inte läsa din tablå just nu.');
+      return;
+    }
     if (!list.length) {
-      el('div', 'none', box, 'Inga matcher i din tablå de närmaste dagarna.');
+      el('div', 'none', box, 'Inga matcher i din tablå de närmaste två veckorna.');
       return;
     }
     for (i = 0; i < list.length && i < SHOW; i++) {

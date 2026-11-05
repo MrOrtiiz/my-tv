@@ -9,6 +9,7 @@ import json
 import os
 import re
 import sys
+import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
@@ -20,7 +21,7 @@ NOT_LIVE = re.compile(r'highlight|höjdpunkt|sammandrag|magasin|magazine|repris|
                       r'handboll|futsal|hockey|esport|\bopen\b', re.I)
 MATCH = re.compile(r'\s[-–—]\s|\bv\.?\s|\bvs\.?\b|\bmot\b|\bcontra\b|fotboll|football|soccer|f[uú]tbol|liga|'
                    r'champions|copa|cup|supercopa|uefa', re.I)
-DAYS = 8
+DAYS = 14
 MAX_MATCHES = 5
 MAX_CHANNELS = 8
 
@@ -46,18 +47,41 @@ def guide(url):
     return io.BytesIO(raw)
 
 
+def save(data):
+    os.makedirs(os.path.dirname(OUT), exist_ok=True)
+    with open(OUT, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+        f.write('\n')
+
+
+def fail(now, why):
+    """Says in the file what went wrong (never the link), so the box and whoever reads the file can tell."""
+    save({'updated': int(now.timestamp() * 1000), 'status': 'error', 'error': why, 'matches': []})
+    print(why)
+
+
 def main():
+    now = datetime.now(timezone.utc)
     url = os.environ.get('EPG_URL', '').strip()
     if not url:
-        sys.exit('No EPG_URL secret: add your IPTV guide link under Settings → Secrets and variables → Actions.')
-    now = datetime.now(timezone.utc)
+        fail(now, 'No EPG_URL secret.')
+        return
     until = now + timedelta(days=DAYS)
-    names, found = {}, []
+    names, found, seen, programmes = {}, [], [], 0
     try:
         src = guide(url)
-    except Exception as e:  # the message may hold the link: say only what kind of failure it was
-        sys.exit('Could not read the guide (%s).' % type(e).__name__)
-    for _, el in ET.iterparse(src, events=('end',)):
+    except urllib.error.HTTPError as e:  # the message may hold the link: only the kind of failure
+        fail(now, 'The guide answered HTTP %d.' % e.code)
+        return
+    except Exception as e:
+        fail(now, 'Could not read the guide (%s).' % type(e).__name__)
+        return
+    try:
+        events = list(ET.iterparse(src, events=('end',)))
+    except ET.ParseError as e:
+        fail(now, 'The guide is not XMLTV (%s).' % str(e)[:80])
+        return
+    for _, el in events:
         if el.tag == 'channel':
             dn = el.find('display-name')
             if dn is not None and dn.text:
@@ -71,10 +95,13 @@ def main():
             text = ' '.join((title, sub))
             start, stop, channel = when(el.get('start')), when(el.get('stop')), el.get('channel') or ''
             el.clear()
+            programmes += 1
             if not start or not stop or stop <= now or start > until:
                 continue
             if not TEAM.search(text):
                 continue
+            if len(seen) < 25:
+                seen.append('%s | %s | %d min' % (start.strftime('%m-%d %H:%M'), text[:90], (stop - start).total_seconds() // 60))
             if NOT_LIVE.search(' '.join((text, cats))):
                 continue
             if not timedelta(minutes=80) <= (stop - start) <= timedelta(hours=5):
@@ -105,12 +132,11 @@ def main():
         rest = [c for c in m['channels'] if c not in swedish]
         out.append({'title': title, 'start': int(m['first'].timestamp() * 1000), 'stop': int(m['stop'].timestamp() * 1000),
                     'live': m['live'], 'channels': (swedish + rest)[:MAX_CHANNELS], 'more': max(0, len(m['channels']) - MAX_CHANNELS)})
-    data = {'updated': int(now.timestamp() * 1000), 'matches': out}
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    with open(OUT, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=1)
-        f.write('\n')
-    print('%d channels in the guide, %d Barça listings, %d matches.' % (len(names), len(found), len(out)))
+    data = {'updated': int(now.timestamp() * 1000), 'status': 'ok', 'matches': out,
+            'guide': {'channels': len(names), 'programmes': programmes, 'barca_listings': len(found)},
+            'barca_titles_seen': seen}
+    save(data)
+    print('%d channels, %d programmes, %d Barça listings kept, %d matches.' % (len(names), programmes, len(found), len(out)))
 
 
 if __name__ == '__main__':

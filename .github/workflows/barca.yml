@@ -23,7 +23,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/barca.json
           if git diff --cached --quiet; then echo "No change."; exit 0; fi
-          # Only the time of the update changed: not worth a commit.
-          if [ "$(git diff --cached --numstat | awk '{s+=$1} END {print s}')" = "1" ]; then echo "Only the time changed."; exit 0; fi
+          # Only the time of the update changed (and it had been made before): not worth a commit.
+          if [ "$(git diff --cached --numstat | awk '{s+=$1} END {print s}')" = "1" ] && ! git show HEAD:data/barca.json | grep -q '"updated": 0'; then echo "Only the time changed."; exit 0; fi
           git commit -m "Barça: the coming matches on your channels"
           git push
