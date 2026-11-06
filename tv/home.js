@@ -1585,6 +1585,49 @@
     };
   }
 
+  // MARK: - Trailers: OK on a pick plays its trailer (TMDB's YouTube video) in the TV's YouTube app, so it starts at once
+  // with no profile to pick; where that can't open, here, over the home screen. Without a trailer: the pick's app, as before.
+
+  function youtubeApp() {
+    for (var i = 0; i < apps.length; i++) if (/^youtube$/i.test(apps[i].title)) return apps[i];
+    return null;
+  }
+
+  var trailerSeq = 0;
+  function playTrailer(p) {
+    if (!p) return;
+    var mine = ++trailerSeq;
+    toast('Hämtar trailern…');
+    Data.trailer(p, function (video) {
+      if (mine !== trailerSeq) return;
+      if (!video) {
+        var target = pickTarget(p);
+        if (target) { toast('Ingen trailer hittades. Öppnar ' + target.app.title + '.'); launcher(target.app.id, target.app.title, target.params)(); }
+        else toast('Ingen trailer hittades.');
+        return;
+      }
+      var yt = youtubeApp();
+      TV.youtube(yt ? yt.id : '', video, function (ok) { if (!ok && mine === trailerSeq) trailerHere(video, p.title); });
+    });
+  }
+
+  var trailerBox = null;
+  function trailerHere(video, title) {
+    if (!trailerBox) { trailerBox = el('div', '', body); trailerBox.id = 'trailer'; }
+    trailerBox.innerHTML = '';
+    var f = el('iframe', '', trailerBox);
+    f.setAttribute('allow', 'autoplay; encrypted-media');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + video + '?autoplay=1&rel=0&playsinline=1';
+    el('div', 'hint', trailerBox, (title ? title + '  ·  ' : '') + 'Tillbaka stänger');
+    trailerBox.className = 'on';
+  }
+  function trailerOpen() { return !!(trailerBox && trailerBox.className === 'on'); }
+  function closeTrailer() { trailerBox.className = ''; trailerBox.innerHTML = ''; }
+  window.addEventListener('keydown', function (e) {
+    if (!trailerOpen()) return;
+    if (e.keyCode === TV.keys.back || e.keyCode === 27 || e.keyCode === 8) { e.preventDefault(); e.stopPropagation(); closeTrailer(); }
+  }, true);
+
   function tvSettings() {
     TV.settings(function (ok) {
       if (!ok) toast(tr("Couldn't open TV Settings"));
@@ -1606,8 +1649,7 @@
         else openPicker('shortcuts');
         return;
       case Z.CARDS:
-        var target = pickTarget(cards[st.card]);
-        if (target) launcher(target.app.id, target.app.title, target.params)();
+        playTrailer(cards[st.card]);
         return;
       case Z.SHELF:
         if (shelf[st.shelf]) launcher(shelf[st.shelf].id, shelf[st.shelf].title)();

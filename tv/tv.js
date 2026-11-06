@@ -317,7 +317,7 @@ var TV = (function () {
   }
 
   /** A POST to the TV's own server on port 8001 (DIAL and its REST API); done(ok). */
-  function post(path, timeout, done) {
+  function post(path, timeout, done, body) {
     var x = new XMLHttpRequest(), over = false;
     x.open('POST', 'http://127.0.0.1:8001' + path, true);
     x.timeout = timeout;
@@ -328,7 +328,7 @@ var TV = (function () {
     };
     x.ontimeout = x.onerror = function () { if (!over) { over = true; if (done) done(false); } };
     x.setRequestHeader('Content-Type', 'text/plain; charset=utf-8');
-    x.send('');
+    x.send(body || '');
   }
 
   function samsungLaunch(id, done) {
@@ -594,6 +594,31 @@ var TV = (function () {
         }
         done(list);
       });
+    },
+
+    /**
+     * A YouTube video in the TV's YouTube app (a pick's trailer); done(ok). Samsung: the app's own deep link (PAYLOAD
+     * "#watch?v=…", as Samsung's samples open it) to the YouTube app the TV lists, then to its usual ids, then the
+     * TV's DIAL server as a phone casts ("v=…"). LG: YouTube's contentTarget.
+     */
+    youtube: function (appId, video, done) {
+      if (samsung) {
+        var ids = [];
+        if (appId) ids.push(appId);
+        if (ids.indexOf('9Ur5IzDKqV.TizenYouTube') < 0) ids.push('9Ur5IzDKqV.TizenYouTube');
+        ids.push('com.samsung.tv.cobalt-yt');
+        (function next(i) {
+          if (i >= ids.length) { post('/ws/apps/YouTube', 8000, done, 'v=' + video); return; }
+          try {
+            var data = [new window.tizen.ApplicationControlData('PAYLOAD', ['#watch?v=' + video + '&launch=launcher'])];
+            var c = new window.tizen.ApplicationControl('http://tizen.org/appcontrol/operation/default', null, null, null, data);
+            window.tizen.application.launchAppControl(c, ids[i], function () { if (done) done(true); }, function () { next(i + 1); });
+          } catch (e) { next(i + 1); }
+        })(0);
+        return;
+      }
+      if (webos) { this.launch(appId || 'youtube.leanback.v4', {contentTarget: 'https://www.youtube.com/tv?v=' + video}, done); return; }
+      if (done) setTimeout(function () { done(false); }, 0);
     },
 
     /** The TV's own settings; done(ok). */

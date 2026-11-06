@@ -402,6 +402,7 @@ var Data = (function () {
     }, key);
   }
 
+  var trailers = {};
   var cache = stored('recs') || {};
   var picks = cache.picks || [], listAt = cache.listAt || 0, period = cache.period, listLang = cache.lang || '', stamp = cache.stamp || '';
   var fetchingRecs = false, failedAt = 0, recsError = '';
@@ -683,6 +684,26 @@ var Data = (function () {
     recsError: function () { return recsError; },
     picks: now,
     showcase: all,
+    /** A pick's trailer on YouTube (its video id), Swedish first, then English: done(id or ''). Kept for the session. */
+    trailer: function (p, done) {
+      var k = p.kind + ':' + p.id;
+      if (trailers.hasOwnProperty(k)) { done(trailers[k]); return; }
+      var langs = ['sv-SE', 'en-US', ''], i = 0;
+      (function next() {
+        if (i >= langs.length) { trailers[k] = ''; done(''); return; }
+        var lang = langs[i++];
+        tmdb('/' + (p.kind === 'tv' ? 'tv' : 'movie') + '/' + p.id + '/videos' + (lang ? '?language=' + lang : ''), function (err, json) {
+          var best = '', score = -1, list = (!err && json && json.results) || [];
+          for (var j = 0; j < list.length; j++) {
+            var v = list[j];
+            if (v.site !== 'YouTube' || !v.key) continue;
+            var s = (v.type === 'Trailer' ? 4 : v.type === 'Teaser' ? 2 : 0) + (v.official ? 1 : 0);
+            if (s > score) { score = s; best = v.key; }
+          }
+          if (best) { trailers[k] = best; done(best); } else next();
+        });
+      })();
+    },
     image: function (path, size) { return path ? 'https://image.tmdb.org/t/p/' + (size || 'w1280') + path : ''; },
 
     /** Night at the location: from sunset to sunrise (the last forecast; without one, 6:00 and 18:00). */
