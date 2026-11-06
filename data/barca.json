@@ -1,5 +1,5 @@
 {
- "updated": 1793968613157,
+ "updated": 1793968860377,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -12,6 +12,7 @@
    "live": false,
    "channels": [],
    "channel_ids": [],
+   "channel_langs": [],
    "more": 0
   }
  ],
