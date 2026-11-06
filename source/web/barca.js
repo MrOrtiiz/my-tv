@@ -163,8 +163,8 @@ var BarcaBox = (function () {
       }
       title.appendChild(document.createTextNode(m.title));
       var ch = m.channels || [];
-      el('div', 'channels' + (ch.length ? '' : ' soon'), row, ch.length ? ch.join('  ·  ') + (m.more ? '  ·  +' + m.more : '')
-        : 'Kanalerna visas när matchen kommer in i din tablå');
+      if (ch.length) channelLine(row, m);
+      else el('div', 'channels soon', row, 'Kanalerna visas när matchen kommer in i din tablå');
     }
   }
 
@@ -193,7 +193,29 @@ var BarcaBox = (function () {
       el('div', 'goals', row, lines.join('  ·  '));
     }
     var ch = m.channels || [];
-    if (ch.length && g.state === 'in') el('div', 'channels', row, ch.join('  ·  '));
+    if (ch.length && g.state === 'in') channelLine(row, m);
+  }
+
+  // MARK: - The channels: Spanish first, then English, Swedish and the rest (the order barca.py sorts them in), each
+  // language with its tag. The names without what the box doesn't need: the country tags and HD/FHD.
+  var LANG_TAG = {es: 'ES', en: 'EN', sv: 'SV', xx: 'ÖVR'};
+
+  function shortName(name) {
+    var n = String(name || '');
+    n = n.replace(/^\s*(\|[A-Z]{2,5}\|\s*|\[[A-Z]{2,5}\]\s*|[A-Z]{2,5}\s*[:|]\s*)/, '');
+    n = n.replace(/\s+(F?HD|UHD|4K|SD|HEVC)\b/gi, '').replace(/\s+\(?(?!TV\b|HD\b)[A-Z]{2,3}\)?\s*$/, '');
+    return n.replace(/^\s+|\s+$/g, '') || String(name || '');
+  }
+
+  function channelLine(row, m) {
+    var ch = m.channels || [], langs = m.channel_langs || [], line = el('div', 'channels langs', row), last = '';
+    for (var i = 0; i < ch.length; i++) {
+      var lang = langs[i] || '';
+      if (lang && lang !== last) { el('span', 'lang lang-' + lang, line, LANG_TAG[lang] || lang.toUpperCase()); last = lang; }
+      else if (i) line.appendChild(document.createTextNode('  ·  '));
+      line.appendChild(document.createTextNode(langs.length ? shortName(ch[i]) : ch[i]));
+    }
+    if (m.more) line.appendChild(document.createTextNode('  ·  +' + m.more));
   }
 
   function load() {

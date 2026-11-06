@@ -24,7 +24,53 @@ MATCH = re.compile(r'\s[-–—]\s|\bv\.?\s|\bvs\.?\b|\bmot\b|\bcontra\b|fotboll
                    r'champions|copa|cup|supercopa|uefa', re.I)
 DAYS = 14
 MAX_MATCHES = 5
-MAX_CHANNELS = 8
+MAX_CHANNELS = 12
+
+# The channels in the order Yuri wants them: Spanish, English, Swedish, then every other language. A channel's language
+# from the country in its name ("ES: …", "… FHD CL", "|UK| …", "[SE]") or in its guide id ("Movistar.es"), else from
+# words that give it away. A country's language, not the country: Chile's and Mexico's channels are Spanish.
+LANG_ORDER = ['es', 'en', 'sv', 'xx']
+COUNTRY_LANG = {
+    'es': 'es', 'esp': 'es', 'spa': 'es', 'mx': 'es', 'mex': 'es', 'ar': 'es', 'arg': 'es', 'cl': 'es', 'co': 'es',
+    'pe': 'es', 've': 'es', 'ec': 'es', 'uy': 'es', 'py': 'es', 'bo': 'es', 'cr': 'es', 'pa': 'es', 'gt': 'es', 'hn': 'es',
+    'ni': 'es', 'do': 'es', 'pr': 'es', 'cu': 'es', 'latam': 'es', 'lat': 'es', 'latino': 'es',
+    'uk': 'en', 'gb': 'en', 'en': 'en', 'eng': 'en', 'us': 'en', 'usa': 'en', 'ie': 'en', 'ca': 'en', 'au': 'en', 'nz': 'en',
+    'za': 'en', 'ng': 'en', 'ke': 'en', 'gh': 'en',
+    'se': 'sv', 'swe': 'sv', 'sw': 'sv', 'sv': 'sv',
+}
+LANG_WORDS = [
+    ('es', re.compile(r'movistar|\bm\+|dazn\s*(laliga|f1|es)|laliga\s*(tv\s*)?hypermotion|espn\s*deportes|deportes|'
+                      r'\bgol\b|vamos|\btudn\b|univision|telemundo|tyc\s*sports|win\s*sports|\bcdo\b|tnt\s*sports\s*(chile|arg)|'
+                      r'directv\s*sports|\bespañol\b|\bespanol\b|castellano|\bcuatro\b|telecinco|la\s*1\b|\btve\b', re.I)),
+    ('sv', re.compile(r'\btv4\b|c\s*more|v\s*sport|viaplay\s*(se|sverige)|sportkanalen|\btv3\s*sport|\bsvt\b|\btv6\b|'
+                      r'\bsverige\b|\bswedish\b|\bnordic\b', re.I)),
+    ('en', re.compile(r'sky\s*sports|tnt\s*sports|bt\s*sport|premier\s*sports|laliga\s*tv|supersport|\bespn\b|cbs\s*sports|'
+                      r'bein\s*sports\s*(usa|xtra|en)|\bfox\s*(sports|soccer)|\bfs1\b|paramount|peacock|\bstan\s*sport|'
+                      r'optus|\benglish\b', re.I)),
+]
+
+
+def language(name, cid=''):
+    """'es', 'en', 'sv' or 'xx' (any other) for a channel."""
+    tags = re.findall(r'(?:^|[\s|\[(:])([A-Za-z]{2,5})(?=$|[\s|\]):])', name or '')
+    # The country tags: written in capitals ("ES:", "|UK|", "FHD CL"), so words in the name don't count.
+    for t in tags:
+        if t.isupper() and t.lower() in COUNTRY_LANG:
+            return COUNTRY_LANG[t.lower()]
+    m = re.search(r'\.([a-z]{2,3})$', (cid or '').lower())
+    if m and m.group(1) in COUNTRY_LANG:
+        return COUNTRY_LANG[m.group(1)]
+    for lang, words in LANG_WORDS:
+        if words.search(name or ''):
+            return lang
+    return 'xx'
+
+
+def ordered(chans, ids):
+    """The channels sorted Spanish, English, Swedish, other (each kept in the guide's order), with their languages."""
+    langs = {c: language(c, ids.get(c, '')) for c in chans}
+    out = sorted(chans, key=lambda c: LANG_ORDER.index(langs[c]))
+    return out, langs
 
 
 def when(text):
@@ -260,14 +306,13 @@ def main():
                 if name and name not in chans:
                     chans.append(name)
                     ids[name] = p['channel']
-            swedish = [c for c in chans if re.search(r'\b(se|swe|sverige|swedish|nordic)\b', c, re.I)]
-            rest = [c for c in chans if c not in swedish]
-            picked = (swedish + rest)[:MAX_CHANNELS]
+            sorted_chans, langs = ordered(chans, ids)
+            picked = sorted_chans[:MAX_CHANNELS]
             out.append({'title': g['title'], 'competition': g['competition'], 'rival_logo': g.get('rival_logo', ''),
                         'start': int(g['kick'].timestamp() * 1000),
                         'stop': int((g['kick'] + timedelta(hours=2)).timestamp() * 1000), 'live': bool(chans),
                         'channels': picked, 'channel_ids': [ids.get(c, '') for c in picked],
-                        'more': max(0, len(chans) - MAX_CHANNELS)})
+                        'channel_langs': [langs[c] for c in picked], 'more': max(0, len(chans) - MAX_CHANNELS)})
         save({'updated': int(now.timestamp() * 1000), 'status': 'ok', 'crest': CREST['url'], 'matches': out, 'source': used, 'source_errors': errors,
               'guide': {'channels': len(names), 'programmes': programmes, 'barca_listings': len(found),
                         'until': max(p['stop'] for p in found).isoformat() if found else None},
@@ -293,11 +338,11 @@ def main():
     for m in matches[:MAX_MATCHES]:
         title = sorted(m['titles'].items(), key=lambda kv: (-kv[1], len(kv[0])))[0][0]
         title = re.sub(r'^\s*(live|direkt|en directo|en vivo)\s*[:|-]\s*', '', title, flags=re.I)
-        swedish = [c for c in m['channels'] if re.search(r'\b(se|swe|sverige|swedish|nordic)\b', c, re.I)]
-        rest = [c for c in m['channels'] if c not in swedish]
-        picked = (swedish + rest)[:MAX_CHANNELS]
+        sorted_chans, langs = ordered(m['channels'], m['ids'])
+        picked = sorted_chans[:MAX_CHANNELS]
         out.append({'title': title, 'start': int(m['first'].timestamp() * 1000), 'stop': int(m['stop'].timestamp() * 1000),
                     'live': m['live'], 'channels': picked, 'channel_ids': [m['ids'].get(c, '') for c in picked],
+                    'channel_langs': [langs[c] for c in picked],
                     'more': max(0, len(m['channels']) - MAX_CHANNELS)})
     data = {'updated': int(now.timestamp() * 1000), 'status': 'ok', 'matches': out,
             'guide': {'channels': len(names), 'programmes': programmes, 'barca_listings': len(found)},

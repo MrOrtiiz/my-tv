@@ -22,3 +22,12 @@
 #barca .playhint { font-size: 18px; font-weight: 600; color: #A50044; padding: 2px 0 10px; display: none; }
 #barca.focus .playhint { display: block; }
 .night #barca .playhint, .ios #barca .playhint { color: #EDBB00; }
+
+/* The Barça box's channels in their languages (barca.js channelLine): a tag before each language, two lines at most. */
+#barca .channels.langs { white-space: normal; max-height: 52px; line-height: 26px; }
+#barca .lang { display: inline-block; margin: 0 8px 0 0; padding: 0 7px; border-radius: 7px; font-size: 14px; font-weight: 700;
+  line-height: 20px; vertical-align: 1px; letter-spacing: 0.04em; color: #fff; background: #6E6E73; }
+#barca .lang ~ .lang { margin-left: 14px; }
+#barca .lang-es { background: #C60B1E; }
+#barca .lang-en { background: #012169; }
+#barca .lang-sv { background: #006AA7; color: #FECC02; }
