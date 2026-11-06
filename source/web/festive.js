@@ -8,7 +8,7 @@
 var Festive = (function () {
   'use strict';
   var W = 960, H = 540, FRAME = 1000 / 30;
-  var canvas = null, g = null, raf = 0, last = 0, acc = 0, kind = '', parts = [], timer = 0, forced = null;
+  var canvas = null, g = null, raf = 0, last = 0, acc = 0, kind = '', parts = [], timer = 0, forced = null, extra = 0;
 
   function on() { return typeof Prefs === 'undefined' || !Prefs.holidays || Prefs.holidays(); }
   function key(m, d) { return m + '-' + d; }
@@ -427,6 +427,11 @@ var Festive = (function () {
           if (p.x < 0) p.x = W; if (p.x > W) p.x = 0; if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
           g.globalAlpha = 1; glow(p.x, p.y, 7, p.c, 0.35 + 0.25 * Math.sin(p.p));
           break;
+        case 'shot':
+          p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 260 * dt; p.vx *= 0.99; p.a += p.va * dt; p.life -= dt * 0.12;
+          if (p.life <= 0 || p.y > H + 20) continue;
+          g.save(); g.translate(p.x, p.y); g.rotate(p.a); g.globalAlpha = Math.min(1, p.life * 1.5); g.fillStyle = p.c; g.fillRect(-4, -2, 8, 4); g.restore();
+          break;
         case 'launcher':
           p.next -= dt;
           if (p.next <= 0) { p.next = rand(0.45, 1.2); parts.push({t: 'rocket', x: rand(W * 0.12, W * 0.88), y: H, vy: rand(-380, -300), top: rand(H * 0.1, H * 0.4)}); }
@@ -451,13 +456,16 @@ var Festive = (function () {
 
   function loop(t) {
     raf = 0;
-    if (!kind || document.hidden) return;
+    if ((!kind && Date.now() > extra) || document.hidden) {
+      if (!kind && g) { g.clearRect(0, 0, W, H); parts = []; }
+      return;
+    }
     var dt = last ? Math.min(0.1, (t - last) / 1000) : 0;
     last = t; acc += dt * 1000;
     if (acc >= FRAME) { draw(acc / 1000); acc = 0; }
     raf = window.requestAnimationFrame(loop);
   }
-  function run() { if (!raf && kind && !document.hidden) { last = 0; acc = FRAME; raf = window.requestAnimationFrame(loop); } }
+  function run() { if (!raf && (kind || Date.now() < extra) && !document.hidden) { last = 0; acc = FRAME; raf = window.requestAnimationFrame(loop); } }
   function stop() { if (raf) window.cancelAnimationFrame(raf); raf = 0; }
 
   function ensure() {
@@ -501,6 +509,20 @@ var Festive = (function () {
       forced = anim ? {anim: anim, name: name || anim, red: !!red, theme: anim === 'birthday' ? 'birthday-' + who : arguments[3] || anim} : null; update();
     },
     days: days,
+    /** A Barça goal: blue, garnet and gold confetti bursting from the sides and fireworks, for some ten seconds. */
+    goal: function () {
+      if (!ensure()) return;
+      canvas.style.opacity = '1';
+      extra = Date.now() + 12000;
+      var cols = ['#004D98', '#A50044', '#EDBB00', '#FFFFFF'];
+      for (var i = 0; i < 160; i++) {
+        var left = i % 2 === 0;
+        parts.push({t: 'shot', x: left ? -10 : W + 10, y: rand(H * 0.4, H), vx: (left ? 1 : -1) * rand(160, 380), vy: rand(-320, -120),
+          a: rand(0, 6.3), va: rand(-8, 8), life: 1, c: pick(cols)});
+      }
+      burst(W * 0.3, H * 0.3); burst(W * 0.7, H * 0.25); burst(W * 0.5, H * 0.18);
+      run();
+    },
     /** Set by home.js: redraws the date line when the day changes. */
     onChange: null
   };
