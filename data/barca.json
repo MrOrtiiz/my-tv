@@ -1,5 +1,5 @@
 {
- "updated": 1793980816475,
+ "updated": 1793983485688,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -28,7 +28,7 @@
  ],
  "guide": {
   "channels": 5627,
-  "programmes": 245560,
+  "programmes": 244019,
   "barca_listings": 10,
   "until": "2026-11-07T19:20:00+01:00"
  },
@@ -55,5 +55,285 @@
   "11-07 09:05 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 85 min",
   "11-07 00:20 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 70 min",
   "11-07 09:05 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 85 min"
- ]
+ ],
+ "table": {
+  "league": "LaLiga",
+  "rows": [
+   {
+    "rank": 1,
+    "team": "Barcelona",
+    "short": "Barcelona",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
+    "points": 30,
+    "played": 11,
+    "gd": 34,
+    "barca": true
+   },
+   {
+    "rank": 2,
+    "team": "Atlético Madrid",
+    "short": "Atlético",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
+    "points": 28,
+    "played": 11,
+    "gd": 14,
+    "barca": false
+   },
+   {
+    "rank": 3,
+    "team": "Real Madrid",
+    "short": "Real Madrid",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/86.png",
+    "points": 27,
+    "played": 11,
+    "gd": 18,
+    "barca": false
+   },
+   {
+    "rank": 4,
+    "team": "Real Betis",
+    "short": "Betis",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/244.png",
+    "points": 23,
+    "played": 11,
+    "gd": 3,
+    "barca": false
+   },
+   {
+    "rank": 5,
+    "team": "Real Sociedad",
+    "short": "Real Sociedad",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/89.png",
+    "points": 19,
+    "played": 11,
+    "gd": 0,
+    "barca": false
+   },
+   {
+    "rank": 6,
+    "team": "Sevilla",
+    "short": "Sevilla",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/243.png",
+    "points": 17,
+    "played": 11,
+    "gd": -2,
+    "barca": false
+   },
+   {
+    "rank": 7,
+    "team": "Athletic Club",
+    "short": "Athletic",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/93.png",
+    "points": 15,
+    "played": 10,
+    "gd": 4,
+    "barca": false
+   },
+   {
+    "rank": 8,
+    "team": "Deportivo",
+    "short": "Deportivo",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/90.png",
+    "points": 14,
+    "played": 11,
+    "gd": 1,
+    "barca": false
+   },
+   {
+    "rank": 9,
+    "team": "Villarreal",
+    "short": "Villarreal",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
+    "points": 12,
+    "played": 11,
+    "gd": 0,
+    "barca": false
+   },
+   {
+    "rank": 10,
+    "team": "Celta Vigo",
+    "short": "Celta Vigo",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
+    "points": 12,
+    "played": 11,
+    "gd": 0,
+    "barca": false
+   },
+   {
+    "rank": 11,
+    "team": "Alavés",
+    "short": "Alavés",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/96.png",
+    "points": 12,
+    "played": 11,
+    "gd": -2,
+    "barca": false
+   },
+   {
+    "rank": 12,
+    "team": "Rayo Vallecano",
+    "short": "Rayo",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/101.png",
+    "points": 12,
+    "played": 10,
+    "gd": -5,
+    "barca": false
+   },
+   {
+    "rank": 13,
+    "team": "Getafe",
+    "short": "Getafe",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2922.png",
+    "points": 12,
+    "played": 11,
+    "gd": -8,
+    "barca": false
+   },
+   {
+    "rank": 14,
+    "team": "Espanyol",
+    "short": "Espanyol",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/88.png",
+    "points": 11,
+    "played": 11,
+    "gd": -1,
+    "barca": false
+   },
+   {
+    "rank": 15,
+    "team": "Osasuna",
+    "short": "Osasuna",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/97.png",
+    "points": 11,
+    "played": 11,
+    "gd": -11,
+    "barca": false
+   },
+   {
+    "rank": 16,
+    "team": "Racing Santander",
+    "short": "Racing",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/87.png",
+    "points": 11,
+    "played": 11,
+    "gd": -14,
+    "barca": false
+   },
+   {
+    "rank": 17,
+    "team": "Elche",
+    "short": "Elche",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3751.png",
+    "points": 10,
+    "played": 11,
+    "gd": -4,
+    "barca": false
+   },
+   {
+    "rank": 18,
+    "team": "Levante",
+    "short": "Levante",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1538.png",
+    "points": 10,
+    "played": 11,
+    "gd": -5,
+    "barca": false
+   },
+   {
+    "rank": 19,
+    "team": "Valencia",
+    "short": "Valencia",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
+    "points": 9,
+    "played": 11,
+    "gd": -9,
+    "barca": false
+   },
+   {
+    "rank": 20,
+    "team": "Málaga",
+    "short": "Málaga",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
+    "points": 5,
+    "played": 11,
+    "gd": -13,
+    "barca": false
+   }
+  ]
+ },
+ "form": [
+  {
+   "date": "2026-10-17T16:30Z",
+   "res": "V",
+   "opp": "Betis",
+   "home": false,
+   "comp": "LaLiga",
+   "score": "5–2"
+  },
+  {
+   "date": "2026-10-20T19:00Z",
+   "res": "F",
+   "opp": "PSG",
+   "home": false,
+   "comp": "Champions League",
+   "score": "2–4"
+  },
+  {
+   "date": "2026-10-25T20:00Z",
+   "res": "F",
+   "opp": "Real Madrid",
+   "home": true,
+   "comp": "LaLiga",
+   "score": "1–2"
+  },
+  {
+   "date": "2026-10-31T20:00Z",
+   "res": "V",
+   "opp": "Alavés",
+   "home": true,
+   "comp": "LaLiga",
+   "score": "6–1"
+  },
+  {
+   "date": "2026-11-03T20:00Z",
+   "res": "V",
+   "opp": "Aston Villa",
+   "home": true,
+   "comp": "Champions League",
+   "score": "3–0"
+  }
+ ],
+ "scorers": [
+  {
+   "name": "Raphinha",
+   "team": "Barcelona",
+   "goals": 15,
+   "barca": true
+  },
+  {
+   "name": "Kylian Mbappé",
+   "team": "Real Madrid",
+   "goals": 12,
+   "barca": false
+  },
+  {
+   "name": "Lamine Yamal",
+   "team": "Barcelona",
+   "goals": 10,
+   "barca": true
+  },
+  {
+   "name": "Ante Budimir",
+   "team": "Osasuna",
+   "goals": 8,
+   "barca": false
+  },
+  {
+   "name": "Yassir Zabiri",
+   "team": "Racing Santander",
+   "goals": 8,
+   "barca": false
+  }
+ ],
+ "league_errors": []
 }
