@@ -1,5 +1,5 @@
 {
- "updated": 1793971390881,
+ "updated": 1793980816475,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -28,18 +28,16 @@
  ],
  "guide": {
   "channels": 5627,
-  "programmes": 247440,
+  "programmes": 245560,
   "barca_listings": 10,
-  "until": "2026-11-07T14:50:00+01:00"
+  "until": "2026-11-07T19:20:00+01:00"
  },
  "barca_titles_seen": [
   "11-06 17:00 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - CD Alaves  | 135 min",
   "11-06 22:30 | Koszykówka mężczyzn: Euroliga - mecz: Hapoel IBI Tel Awiw - Barca  | 450 min",
   "11-06 15:50 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 150 min",
-  "11-06 14:30 | Unicaja vs. Barcelona  | 120 min",
+  "11-07 16:00 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
   "11-07 00:00 | Unicaja vs. Barcelona  | 120 min",
-  "11-06 16:00 | LaLiga EA Sports Highlights - Matchday 28: Atletico Madrid vs Barcelona  | 30 min",
-  "11-06 16:30 | LaLiga EA Sports Highlights - Matchday 19: Barcelona vs Atletico Madrid  | 30 min",
   "11-06 17:00 | LaLiga Santander - Matchday 18: Barcelona vs Atlético Madrid  | 120 min",
   "11-06 20:30 | LaLiga EA Sports Blitz Highlights - Matchday 19: Barcelona vs Atletico Madrid  | 5 min",
   "11-06 20:35 | LaLiga EA Sports Blitz Highlights - Matchday 28: Atletico Madrid vs Barcelona  | 5 min",
