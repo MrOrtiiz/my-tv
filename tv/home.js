@@ -1697,7 +1697,8 @@
     var s = $('saver');
     s.innerHTML = '';
     var a = el('div', 'photo', s), b = el('div', 'photo', s);
-    el('div', 'shade', s);
+    var shade = el('div', 'shade', s);
+    if (window.Festive && Festive.into) Festive.into(s, shade);   // the day's animation over the photos, under the clock
     var clock = el('div', 'clock', s);
     el('div', 'time', clock);
     el('div', 'date', clock);
@@ -1733,13 +1734,20 @@
   function tickSaverClock(clock) {
     var d = new Date();
     clock.firstChild.textContent = formatDate('format|h:mm', d.getTime());
-    clock.children[1].textContent = formatDate('format|EEEE, MMMM d', d.getTime());
+    clock.children[1].textContent = formatDate('format|EEEE, MMMM d', d.getTime()) + dayName();
+  }
+
+  /** Today's holiday, theme day or match day for the screensavers' date lines (festive.js), as on the home screen. */
+  function dayName() {
+    var day = window.Festive ? Festive.today() : null;
+    return day ? '  ·  ' + day.name : '';
   }
 
   function hideSaver() {
     saverOn = false;
     clearTimeout(saverTimer);
     setClass($('saver'), 'on', false);
+    if (window.Festive && Festive.into) Festive.into(null);
   }
 
   // MARK: - The clock screensaver: a clock, the date and the weather, drifting slowly for OLED panels
@@ -1751,6 +1759,7 @@
     var a = $('ambient');
     a.innerHTML = '';
     var shift = el('div', 'shift', a);
+    if (window.Festive && Festive.into) Festive.into(a, shift);   // the day's animation behind the clock
     el('div', 'clock', shift);
     el('div', 'date', shift);
     var side = el('div', 'side', shift);
@@ -1766,7 +1775,7 @@
     if (!ambientOn) return;
     var a = $('ambient'), d = new Date(), w = Prefs.weather() ? Data.weather : null;
     a.querySelector('.clock').textContent = formatDate('format|h:mm', d.getTime());
-    a.querySelector('.date').textContent = formatDate('format|EEEE, MMMM d', d.getTime());
+    a.querySelector('.date').textContent = formatDate('format|EEEE, MMMM d', d.getTime()) + dayName();
     // The forecast as it is now (a new one comes every 30 minutes), and only with the weather card on, as on Android.
     a.querySelector('.temp').textContent = w ? Data.degrees(w.temp) : '';
     a.querySelector('.cond').textContent = w ? Data.condition(w.code, w.isDay) : '';
@@ -1780,6 +1789,7 @@
     ambientOn = false;
     clearInterval(ambientTimer);
     setClass($('ambient'), 'on', false);
+    if (window.Festive && Festive.into) Festive.into(null);
   }
 
   function poke(ok) {

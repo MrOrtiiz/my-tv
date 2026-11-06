@@ -46,3 +46,27 @@
 .fest .round.focus { box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(var(--fa), 0.9); }
 .fest .toggle.on { background: rgb(var(--fa)); }
 .fest .box .row.focus { box-shadow: inset 0 0 0 1.5px rgba(var(--fa), 0.6); }
+
+/* The screensavers follow the day too: the animation (moved in by festive.js Festive.into), a tint of the day's colors
+ * on the black, and the clock and the date in its colors. */
+#saver #festive.away, #ambient #festive.away { position: absolute; left: 0; top: 0; width: 100%; height: 100%; -webkit-transition: opacity 1s; transition: opacity 1s; }
+.fest #saver {
+  background: -webkit-linear-gradient(top, rgba(var(--fa), 0.2), rgba(0, 0, 0, 0) 50%, rgba(var(--fb), 0.14)), #000;
+  background: linear-gradient(rgba(var(--fa), 0.2), rgba(0, 0, 0, 0) 50%, rgba(var(--fb), 0.14)), #000;
+}
+.fest #ambient {
+  background: -webkit-linear-gradient(top, rgba(var(--fa), 0.16), rgba(0, 0, 0, 0) 50%, rgba(var(--fb), 0.12)), #050506;
+  background: linear-gradient(rgba(var(--fa), 0.16), rgba(0, 0, 0, 0) 50%, rgba(var(--fb), 0.12)), #050506;
+}
+.fest #saver .clock .time, .fest #ambient .clock {
+  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.92) 30%, rgba(var(--fa), 0.95));
+  background: linear-gradient(rgba(255, 255, 255, 0.92) 30%, rgba(var(--fa), 0.95));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.fest #saver .clock .date, .fest #ambient .date { color: rgba(var(--fa), 0.95); }
+.fest #saver .clock {
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35), 0 0 40px rgba(var(--fa), 0.2),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.4), inset 0 0 0 1.5px rgba(var(--fa), 0.5);
+}

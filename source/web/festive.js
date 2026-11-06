@@ -503,6 +503,15 @@ var Festive = (function () {
     today: function () { return on() ? today() : null; },
     countdown: function () { return on() && !forced ? countdown() : ''; },
     update: update,
+    /** The animation in a screensaver (host, under its clock: before `before`), or back over the sky (no host). */
+    into: function (host, before) {
+      if (!ensure()) return;
+      var target = host || document.getElementById('sky');
+      if (!target) return;
+      if (canvas.parentNode !== target || (before && canvas.nextSibling !== before)) target.insertBefore(canvas, before || null);
+      canvas.className = host ? 'away' : '';
+      run();
+    },
     /** For trying an animation: Festive.preview('newyear', 'Nyårsafton', false); Festive.preview() to stop. */
     preview: function (anim, name, red) {
       if (anim === 'birthday-b' || anim === 'birthday-g') { who = anim.slice(-1); anim = 'birthday'; kind = ''; }
