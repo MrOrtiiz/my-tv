@@ -1,5 +1,5 @@
 {
- "updated": 1793916244212,
+ "updated": 1793928387847,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -26,21 +26,21 @@
  ],
  "guide": {
   "channels": 5627,
-  "programmes": 234065,
-  "barca_listings": 5,
-  "until": "2026-11-06T19:15:00+01:00"
+  "programmes": 229042,
+  "barca_listings": 6,
+  "until": "2026-11-07T02:00:00+01:00"
  },
  "barca_titles_seen": [
   "11-06 17:00 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - CD Alaves  | 135 min",
   "11-05 23:00 | Koszykówka mężczyzn: Euroliga - mecz: Hapoel IBI Tel Awiw - Barca  | 480 min",
   "11-06 22:30 | Koszykówka mężczyzn: Euroliga - mecz: Hapoel IBI Tel Awiw - Barca  | 450 min",
   "11-06 06:00 | UEFA Champions League: Barcelona - Aston Villa  | 120 min",
-  "11-05 21:40 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 125 min",
   "11-06 08:35 | Koszykówka mężczyzn: Superpuchar Hiszpanii - mecz półfinałowy: Valencia Basket - Barca  | 175 min",
   "11-06 15:50 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 150 min",
   "11-06 04:00 | 6 Hours of Barcelona, Fecha 7  | 60 min",
   "11-06 06:00 | UEFA Champions League: Barcelona - Aston Villa  | 120 min",
   "11-06 14:30 | Unicaja vs. Barcelona  | 120 min",
+  "11-07 00:00 | Unicaja vs. Barcelona  | 120 min",
   "11-06 06:00 | UEFA Champions League: Barcelona - Aston Villa  | 120 min",
   "11-06 01:00 | LaLiga 21/22: Barcelona v A Madrid  | 120 min",
   "11-06 01:30 | FIA WEC HL '26: 6 Hours of Barcelona  | 60 min",
