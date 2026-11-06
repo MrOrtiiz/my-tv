@@ -325,6 +325,9 @@
   // MARK: - Focus
 
   var Z = {TOP: 'top', CARDS: 'cards', SHELF: 'shelf', DRAWER: 'drawer', APPS: 'apps', SETTINGS: 'settings', EDIT: 'edit', LANG: 'lang', CITY: 'city', KEY: 'key', ABOUT: 'about'};
+  /** The Barça box's place in the top row (after the tabs 0-2 and the buttons 3-5): OK plays the match (iptv.js). */
+  var BARCA = 6;
+  function barcaShown() { return !!$('barca'); }
   var st = {zone: Z.SHELF, top: 0, tab: 0, card: 0, shelf: 0, drawer: 0, grid: 0, row: 0, edit: 0, lang: 0, city: 0, key: 0};
   var cards = [];
 
@@ -340,6 +343,7 @@
     list = $('buttons').children;
     for (i = 0; i < list.length; i++) setClass(list[i], 'focus', st.zone === Z.TOP && st.top === 3 + i);
     setClass($('quotes'), 'hide', st.zone === Z.TOP && st.top >= 3);
+    if ($('barca')) setClass($('barca'), 'focus', st.zone === Z.TOP && st.top === BARCA);
     layoutCards();
     list = $('cards').children;
     for (i = 0; i < list.length; i++) setClass(list[i], 'focus', st.zone === Z.CARDS && st.card === i);
@@ -975,7 +979,10 @@
       })(i);
     }
     rows.push({label: tr('TMDB key'), value: Prefs.tmdbKey().length >= 4 ? '•••• ' + Prefs.tmdbKey().slice(-4) : tr('Not set'), opens: true, tmdb: true,
-      step: function (d) { if (d >= 0) openKey(); }});
+      step: function (d) { if (d >= 0) openKey('tmdb'); }});
+    var iptvLink = Prefs.iptv(), iptvHost = /^https?:\/\/([^\/:?#]+)/i.exec(iptvLink);
+    rows.push({label: 'IPTV-länk', value: iptvLink ? (iptvHost ? iptvHost[1] : '••••') : tr('Not set'), opens: true, iptvRow: true,
+      step: function (d) { if (d >= 0) openKey('iptv'); }});
     var sv = Data.services();
     if (sv.length) {
       var someOff = false;   // only the services this TV has count
@@ -1216,10 +1223,18 @@
   // MARK: - TMDB key: typed on the TV, so builds without one (the releases) get the picks too; TMDB checks it first
 
   var keyStatus = '', keyWarn = false, keyTimer = 0, keySeq = 0, keyAsking = false;
+  /** The sheet asks for the TMDB key ('tmdb') or the IPTV list's link ('iptv', iptv.js); both only on the TV. */
+  var keyMode = 'tmdb', CHECKING_IPTV = 'Kollar länken mot din IPTV…';
 
-  function keyRows() { return keyAsking ? 2 : Prefs.tmdbKeyOnTV() ? 3 : 2; }
+  function keyOnTV() { return keyMode === 'iptv' ? !!Prefs.iptv() : Prefs.tmdbKeyOnTV(); }
+  function keyChecking() { return keyStatus === tr('Checking the key with TMDB…') || keyStatus === CHECKING_IPTV; }
+
+  function keyRows() { return keyAsking ? 2 : keyOnTV() ? 3 : 2; }
 
   function keySteps() {
+    if (keyMode === 'iptv') return 'Din M3U-länk eller Xtream-inloggning (samma länk som i GitHub-hemligheten EPG_URL). '
+      + 'Den sparas bara på TV:n och används för att spela Barças matcher från Barça-rutan.\n'
+      + 'Tips: i SmartThings-appen på mobilen kan du klistra in länken i TV:ns tangentbord.';
     return tr("The key brings the picks: what's trending on your streaming apps, with their photos on the screensaver.") + '\n'
       + tr('Free, and it takes two minutes:') + '\n1. ' + tr('Create an account at themoviedb.org.')
       + '\n2. ' + tr('Open Settings → API and request a developer key.');
@@ -1228,7 +1243,8 @@
   function renderKey() {
     var box = $('keypick').firstChild, old = fieldOf('keypick'), typed = old ? old.value : '', inField = typingIn('keypick');
     box.innerHTML = '';
-    el('div', 'title', box, keyAsking ? tr('Remove the TMDB key?') : tr('TMDB key'));
+    var iptv = keyMode === 'iptv';
+    el('div', 'title', box, keyAsking ? (iptv ? 'Ta bort IPTV-länken?' : tr('Remove the TMDB key?')) : (iptv ? 'IPTV-länk' : tr('TMDB key')));
     var list = el('div', 'list', box), holder = el('div', 'rows', list);
     list.style.height = keyRows() * 78 + 'px';
     if (keyAsking) {
@@ -1237,21 +1253,23 @@
       updateFocus();
       return;
     }
-    var keyField = textField(holder, Z.KEY, typed, tr('API Read Access Token or API Key'), tr('TMDB key'));
+    var keyField = iptv ? textField(holder, Z.KEY, typed, 'http://…', 'IPTV-länk')
+      : textField(holder, Z.KEY, typed, tr('API Read Access Token or API Key'), tr('TMDB key'));
     // A v3 key is lowercase hex: the TV's keyboard mustn't capitalize it (the city's field wants capitals).
     keyField.setAttribute('autocapitalize', 'none');
     keyField.setAttribute('autocorrect', 'off');
     var save = el('div', 'row', holder, tr('Save'));
     sym('chevron_right', el('span', 'value', save));
     hover(save, Z.KEY, 1);
-    if (Prefs.tmdbKeyOnTV()) hover(el('div', 'row', holder, tr('Remove the key')), Z.KEY, 2);
+    if (keyOnTV()) hover(el('div', 'row', holder, iptv ? 'Ta bort länken' : tr('Remove the key')), Z.KEY, 2);
     if (keyStatus) setClass(el('div', 'hint', box, keyStatus), 'warn', keyWarn);
     el('div', 'hint steps', box, keySteps());
     if (inField) openField('keypick');
     updateFocus();
   }
 
-  function openKey() {
+  function openKey(mode) {
+    keyMode = mode === 'iptv' ? 'iptv' : 'tmdb';
     setClass($('settings'), 'open', false);
     st.zone = Z.KEY;
     st.key = 0;
@@ -1267,7 +1285,7 @@
     keyStatus = text;
     keyWarn = !!warn;
     clearTimeout(keyTimer);
-    if (text && text !== tr('Checking the key with TMDB…')) keyTimer = setTimeout(function () {
+    if (text && text !== tr('Checking the key with TMDB…') && text !== CHECKING_IPTV) keyTimer = setTimeout(function () {
       keyStatus = '';
       var line = st.zone === Z.KEY && $('keypick').querySelector('.hint:not(.steps)');
       if (line) line.parentNode.removeChild(line);
@@ -1284,7 +1302,8 @@
     var f = fieldOf('keypick'), typed = f ? f.value : '', key = cleanKey(typed);
     closeField('keypick');
     if (!typed.replace(/\s+/g, '')) { st.key = 0; openField('keypick'); updateFocus(); return; }
-    if (keyStatus === tr('Checking the key with TMDB…')) return;
+    if (keyChecking()) return;
+    if (keyMode === 'iptv') { saveIptv(typed.replace(/\s+/g, '')); return; }
     if (!key) { setKeyStatus(tr("That doesn't look like a TMDB key."), true); return; }
     setKeyStatus(tr('Checking the key with TMDB…'));
     var mine = ++keySeq;   // an answer for a sheet already closed is dropped
@@ -1298,8 +1317,24 @@
     });
   }
 
+  /** The IPTV link: tried first (the channel list must load), then kept on the TV only. */
+  function saveIptv(link) {
+    if (!/^https?:\/\/[^\s\/]+/i.test(link)) { setKeyStatus('Det ser inte ut som en länk (den börjar med http:// eller https://).', true); return; }
+    if (!window.IPTV) { setKeyStatus('IPTV-delen har inte laddats. Starta om appen.', true); return; }
+    setKeyStatus(CHECKING_IPTV);
+    var mine = ++keySeq;
+    IPTV.check(link, function (err, n) {
+      if (mine !== keySeq || st.zone !== Z.KEY) return;
+      if (err) { setKeyStatus('Kunde inte läsa listan: ' + err.message + '.', true); return; }
+      Prefs.set('iptv', link);
+      if (fieldOf('keypick')) fieldOf('keypick').value = '';
+      setKeyStatus('Sparad. ' + n + ' kanaler hittades. OK på Barça-rutan spelar matchen.');
+    });
+  }
+
   /** Back to config.properties' key (none in the releases): the picks go. */
   function removeKey() {
+    if (keyMode === 'iptv') { Prefs.set('iptv', undefined); if (window.IPTV) IPTV.forget(); closeKey(); return; }
     Prefs.set('tmdbKey', undefined);   // left out of the saved settings
     closeKey();
     Data.keyChanged();
@@ -1316,7 +1351,7 @@
     var f = fieldOf('keypick');
     if (f) f.value = '';
     openSettings();
-    for (var i = 0; i < rowsNow.length; i++) if (rowsNow[i].tmdb) st.row = i;
+    for (var i = 0; i < rowsNow.length; i++) if (keyMode === 'iptv' ? rowsNow[i].iptvRow : rowsNow[i].tmdb) st.row = i;
     updateFocus();
   }
 
@@ -1477,6 +1512,7 @@
     switch (st.zone) {
       case Z.TOP:
         if (st.top < 3) return;
+        if (st.top === BARCA) { if (window.BarcaBox && BarcaBox.play) BarcaBox.play(toast); return; }
         if (st.top === 3) { var live = liveTV(); if (live) launcher(live.id, tr('Live TV'))(); }
         else if (st.top === 4) { st.zone = Z.SHELF; openDrawer(); st.drawer = 1 < drawerInputs ? 1 : 0; updateFocus(); }
         else openSettings();
@@ -1543,7 +1579,7 @@
         else if (dy > 0) { openDrawer(); return; }
         else if (dy < 0) {
           if (cards.length) { st.zone = Z.CARDS; st.card = nearest(cardNodes, centerX(tiles[st.shelf])); }
-          else { st.zone = Z.TOP; st.top = picksShown() ? st.tab : 3; }
+          else { st.zone = Z.TOP; st.top = barcaShown() ? BARCA : picksShown() ? st.tab : 3; }
         }
         break;
       case Z.CARDS:
@@ -1552,6 +1588,13 @@
         else if (shelf.length) { st.zone = Z.SHELF; st.shelf = nearest(tiles, centerX(cardNodes[st.card])); }
         break;
       case Z.TOP:
+        if (st.top === BARCA) {
+          if (dy < 0 || dx > 0) st.top = 3;
+          else if (dy > 0) { if (cards.length) { st.zone = Z.CARDS; st.card = 0; } else st.zone = Z.SHELF; }
+          break;
+        }
+        if (dy > 0 && st.top >= 3 && barcaShown() && !cards.length) { st.top = BARCA; break; }
+        if (dx < 0 && st.top === 3 && barcaShown() && !picksShown()) { st.top = BARCA; break; }
         if (dx) {
           st.top = Math.max(picksShown() ? 0 : 3, Math.min(5, st.top + dx));   // without the picks the tabs can't hold focus
           if (st.top < 3) selectTab(st.top);   // as on Apple TV: focusing a tab selects it
@@ -1928,6 +1971,7 @@
     checkNight();
     Data.refresh();
     applyDim();   // automatic: medium from 22:00, off again at 07:00
+    if (window.IPTV && IPTV.playing()) idleAt = Date.now();   // no screensaver over a match
     if (!saverOn && !ambientOn && !sheetOpen() && Date.now() - idleAt > SAVER_AFTER) {
       if (saverMode() === 'clock') showAmbient(); else showSaver();
     }

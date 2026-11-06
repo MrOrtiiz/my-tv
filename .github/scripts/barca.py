@@ -249,7 +249,7 @@ def main():
         out = []
         for g in games[:MAX_MATCHES]:
             words = tokens(g['rival'])
-            chans = []
+            chans, ids = [], {}
             for p in found:
                 if not -50 * 60 <= (p['start'] - g['kick']).total_seconds() <= 20 * 60:
                     continue
@@ -259,12 +259,15 @@ def main():
                 name = names.get(p['channel'], p['channel'])
                 if name and name not in chans:
                     chans.append(name)
+                    ids[name] = p['channel']
             swedish = [c for c in chans if re.search(r'\b(se|swe|sverige|swedish|nordic)\b', c, re.I)]
             rest = [c for c in chans if c not in swedish]
+            picked = (swedish + rest)[:MAX_CHANNELS]
             out.append({'title': g['title'], 'competition': g['competition'], 'rival_logo': g.get('rival_logo', ''),
                         'start': int(g['kick'].timestamp() * 1000),
                         'stop': int((g['kick'] + timedelta(hours=2)).timestamp() * 1000), 'live': bool(chans),
-                        'channels': (swedish + rest)[:MAX_CHANNELS], 'more': max(0, len(chans) - MAX_CHANNELS)})
+                        'channels': picked, 'channel_ids': [ids.get(c, '') for c in picked],
+                        'more': max(0, len(chans) - MAX_CHANNELS)})
         save({'updated': int(now.timestamp() * 1000), 'status': 'ok', 'crest': CREST['url'], 'matches': out, 'source': used, 'source_errors': errors,
               'guide': {'channels': len(names), 'programmes': programmes, 'barca_listings': len(found),
                         'until': max(p['stop'] for p in found).isoformat() if found else None},
@@ -279,20 +282,23 @@ def main():
         # The same match on several channels: listings that start within an hour of each other.
         m = next((m for m in matches if abs((p['start'] - m['first']).total_seconds()) <= 3600), None)
         if m is None:
-            m = {'first': p['start'], 'titles': {}, 'channels': [], 'live': False, 'stop': p['stop']}
+            m = {'first': p['start'], 'titles': {}, 'channels': [], 'ids': {}, 'live': False, 'stop': p['stop']}
             matches.append(m)
         m['titles'][p['title']] = m['titles'].get(p['title'], 0) + 1
         m['live'] = m['live'] or p['live']
         if name and name not in m['channels']:
             m['channels'].append(name)
+            m['ids'][name] = p['channel']
     out = []
     for m in matches[:MAX_MATCHES]:
         title = sorted(m['titles'].items(), key=lambda kv: (-kv[1], len(kv[0])))[0][0]
         title = re.sub(r'^\s*(live|direkt|en directo|en vivo)\s*[:|-]\s*', '', title, flags=re.I)
         swedish = [c for c in m['channels'] if re.search(r'\b(se|swe|sverige|swedish|nordic)\b', c, re.I)]
         rest = [c for c in m['channels'] if c not in swedish]
+        picked = (swedish + rest)[:MAX_CHANNELS]
         out.append({'title': title, 'start': int(m['first'].timestamp() * 1000), 'stop': int(m['stop'].timestamp() * 1000),
-                    'live': m['live'], 'channels': (swedish + rest)[:MAX_CHANNELS], 'more': max(0, len(m['channels']) - MAX_CHANNELS)})
+                    'live': m['live'], 'channels': picked, 'channel_ids': [m['ids'].get(c, '') for c in picked],
+                    'more': max(0, len(m['channels']) - MAX_CHANNELS)})
     data = {'updated': int(now.timestamp() * 1000), 'status': 'ok', 'matches': out,
             'guide': {'channels': len(names), 'programmes': programmes, 'barca_listings': len(found)},
             'barca_titles_seen': seen, 'source': used, 'source_errors': errors}

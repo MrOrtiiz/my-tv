@@ -1,0 +1,24 @@
+/* The IPTV player (iptv.js): the picture over everything, and a glass bar with the channel at the foot of the screen. */
+#iptv { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 100; background: #000; display: none; }
+#iptv.on { display: block; }
+#iptv video { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: #000; }
+#iptv .info {
+  position: absolute; left: 80px; right: 80px; bottom: 70px; padding: 26px 40px 24px; border-radius: 36px; color: #fff;
+  background: rgba(20, 20, 24, 0.72);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4), inset 0 1.5px 0 rgba(255, 255, 255, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  opacity: 0; -webkit-transition: opacity 0.4s; transition: opacity 0.4s;
+}
+#iptv .info.on { opacity: 1; }
+#iptv .line { white-space: nowrap; }
+#iptv .chan { font-size: 40px; font-weight: 600; }
+#iptv .count { margin-left: 18px; font-size: 26px; font-weight: 500; color: rgba(255, 255, 255, 0.6); }
+#iptv .title { margin-top: 6px; font-size: 28px; font-weight: 500; color: #EDBB00; }
+#iptv .status { margin-top: 10px; font-size: 26px; color: rgba(255, 255, 255, 0.85); }
+#iptv .status:empty { display: none; }
+#iptv .keys { margin-top: 12px; font-size: 22px; color: rgba(255, 255, 255, 0.55); }
+
+/* The Barça box can take the focus (OK plays the match): a ring like the other focused things. */
+#barca.focus { box-shadow: 0 22px 50px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(237, 187, 0, 0.95), 0 0 30px rgba(237, 187, 0, 0.45); }
+#barca .playhint { font-size: 18px; font-weight: 600; color: #A50044; padding: 2px 0 10px; display: none; }
+#barca.focus .playhint { display: block; }
+.night #barca .playhint, .ios #barca .playhint { color: #EDBB00; }

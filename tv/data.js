@@ -104,6 +104,8 @@ var Prefs = (function () {
     tmdbKey: function () { return String(pick('tmdbKey', CONFIG.tmdbKey || '')).trim(); },
     /** True when the key in use was typed on the TV (Remove takes it back to config.properties'). */
     tmdbKeyOnTV: function () { return v.tmdbKey !== undefined; },
+    /** The IPTV list's link (an M3U link or an Xtream login), typed on the TV (Home Settings → IPTV-länk); only here. */
+    iptv: function () { return String(pick('iptv', '') || '').trim(); },
     setCity: function (name, lat, lon) { v.city = name; v.latitude = lat; v.longitude = lon; save(); this.version++; },
     /** Streaming services (keys like "netflix") whose titles are left out of the picks. */
     serviceOff: function (key) { return pick('servicesOff', []).indexOf(key) >= 0; },

@@ -121,7 +121,7 @@ var BarcaBox = (function () {
     if (!top) return;
     if (!on() || !data || !data.updated) { if (box) box.parentNode.removeChild(box); return; }
     if (!box) { box = el('div', 'glass', top); box.id = 'barca'; }
-    box.className = 'glass';
+    box.className = 'glass' + (/\bfocus\b/.test(box.className) ? ' focus' : '');
     box.innerHTML = '';
     var head = el('div', 'head', box);
     // The club's crest as ESPN links it (barca.json's crest, else ESPN's address for it); the blaugrana dot if it won't load.
@@ -133,6 +133,7 @@ var BarcaBox = (function () {
     // When the match list was made: shows at once whether the TV has the newest one.
     var u = new Date(data.updated);
     el('span', 'stamp', head, 'uppdaterad ' + two(u.getHours()) + ':' + two(u.getMinutes()));
+    el('div', 'playhint', box, 'OK spelar matchen i din IPTV');
     var now = Date.now(), list = [], i;
     for (i = 0; data.matches && i < data.matches.length; i++) {
       var mm = data.matches[i];
@@ -240,5 +241,8 @@ var BarcaBox = (function () {
     return null;
   }
 
-  return {refresh: load, matchToday: matchToday, live: pollLive};
+  /** OK on the box: the match on your IPTV (iptv.js). */
+  function play(say) { if (window.IPTV) IPTV.barca(data, say); }
+
+  return {refresh: load, matchToday: matchToday, live: pollLive, play: play};
 })();
