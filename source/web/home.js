@@ -1578,10 +1578,22 @@
     return {app: app, params: via ? {contentTarget: 'nuvio://tmdb/' + (p.kind === 'tv' ? 'series' : 'movie') + '/' + p.id} : null};
   }
 
+  var GAMES_ID = 'FreeMyGames.Spel';
+  function gamesLink() { try { return localStorage.getItem('fmtv.games') || ''; } catch (e) { return ''; } }
+  function launchGames(done) {
+    try {
+      var data = [new tizen.ApplicationControlData('drive', [gamesLink()])];
+      var c = new tizen.ApplicationControl('http://tizen.org/appcontrol/operation/default', null, null, null, data);
+      tizen.application.launchAppControl(c, GAMES_ID, function () { done(true); }, function () { done(false); });
+    } catch (e) { done(false); }
+  }
+
   function launcher(id, name, params) {
     return function () {
       // The IPTV app gets the IPTV link with it, so it's typed only once (here).
       if (window.IPTV && id === IPTV.APP_ID && Prefs.iptv()) { IPTV.launchApp(null, function (ok) { if (!ok) TV.launch(id, null, function () {}); }); return; }
+      // The games app (games/ in the repo) gets the Google Drive script's address, sent once from the phone page.
+      if (id === GAMES_ID && gamesLink()) { launchGames(function (ok) { if (!ok) TV.launch(id, null, function () {}); }); return; }
       TV.launch(id, params || null, function (ok) {
         if (!ok) toast(trf("Couldn't open {app}.", {app: name || id}));
       });

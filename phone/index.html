@@ -73,6 +73,8 @@
     <p><b>Claude-nyckel.</b> Med en egen nyckel från console.anthropic.com förstår sökningen fria önskemål ("något roligt med Adam Sandler").
       Nyckeln skickas direkt till TV:n och sparas bara där.</p>
     <form id="keyform"><input id="key" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" spellcheck="false"><button>Skicka</button></form>
+    <p><b>Spel (Google Drive).</b> Adressen till ditt Drive-skript för Spel-appen (slutar på /exec).</p>
+    <form id="gamesform"><input id="games" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off" autocapitalize="off" spellcheck="false"><button>Skicka</button></form>
     <p>Plex kopplar du på TV:n: Sök → Koppla Plex, och skriv sedan koden på plex.tv/link.</p>
     <p>Free My TV behöver vara öppen på TV:n för att ta emot det du säger.</p>
   </details>
@@ -163,6 +165,15 @@
     send({t: 'key', claude: k}, true);
     $('key').value = '';
     say('Nyckeln skickades till TV:n…', false);
+  };
+
+  $('gamesform').onsubmit = function (e) {
+    e.preventDefault();
+    var u = $('games').value.trim();
+    if (!/^https:\/\/script\.google\.com\/.+\/exec/.test(u)) { say('Adressen ska börja med https://script.google.com/ och sluta på /exec.', false); return; }
+    send({t: 'games', url: u}, true);
+    $('games').value = '';
+    say('Spellänken skickades till TV:n…', false);
   };
 
   // Speech: the phone's own recognition, in the language picked (kept).

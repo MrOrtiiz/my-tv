@@ -898,7 +898,13 @@ var Search = (function () {
       if (s) { if (!opened) open(); sel = o.r; srcAt = o.s; zone = 'sources'; draw(); run(s, t); }
       return;
     }
-    if (o.t === 's-key' && o.claude) { saveClaude(o.claude, true); return; }
+    if (o.t === 'key' && o.claude) { saveClaude(o.claude, true); return; }
+    if (o.t === 'games' && /^https:\/\/script\.google\.com\/.+/.test(o.url || '')) {   // for the Spel app (games/), given to it when it's opened
+      try { localStorage.setItem('fmtv.games', o.url); } catch (e) {}
+      toast('Spel-appen får din Google Drive-mapp när du öppnar den härifrån.');
+      tellPhone({t: 'note', say: 'Spellänken är sparad på TV:n. Öppna Spel från Free My TV.'});
+      return;
+    }
     if (o.t === 'close') { close(); return; }
   }
 
