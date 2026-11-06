@@ -223,7 +223,105 @@ def guide(url):
     return io.BytesIO(raw)
 
 
+# LaLiga's table, Barça's form (the last five, every competition) and the league's top scorers, for the box's pages
+# when it isn't match day. Each part on its own: one that fails is left out and named in league_errors.
+STANDINGS = 'https://site.api.espn.com/apis/v2/sports/soccer/esp.1/standings'
+RESULTS = 'https://site.api.espn.com/apis/site/v2/sports/soccer/%s/teams/83/schedule'
+SCORERS = ['https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/statistics',
+           'https://site.web.api.espn.com/apis/site/v2/sports/soccer/esp.1/statistics']
+
+
+def num(v):
+    """A score or a stat as ESPN gives it: a number, a string, or {value, displayValue}."""
+    if isinstance(v, dict):
+        v = v.get('value', v.get('displayValue'))
+    try:
+        return int(float(v))
+    except (TypeError, ValueError):
+        return None
+
+
+def table():
+    data = json.loads(fetch(STANDINGS))
+    groups = data.get('children') or [data]
+    entries = ((groups[0].get('standings') or {}).get('entries')) or []
+    rows = []
+    for e in entries:
+        st = {x.get('name') or x.get('type'): x.get('value') for x in e.get('stats') or []}
+        t = e.get('team') or {}
+        rows.append({'rank': num(st.get('rank')), 'team': t.get('displayName') or '', 'short': t.get('shortDisplayName') or t.get('displayName') or '',
+                     'logo': logo(t), 'points': num(st.get('points')), 'played': num(st.get('gamesPlayed')),
+                     'gd': num(st.get('pointDifferential')), 'barca': 'barcelona' in fold(t.get('displayName') or '')})
+    rows = [r for r in rows if r['rank'] is not None]
+    rows.sort(key=lambda r: r['rank'])
+    if not rows:
+        raise ValueError('no rows')
+    return {'league': 'LaLiga', 'rows': rows}
+
+
+def form():
+    games = []
+    for slug, comp in LEAGUES:
+        try:
+            data = json.loads(fetch(RESULTS % slug))
+        except Exception:
+            continue
+        for ev in data.get('events') or []:
+            c = (ev.get('competitions') or [{}])[0]
+            if not ((c.get('status') or ev.get('status') or {}).get('type') or {}).get('completed'):
+                continue
+            us = them = None
+            for t in c.get('competitors') or []:
+                side = {'name': (t.get('team') or {}).get('shortDisplayName') or (t.get('team') or {}).get('displayName') or '',
+                        'score': num(t.get('score')), 'home': t.get('homeAway') == 'home'}
+                if 'barcelona' in fold((t.get('team') or {}).get('displayName') or ''):
+                    us = side
+                else:
+                    them = side
+            if not us or not them or us['score'] is None or them['score'] is None:
+                continue
+            res = 'V' if us['score'] > them['score'] else 'F' if us['score'] < them['score'] else 'O'
+            games.append({'date': ev.get('date', ''), 'res': res, 'opp': them['name'], 'home': us['home'], 'comp': comp,
+                          'score': '%d–%d' % (us['score'], them['score'])})
+    games.sort(key=lambda g: g['date'])
+    if not games:
+        raise ValueError('no results')
+    return games[-5:]
+
+
+def scorers():
+    for url in SCORERS:
+        try:
+            data = json.loads(fetch(url))
+        except Exception:
+            continue
+        for cat in data.get('stats') or []:
+            if 'goal' not in fold(cat.get('name') or '') and 'goal' not in fold(cat.get('displayName') or ''):
+                continue
+            out = []
+            for l in (cat.get('leaders') or [])[:5]:
+                a = l.get('athlete') or {}
+                team = (a.get('team') or l.get('team') or {}).get('shortDisplayName') or (a.get('team') or l.get('team') or {}).get('displayName') or ''
+                out.append({'name': a.get('displayName') or a.get('shortName') or '', 'team': team, 'goals': num(l.get('value')),
+                            'barca': 'barcelona' in fold(team)})
+            if out:
+                return out
+    raise ValueError('no scorers')
+
+
+def league_info():
+    info, errors = {}, []
+    for key, fn in (('table', table), ('form', form), ('scorers', scorers)):
+        try:
+            info[key] = fn()
+        except Exception as e:
+            errors.append('%s: %s' % (key, type(e).__name__))
+    info['league_errors'] = errors
+    return info
+
+
 def save(data):
+    data.update(league_info())
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=1)

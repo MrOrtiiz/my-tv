@@ -747,3 +747,36 @@ body:not(.no-picks) #barca .none { padding: 8px 0; }
 #trailer iframe { position: absolute; left: 0; top: 0; width: 100%; height: 100%; border: 0; }
 #trailer .hint { position: absolute; left: 50%; bottom: 40px; padding: 10px 26px; border-radius: 24px; font-size: 22px; color: #fff;
   background: rgba(0, 0, 0, 0.6); -webkit-transform: translateX(-50%); transform: translateX(-50%); }
+
+/* The Barça box's pages (barca.js): the matches, LaLiga's table with the form, the top scorers; dots at the foot. */
+#barca .page { min-height: 236px; }
+body:not(.no-picks) #barca .page { min-height: 0; }
+#barca .dots { position: absolute; left: 0; right: 0; bottom: 12px; text-align: center; }
+#barca .dots span { display: inline-block; width: 8px; height: 8px; border-radius: 4px; margin: 0 4px; background: rgba(127, 127, 140, 0.4); }
+#barca .dots span.on { background: currentColor; }
+#barca .standing { margin: 10px 0 6px; white-space: nowrap; font-size: 20px; font-weight: 600; opacity: 0.9; }
+#barca .standing .place { font-size: 38px; font-weight: 700; margin-right: 12px; vertical-align: -4px; }
+#barca .standing .league { float: right; font-size: 17px; opacity: 0.6; margin-top: 10px; }
+#barca .form { margin: 6px 0 2px; white-space: nowrap; }
+#barca .form .label { font-size: 17px; opacity: 0.6; margin-right: 10px; vertical-align: 3px; }
+#barca .chip { display: inline-block; width: 28px; height: 28px; line-height: 28px; border-radius: 8px; margin-right: 6px; text-align: center;
+  font-size: 16px; font-weight: 700; color: #FFF; }
+#barca .chip-V { background: #30D158; }
+#barca .chip-O { background: #8E8E93; }
+#barca .chip-F { background: #FF453A; }
+#barca .lastgame { font-size: 16px; opacity: 0.65; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#barca .table { font-size: 19px; -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
+#barca .table .tr { height: 30px; line-height: 30px; white-space: nowrap; border-radius: 8px; padding: 0 8px; }
+#barca .table .tr.us { background: rgba(165, 0, 68, 0.28); font-weight: 700; }
+#barca .table .rk { display: inline-block; width: 30px; opacity: 0.7; }
+#barca .table .tm { display: inline-block; width: 230px; overflow: hidden; text-overflow: ellipsis; vertical-align: top; }
+#barca .table .pl { display: inline-block; width: 110px; opacity: 0.6; overflow: hidden; text-overflow: ellipsis; vertical-align: top; }
+#barca .table .pt { display: inline-block; width: 40px; text-align: right; font-weight: 700; }
+#barca .table .gap { height: 18px; line-height: 12px; text-align: center; opacity: 0.5; }
+#barca .table.scorers .tm { width: 200px; }
+#barca .table.scorers .pl { width: 140px; }
+
+/* The count-down to the next match, a pill under the box. */
+#barcapill { position: absolute; height: 44px; line-height: 44px; padding: 0 22px; border-radius: 22px; font-size: 21px; font-weight: 600; white-space: nowrap;
+  color: #FFF; background: rgba(165, 0, 68, 0.55); box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.16); }
+#barca .dots ~ .page { padding-bottom: 22px; }

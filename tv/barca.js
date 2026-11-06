@@ -116,10 +116,94 @@ var BarcaBox = (function () {
     return DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + time;
   }
 
+  // MARK: - Pages: away from match day the box turns, as iOS's widget stacks do, between the coming matches, LaLiga's
+  // table with Barça's form, and the top scorers; a dot for each page at its foot.
+  var PAGE_EVERY = 12000, page = 0, pageTimer = 0;
+  var SHORT = {'Atlético Madrid': 'Atlético', 'Internazionale': 'Inter', 'Paris Saint-Germain': 'PSG', 'Bayern Munich': 'Bayern',
+    'Borussia Dortmund': 'Dortmund', 'Manchester City': 'Man City', 'Manchester United': 'Man United', 'Athletic Club': 'Athletic',
+    'Barcelona': 'Barça', 'FC Barcelona': 'Barça'};
+
+  function pages() {
+    if (live || matchToday() || !document.body || !/\bno-picks\b/.test(document.body.className)) return ['matches'];
+    var list = ['matches'];
+    if (data.table && data.table.rows && data.table.rows.length) list.push('table');
+    if (data.scorers && data.scorers.length) list.push('scorers');
+    return list;
+  }
+
+  function turn() {
+    clearTimeout(pageTimer);
+    pageTimer = setTimeout(function () { page++; render(); turn(); }, PAGE_EVERY);
+  }
+
+  function short(name) { return SHORT[name] || name; }
+
+  /** LaLiga: Barça's place and points, its last five (V O F), and the table's top four with Barça. */
+  function tablePage(box) {
+    var rows = data.table.rows, us = null, i;
+    for (i = 0; i < rows.length; i++) if (rows[i].barca) us = rows[i];
+    var sum = el('div', 'standing', box);
+    if (us) {
+      el('span', 'place', sum, us.rank + ':a');
+      el('span', 'pts', sum, us.points + ' p  ·  ' + us.played + ' matcher  ·  ' + (us.gd > 0 ? '+' : '') + us.gd);
+    }
+    el('span', 'league', sum, 'LaLiga');
+    if (data.form && data.form.length) {
+      var f = el('div', 'form', box);
+      el('span', 'label', f, 'Form');
+      for (i = 0; i < data.form.length; i++) {
+        var r = data.form[i];
+        el('span', 'chip chip-' + r.res, f, r.res);
+      }
+      var lastG = data.form[data.form.length - 1];
+      el('div', 'lastgame', box, 'Senast: ' + lastG.score + (lastG.home ? ' hemma mot ' : ' borta mot ') + short(lastG.opp) + '  ·  ' + lastG.comp);
+    }
+    var tb = el('div', 'table', box), shown = [];
+    for (i = 0; i < rows.length && i < 4; i++) shown.push(rows[i]);
+    if (us && us.rank > 4) shown.push(null, us);
+    for (i = 0; i < shown.length; i++) {
+      var x = shown[i];
+      if (!x) { el('div', 'gap', tb, '···'); continue; }
+      var tr = el('div', 'tr' + (x.barca ? ' us' : ''), tb);
+      el('span', 'rk', tr, String(x.rank));
+      el('span', 'tm', tr, short(x.short || x.team));
+      el('span', 'pl', tr, String(x.played));
+      el('span', 'pt', tr, String(x.points));
+    }
+  }
+
+  /** LaLiga's top scorers, Barça's in its colors. */
+  function scorersPage(box) {
+    el('div', 'standing', box).appendChild(document.createTextNode('Skytteligan  ·  LaLiga'));
+    var tb = el('div', 'table scorers', box);
+    for (var i = 0; i < data.scorers.length && i < 5; i++) {
+      var s = data.scorers[i], tr = el('div', 'tr' + (s.barca ? ' us' : ''), tb);
+      el('span', 'rk', tr, String(i + 1));
+      el('span', 'tm', tr, s.name);
+      el('span', 'pl', tr, short(s.team));
+      el('span', 'pt', tr, String(s.goals));
+    }
+  }
+
+  /** The pill under the box: "Atlético – Barça om 2 dagar", "… i morgon 21:00", "… i dag 21:00". */
+  function pill(box) {
+    var top = document.getElementById('top'), p = document.getElementById('barcapill'), now = Date.now(), next = null;
+    for (var i = 0; data && data.matches && i < data.matches.length; i++) if (data.matches[i].start > now) { next = data.matches[i]; break; }
+    if (!box || !next || live) { if (p) p.style.display = 'none'; return; }
+    if (!p) { p = el('div', '', top); p.id = 'barcapill'; }
+    var teams = String(next.title).split(/\s+[–-]\s+/), name = teams.length === 2 ? short(teams[0]) + ' – ' + short(teams[1]) : next.title;
+    var d = new Date(next.start), t0 = new Date(), days = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() -
+      new Date(t0.getFullYear(), t0.getMonth(), t0.getDate()).getTime()) / 86400000), hm = two(d.getHours()) + ':' + two(d.getMinutes());
+    p.textContent = name + (days <= 0 ? ' i dag ' + hm : days === 1 ? ' i morgon ' + hm : ' om ' + days + ' dagar');
+    p.style.display = '';
+    p.style.left = box.offsetLeft + 'px';
+    p.style.top = (box.offsetTop + box.offsetHeight + 14) + 'px';
+  }
+
   function render() {
     var top = document.getElementById('top'), box = document.getElementById('barca');
     if (!top) return;
-    if (!on() || !data || !data.updated) { if (box) box.parentNode.removeChild(box); return; }
+    if (!on() || !data || !data.updated) { if (box) box.parentNode.removeChild(box); pill(null); return; }
     if (!box) { box = el('div', 'glass', top); box.id = 'barca'; }
     box.className = 'glass' + (/\bfocus\b/.test(box.className) ? ' focus' : '');
     box.innerHTML = '';
@@ -134,6 +218,16 @@ var BarcaBox = (function () {
     var u = new Date(data.updated);
     el('span', 'stamp', head, 'uppdaterad ' + two(u.getHours()) + ':' + two(u.getMinutes()));
     el('div', 'playhint', box, 'OK spelar matchen i din IPTV');
+    var pg = pages(), which = pg[page % pg.length];
+    if (pg.length > 1) {
+      var dots = el('div', 'dots', box);
+      for (var q = 0; q < pg.length; q++) el('span', q === page % pg.length ? 'on' : '', dots);
+      if (!pageTimer) turn();
+    }
+    var area = el('div', 'page page-' + which, box);
+    if (which === 'table') { tablePage(area); pill(box); return; }
+    if (which === 'scorers') { scorersPage(area); pill(box); return; }
+    box = area;   // the matches page draws into its area
     var now = Date.now(), list = [], i;
     for (i = 0; data.matches && i < data.matches.length; i++) {
       var mm = data.matches[i];
@@ -142,13 +236,16 @@ var BarcaBox = (function () {
     }
     if (data.status === 'error') {
       el('div', 'none', box, 'Kunde inte läsa din tablå just nu.');
+      pill(box.parentNode);
       return;
     }
     if (!list.length) {
       el('div', 'none', box, 'Inga matcher i din tablå de närmaste två veckorna.');
+      pill(box.parentNode);
       return;
     }
-    for (i = 0; i < list.length && i < SHOW; i++) {
+    var most = pg.length > 1 ? 2 : SHOW;   // with pages, room for two
+    for (i = 0; i < list.length && i < most; i++) {
       var m = list[i], row = el('div', 'match', box), playing = m.start <= now && now < m.stop;
       var g = live && liveFor === m.start ? live : null;
       if (g && g.home && g.away && g.state !== 'pre') { liveRow(box, row, m, g); continue; }
@@ -166,12 +263,13 @@ var BarcaBox = (function () {
       if (ch.length) channelLine(row, m);
       else el('div', 'channels soon', row, 'Kanalerna visas när matchen kommer in i din tablå');
     }
+    pill(box.parentNode);
   }
 
   /** A match being played, or just played: the clock, the score in large, the goals. */
   function liveRow(box, row, m, g) {
     row.className = 'match live-row' + (g.state === 'in' ? ' on' : '');
-    if (Date.now() < goalUntil) { box.className += ' goal'; el('div', 'goalflash', row, 'MÅÅÅL!'); }
+    if (Date.now() < goalUntil) { document.getElementById('barca').className += ' goal'; el('div', 'goalflash', row, 'MÅÅÅL!'); }
     var t = el('div', 'when now', row);
     if (g.state === 'in') {
       el('span', 'pulse', t);
