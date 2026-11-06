@@ -1,5 +1,5 @@
 {
- "updated": 1793928387847,
+ "updated": 1793938055833,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -26,7 +26,7 @@
  ],
  "guide": {
   "channels": 5627,
-  "programmes": 229042,
+  "programmes": 225338,
   "barca_listings": 6,
   "until": "2026-11-07T02:00:00+01:00"
  },
@@ -37,13 +37,9 @@
   "11-06 06:00 | UEFA Champions League: Barcelona - Aston Villa  | 120 min",
   "11-06 08:35 | Koszykówka mężczyzn: Superpuchar Hiszpanii - mecz półfinałowy: Valencia Basket - Barca  | 175 min",
   "11-06 15:50 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 150 min",
-  "11-06 04:00 | 6 Hours of Barcelona, Fecha 7  | 60 min",
   "11-06 06:00 | UEFA Champions League: Barcelona - Aston Villa  | 120 min",
   "11-06 14:30 | Unicaja vs. Barcelona  | 120 min",
   "11-07 00:00 | Unicaja vs. Barcelona  | 120 min",
-  "11-06 06:00 | UEFA Champions League: Barcelona - Aston Villa  | 120 min",
-  "11-06 01:00 | LaLiga 21/22: Barcelona v A Madrid  | 120 min",
-  "11-06 01:30 | FIA WEC HL '26: 6 Hours of Barcelona  | 60 min",
-  "11-06 03:30 | Barcelona vs Aston Villa - UEFA Champions League MD4  | 30 min"
+  "11-06 06:00 | UEFA Champions League: Barcelona - Aston Villa  | 120 min"
  ]
 }
