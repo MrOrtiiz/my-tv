@@ -1431,19 +1431,42 @@
     var list = el('div', 'list', box), holder = el('div', 'rows', list);
     list.style.height = Math.min(e.rows.length, 7) * 78 + 'px';
     for (var i = 0; i < e.rows.length; i++) {
-      var a = e.rows[i], at = e.ids.indexOf(a.id), row = el('div', 'row', holder, a.title);
-      var place = el('span', 'value', row, at >= 0 ? '#' + (at + 1) : tr('shelf|Off'));
-      if (at >= 0) sym('check', place).style.marginLeft = '16px';   // on the shelf: a check, as in the pickers
+      var a = e.rows[i], at = e.ids.indexOf(a.id), row = el('div', 'row' + (a.id === grabId ? ' grab' : ''), holder, a.title);
+      var place = el('span', 'value', row, a.id === grabId ? '↕  #' + (at + 1) : at >= 0 ? '#' + (at + 1) : tr('shelf|Off'));
+      if (at >= 0 && a.id !== grabId) sym('check', place).style.marginLeft = '16px';   // on the shelf: a check, as in the pickers
       hover(row, Z.EDIT, i);
     }
-    el('div', 'hint', box, tr('OK adds or removes an app. ← → change the order.'));
+    el('div', 'hint', box, grabId ? 'Flytta med ▲ ▼  ·  OK släpper appen här  ·  ◀ tar bort den från favoriterna'
+      : 'OK på en favorit tar upp den så att du kan flytta den med ▲ ▼. OK på en app som är Av lägger till den. ◀ tar bort en favorit.');
     updateFocus();
+  }
+
+  // The app picked up to be moved (OK on a favourite): ▲ ▼ move it a place at a time, OK or Back put it down.
+  var grabId = null;
+
+  function editOk() {
+    var e = editList(), app = e.rows[st.edit];
+    if (!app) return;
+    if (grabId) { grabId = null; renderShelfEdit(); return; }
+    if (e.ids.indexOf(app.id) >= 0) { grabId = app.id; renderShelfEdit(); return; }
+    editShelf(0);   // an app that's off: onto the shelf, last
+  }
+
+  function editRemove() {
+    var e = editList(), app = e.rows[st.edit];
+    if (!app || e.ids.indexOf(app.id) < 0) return;
+    var keep = st.edit;
+    grabId = null;
+    editShelf(0);   // on the shelf: off it
+    st.edit = Math.min(keep, apps.length - 1);   // the focus stays on the same line
+    renderShelfEdit();
   }
 
   function openShelfEdit() {
     setClass($('settings'), 'open', false);
     st.zone = Z.EDIT;
     st.edit = 0;
+    grabId = null;
     renderShelfEdit();
     setClass($('shelfedit'), 'open', true);
     updateFocus();
@@ -1536,7 +1559,7 @@
         if (rowsNow[st.row]) { rowsNow[st.row].step(1); if (st.zone === Z.SETTINGS) renderSettings(); }
         return;
       case Z.EDIT:
-        editShelf(0);
+        editOk();
         return;
       case Z.LANG:
         closeLanguages(true);
@@ -1621,8 +1644,9 @@
         }
         break;
       case Z.EDIT:
+        if (grabId) { if (dy) editShelf(dy); else if (dx < 0) editRemove(); return; }
         if (dy) st.edit = Math.max(0, Math.min(apps.length - 1, st.edit + dy));
-        else if (dx) editShelf(dx);
+        else if (dx < 0) { editRemove(); return; }
         break;
       case Z.LANG:
         if (dy) st.lang = Math.max(0, Math.min(languageChoices().length - 1, st.lang + dy));
@@ -1639,6 +1663,7 @@
 
   function back() {
     if (st.zone === Z.EDIT) {
+      if (grabId) { grabId = null; renderShelfEdit(); return; }   // Back puts the app down where it is
       setClass($('shelfedit'), 'open', false);
       openSettings();
       for (var i = 0; i < rowsNow.length; i++) if (rowsNow[i].shelf) st.row = i;   // back on the Shelf row, whatever follows it
