@@ -460,14 +460,19 @@ var TV = (function () {
         finish();
       });
       wait();
-      // The app's own version: its appinfo.json, beside index.html.
-      var x = new XMLHttpRequest();
+      // The app's own version: its appinfo.json, beside index.html. Loaded from GitHub by lg/index.html: the loader's
+      // version and the commit instead (appinfo.json isn't beside the page there).
+      var L = window.FMTV_LOADER;
+      if (L) { out.version = L.version + ' · ' + L.commit; setTimeout(finish, 0); }
+      var x = L ? null : new XMLHttpRequest();
+      if (x) {
       x.onreadystatechange = function () {
         if (x.readyState !== 4) return;
         try { out.version = JSON.parse(x.responseText).version || ''; } catch (e) {}
         finish();
       };
       try { x.open('GET', 'appinfo.json', true); x.send(); } catch (e) { finish(); }
+      }
     } else if (samsung) {
       var info = window.tizen.systeminfo;
       try { out.model = info.getCapability('http://tizen.org/system/model_name') || ''; } catch (e) {}

@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920, height=1080">
+<title>Free My TV</title>
+<style>html, body { margin: 0; background: #0B0B0D; }</style>
+</head>
+<body>
+<script>
+/*
+ * Free My TV på LG (webOS): laddaren. Vid varje start hämtar den den senaste koden från GitHub-repot
+ * MrOrtiiz/my-tv (mappen tv/, samma som The Frame) via jsDelivr, låst till senaste commit, och skriver in den i den
+ * här sidan. Sidan har kvar appens eget ursprung, så LG:s tjänster (PalmServiceBridge) och appens lagring fungerar.
+ * Efter tv/config.js läses lg/barn.js (den här TV:ns egna standardval) och sist lg/devmode.js.
+ * Utan internet: den inbyggda kopian i app/. ES5.
+ */
+(function () {
+  'use strict';
+  var REPO = 'MrOrtiiz/my-tv', VERSION = '1.0.0';
+  var KEY = 'fmtv.live';   // senaste commit som gick att ladda
+
+  function stored() { try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; } }
+  function store(sha) { try { localStorage.setItem(KEY, sha); } catch (e) {} }
+
+  function get(url, timeout, headers, done) {
+    var x = new XMLHttpRequest(), over = false;
+    function end(text) { if (over) return; over = true; done(text); }
+    try {
+      x.open('GET', url, true);
+      x.timeout = timeout;
+      for (var h in headers) x.setRequestHeader(h, headers[h]);
+      x.onreadystatechange = function () {
+        if (x.readyState === 4) end(x.status === 200 ? x.responseText : null);
+      };
+      x.ontimeout = x.onerror = function () { end(null); };
+      x.send();
+    } catch (e) { end(null); }
+  }
+
+  function local() { location.replace('app/index.html'); }
+
+  /** Skriver in tv/index.html från commit `sha`; otherwise() om den inte gick att hämta. */
+  function open(sha, otherwise) {
+    var base = 'https://cdn.jsdelivr.net/gh/' + REPO + '@' + sha + '/';
+    get(base + 'tv/index.html', 10000, {}, function (html) {
+      if (!html || html.indexOf('home.js') < 0) { otherwise(); return; }
+      store(sha);
+      var info = '<script>window.FMTV_LOADER = {platform: "lg", version: "' + VERSION + '", commit: "' + sha.slice(0, 7) + '"};<\/script>';
+      html = html.replace(/<head>/i, '<head><base href="' + base + 'tv/">' + info)
+        .replace('<script src="config.js"><\/script>', '<script src="config.js"><\/script><script src="../lg/barn.js"><\/script>')
+        .replace('<\/body>', '<script src="../lg/devmode.js"><\/script><\/body>');
+      document.open();
+      document.write(html);
+      document.close();
+    });
+  }
+
+  var last = stored();
+  get('https://api.github.com/repos/' + REPO + '/commits/main', 5000, {Accept: 'application/vnd.github.sha'}, function (sha) {
+    sha = sha && /^[0-9a-f]{40}$/.test(sha.trim()) ? sha.trim() : '';
+    if (sha) open(sha, function () { if (last && last !== sha) open(last, local); else local(); });
+    else if (last) open(last, local);
+    else local();
+  });
+})();
+</script>
+</body>
+</html>

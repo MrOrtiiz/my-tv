@@ -744,7 +744,7 @@
 
   var drawerItems = [], drawerInputs = 0;
   // The HDMI ports by what's plugged into them: [name, symbol].
-  var OWN_INPUTS = {hdmi4: ['PS5', 'gamepad']};
+  var OWN_INPUTS = CONFIG.ownInputs || {hdmi4: ['PS5', 'gamepad']};   // lg/barn.js: inga på barnens TV
 
   function renderDrawer() {
     var d = $('drawer');
@@ -1447,6 +1447,11 @@
       [tr('Model'), info && info.model], [tr('Firmware'), info && info.firmware], [tr('System'), info && info.system],
       [tr('IP address'), info && info.ip], [tr('Time zone'), TV.zone()], ['Free My TV', info && info.version]
     ];
+    // LG: när Developer Mode förlängdes senast (lg/devmode.js).
+    if (window.DevMode) {
+      var dm = DevMode.last(), dd = dm ? new Date(dm) : null;
+      rows.push(['Developer Mode förlängd', dd ? dd.getDate() + '/' + (dd.getMonth() + 1) + ' ' + dd.getFullYear() : 'Inte än']);
+    }
     for (var i = 0; i < rows.length; i++) {
       var row = el('div', 'row', holder), label = el('span', '', row, rows[i][0]);
       fitValue(row, label, el('span', 'value', row, info ? rows[i][1] || tr('Unavailable') : '…'));
