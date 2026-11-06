@@ -318,11 +318,38 @@ var IPTV = (function () {
     return null;
   }
 
+  // MARK: - The IPTV app (iptv/ in the repo): opened with the link, and the match to play
+
+  var APP_ID = 'FreeMyIPTV.IPTV';
+
+  function appInstalled() {
+    try { return !!(window.tizen && tizen.application.getAppInfo(APP_ID)); } catch (e) { return false; }
+  }
+
+  /** Opens the IPTV app with the link (and play: {title, channels, channel_ids}); done(ok). */
+  function launchApp(play, done) {
+    try {
+      var data = [new tizen.ApplicationControlData('link', [link()])];
+      if (play) data.push(new tizen.ApplicationControlData('play', [JSON.stringify(play)]));
+      var c = new tizen.ApplicationControl('http://tizen.org/appcontrol/operation/default', null, null, null, data);
+      tizen.application.launchAppControl(c, APP_ID, function () { if (done) done(true); }, function () { if (done) done(false); });
+    } catch (e) { if (done) done(false); }
+  }
+
   /** OK on the Barça box. say(text) shows a message on the home screen when there is nothing to play. */
   function barca(data, say) {
     if (!link()) { say('Lägg in din IPTV-länk under Hemskärm → IPTV-länk.'); return; }
     var m = barcaMatch(data);
     if (!m) { say('Inga kanaler än: de dyker upp när matchen kommer in i din tablå, dagen före.'); return; }
+    // In the IPTV app when it's on the TV; else in the player here.
+    if (appInstalled()) {
+      launchApp({title: m.title, channels: m.channels, channel_ids: m.channel_ids || []}, function (ok) { if (!ok) barcaHere(m, say); });
+      return;
+    }
+    barcaHere(m, say);
+  }
+
+  function barcaHere(m, say) {
     say('Hämtar dina kanaler…');
     load(link(), function (err) {
       if (err) { say('Kunde inte läsa din IPTV-lista (' + err.message + ').'); return; }
@@ -344,6 +371,9 @@ var IPTV = (function () {
     check: function (url, done) { load(url, function (err, got) { done(err, got ? got.length : 0); }, true); },
     forget: function () { list = null; listFor = ''; try { localStorage.removeItem(CACHE); } catch (e) {} },
     barca: barca,
+    APP_ID: APP_ID,
+    appInstalled: appInstalled,
+    launchApp: launchApp,
     open: open,
     close: close
   };

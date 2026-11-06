@@ -1,0 +1,151 @@
+/*
+ * IPTV in the look of Free My TV's iOS style, dark: glass panels (no backdrop-filter: too heavy for the TV),
+ * a tinted night sky behind, white text, a gold focus ring. 1920 × 1080; only transform and opacity animate.
+ */
+@font-face { font-family: 'Inter'; src: url('../tv/fonts/InterVariable.ttf') format('truetype'); font-weight: 100 900; }
+
+html, body { margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: hidden; background: #050507; }
+body { font-family: 'Inter', 'SamsungOneUI', 'Helvetica Neue', Arial, sans-serif; color: #F5F5F7; -webkit-font-smoothing: antialiased; position: relative; }
+#bg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+  background: radial-gradient(1200px 700px at 15% -10%, rgba(0, 77, 152, 0.45), rgba(0, 0, 0, 0) 70%),
+              radial-gradient(1000px 700px at 100% 110%, rgba(165, 0, 68, 0.38), rgba(0, 0, 0, 0) 70%),
+              linear-gradient(#0B0B12, #050507); }
+
+.glass {
+  background: linear-gradient(rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.05));
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35), inset 0 1.5px 0 rgba(255, 255, 255, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+  border-radius: 34px;
+}
+
+/* MARK: - Top bar */
+#top { position: absolute; left: 64px; right: 64px; top: 36px; height: 76px; }
+#brand { position: absolute; left: 0; top: 14px; font-size: 38px; font-weight: 700; letter-spacing: -0.01em; }
+#brand .dot { display: inline-block; width: 22px; height: 22px; border-radius: 11px; margin-right: 14px; vertical-align: 1px;
+  background: linear-gradient(90deg, #004D98 50%, #A50044 50%); box-shadow: 0 0 0 2px rgba(237, 187, 0, 0.8); }
+#tabs { position: absolute; left: 230px; top: 6px; white-space: nowrap; }
+#tabs .tab { display: inline-block; margin-right: 10px; padding: 0 28px; height: 60px; line-height: 60px; border-radius: 30px;
+  font-size: 28px; font-weight: 600; color: rgba(245, 245, 247, 0.6); }
+#tabs .tab.on { color: #fff; background: rgba(255, 255, 255, 0.12); }
+#tabs .tab.focus { color: #111; background: #fff; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(237, 187, 0, 0.95); }
+#clock { position: absolute; right: 0; top: 10px; font-size: 44px; font-weight: 300; letter-spacing: -0.01em; color: rgba(255, 255, 255, 0.9); }
+
+/* MARK: - Columns and lists */
+#main { position: absolute; left: 64px; right: 64px; top: 140px; bottom: 56px; }
+.col { position: absolute; top: 0; bottom: 0; overflow: hidden; padding: 0; }
+.col .inner { position: absolute; left: 14px; right: 14px; top: 14px; bottom: 14px; }
+.row { position: absolute; left: 0; right: 0; border-radius: 22px; padding: 0 22px; overflow: hidden; white-space: nowrap; }
+.row.sel { background: rgba(255, 255, 255, 0.08); }
+.row.focus { background: #fff; color: #111; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(237, 187, 0, 0.95); }
+.row .name { font-size: 26px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+.groups .row .name, .cats .row .name, .setlist .row .name, .seasons .row .name, .eps .row .name { display: inline-block; max-width: 70%; line-height: 68px; vertical-align: top; }
+.row .n { position: absolute; right: 22px; top: 0; line-height: 68px; font-size: 22px; color: rgba(245, 245, 247, 0.5); }
+.row.focus .n { color: rgba(0, 0, 0, 0.5); }
+.lang { position: absolute; right: 74px; top: 22px; padding: 0 8px; border-radius: 8px; font-size: 15px; font-weight: 700; line-height: 24px;
+  letter-spacing: 0.04em; color: #fff; background: #6E6E73; }
+.groups .row .name, .cats .row .name { max-width: 300px; }
+.lang-es { background: #C60B1E; } .lang-en { background: #012169; } .lang-sv { background: #006AA7; color: #FECC02; }
+.empty, .hint { padding: 26px; font-size: 24px; line-height: 34px; color: rgba(245, 245, 247, 0.6); white-space: normal; }
+.loading { padding: 40px; font-size: 30px; color: rgba(245, 245, 247, 0.7); }
+.row .logo { position: absolute; left: 18px; top: 50%; width: 76px; height: 52px; margin-top: -26px; border-radius: 12px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.row .logo img { width: 100%; height: 100%; object-fit: contain; }
+.row .text { position: absolute; left: 112px; right: 56px; top: 0; bottom: 0; }
+.live .row .text .name, .favs .row .text .name { line-height: 76px; }
+.favs .row .text .name { line-height: 50px; padding-top: 4px; }
+.guide .row .text .name { padding-top: 10px; font-size: 25px; }
+.row .now, .row .next { font-size: 21px; line-height: 30px; color: rgba(245, 245, 247, 0.75); overflow: hidden; text-overflow: ellipsis; }
+.row .next { color: rgba(245, 245, 247, 0.45); }
+.row.focus .now { color: rgba(0, 0, 0, 0.7); } .row.focus .next { color: rgba(0, 0, 0, 0.45); }
+.row .star, .tile .star { position: absolute; right: 22px; top: 50%; margin-top: -16px; font-size: 26px; color: #EDBB00; }
+
+.live .groups, .guide .groups { left: 0; width: 470px; }
+.live .chans { left: 500px; width: 640px; }
+.guide .chans { left: 500px; width: 760px; }
+.live .side { left: 1170px; right: 0; padding: 34px; }
+.guide .side { left: 1290px; right: 0; padding: 34px; }
+.side .head { position: relative; height: 96px; }
+.side .logo.big { position: absolute; left: 0; top: 0; width: 132px; height: 88px; border-radius: 18px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.side .logo.big img { width: 100%; height: 100%; object-fit: contain; }
+.side .title { position: absolute; left: 156px; right: 0; top: 0; font-size: 32px; font-weight: 700; line-height: 44px; max-height: 88px; overflow: hidden; }
+.side .progs { margin-top: 26px; font-size: 24px; color: rgba(245, 245, 247, 0.65); }
+.prog { position: relative; padding: 10px 0 10px 96px; border-top: 1px solid rgba(255, 255, 255, 0.07); }
+.prog .time { position: absolute; left: 0; top: 12px; font-size: 22px; color: rgba(245, 245, 247, 0.5); }
+.prog .ptitle { font-size: 24px; line-height: 32px; color: rgba(245, 245, 247, 0.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prog.now .ptitle { font-weight: 700; color: #fff; }
+.prog.now .time { color: #EDBB00; }
+.prog .desc { margin-top: 8px; font-size: 20px; line-height: 28px; color: rgba(245, 245, 247, 0.55); max-height: 84px; overflow: hidden; }
+.progress { height: 6px; margin-top: 8px; border-radius: 3px; background: rgba(255, 255, 255, 0.15); overflow: hidden; }
+.progress .fill { height: 100%; background: #EDBB00; }
+.side .keys { position: absolute; left: 34px; bottom: 26px; font-size: 20px; color: rgba(245, 245, 247, 0.45); }
+.buttons { margin-top: 28px; }
+.button { display: inline-block; margin: 0 14px 14px 0; padding: 0 30px; height: 64px; line-height: 64px; border-radius: 32px;
+  font-size: 25px; font-weight: 600; background: rgba(255, 255, 255, 0.12); }
+.button.focus { background: #fff; color: #111; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(237, 187, 0, 0.95); }
+.side .buttons .button { display: block; margin-right: 0; }
+
+/* MARK: - Films and series */
+.vod .cats { left: 0; width: 470px; }
+.vod .posters { left: 500px; right: 0; }
+.vod .posters .inner { left: 6px; right: 0; top: 6px; bottom: 0; }
+.tile { position: absolute; width: 194px; height: 345px; }
+.tile .poster { width: 194px; height: 288px; border-radius: 18px; object-fit: cover; background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4); }
+.tile .pname { margin-top: 8px; font-size: 19px; font-weight: 600; line-height: 24px; height: 48px; overflow: hidden; color: rgba(245, 245, 247, 0.8); }
+.tile.focus .poster { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(237, 187, 0, 0.95); -webkit-transform: scale(1.05); transform: scale(1.05); }
+.tile.focus .pname { color: #fff; }
+.tile .star { top: 12px; right: 12px; margin: 0; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); }
+
+#overlay { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: none; z-index: 20; background: rgba(0, 0, 0, 0.55); }
+#overlay.on { display: block; }
+.sheet { position: absolute; left: 120px; right: 120px; top: 90px; bottom: 90px; overflow: hidden; background: #15151C; }
+.sheet .backdrop { position: absolute; left: 0; top: 0; right: 0; height: 520px; background-size: cover; background-position: center top; opacity: 0.35; }
+.sheet .backdrop:after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 300px; background: linear-gradient(rgba(21, 21, 28, 0), #15151C); }
+.sheet .dposter { position: absolute; left: 60px; top: 60px; width: 300px; height: 444px; border-radius: 22px; object-fit: cover; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
+.sheet .dinfo { position: absolute; left: 410px; right: 60px; top: 60px; bottom: 40px; }
+.dtitle { font-size: 50px; font-weight: 700; line-height: 60px; letter-spacing: -0.01em; }
+.dmeta { margin-top: 10px; font-size: 24px; color: #EDBB00; white-space: pre; }
+.dplot { margin-top: 18px; font-size: 24px; line-height: 34px; color: rgba(245, 245, 247, 0.78); max-height: 136px; overflow: hidden; }
+.episodes { position: absolute; left: 0; right: 0; top: 330px; bottom: 0; }
+.episodes .seasons { position: absolute; left: 0; width: 280px; top: 0; bottom: 0; }
+.episodes .eps { position: absolute; left: 300px; right: 0; top: 0; bottom: 0; }
+.episodes .inner { left: 0; right: 0; top: 0; bottom: 0; }
+.episodes .row .name { line-height: 56px; }
+.episodes .row .n { line-height: 56px; }
+.sheet.small { left: 360px; right: 360px; top: 300px; bottom: auto; height: 380px; padding: 50px; }
+.field { display: block; width: 100%; box-sizing: border-box; margin-top: 30px; height: 76px; padding: 0 26px; border: 0; border-radius: 22px;
+  font: inherit; font-size: 26px; color: #111; background: #fff; outline: none; box-shadow: 0 0 0 3px rgba(237, 187, 0, 0.95); }
+.sheet.small .hint { padding: 22px 0 0; }
+
+/* MARK: - Favourites, settings */
+.favs .groups { left: 0; width: 470px; }
+.favs .items { left: 500px; right: 0; }
+.settings .setlist { left: 0; width: 900px; height: 420px; bottom: auto; }
+.settings > .hint { position: absolute; left: 940px; right: 0; top: 0; }
+.setlist .row .name { line-height: 84px; max-width: 50%; }
+.setlist .row .n { line-height: 84px; max-width: 46%; overflow: hidden; text-overflow: ellipsis; }
+
+/* MARK: - Player */
+#player { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 30; background: #000; display: none; }
+#player.on { display: block; }
+#player video { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: #000; }
+#player .bar { position: absolute; left: 80px; right: 80px; bottom: 64px; padding: 26px 40px 24px; background: rgba(16, 16, 22, 0.9);
+  opacity: 0; -webkit-transition: opacity 0.4s; transition: opacity 0.4s; }
+#player .bar.on { opacity: 1; }
+#player .line { white-space: nowrap; overflow: hidden; }
+#player .logo { height: 48px; max-width: 110px; margin-right: 22px; vertical-align: -10px; object-fit: contain; }
+#player .name { font-size: 38px; font-weight: 700; }
+#player .count { margin-left: 18px; font-size: 24px; color: rgba(255, 255, 255, 0.55); }
+#player .sub { margin-top: 6px; font-size: 26px; font-weight: 600; color: #EDBB00; }
+#player .prog { padding-left: 200px; border: 0; }
+#player .prog .time { top: 12px; }
+#player .prog .title { font-size: 26px; color: rgba(255, 255, 255, 0.8); }
+#player .prog.now .title { font-weight: 700; color: #fff; }
+#player .progress { width: 600px; }
+#player .progress.big { width: auto; height: 8px; margin-top: 18px; }
+#player .times { margin-top: 10px; font-size: 24px; color: rgba(255, 255, 255, 0.75); }
+#player .status { margin-top: 10px; font-size: 24px; color: rgba(255, 255, 255, 0.9); }
+#player .keys { margin-top: 12px; font-size: 20px; color: rgba(255, 255, 255, 0.45); }
+
+#toast { position: absolute; left: 50%; bottom: 60px; z-index: 50; padding: 0 34px; height: 64px; line-height: 64px; font-size: 25px; font-weight: 600;
+  white-space: nowrap; background: rgba(30, 30, 38, 0.92); opacity: 0; -webkit-transform: translate(-50%, 20px); transform: translate(-50%, 20px);
+  -webkit-transition: opacity 0.3s, -webkit-transform 0.3s; transition: opacity 0.3s, transform 0.3s; }
+#toast.on { opacity: 1; -webkit-transform: translate(-50%, 0); transform: translate(-50%, 0); }

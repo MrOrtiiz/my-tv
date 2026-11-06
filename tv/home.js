@@ -1491,6 +1491,8 @@
 
   function launcher(id, name, params) {
     return function () {
+      // The IPTV app gets the IPTV link with it, so it's typed only once (here).
+      if (window.IPTV && id === IPTV.APP_ID && Prefs.iptv()) { IPTV.launchApp(null, function (ok) { if (!ok) TV.launch(id, null, function () {}); }); return; }
       TV.launch(id, params || null, function (ok) {
         if (!ok) toast(trf("Couldn't open {app}.", {app: name || id}));
       });
