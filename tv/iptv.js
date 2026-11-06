@@ -211,6 +211,14 @@ var IPTV = (function () {
 
   /** The ways to play a channel, tried in turn until one plays. */
   function ways(ch) {
+    if (ch.vod) {   // a film (IPTV or Plex): each address as is, an HLS one through hls.js too
+      var v = [], urls = ch.list || [ch.u];
+      for (var i = 0; i < urls.length; i++) {
+        v.push({how: 'native', url: urls[i]});
+        if (/\.m3u8(\?|$)/i.test(urls[i])) v.push({how: 'hls', url: urls[i]});
+      }
+      return v;
+    }
     var out = [], hlsUrl = /\.m3u8(\?|$)/i.test(ch.u) ? ch.u : '', tsUrl = ch.t || (hlsUrl ? '' : ch.u);
     if (hlsUrl) { out.push({how: 'native', url: hlsUrl}); out.push({how: 'hls', url: hlsUrl}); }
     if (tsUrl) { out.push({how: 'mpegts', url: tsUrl}); out.push({how: 'native', url: tsUrl}); }

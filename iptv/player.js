@@ -53,9 +53,13 @@ var Player = (function () {
 
   function ways(item) {
     var out = [];
-    if (item.kind && item.kind !== 'live') {
-      if (/\.ts(\?|$)/i.test(item.url)) out.push({how: 'mpegts', url: item.url, live: false});
-      out.push({how: 'native', url: item.url});
+    if (item.kind && item.kind !== 'live') {   // a film or an episode: its address, then any others (Plex: the file, then HLS)
+      var urls = [item.url].concat(item.alt || []);
+      for (var i = 0; i < urls.length; i++) {
+        if (/\.ts(\?|$)/i.test(urls[i])) out.push({how: 'mpegts', url: urls[i], live: false});
+        out.push({how: 'native', url: urls[i]});
+        if (/\.m3u8(\?|$)/i.test(urls[i])) out.push({how: 'hls', url: urls[i]});
+      }
       return out;
     }
     if (item.hls) { out.push({how: 'native', url: item.hls}); out.push({how: 'hls', url: item.hls}); }

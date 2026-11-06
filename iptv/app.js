@@ -7,7 +7,7 @@
  */
 var App = (function () {
   'use strict';
-  var VERSION = '1.0';
+  var VERSION = '1.1';
   var K = {left: 37, up: 38, right: 39, down: 40, ok: 13, back: 10009, chUp: 427, chDown: 428,
     play: 415, pause: 19, playPause: 10252, ff: 417, rew: 412, stop: 413};
   var TABS = [['live', 'Live'], ['guide', 'TV-guide'], ['films', 'Filmer'], ['series', 'Serier'], ['favs', 'Favoriter'], ['settings', 'Inställningar']];
@@ -706,10 +706,25 @@ var App = (function () {
     var d = appControl(), play = null;
     if (d.link && d.link !== Store.link()) { Store.link(d.link); Store.forget(); }
     try { play = d.play ? JSON.parse(d.play) : null; } catch (e) {}
+    // From Free My TV's search: a film or an episode from Plex (its addresses), played at once.
+    if (play && play.direct && play.direct.urls && play.direct.urls.length) {
+      var dp = play.direct, it = {kind: 'film', id: String(dp.id || dp.urls[0]), name: dp.title || '', poster: dp.poster || '', url: dp.urls[0], alt: dp.urls.slice(1)};
+      if (dp.from && !Store.position(it)) Store.watched(it, dp.from, 0);
+      Player.open([it], 0, {title: dp.title || '', onClose: function () { drawScreen(); }});
+      loadChannels(false, function () {});   // the lists behind it, for when Back closes the film
+      return;
+    }
     loadChannels(false, function () {
       if (Player.playing() && !play) return;
       drawScreen();
       if (loadErr) { toast(Store.link() ? 'Kunde inte läsa din IPTV-lista: ' + loadErr.message : 'Lägg in din IPTV-länk under Inställningar.', 6000); if (!Store.link()) { tabAt = 5; openTab('settings'); } return; }
+      // From Free My TV's search: a film or a series from the list, on its own page (Play, the seasons).
+      if (play && play.open && play.open.id) {
+        var o = play.open;
+        Api.use(Store.link());
+        openDetail({kind: o.kind === 'series' ? 'series' : 'film', id: String(o.id), name: o.name || '', poster: o.poster || '', url: o.url || '', year: o.year || ''});
+        return;
+      }
       if (play && play.channels) {
         var items = [];
         for (var i = 0; i < play.channels.length; i++) {

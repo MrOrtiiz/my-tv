@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0B0D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Free My TV">
+<title>Free My TV · Sök</title>
+<!--
+  The phone side of Free My TV's search (tv/search.js): opened from the QR code on the TV, which puts the TV's secret
+  topic after the #. What's said here goes to the TV through ntfy.sh (topic-tv); the TV answers with the titles it found
+  and where each one is (topic-ph), and a tap here opens it on the TV. Nothing is kept anywhere but this phone and the TV.
+-->
+<style>
+  :root { color-scheme: dark; --bg: #0B0B0D; --card: #1C1C1E; --line: rgba(255,255,255,0.1); --dim: rgba(235,235,245,0.6); --accent: #FFD60A; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; background: var(--bg); color: #fff; font: 17px/1.4 -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+    padding: max(18px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom)); }
+  h1 { font-size: 30px; margin: 6px 0 2px; letter-spacing: -0.02em; }
+  .state { font-size: 14px; color: var(--dim); }
+  .state b { color: #30D158; font-weight: 600; }
+  .state.off b { color: #FF453A; }
+  .mic { display: block; margin: 28px auto 12px; width: 132px; height: 132px; border-radius: 50%; border: 0; background: #fff; color: #0B0B0D;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5); font-size: 0; position: relative; }
+  .mic svg { width: 56px; height: 56px; }
+  .mic.on { background: #FF453A; color: #fff; animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,69,58,0.55); } 100% { box-shadow: 0 0 0 28px rgba(255,69,58,0); } }
+  .heard { text-align: center; min-height: 26px; font-size: 19px; color: var(--dim); margin-bottom: 10px; }
+  .langs { display: flex; justify-content: center; gap: 8px; margin-bottom: 18px; }
+  .langs button { border: 0; border-radius: 16px; padding: 6px 14px; font-size: 14px; font-weight: 600; background: var(--card); color: var(--dim); }
+  .langs button.on { background: #fff; color: #0B0B0D; }
+  form { display: flex; gap: 8px; }
+  input { flex: 1; min-width: 0; border: 0; border-radius: 14px; padding: 14px 16px; font-size: 17px; background: var(--card); color: #fff; outline: 0; }
+  form button, .btn { border: 0; border-radius: 14px; padding: 0 18px; font-size: 16px; font-weight: 600; background: #fff; color: #0B0B0D; }
+  .say { margin: 20px 2px 8px; font-size: 17px; color: var(--accent); min-height: 24px; }
+  .say.plain { color: var(--dim); }
+  .res { display: flex; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); }
+  .res img, .res .ph { width: 74px; height: 111px; border-radius: 10px; object-fit: cover; background: var(--card); flex: none; }
+  .res .t { font-weight: 700; font-size: 18px; }
+  .res .m { font-size: 14px; color: var(--dim); margin-bottom: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chips button { border: 0; border-radius: 15px; padding: 7px 12px; font-size: 14px; font-weight: 600; background: #2C2C2E; color: #fff; }
+  .chips button:active { background: #fff; color: #0B0B0D; }
+  .empty { text-align: center; color: var(--dim); margin-top: 40px; }
+  details { margin-top: 34px; border-top: 1px solid var(--line); padding-top: 14px; color: var(--dim); font-size: 15px; }
+  summary { font-weight: 600; color: #fff; font-size: 16px; }
+  details p { margin: 10px 0; }
+  details form { margin-top: 8px; }
+  .pair { text-align: center; margin-top: 80px; color: var(--dim); }
+  .pair h2 { color: #fff; }
+</style>
+</head>
+<body>
+<h1>Vad vill du se?</h1>
+<div class="state" id="state">Ansluter till TV:n…</div>
+
+<div id="app">
+  <button class="mic" id="mic" aria-label="Prata">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.93V21h2v-3.07A7 7 0 0 0 19 11h-2z"/></svg>
+  </button>
+  <div class="heard" id="heard">Tryck och säg en film, en serie eller vad du är sugen på</div>
+  <div class="langs" id="langs">
+    <button data-l="sv-SE">Svenska</button><button data-l="es-ES">Español</button><button data-l="en-US">English</button>
+  </div>
+  <form id="ask"><input id="q" placeholder="…eller skriv här" autocomplete="off" enterkeyhint="search"><button>Sök</button></form>
+  <div class="say plain" id="say"></div>
+  <div id="list"></div>
+
+  <details>
+    <summary>Inställningar</summary>
+    <p><b>Claude-nyckel.</b> Med en egen nyckel från console.anthropic.com förstår sökningen fria önskemål ("något roligt med Adam Sandler").
+      Nyckeln skickas direkt till TV:n och sparas bara där.</p>
+    <form id="keyform"><input id="key" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" spellcheck="false"><button>Skicka</button></form>
+    <p>Plex kopplar du på TV:n: Sök → Koppla Plex, och skriv sedan koden på plex.tv/link.</p>
+    <p>Free My TV behöver vara öppen på TV:n för att ta emot det du säger.</p>
+  </details>
+</div>
+
+<div class="pair" id="pair" hidden>
+  <h2>Inte kopplad än</h2>
+  <p>Öppna Free My TV på TV:n, välj Sök och sedan Koppla mobilen, och skanna QR-koden.</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var RELAY = (/[?&]relay=([^&#]+)/.exec(location.search) || [])[1];
+  RELAY = RELAY ? decodeURIComponent(RELAY) : 'https://ntfy.sh/';
+  var topic = (location.hash || '').replace(/^#/, '');
+  try {
+    if (/^fmtv-[A-Za-z0-9]{10,}$/.test(topic)) localStorage.setItem('fmtv.topic', topic);
+    else topic = localStorage.getItem('fmtv.topic') || '';
+  } catch (e) {}
+  var $ = function (id) { return document.getElementById(id); };
+  if (!topic) { $('app').hidden = true; $('pair').hidden = false; $('state').textContent = ''; return; }
+  if (!location.hash) history.replaceState(null, '', '#' + topic);
+
+  function send(o, nocache) {
+    return fetch(RELAY + topic + '-tv' + (nocache ? '?cache=no' : ''), {method: 'POST', body: JSON.stringify(o)})
+      .catch(function () { state('Kunde inte nå TV:n just nu', true); });
+  }
+  function state(text, bad) { var s = $('state'); s.className = 'state' + (bad ? ' off' : ''); s.innerHTML = text; }
+
+  // What the TV says back.
+  var tvSeen = false, results = [];
+  var es = new EventSource(RELAY + topic + '-ph/sse');
+  es.onopen = function () { if (!tvSeen) state('Väntar på TV:n…'); };
+  es.onerror = function () { state('Tappade kontakten, försöker igen…', true); };
+  es.onmessage = function (e) {
+    var m, o;
+    try { m = JSON.parse(e.data); o = JSON.parse(m.message); } catch (x) { return; }
+    if (!o || !o.t) return;
+    tvSeen = true;
+    state('<b>●</b> Ansluten till TV:n');
+    if (o.t === 'note') { say(o.say, false); }
+    else if (o.t === 'busy') { say(o.say || 'Letar…', false); }
+    else if (o.t === 'res') { results = o.items || []; say(o.say || (results.length ? '' : 'Hittade inget.'), true); draw(); }
+  };
+  setTimeout(function () { send({t: 'hello'}); }, 800);
+  setTimeout(function () { if (!tvSeen) state('TV:n svarar inte. Är Free My TV öppen?', true); }, 9000);
+
+  function say(text, claude) { var s = $('say'); s.textContent = text || ''; s.className = 'say' + (claude ? '' : ' plain'); }
+
+  function draw() {
+    var list = $('list');
+    list.innerHTML = '';
+    results.forEach(function (r, i) {
+      var row = document.createElement('div'); row.className = 'res';
+      var img;
+      if (r.p) { img = document.createElement('img'); img.src = 'https://image.tmdb.org/t/p/w185' + r.p; img.alt = ''; }
+      else { img = document.createElement('div'); img.className = 'ph'; }
+      row.appendChild(img);
+      var b = document.createElement('div');
+      var t = document.createElement('div'); t.className = 't'; t.textContent = r.n; b.appendChild(t);
+      var m = document.createElement('div'); m.className = 'm'; m.textContent = (r.y || '') + (r.k === 'tv' ? ' · Serie' : ' · Film'); b.appendChild(m);
+      var chips = document.createElement('div'); chips.className = 'chips';
+      (r.s || []).forEach(function (label, j) {
+        var c = document.createElement('button'); c.textContent = label;
+        c.onclick = function () { send({t: 'open', r: i, s: j}); say('Öppnar ' + label.split(' · ')[0] + ' på TV:n…', false); };
+        chips.appendChild(c);
+      });
+      if (!(r.s || []).length) { var w = document.createElement('div'); w.className = 'm'; w.textContent = 'Letar var den finns…'; chips.appendChild(w); }
+      b.appendChild(chips);
+      row.appendChild(b);
+      list.appendChild(row);
+    });
+  }
+
+  function ask(text) {
+    text = (text || '').trim();
+    if (!text) return;
+    results = []; draw();
+    say('Skickar till TV:n…', false);
+    send({t: 'ask', q: text});
+  }
+  $('ask').onsubmit = function (e) { e.preventDefault(); var q = $('q'); ask(q.value); q.blur(); };
+  $('keyform').onsubmit = function (e) {
+    e.preventDefault();
+    var k = $('key').value.replace(/\s+/g, '');
+    if (!/^sk-ant-/.test(k)) { say('Det ser inte ut som en Claude-nyckel.', false); return; }
+    send({t: 'key', claude: k}, true);
+    $('key').value = '';
+    say('Nyckeln skickades till TV:n…', false);
+  };
+
+  // Speech: the phone's own recognition, in the language picked (kept).
+  var lang = 'sv-SE';
+  try { lang = localStorage.getItem('fmtv.lang') || 'sv-SE'; } catch (e) {}
+  function drawLangs() { Array.prototype.forEach.call($('langs').children, function (b) { b.className = b.getAttribute('data-l') === lang ? 'on' : ''; }); }
+  Array.prototype.forEach.call($('langs').children, function (b) {
+    b.onclick = function () { lang = b.getAttribute('data-l'); try { localStorage.setItem('fmtv.lang', lang); } catch (e) {} drawLangs(); };
+  });
+  drawLangs();
+
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition, rec = null, heard = '';
+  if (!SR) {
+    $('mic').onclick = function () { $('q').focus(); };
+    $('heard').textContent = 'Använd mikrofonen på tangentbordet och tryck Sök';
+  } else {
+    $('mic').onclick = function () {
+      if (rec) { rec.stop(); return; }
+      rec = new SR();
+      rec.lang = lang; rec.interimResults = true; rec.maxAlternatives = 1; rec.continuous = false;
+      heard = '';
+      $('mic').className = 'mic on';
+      $('heard').textContent = 'Lyssnar…';
+      rec.onresult = function (e) {
+        var s = '';
+        for (var i = 0; i < e.results.length; i++) s += e.results[i][0].transcript;
+        heard = s; $('heard').textContent = '"' + s + '"';
+      };
+      rec.onerror = function (e) { $('heard').textContent = e.error === 'not-allowed' ? 'Mikrofonen är inte tillåten för sidan' : 'Hörde inget, försök igen'; };
+      rec.onend = function () { $('mic').className = 'mic'; rec = null; if (heard) { $('q').value = heard; ask(heard); } };
+      rec.start();
+    };
+  }
+})();
+</script>
+</body>
+</html>

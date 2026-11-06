@@ -325,8 +325,8 @@
   // MARK: - Focus
 
   var Z = {TOP: 'top', CARDS: 'cards', SHELF: 'shelf', DRAWER: 'drawer', APPS: 'apps', SETTINGS: 'settings', EDIT: 'edit', LANG: 'lang', CITY: 'city', KEY: 'key', ABOUT: 'about', PICK: 'pick'};
-  /** The Barça box's place in the top row (after the tabs 0-2 and the buttons 3-5): OK plays the match (iptv.js). */
-  var BARCA = 6;
+  /** The Barça box's place in the top row (after the tabs 0-2 and the buttons 3-6): OK plays the match (iptv.js). */
+  var BARCA = 7;
   function barcaShown() { return !!$('barca'); }
   var st = {pick: 0, zone: Z.SHELF, top: 0, tab: 0, card: 0, shelf: 0, drawer: 0, grid: 0, row: 0, edit: 0, lang: 0, city: 0, key: 0};
   var cards = [];
@@ -410,10 +410,10 @@
     }
     var buttons = $('buttons');
     buttons.innerHTML = '';
-    var defs = [['live_tv', tr('light|Live TV')], ['hdmi', tr('Inputs')], ['apps', tr('Shortcuts')]];
-    for (var b = 0; b < 3; b++) {
-      var r = el('button', 'round' + (b === 2 ? ' last' : ''), buttons);
-      r.style.left = (1596 + 88 * b) + 'px';
+    var defs = [['search', 'Sök'], ['live_tv', tr('light|Live TV')], ['hdmi', tr('Inputs')], ['apps', tr('Shortcuts')]];
+    for (var b = 0; b < 4; b++) {
+      var r = el('button', 'round' + (b === 3 ? ' last' : ''), buttons);
+      r.style.left = (1508 + 88 * b) + 'px';
       sym(defs[b][0], r);
       el('div', 'tip', r, defs[b][1]);
       hover(r, Z.TOP, 3 + b);
@@ -1648,8 +1648,9 @@
       case Z.TOP:
         if (st.top < 3) return;
         if (st.top === BARCA) { if (window.BarcaBox && BarcaBox.play) BarcaBox.play(toast); return; }
-        if (st.top === 3) { var live = liveTV(); if (live) launcher(live.id, tr('Live TV'))(); }
-        else if (st.top === 4) openPicker('inputs');
+        if (st.top === 3) { if (window.Search) Search.open(); }
+        else if (st.top === 4) { var live = liveTV(); if (live) launcher(live.id, tr('Live TV'))(); }
+        else if (st.top === 5) openPicker('inputs');
         else openPicker('shortcuts');
         return;
       case Z.CARDS:
@@ -1744,7 +1745,7 @@
         }
         if (below && dx < 0 && st.top === 3) break;
         if (dx) {
-          st.top = Math.max(picksShown() ? 0 : 3, Math.min(5, st.top + dx));   // without the picks the tabs can't hold focus
+          st.top = Math.max(picksShown() ? 0 : 3, Math.min(6, st.top + dx));   // without the picks the tabs can't hold focus
           if (st.top < 3) selectTab(st.top);   // as on Apple TV: focusing a tab selects it
         } else if (dy > 0) {
           if (cards.length) { st.zone = Z.CARDS; st.card = Math.min(cards.length - 1, st.top < 3 ? 0 : cards.length - 1); }
@@ -2126,7 +2127,7 @@
     checkNight();
     Data.refresh();
     applyDim();   // automatic: medium from 22:00, off again at 07:00
-    if (window.IPTV && IPTV.playing()) idleAt = Date.now();   // no screensaver over a match
+    if ((window.IPTV && IPTV.playing()) || (window.Search && Search.isOpen())) idleAt = Date.now();   // no screensaver over a match or a search
     if (!saverOn && !ambientOn && !sheetOpen() && Date.now() - idleAt > SAVER_AFTER) {
       if (saverMode() === 'clock') showAmbient(); else showSaver();
     }
@@ -2136,5 +2137,6 @@
 
   // For the browser preview and tests.
   window.FreeMyTV = {state: st, move: move, activate: activate, back: back, showSaver: showSaver, hideSaver: hideSaver, toast: toast,
+    trailer: playTrailer, poke: function () { poke(false); },
     showAmbient: showAmbient, hideAmbient: hideAmbient, applyDim: applyDim};
 })();
