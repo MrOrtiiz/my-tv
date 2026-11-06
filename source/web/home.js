@@ -542,14 +542,17 @@
   var shelfFirst = 0, tileStep = 0, tileLeft = 0;
 
   // The iOS look without picks (ios.css): the favourite apps as round icons with their names, in rows, as on an iPhone's
-  // home screen, not a row that scrolls. Up to 2 rows of up to 6; the rest are in All Apps.
-  var GRID_MAX = 12, GRID_COLS = 6, gridMode = false, gridCols = 1;
+  // home screen, not a row that scrolls. Every favourite shows: up to 8 in a row, as many rows as it takes; past 2 rows
+  // the icons get smaller so the rows fit under the weather (y 600 to 1040).
+  var GRID_COLS = 8, GRID_ROOM = 440, gridMode = false, gridCols = 1;
   function wantGrid() { return Prefs.ios() && hasClass(body, 'no-picks'); }
-  function gridCount() { return Math.min(shelf.length, GRID_MAX); }
+  function gridCount() { return shelf.length; }
 
   function renderGrid() {
-    var n = gridCount(), rows = Math.max(1, Math.ceil(n / GRID_COLS)), d = 104, cell = 176, rowH = 168;
+    var n = gridCount(), rows = Math.max(1, Math.ceil(n / GRID_COLS));
     if (n > 3 && rows < 2) rows = 2;   // rows, not one long line
+    var k = Math.min(1, GRID_ROOM / (rows * 168)), d = Math.round(104 * k), cell = Math.round(176 * Math.max(k, 0.85)), rowH = Math.round(168 * k);
+    setClass(body, 'grid-dense', k < 1);
     gridCols = Math.max(1, Math.ceil(n / rows));
     $('platter').style.display = 'none';
     var tiles = $('tiles');

@@ -250,3 +250,7 @@ body:not(.no-picks) #barca .crest { width: 34px; height: 34px; margin: 0; }
 
 /* The drawer's focused key stays white, over the glass (the glass rule above would hide it). */
 .ios .key.focus, .ios.night .key.focus { background: #F5F5F7; color: #1C1C1E; }
+
+/* More than two rows of favourites (home.js renderGrid): smaller icons, so smaller names. */
+.ios.grid-dense .tile.circ { border-radius: 21px; }
+.ios.grid-dense .tile.circ::before { font-size: 16px; line-height: 20px; margin-top: 7px; left: -30px; right: -30px; }
