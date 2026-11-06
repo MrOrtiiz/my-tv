@@ -74,7 +74,7 @@ var Prefs = (function () {
     /** The Barça box: FC Barcelona's coming matches on your IPTV channels (barca.js). */
     barca: function () { return pick('barca', true) !== false; },
     /** The picks on the home screen (Home Settings → Film picks); off, the clock and the boxes take their place. */
-    picksOn: function () { return pick('picksOn', true) !== false; },
+    picksOn: function () { return pick('picksOn', CONFIG.picksOn !== false) !== false; },
     /** The iOS look (ios.css): liquid glass, the lock screen's clock (on unless turned off). */
     ios: function () { return pick('ios', true) !== false; },
     /** The Swedish calendar's holidays and fun days by the date, with their animations (festive.js). */
@@ -86,7 +86,7 @@ var Prefs = (function () {
     /** Dimming over the picture, for a dark room: 'off', 'low', 'medium', 'high' or 'auto' (medium at night). */
     dim: function () { return pick('dim', 'off'); },
     /** The weather card's forecast: 'hours' (the next 6 hours) or 'days' (the next 5 days). */
-    forecast: function () { return pick('forecast', 'hours') === 'days' ? 'days' : 'hours'; },
+    forecast: function () { return pick('forecast', CONFIG.forecast || 'hours') === 'days' ? 'days' : 'hours'; },
     quotes: function () { return pick('quotes', CONFIG.showCrypto !== false); },
     coin: function (i) { var c = pick('coins', null); return c ? c[i] !== false : true; },
     /** Picks per tab: 3 (as it was) up to 6. */
