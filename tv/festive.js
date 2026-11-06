@@ -45,7 +45,9 @@ var Festive = (function () {
     fixed(4, 30, 'Valborgsmässoafton', false, 'valborg');
     fixed(5, 1, 'Första maj', true, 'sparkle', 'red');
     fixed(6, 6, 'Sveriges nationaldag', true, 'flags');
+    fixed(7, 20, 'Colombias nationaldag', false, 'confetti', 'colombia');
     fixed(10, 4, 'Kanelbullens dag', false, 'sparkle', 'warm');
+    fixed(10, 12, 'Spaniens nationaldag', false, 'confetti', 'spain');
     fixed(10, 24, 'FN-dagen', false, 'sparkle', 'sky');
     fixed(10, 31, 'Halloween', false, 'halloween');
     fixed(11, 6, 'Gustav Adolfsdagen', false, 'sparkle', 'warm');
@@ -177,6 +179,8 @@ var Festive = (function () {
     valborg: ['255,140,40', '255,69,58', '255,120,30,0.04', '255,90,20,0.24'],
     flags: ['254,204,2', '0,106,167', '0,106,167,0.2', '254,204,2,0.12'],
     sami: ['218,41,28', '0,122,201', '0,122,201,0.14', '255,206,0,0.1'],
+    spain: ['198,11,30', '255,196,0', '198,11,30,0.12', '255,196,0,0.14'],
+    colombia: ['252,209,22', '0,56,147', '0,56,147,0.12', '206,17,38,0.12'],
     halloween: ['255,140,0', '160,80,255', '120,40,180,0.16', '255,110,0,0.2'],
     neon: ['255,60,180', '0,230,255', '120,0,160,0.2', '255,60,180,0.16'],
     heroes: ['170,90,255', '255,200,80', '90,40,200,0.2', '255,180,60,0.1'],
@@ -228,6 +232,13 @@ var Festive = (function () {
     g.fillRect(x - r, y - r, r * 2, r * 2);
   }
 
+  // Flag colors for national-day confetti (repeats weight the bigger stripes).
+  var FLAG = {
+    sami: ['#DA291C', '#007AC9', '#00A651', '#FFCE00'],
+    spain: ['#C60B1E', '#FFC400', '#FFC400'],
+    colombia: ['#FCD116', '#FCD116', '#003893', '#CE1126']
+  };
+
   var SETUP = {
     christmas: function () {
       for (var i = 0; i < 110; i++) parts.push({t: 'snow', x: rand(0, W), y: rand(0, H), r: rand(0.8, 2.6), v: rand(14, 40), p: rand(0, 6.3)});
@@ -255,9 +266,9 @@ var Festive = (function () {
     easter: function () { for (var i = 0; i < 40; i++) parts.push({t: 'feather', x: rand(0, W), y: rand(-H, H), v: rand(12, 26), a: rand(0, 6.3), va: rand(-1, 1), p: rand(0, 6.3), c: pick(['255,214,0', '255,90,160', '90,200,255', '120,230,120', '255,140,40', '180,110,255'])}); },
     valborg: function () { for (var i = 0; i < 90; i++) parts.push({t: 'ember', x: rand(W * 0.1, W * 0.9), y: rand(H * 0.4, H + 20), v: rand(30, 70), p: rand(0, 6.3), life: rand(0, 1)}); },
     flags: function () { for (var i = 0; i < 90; i++) parts.push({t: 'confetti', x: rand(0, W), y: rand(-H, H), v: rand(30, 60), a: rand(0, 6.3), va: rand(-4, 4), p: rand(0, 6.3), c: i % 2 ? '#FECC02' : '#006AA7'}); },
-    // Confetti in the day's colors (the Sami flag's four on the Sami National Day).
+    // Confetti in the day's colors (the flag's own on national days).
     confetti: function () {
-      var cols = theme === 'sami' ? ['#DA291C', '#007AC9', '#00A651', '#FFCE00'] : THEMES[theme] ? ['rgb(' + THEMES[theme][0] + ')', 'rgb(' + THEMES[theme][1] + ')', '#FFFFFF'] : ['#FFD60A', '#FF453A', '#0A84FF'];
+      var cols = FLAG[theme] || (THEMES[theme] ? ['rgb(' + THEMES[theme][0] + ')', 'rgb(' + THEMES[theme][1] + ')', '#FFFFFF'] : ['#FFD60A', '#FF453A', '#0A84FF']);
       for (var i = 0; i < 80; i++) parts.push({t: 'confetti', x: rand(0, W), y: rand(-H, H), v: rand(30, 60), a: rand(0, 6.3), va: rand(-4, 4), p: rand(0, 6.3), c: pick(cols)});
     },
     halloween: function () {
