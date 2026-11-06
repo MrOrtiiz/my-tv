@@ -324,14 +324,17 @@
 
   // MARK: - Focus
 
-  var Z = {TOP: 'top', CARDS: 'cards', SHELF: 'shelf', DRAWER: 'drawer', APPS: 'apps', SETTINGS: 'settings', EDIT: 'edit', LANG: 'lang', CITY: 'city', KEY: 'key', ABOUT: 'about'};
+  var Z = {TOP: 'top', CARDS: 'cards', SHELF: 'shelf', DRAWER: 'drawer', APPS: 'apps', SETTINGS: 'settings', EDIT: 'edit', LANG: 'lang', CITY: 'city', KEY: 'key', ABOUT: 'about', PICK: 'pick'};
   /** The Barça box's place in the top row (after the tabs 0-2 and the buttons 3-5): OK plays the match (iptv.js). */
   var BARCA = 6;
   function barcaShown() { return !!$('barca'); }
-  var st = {zone: Z.SHELF, top: 0, tab: 0, card: 0, shelf: 0, drawer: 0, grid: 0, row: 0, edit: 0, lang: 0, city: 0, key: 0};
+  var st = {pick: 0, zone: Z.SHELF, top: 0, tab: 0, card: 0, shelf: 0, drawer: 0, grid: 0, row: 0, edit: 0, lang: 0, city: 0, key: 0};
   var cards = [];
 
-  function sheetOpen() { return st.zone === Z.APPS || st.zone === Z.SETTINGS || st.zone === Z.EDIT || st.zone === Z.LANG || st.zone === Z.CITY || st.zone === Z.KEY || st.zone === Z.ABOUT; }
+  function sheetOpen() { return st.zone === Z.APPS || st.zone === Z.SETTINGS || st.zone === Z.EDIT || st.zone === Z.LANG || st.zone === Z.CITY || st.zone === Z.KEY || st.zone === Z.ABOUT || st.zone === Z.PICK; }
+
+  /** The iOS look with the picks on: the home screen as without them, and the picks under the favourites (scrolled to). */
+  function picksBelow() { return Prefs.ios() && picksShown(); }
 
   function updateFocus() {
     var i, list;
@@ -363,6 +366,8 @@
     focusRows($('citypick'), st.city, st.zone === Z.CITY);
     focusRows($('keypick'), st.key, st.zone === Z.KEY);
     setClass(body, 'drawer-open', st.zone === Z.DRAWER);
+    focusRows($('picker'), st.pick, st.zone === Z.PICK);
+    setClass(body, 'picks-scroll', hasClass(body, 'picks-below') && (st.zone === Z.CARDS || (st.zone === Z.TOP && st.top < 3)));
     followSoon();
   }
 
@@ -405,7 +410,7 @@
     }
     var buttons = $('buttons');
     buttons.innerHTML = '';
-    var defs = [['live_tv', tr('light|Live TV')], ['hdmi', tr('HDMI Inputs')], ['settings', tr('light|Settings')]];
+    var defs = [['live_tv', tr('light|Live TV')], ['hdmi', tr('Inputs')], ['apps', tr('Shortcuts')]];
     for (var b = 0; b < 3; b++) {
       var r = el('button', 'round' + (b === 2 ? ' last' : ''), buttons);
       r.style.left = (1596 + 88 * b) + 'px';
@@ -431,7 +436,9 @@
     var shown = Data.hasKey() && Prefs.picksOn();   // Home Settings → Film picks
     var list = shown ? Data.picks(TAB_KIND[st.tab]) : [];
     var holder = $('cards');
-    setClass(body, 'no-picks', !list.length);
+    var below = picksBelow() && list.length > 0;
+    setClass(body, 'no-picks', !list.length || below);   // with the picks below, the home screen stays as without them
+    setClass(body, 'picks-below', below);
     if (wantGrid() !== gridMode && apps.length) renderShelf();
     setClass(body, 'no-key', !shown);   // as on Android: no title or tabs that could never show anything
     if (!shown && st.zone === Z.TOP && st.top < 3) st.top = 3;
@@ -891,6 +898,58 @@
     updateFocus();
   }
 
+  // MARK: - Inputs and Shortcuts: sheets from the buttons at the top right (they were the drawer under the favourites)
+
+  var pickItems = [];
+
+  function pickerItems(kind) {
+    var out = [];
+    if (kind === 'inputs') {
+      for (var i = 0; i < inputs.length; i++) {
+        var x = inputs[i], own = OWN_INPUTS[x.key], label = own ? own[0] : x.label || tr('Live TV');
+        out.push({label: label, symbol: own ? own[1] : x.symbol, off: !x.connected, value: x.connected ? '' : 'Inte ansluten', run: launcher(x.id, label)});
+      }
+      return out;
+    }
+    out.push({label: tr('All Apps'), symbol: 'apps', run: openApps});
+    out.push({label: tr('Shelf'), symbol: 'apps', run: openShelfEdit});
+    out.push({label: tr('Home Settings'), symbol: 'settings', run: openSettings});
+    if (window.IPTV) out.push({label: 'IPTV-länk', symbol: 'live_tv', run: function () { openKey('iptv'); }});
+    if (TV.canOpenSettings) out.push({label: tr('TV Settings'), symbol: 'tv_settings', run: tvSettings});
+    out.push({label: tr('About this TV'), symbol: 'settings', run: openAbout});
+    return out;
+  }
+
+  function openPicker(kind) {
+    pickItems = pickerItems(kind);
+    var box = $('picker').firstChild;
+    box.innerHTML = '';
+    var title = el('div', 'title', box);
+    sym(kind === 'inputs' ? 'hdmi' : 'apps', title);
+    title.appendChild(document.createTextNode(kind === 'inputs' ? tr('Inputs') : tr('Shortcuts')));
+    var list = el('div', 'list', box), holder = el('div', 'rows', list);
+    list.style.height = Math.min(pickItems.length, 7) * 78 + 'px';
+    st.pick = 0;
+    for (var i = 0; i < pickItems.length; i++) {
+      var it = pickItems[i], row = el('div', 'row' + (it.off ? ' dim' : ''), holder);
+      sym(it.symbol, row);
+      row.appendChild(document.createTextNode(it.label));
+      if (it.value) el('span', 'value', row, it.value);
+      else sym('chevron_right', el('span', 'value', row));
+      hover(row, Z.PICK, i);
+      if (kind === 'inputs' && !it.off && st.pick === 0 && i > 0 && pickItems[0].off) st.pick = i;
+    }
+    el('div', 'hint', box, 'OK öppnar, Tillbaka stänger.');
+    setClass($('picker'), 'open', true);
+    st.zone = Z.PICK;
+    updateFocus();
+  }
+
+  function closePicker() {
+    setClass($('picker'), 'open', false);
+    st.zone = Z.SHELF;
+  }
+
   // MARK: - All Apps
 
   function renderApps() {
@@ -923,6 +982,7 @@
     setClass($('shelfedit'), 'open', false);
     setClass($('langpick'), 'open', false);
     setClass($('about'), 'open', false);
+    setClass($('picker'), 'open', false);
     closeField('citypick');
     closeField('keypick');
     setClass($('citypick'), 'open', false);
@@ -1542,8 +1602,8 @@
         if (st.top < 3) return;
         if (st.top === BARCA) { if (window.BarcaBox && BarcaBox.play) BarcaBox.play(toast); return; }
         if (st.top === 3) { var live = liveTV(); if (live) launcher(live.id, tr('Live TV'))(); }
-        else if (st.top === 4) { st.zone = Z.SHELF; openDrawer(); st.drawer = 1 < drawerInputs ? 1 : 0; updateFocus(); }
-        else openSettings();
+        else if (st.top === 4) openPicker('inputs');
+        else openPicker('shortcuts');
         return;
       case Z.CARDS:
         var target = pickTarget(cards[st.card]);
@@ -1563,6 +1623,9 @@
         return;
       case Z.EDIT:
         editOk();
+        return;
+      case Z.PICK:
+        if (pickItems[st.pick] && !pickItems[st.pick].off) { var run = pickItems[st.pick].run; closePicker(); run(); }
         return;
       case Z.LANG:
         closeLanguages(true);
@@ -1604,25 +1667,36 @@
           if (dy < 0 && st.shelf - gridCols >= 0) { st.shelf -= gridCols; break; }
         }
         if (dx) st.shelf = Math.max(0, Math.min(shelf.length - 1, st.shelf + dx));
-        else if (dy > 0) { openDrawer(); return; }
+        else if (dy > 0) {   // the picks, when they're below the favourites (the drawer is gone: inputs and shortcuts are up top)
+          if (cards.length && hasClass(body, 'picks-below')) { st.zone = Z.CARDS; st.card = Math.min(st.card, cards.length - 1); }
+        }
         else if (dy < 0) {
-          if (cards.length) { st.zone = Z.CARDS; st.card = nearest(cardNodes, centerX(tiles[st.shelf])); }
-          else { st.zone = Z.TOP; st.top = barcaShown() ? BARCA : picksShown() ? st.tab : 3; }
+          if (cards.length && !hasClass(body, 'picks-below')) { st.zone = Z.CARDS; st.card = nearest(cardNodes, centerX(tiles[st.shelf])); }
+          else { st.zone = Z.TOP; st.top = barcaShown() ? BARCA : picksShown() && !picksBelow() ? st.tab : 3; }
         }
         break;
       case Z.CARDS:
         if (dx) st.card = Math.max(0, Math.min(cards.length - 1, st.card + dx));
         else if (dy < 0) { st.zone = Z.TOP; st.top = st.tab; }
-        else if (shelf.length) { st.zone = Z.SHELF; st.shelf = nearest(tiles, centerX(cardNodes[st.card])); }
+        else if (shelf.length && !hasClass(body, 'picks-below')) { st.zone = Z.SHELF; st.shelf = nearest(tiles, centerX(cardNodes[st.card])); }
         break;
       case Z.TOP:
+        var below = hasClass(body, 'picks-below');
         if (st.top === BARCA) {
           if (dy < 0 || dx > 0) st.top = 3;
-          else if (dy > 0) { if (cards.length) { st.zone = Z.CARDS; st.card = 0; } else st.zone = Z.SHELF; }
+          else if (dy > 0) { if (cards.length && !below) { st.zone = Z.CARDS; st.card = 0; } else st.zone = Z.SHELF; }
           break;
         }
-        if (dy > 0 && st.top >= 3 && barcaShown() && !cards.length) { st.top = BARCA; break; }
-        if (dx < 0 && st.top === 3 && barcaShown() && !picksShown()) { st.top = BARCA; break; }
+        if (dy > 0 && st.top >= 3 && barcaShown() && (!cards.length || below)) { st.top = BARCA; break; }
+        if (dy > 0 && st.top >= 3 && below) { st.zone = Z.SHELF; break; }
+        if (dx < 0 && st.top === 3 && barcaShown() && (!picksShown() || below)) { st.top = BARCA; break; }
+        if (below && st.top < 3) {   // the tabs over the picks, below the favourites
+          if (dx) { st.top = Math.max(0, Math.min(2, st.top + dx)); selectTab(st.top); }
+          else if (dy > 0 && cards.length) { st.zone = Z.CARDS; st.card = Math.min(st.card, cards.length - 1); }
+          else if (dy < 0) st.zone = Z.SHELF;
+          break;
+        }
+        if (below && dx < 0 && st.top === 3) break;
         if (dx) {
           st.top = Math.max(picksShown() ? 0 : 3, Math.min(5, st.top + dx));   // without the picks the tabs can't hold focus
           if (st.top < 3) selectTab(st.top);   // as on Apple TV: focusing a tab selects it
@@ -1660,6 +1734,9 @@
       case Z.KEY:
         if (dy) st.key = Math.max(0, Math.min(keyRows() - 1, st.key + dy));
         break;
+      case Z.PICK:
+        if (dy) st.pick = Math.max(0, Math.min(pickItems.length - 1, st.pick + dy));
+        break;
     }
     updateFocus();
   }
@@ -1673,6 +1750,7 @@
       updateFocus();
       return;
     }
+    if (st.zone === Z.PICK) { closePicker(); st.zone = Z.TOP; updateFocus(); return; }
     if (st.zone === Z.LANG) { closeLanguages(false); return; }
     if (st.zone === Z.CITY) { closeCities(false); return; }
     if (st.zone === Z.KEY) { if (keyAsking) askRemoveKey(false); else closeKey(); return; }
@@ -1686,7 +1764,7 @@
   /** The pointer focuses what it's over (the Magic Remote, or a mouse when previewing). */
   function hover(node, zone, index) {
     node.onmouseover = function () {
-      if (saverOn || (sheetOpen() !== (zone === Z.APPS || zone === Z.SETTINGS || zone === Z.EDIT || zone === Z.LANG || zone === Z.CITY || zone === Z.KEY || zone === Z.ABOUT))) return;
+      if (saverOn || (sheetOpen() !== (zone === Z.APPS || zone === Z.SETTINGS || zone === Z.EDIT || zone === Z.LANG || zone === Z.CITY || zone === Z.KEY || zone === Z.ABOUT || zone === Z.PICK))) return;
       if (zone === Z.DRAWER && st.zone !== Z.DRAWER) return;
       if (zone !== Z.DRAWER && st.zone === Z.DRAWER && zone !== Z.SHELF) return;
       if (zone === Z.TOP && index < 3 && !picksShown()) return;   // the tabs are hidden without the picks
@@ -1702,6 +1780,7 @@
       else if (zone === Z.LANG) st.lang = index;
       else if (zone === Z.CITY) st.city = index;
       else if (zone === Z.KEY) st.key = index;
+      else if (zone === Z.PICK) st.pick = index;
       updateFocus();
     };
     node.onclick = function () { node.onmouseover(); activate(); };

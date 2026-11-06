@@ -595,7 +595,7 @@ body:not(.no-picks) #barca .none { padding: 8px 0; }
 .cell.focus .face { -webkit-transform: scale(1.08); transform: scale(1.08); box-shadow: 0 16px 34px rgba(0, 0, 0, 0.55), inset 0 0 0 2px rgba(255, 255, 255, 0.4); }
 .cell.focus .label { color: #FFF; }
 
-#settings .box, #shelfedit .box, #langpick .box, #citypick .box, #keypick .box, #about .box {
+#settings .box, #shelfedit .box, #langpick .box, #citypick .box, #keypick .box, #about .box, #picker .box {
   position: absolute;
   left: 560px;
   top: 150px;
@@ -729,3 +729,14 @@ body:not(.no-picks) #barca .none { padding: 8px 0; }
   -webkit-transform: scale(1.03); transform: scale(1.03);
 }
 #shelfedit .row.grab .value { color: #111; }
+
+/* Inputs and Shortcuts (home.js openPicker): rows with their symbol. */
+#picker .row .sym { width: 32px; height: 32px; vertical-align: -5px; margin-right: 18px; }
+#picker .row .value { color: rgba(255, 255, 255, 0.45); font-size: 24px; }
+#picker .row .value .sym { margin: 0; width: 26px; height: 26px; }
+
+/* The iOS look with the picks on: the picks and their tabs under the favourites; going down to them scrolls the page. */
+.picks-below #title { display: none; }
+.picks-below #tabs { top: 1100px; left: 54px; }
+.picks-below #cards { top: 920px; }
+.picks-scroll #home { -webkit-transform: translateY(-760px); transform: translateY(-760px); }

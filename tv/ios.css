@@ -129,14 +129,14 @@
 /* MARK: - Sheets: frosted glass, iOS switches */
 
 .ios .sheet { background: rgba(0, 0, 0, 0.42); }
-.ios #settings .box, .ios #shelfedit .box, .ios #langpick .box, .ios #citypick .box, .ios #keypick .box, .ios #about .box {
+.ios #settings .box, .ios #shelfedit .box, .ios #langpick .box, .ios #citypick .box, .ios #keypick .box, .ios #about .box, .ios #picker .box {
   border-radius: 48px;
   background: -webkit-linear-gradient(top, rgba(58, 60, 70, 0.82), rgba(28, 30, 36, 0.86));
   background: linear-gradient(rgba(58, 60, 70, 0.82), rgba(28, 30, 36, 0.86));
   box-shadow: 0 40px 90px rgba(0, 0, 0, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.28), inset 0 0 0 1.5px rgba(255, 255, 255, 0.12);
 }
 @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-  .ios #settings .box, .ios #shelfedit .box, .ios #langpick .box, .ios #citypick .box, .ios #keypick .box, .ios #about .box {
+  .ios #settings .box, .ios #shelfedit .box, .ios #langpick .box, .ios #citypick .box, .ios #keypick .box, .ios #about .box, .ios #picker .box {
     -webkit-backdrop-filter: blur(40px) saturate(1.8);
     backdrop-filter: blur(40px) saturate(1.8);
   }
