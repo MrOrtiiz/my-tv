@@ -1,5 +1,5 @@
 {
- "updated": 1793992105846,
+ "updated": 1794001981813,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -28,7 +28,7 @@
  ],
  "guide": {
   "channels": 5627,
-  "programmes": 237368,
+  "programmes": 233829,
   "barca_listings": 8,
   "until": "2026-11-07T19:20:00+01:00"
  },
@@ -36,11 +36,6 @@
   "11-06 22:30 | Koszykówka mężczyzn: Euroliga - mecz: Hapoel IBI Tel Awiw - Barca  | 450 min",
   "11-07 16:00 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
   "11-07 00:00 | Unicaja vs. Barcelona  | 120 min",
-  "11-06 20:30 | LaLiga EA Sports Blitz Highlights - Matchday 19: Barcelona vs Atletico Madrid  | 5 min",
-  "11-06 20:35 | LaLiga EA Sports Blitz Highlights - Matchday 28: Atletico Madrid vs Barcelona  | 5 min",
-  "11-06 20:40 | LaLiga EA Sports Blitz Highlights - Matchday 18: Barcelona vs Atletico Madrid  | 5 min",
-  "11-06 20:45 | LaLiga EA Sports Blitz Highlights - Matchday 29: Atletico Madrid vs Barcelona  | 5 min",
-  "11-06 20:50 | LaLiga EA Sports Blitz Highlights - Matchday 15: Barcelona vs Atletico Madrid  | 5 min",
   "11-06 20:55 | LaLiga Santander - Matchday 15: Atletico Madrid vs Barcelona  | 120 min",
   "11-07 01:00 | LaLiga HL 22/23: Barcelona v A Madrid  | 5 min",
   "11-07 02:05 | LaLiga EA Sports - Matchday 30: Atletico Madrid vs Barcelona  | 115 min",
@@ -49,7 +44,12 @@
   "11-07 10:55 | LaLiga EA Sports - Matchday 19: Barcelona vs Atletico Madrid  | 115 min",
   "11-07 12:50 | LaLiga EA Sports - Matchday 30: Atletico Madrid vs Barcelona  | 120 min",
   "11-07 18:05 | LaLiga EA Sports Blitz Highlights - Matchday 30: Atletico Madrid vs Barcelona  | 5 min",
+  "11-07 20:15 | LaLiga EA Sports Blitz Highlights - Matchday 19: Barcelona vs Atletico Madrid  | 5 min",
+  "11-07 20:20 | LaLiga EA Sports Blitz Highlights - Matchday 28: Atletico Madrid vs Barcelona  | 5 min",
+  "11-07 22:30 | LaLiga EA Sports Blitz Highlights - Matchday 18: Barcelona vs Atletico Madrid  | 5 min",
+  "11-07 22:35 | LaLiga EA Sports Blitz Highlights - Matchday 29: Atletico Madrid vs Barcelona  | 5 min",
   "11-07 18:45 | UCL HL 26/27: Barcelona v A Villa  | 5 min",
+  "11-07 22:20 | UCL HL 26/27: Barcelona v A Villa  | 5 min",
   "11-07 00:20 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 70 min",
   "11-07 09:05 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 85 min",
   "11-07 00:20 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 70 min",
