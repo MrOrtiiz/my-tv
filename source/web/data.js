@@ -414,8 +414,62 @@ var Data = (function () {
     return h >= 5 && h < 12 ? 0 : h >= 12 && h < 18 ? 1 : 2;
   }
 
+  // MARK: - Taste: what Yuri shows interest in (the trailers he plays), kept on the TV, for the picks "För dig"
+
+  function taste() { return stored('taste') || []; }
+
+  /** A pick he wanted to see (its trailer): first in the taste, the 40 latest kept. */
+  function liked(p) {
+    var t = taste(), out = [{kind: p.kind, id: p.id, title: p.title, at: Date.now()}];
+    for (var i = 0; i < t.length && out.length < 40; i++) if (!(t[i].kind === p.kind && t[i].id === p.id)) out.push(t[i]);
+    store('taste', out);
+    if (Math.floor(out.length / 2) !== Math.floor(t.length / 2)) { refreshRecs(); }   // new picks every second title
+  }
+
+  /**
+   * Picks like the ones he liked: TMDB's recommendations for his 6 latest, scored by how high they come and how recent
+   * the liked title is, the ones he already liked left out, and only what's on one of the TV's apps (the details say).
+   */
+  function forYou(done) {
+    var t = taste().slice(0, 6);
+    if (!t.length) { done([]); return; }
+    var score = {}, picksBy = {}, likedKey = {}, all = taste();
+    for (var a = 0; a < all.length; a++) likedKey[all[a].kind + ':' + all[a].id] = true;
+    var k = 0;
+    each(t, function (x, next) {
+      var weight = (t.length - k++) * 2;
+      tmdb('/' + x.kind + '/' + x.id + '/recommendations?language=' + lang(), function (e, r) {
+        for (var j = 0; !e && r && r.results && j < r.results.length && j < 12; j++) {
+          var key = x.kind + ':' + r.results[j].id;
+          if (likedKey[key]) continue;
+          if (!picksBy[key]) {
+            var tmp = [];
+            addPick(tmp, r.results[j], x.kind);
+            if (!tmp.length) continue;
+            picksBy[key] = tmp[0];
+            score[key] = 0;
+          }
+          score[key] += 12 - j + weight;
+        }
+        next();
+      });
+    }, function () {
+      var keys = [];
+      for (var key in picksBy) if (picksBy.hasOwnProperty(key)) keys.push(key);
+      keys.sort(function (x, y) { return score[y] - score[x]; });
+      var out = [], cands = [];
+      for (var i = 0; i < keys.length && i < 18; i++) cands.push(picksBy[keys[i]]);
+      each(cands, function (p, n) {
+        details(p, function (de) {
+          if (!de && p.app) { p.forYou = true; p.meta = 'För dig' + (p.meta ? ' · ' + p.meta : ''); out.push(p); }
+          n();
+        });
+      }, function () { done(out); });
+    });
+  }
+
   function sourceStamp() {
-    var s = KEY.length + ':' + KEY.slice(-6) + ':' + REGION + (Prefs.hideAnimation() ? ':no-animation' : '');
+    var s = KEY.length + ':' + KEY.slice(-6) + ':' + REGION + (Prefs.hideAnimation() ? ':no-animation' : '') + ':t' + Math.floor(taste().length / 2);
     for (var i = 0; i < SERVICES.length; i++) s += usable(SERVICES[i][1]) ? '1' : '0';
     return s;
   }
@@ -435,11 +489,19 @@ var Data = (function () {
       if ((kind === null || kind === p.kind) && (!p.detailed || (p.app && usable(p.app)))) list.push(p);
     }
     if (!list.length) return list;
-    var hour = Math.floor(Date.now() / 3600000), out = [], seen = {}, n = Prefs.cards();
-    for (var j = 0; j < list.length && out.length < n; j++) {
-      var q = list[(hour * n + j) % list.length], f = franchise(q.title);
+    // "För dig" first (two of every three cards, changing each hour), then the rest as before.
+    var mine = [], rest = [];
+    for (var m = 0; m < list.length; m++) (list[m].forYou ? mine : rest).push(list[m]);
+    var hour = Math.floor(Date.now() / 3600000), out = [], seen = {}, n = Prefs.cards(), want = mine.length ? Math.ceil(n * 2 / 3) : 0;
+    for (var a = 0; a < mine.length && out.length < want; a++) {
+      var y = mine[(hour * want + a) % mine.length], fy = franchise(y.title);
+      if (!seen[fy]) { seen[fy] = true; out.push(y); }
+    }
+    for (var j = 0; j < rest.length && out.length < n; j++) {
+      var q = rest[(hour * n + j) % rest.length], f = franchise(q.title);
       if (!seen[f]) { seen[f] = true; out.push(q); }
     }
+    for (j = 0; j < mine.length && out.length < n; j++) if (!seen[franchise(mine[j].title)]) { seen[franchise(mine[j].title)] = true; out.push(mine[j]); }
     return out;
   }
 
@@ -590,12 +652,15 @@ var Data = (function () {
           for (var j = 0; !e1 && j < r1.results.length; j++) addPick(fresh.movie, r1.results[j], 'movie');
           tmdb('/discover/tv?vote_count.gte=20&air_date.gte=' + day(-90) + '&air_date.lte=' + day(0) + common, function (e2, r2) {
             for (var k = 0; !e2 && k < r2.results.length; k++) addPick(fresh.tv, r2.results[k], 'tv');
-            var list = [], seen = {};
-            alternate(list, seen, hot.movie, hot.tv, 24);
-            alternate(list, seen, fresh.movie, fresh.tv, 24);
-            if (!list.length) { done(new Error('TMDB returned no recommendations')); return; }
-            picks = list;
-            done(null);
+            forYou(function (mine) {
+              var list = [], seen = {};
+              for (var m = 0; m < mine.length; m++) { seen[keyOf(mine[m])] = true; list.push(mine[m]); }
+              alternate(list, seen, hot.movie, hot.tv, 24 + mine.length);
+              alternate(list, seen, fresh.movie, fresh.tv, 24 + mine.length);
+              if (!list.length) { done(new Error('TMDB returned no recommendations')); return; }
+              picks = list;
+              done(null);
+            });
           });
         });
       });
@@ -685,6 +750,11 @@ var Data = (function () {
     picks: now,
     showcase: all,
     /** A pick's trailer on YouTube (its video id), Swedish first, then English: done(id or ''). Kept for the session. */
+    /** He played this pick's trailer: it counts toward "För dig". */
+    liked: liked,
+    /** What he liked, newest first: [{kind, id, title, at}]. */
+    taste: taste,
+    forgetTaste: function () { store('taste', []); refreshRecs(); },
     trailer: function (p, done) {
       var k = p.kind + ':' + p.id;
       if (trailers.hasOwnProperty(k)) { done(trailers[k]); return; }

@@ -1043,6 +1043,9 @@
     }
     rows.push({label: tr('TMDB key'), value: Prefs.tmdbKey().length >= 4 ? '•••• ' + Prefs.tmdbKey().slice(-4) : tr('Not set'), opens: true, tmdb: true,
       step: function (d) { if (d >= 0) openKey('tmdb'); }});
+    var likedN = Data.taste().length;
+    rows.push({label: 'Rensa "För dig"', value: likedN ? likedN + ' titlar' : 'Tom', opens: false,
+      step: function () { Data.forgetTaste(); toast('"För dig" börjar om från början.'); renderSettings(); }});
     var iptvLink = Prefs.iptv(), iptvHost = /^https?:\/\/([^\/:?#]+)/i.exec(iptvLink);
     rows.push({label: 'IPTV-länk', value: iptvLink ? (iptvHost ? iptvHost[1] : '••••') : tr('Not set'), opens: true, iptvRow: true,
       step: function (d) { if (d >= 0) openKey('iptv'); }});
@@ -1597,6 +1600,7 @@
   function playTrailer(p) {
     if (!p) return;
     var mine = ++trailerSeq;
+    Data.liked(p);   // what he wants to see: "För dig" learns from it
     toast('Hämtar trailern…');
     Data.trailer(p, function (video) {
       if (mine !== trailerSeq) return;
