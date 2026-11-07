@@ -43,10 +43,17 @@ var Play = (function () {
 
   function $(id) { return document.getElementById(id); }
 
-  /** The files of a core, at jsDelivr: each variant EmulatorJS may ask for, and its report. */
+  /**
+   * The files of a core, at jsDelivr: each variant EmulatorJS may ask for, and its report. The main one comes from this
+   * repo (games/cores/), repacked as a zip: the cores' own 7z archives (LZMA) were too heavy for the TV to unpack (SNES
+   * stopped at "Decompress Game Core 0%"). Same files inside, unchanged.
+   */
+  var OWN = {fceumm: 1, snes9x: 1, gambatte: 1, mgba: 1, smsplus: 1, genesis_plus_gx: 1};
   function paths(core) {
-    var p = {}, root = CORES + core + VER;
+    var p = {}, root = CORES + core + VER, ref = 'main';
+    try { ref = localStorage.getItem('spel.live') || 'main'; } catch (e) {}
     ['', '-legacy', '-thread', '-thread-legacy'].forEach(function (v) { p[core + v + '-wasm.data'] = root + core + v + '-wasm.data'; });
+    if (OWN[core]) ['', '-legacy'].forEach(function (v) { p[core + v + '-wasm.data'] = 'https://cdn.jsdelivr.net/gh/MrOrtiiz/my-tv@' + ref + '/games/cores/' + core + v + '-wasm.data'; });
     p[core + '.json'] = root + 'reports/' + core + '.json';
     return p;
   }
@@ -103,6 +110,15 @@ var Play = (function () {
     frame.contentWindow.addEventListener('keydown', inFrameKey, true);
     loading('Startar ' + g.title + '…');
     watchPad();
+    var seen = '';
+    var follow = setInterval(function () {
+      if (!frame || started) { clearInterval(follow); return; }
+      try {
+        var t = frame.contentWindow.document.querySelector('.ejs_loading_text');
+        var txt = t ? t.textContent.replace(/\s*\d+%$/, '') : '';
+        if (txt && txt !== seen) { seen = txt; log('EmulatorJS: ' + t.textContent); }
+      } catch (e) {}
+    }, 400);
     // A start that never gets going: stop it after 45 s instead of leaving a black screen.
     clearTimeout(watchdog);
     watchdog = setTimeout(function () {

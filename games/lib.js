@@ -148,8 +148,8 @@ var Library = (function () {
     {id: 'gbc', name: 'Game Boy Color', core: 'gambatte', ext: ['gbc'], words: /\bgbc\b|game ?boy ?colou?r/i, color: ['#1FA97A', '#0B5A3F']},
     {id: 'gb', name: 'Game Boy', core: 'gambatte', ext: ['gb'], words: /\bgb\b|game ?boy/i, color: ['#7E9A3A', '#3D4F15']},
     {id: 'md', name: 'Mega Drive', core: 'genesis_plus_gx', scheme: 'segaMD', ext: ['md', 'gen', 'smd'], words: /mega ?drive|genesis|\bmd\b/i, color: ['#2F80ED', '#0E3A7A']},
-    {id: 'sms', name: 'Master System', core: 'genesis_plus_gx', scheme: 'segaMS', ext: ['sms'], words: /master ?system|\bsms\b/i, color: ['#E0403A', '#5E1310']},
-    {id: 'gg', name: 'Game Gear', core: 'genesis_plus_gx', scheme: 'segaGG', ext: ['gg'], words: /game ?gear|\bgg\b/i, color: ['#3A3D46', '#121318']}
+    {id: 'sms', name: 'Master System', core: 'smsplus', scheme: 'segaMS', ext: ['sms'], words: /master ?system|\bsms\b/i, color: ['#E0403A', '#5E1310']},
+    {id: 'gg', name: 'Game Gear', core: 'smsplus', scheme: 'segaGG', ext: ['gg'], words: /game ?gear|\bgg\b/i, color: ['#3A3D46', '#121318']}
   ];
   var BY_ID = {};
   for (var i = 0; i < SYSTEMS.length; i++) BY_ID[SYSTEMS[i].id] = SYSTEMS[i];
