@@ -37,6 +37,8 @@ jobs:
         env:
           EPG_URL: ${{ secrets.EPG_URL }}
           SPORT_OUT: ${{ runner.temp }}/sport/sport.json
+          # Run by hand: also what it saw and left out on the Spanish, English and Swedish channels.
+          SPORT_DEBUG: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
         run: python3 .github/scripts/sport.py
       - name: Publish the sport
         env:

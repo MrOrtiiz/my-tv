@@ -118,6 +118,8 @@ def main():
     except Exception as e:  # never the message: it may hold the link
         print('Could not read the guide (%s).' % type(e).__name__)
         return
+    debug = os.environ.get('SPORT_DEBUG') == '1'
+    seen, dropped = {}, {}
     names, events, read = {}, {}, 0
     for _, el in ET.iterparse(src, events=('end',)):
         if el.tag == 'channel':
@@ -141,12 +143,20 @@ def main():
         if not (SPORT_CH.search(cname) or SPORT_CAT.search(cats)):
             continue
         text = ' '.join((title, sub))
+        if debug:
+            lg = language(cname, cid)
+            seen.setdefault(lg, set()).add(cname)
+        why = ''
         if NOT.search(text) or (NOT.search(cats) and not MATCH.search(text)):
-            continue
-        if not (MATCH.search(text) or EVENT.search(text)):
+            why = 'not'
+        elif not (MATCH.search(text) or EVENT.search(text)):
             # Only "Live" to go on: a sport category, and a title that isn't just the channel's name.
             if not (LIVE.search(' '.join((text, desc[:120]))) and SPORT_CAT.search(cats)) or fold(title)[:8] in fold(cname):
-                continue
+                why = 'plain'
+        if why:
+            if debug and lg in ('es', 'sv', 'en'):
+                dropped.setdefault((lg, why), []).append('%s | %s | %s | %s | %s' % (cname[:24], title[:50], sub[:30], cats[:20], desc[:50].replace('\n', ' ')))
+            continue
         if (stop - start) < timedelta(minutes=20) or (stop - start) > timedelta(hours=10):
             continue
         # A generic title with the match in its sub-title: "LaLiga" / "Real Madrid - Sevilla".
@@ -194,6 +204,15 @@ def main():
     with open(OUT, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, separators=(',', ':'))
     print('%d channels, %d programmes, %d sport broadcasts: %s' % (len(names), read, len(out), counts))
+    if debug:
+        import random
+        random.seed(1)
+        for lg, chans in sorted(seen.items()):
+            print('== %s: %d sport channels: %s' % (lg, len(chans), ', '.join(sorted(chans)[:80])))
+        for (lg, why), rows in sorted(dropped.items()):
+            print('== left out, %s, %s: %d' % (lg, why, len(rows)))
+            for r in random.sample(rows, min(40, len(rows))):
+                print('   ' + r)
 
 
 if __name__ == '__main__':
