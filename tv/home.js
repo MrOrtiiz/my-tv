@@ -1583,7 +1583,7 @@
     return {app: app, params: via ? {contentTarget: 'nuvio://tmdb/' + (p.kind === 'tv' ? 'series' : 'movie') + '/' + p.id} : null};
   }
 
-  var GAMES_ID = 'FreeMyGames.Spel';
+  var GAMES_ID = 'FreeMyGame.Spel';
   function gamesLink() { try { return localStorage.getItem('fmtv.games') || ''; } catch (e) { return ''; } }
   function launchGames(done) {
     try {
