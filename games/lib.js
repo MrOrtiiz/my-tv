@@ -143,11 +143,11 @@ var Library = (function () {
   // The consoles: EmulatorJS core, the extensions that are theirs, the words in a folder's name that mean them.
   var SYSTEMS = [
     {id: 'nes', name: 'NES', core: 'fceumm', ext: ['nes', 'unf', 'unif'], words: /\bnes\b|famicom|nintendo ?entertainment|nintendo ?8/i, color: ['#D0352B', '#7A1712']},
-    {id: 'snes', name: 'SNES', core: 'snes9x', ext: ['sfc', 'smc', 'fig', 'swc'], words: /snes|super ?nintendo|super ?famicom|super ?nes/i, color: ['#7D63F2', '#3A2A8C']},
+    {id: 'snes', name: 'SNES', off: true, core: 'snes9x', ext: ['sfc', 'smc', 'fig', 'swc'], words: /snes|super ?nintendo|super ?famicom|super ?nes/i, color: ['#7D63F2', '#3A2A8C']},
     {id: 'gba', name: 'Game Boy Advance', core: 'mgba', ext: ['gba'], words: /\bgba\b|game ?boy ?advance/i, color: ['#5E4FD6', '#2B2275']},
     {id: 'gbc', name: 'Game Boy Color', core: 'gambatte', ext: ['gbc'], words: /\bgbc\b|game ?boy ?colou?r/i, color: ['#1FA97A', '#0B5A3F']},
     {id: 'gb', name: 'Game Boy', core: 'gambatte', ext: ['gb'], words: /\bgb\b|game ?boy/i, color: ['#7E9A3A', '#3D4F15']},
-    {id: 'md', name: 'Mega Drive', core: 'genesis_plus_gx', scheme: 'segaMD', ext: ['md', 'gen', 'smd'], words: /mega ?drive|genesis|\bmd\b/i, color: ['#2F80ED', '#0E3A7A']},
+    {id: 'md', name: 'Mega Drive', off: true, core: 'genesis_plus_gx', scheme: 'segaMD', ext: ['md', 'gen', 'smd'], words: /mega ?drive|genesis|\bmd\b/i, color: ['#2F80ED', '#0E3A7A']},
     {id: 'sms', name: 'Master System', core: 'smsplus', scheme: 'segaMS', ext: ['sms'], words: /master ?system|\bsms\b/i, color: ['#E0403A', '#5E1310']},
     {id: 'gg', name: 'Game Gear', core: 'smsplus', scheme: 'segaGG', ext: ['gg'], words: /game ?gear|\bgg\b/i, color: ['#3A3D46', '#121318']}
   ];
@@ -184,7 +184,7 @@ var Library = (function () {
       var f = files[i];
       if (IMAGE.test(f.name)) continue;
       var s = systemOf(f);
-      if (!s) continue;
+      if (!s || s.off) continue;   // off: too heavy for The Frame (SNES shut the TV down, Mega Drive's core asks for 512 MB)
       var t = title(f.name);
       games.push({id: f.id, name: f.name, title: t.title, tags: t.tags, system: s.id, folder: f.folder || '', size: f.size || 0,
         modified: f.modified || 0, cover: covers[key(f.name)] || covers[key(t.title)] || ''});
@@ -193,5 +193,8 @@ var Library = (function () {
     return games;
   }
 
-  return {SYSTEMS: SYSTEMS, system: function (id) { return BY_ID[id]; }, build: build, ext: ext};
+  /** The consoles switched off, by name (for Inställningar). */
+  function off() { return SYSTEMS.filter(function (s) { return s.off; }).map(function (s) { return s.name; }); }
+
+  return {SYSTEMS: SYSTEMS, off: off, system: function (id) { return BY_ID[id]; }, build: build, ext: ext};
 })();

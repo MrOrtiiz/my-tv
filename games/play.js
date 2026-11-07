@@ -76,6 +76,7 @@ var Play = (function () {
   /** Starts a game: g (from Library), rom (Uint8Array), state (Uint8Array to continue from, or null); end() when closed. */
   function start(g, rom, state, end) {
     stop(true);
+    if (Library.system(g.system).off) { App.toast(Library.system(g.system).name + ' är avstängt: för tungt för TV:n.'); return; }
     game = g; onEnd = end; started = false; menuOn = false;
     var sys = Library.system(g.system);
     run = {game: g.title, system: sys.name, at: Date.now(), ok: false, steps: []};

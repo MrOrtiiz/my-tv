@@ -237,6 +237,7 @@ var App = (function () {
         Store.dbClear('roms', function () { Store.dbClear('covers', function () { coverUrls = {}; toast('Spelfilerna hämtas från Drive igen nästa gång. Dina sparade lägen finns kvar.'); }); });
       }});
     }
+    if (Library.off().length) el('div', 'small', c, Library.off().join(' och ') + ' är avstängda: de är för tunga för TV:n (SNES stängde av den). Deras spel visas inte. NES, Game Boy, Game Boy Color, Game Boy Advance och Master System fungerar.');
     var lr = Play.lastRun();
     if (lr) {
       el('div', 'small', c, 'Senaste start: ' + lr.game + ' (' + lr.system + ')' + (lr.ok ? ', startade.' : ', STARTADE INTE. Ta gärna en bild av det här.'));
