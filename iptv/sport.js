@@ -10,6 +10,7 @@
  * - Barça's next match also from data/barca.json (the same as Free My TV's Barça box).
  * - Without sport.json (or when it is older than 12 hours): the guide of the sport channels read here, as many of each
  *   language (at most 180 in all), so English and Swedish ones aren't crowded out by the Spanish.
+ * Preview: the marked match's first channel plays small at the bottom left after a moment on it (Player.preview).
  * OK plays the match: ▲ ▼ (or the channel keys) switch between its channels, as from the Barça box. A match more than
  * 10 minutes away gets a reminder instead.
  * Uses App.u (app.js). ES5 only.
@@ -111,6 +112,9 @@ var Sport = (function () {
     var fHost = u.el('div', 'col groups glass', main), eHost = u.el('div', 'col events glass', main);
     V = {zone: 'events', events: [], read: 0, chans: [], filter: 'all', loading: true};
     V.status = u.el('div', 'sstatus', fHost);
+    // The preview: the marked match's first channel, playing small at the bottom left (as in the TV guide).
+    V.pv = u.el('div', 'spv', fHost);
+    u.el('div', 'pvh', V.pv, 'Förhandsvisning');
     V.filters = new u.List(u.el('div', 'flist', fHost), 76, function (f, r) { u.el('div', 'name', r, f[1]); if (f[3]) u.el('span', 'n', r, String(f[3])); });
     V.list = new u.List(eHost, 112, row);
     V.list.emptyText = 'Hämtar sporten…';
@@ -288,6 +292,7 @@ var Sport = (function () {
     var at = cur ? V.events.indexOf(cur) : 0;
     V.list.emptyText = V.loading ? 'Hämtar sporten…' : !V.fromFeed && V.read < V.chans.length ? 'Läser tablån för sportkanalerna…' : 'Inget i tablån de närmaste timmarna.';
     V.list.set(V.events, at < 0 ? 0 : at);
+    later();
     status();
   }
 
@@ -317,7 +322,7 @@ var Sport = (function () {
       V.list.draw();
       return;
     }
-    Player.open(ev.channels, 0, {title: ev.title + (ev.channels.length > 1 ? '  ·  ▲ ▼ byter kanal' : '')});
+    Player.open(ev.channels, 0, {title: ev.title + (ev.channels.length > 1 ? '  ·  ▲ ▼ byter kanal' : ''), onClose: function () { later(); }});
   }
 
   function key(k, K) {
@@ -329,8 +334,8 @@ var Sport = (function () {
       focus(true);
       return;
     }
-    if (k === K.up) { if (!V.list.move(-1)) return 'tabs'; }
-    else if (k === K.down) V.list.move(1);
+    if (k === K.up) { if (!V.list.move(-1)) return 'tabs'; later(); }
+    else if (k === K.down) { V.list.move(1); later(); }
     else if (k === K.left) V.zone = 'filters';
     else if (k === K.ok && V.list.current()) { play(V.list.current()); return; }
     else if (k === K.back) return 'tabs';
@@ -344,5 +349,16 @@ var Sport = (function () {
     V.list.focus(on && V.zone === 'events');
   }
 
-  return {build: build, key: key, focus: focus, leave: function () { V = null; }};
+  // The preview starts when you stay on a match a moment, not on every step through the list.
+  var pvTimer = 0;
+  function later() {
+    clearTimeout(pvTimer);
+    pvTimer = setTimeout(function () {
+      if (!V || !document.body.contains(V.pv)) return;
+      var ev = V.list.current();
+      Player.preview(ev && ev.channels[0] || null, V.pv);
+    }, 900);
+  }
+
+  return {build: build, key: key, focus: focus, leave: function () { clearTimeout(pvTimer); Player.preview(null); V = null; }};
 })();

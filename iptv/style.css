@@ -217,7 +217,9 @@ body { font-family: 'Inter', 'SamsungOneUI', 'Helvetica Neue', Arial, sans-serif
 .sport .groups { left: 0; width: 380px; }
 .sport .events { left: 410px; right: 0; }
 .sstatus { position: absolute; left: 30px; right: 30px; bottom: 22px; font-size: 20px; line-height: 28px; color: rgba(245, 245, 247, 0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.flist { position: absolute; left: 0; right: 0; top: 0; bottom: 70px; overflow: hidden; }
+.flist { position: absolute; left: 0; right: 0; top: 0; bottom: 270px; overflow: hidden; }
+.spv { position: absolute; left: 20px; right: 20px; bottom: 62px; height: 191px; border-radius: 16px; background: rgba(0, 0, 0, 0.55); overflow: hidden; }
+.spv .pvh { position: absolute; left: 0; right: 0; top: 80px; text-align: center; font-size: 19px; color: rgba(245, 245, 247, 0.4); }
 .events .row .etime { position: absolute; left: 22px; top: 0; bottom: 0; width: 140px; display: flex; flex-direction: column; justify-content: center; font-size: 28px; line-height: 34px; font-weight: 700; color: rgba(245, 245, 247, 0.75); overflow: hidden; }
 .events .row .etime .eday { font-size: 19px; line-height: 24px; font-weight: 600; text-transform: none; opacity: 0.8; overflow: hidden; text-overflow: ellipsis; }
 .events .row .etime.live { color: #FF453A; }
