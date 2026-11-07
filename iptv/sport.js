@@ -31,7 +31,7 @@ var Sport = (function () {
   /** The sports, in the order of the groups (the ids are sport.py's); here the first that matches a programme wins. */
   var SPORTS = [
     ['f1', 'F1', /\bf1\b|formula\s*1|f[oó]rmula\s*1|formel\s*1|grand prix de f|\bf1 (gp|grand)/i],
-    ['motor', 'Motorsport', /motogp|moto\s*gp|nascar|indycar|rally|\bwrc\b|superbike|\bdtm\b|formula\s*e\b|le mans|grand prix|\bgp\b|speedway|motocross/i],
+    ['motor', 'Motorsport', /motogp|moto\s*gp|nascar|indycar|rally|\bwrc\b|\bwec\b|endurance|superbike|\bdtm\b|formula\s*e\b|le mans|porsche|carrera cup|supercup|autorace|\d+\s*(horas|hours|uur|timmar|heures|ore)\b|\bgt3?\b|\btcr\b|touring car|dakar|karting|grand prix|\bgp\b|speedway|motocross/i],
     ['basket', 'Basket', /\bnba\b|\bwnba\b|basket|baloncesto|b[aà]squet|euroleague|euroliga|\bacb\b|basketligan/i],
     ['hockey', 'Hockey', /\bnhl\b|hockey|\bshl\b|\bkhl\b|hockeyallsvenskan/i],
     ['tennis', 'Tennis', /tennis|tenis|\batp\b|\bwta\b|wimbledon|roland garros|us open|australian open|davis cup/i],
@@ -233,7 +233,15 @@ var Sport = (function () {
       ev.channels.sort(function (a, b) { return Lang.rank(a.name, a.epg) - Lang.rank(b.name, b.epg); });
       ev.live = ev.start <= now && now < ev.stop;
       if (!ev.sport) ev.sport = sportOf(ev);
-      ev.fav = favOf(ev.title);
+      // A favourite is a football match of the team ("Porsche Cup … in Barcelona" or "6 Horas de Barcelona" isn't), and
+      // Barça's only when barca.json has a match then: any other Barça match today is a replay.
+      ev.fav = ev.sport === 'football' && MATCH.test(ev.title) ? favOf(ev.title) : '';
+      if (ev.fav === 'Barça' && !ev.next && barca && barca.matches) {
+        var real = false;
+        barca.matches.forEach(function (m) { if (Math.abs(m.start - ev.start) < 90 * 60000) real = true; });
+        if (!real) { ev.fav = ''; ev.replay = true; }
+      }
+      ev.barca = ev.fav === 'Barça';
       // On a Spanish, English or Swedish channel (0), or only in other languages (1).
       ev.other = ev.channels.length && Lang.rank(ev.channels[0].name, ev.channels[0].epg) >= 3 ? 1 : 0;
     });
@@ -274,10 +282,13 @@ var Sport = (function () {
     var u = U(), now = Date.now();
     if (ev.barca) r.className += ' barca';
     else if (ev.fav) r.className += ' fav';
-    var time = u.el('div', 'etime' + (ev.live ? ' live' : ''), r, ev.live ? 'NU' : u.hm(ev.start));
-    if (!ev.live && new Date(ev.start).getDate() !== new Date().getDate()) time.textContent = (ev.start - now > 2 * 86400000 ? new Date(ev.start).toLocaleDateString('sv-SE', {weekday: 'short', day: 'numeric', month: 'short'}) + ' ' : 'imorgon ') + u.hm(ev.start);
+    // The time on its own line, the day (imorgon, lör 8 nov) small above it: nothing runs into the title.
+    var time = u.el('div', 'etime' + (ev.live ? ' live' : ''), r);
+    if (!ev.live && new Date(ev.start).getDate() !== new Date().getDate()) u.el('div', 'eday', time, ev.start - now > 2 * 86400000 ? new Date(ev.start).toLocaleDateString('sv-SE', {weekday: 'short', day: 'numeric', month: 'short'}) : 'imorgon');
+    u.el('div', 'ehm', time, ev.live ? 'NU' : u.hm(ev.start));
     var t = u.el('div', 'text', r);
     u.el('div', 'name', t, (ev.fav ? '★  ' : '') + ev.title);
+    if (ev.replay && ev.desc.indexOf('Repris') !== 0) ev.desc = 'Repris' + (ev.desc ? ' · ' + ev.desc : '');
     var names = ev.channels.slice(0, 3).map(function (c) { var tag = Lang.tag(c.name, c.epg); return (tag ? tag + ' ' : '') + c.name.replace(/^\s*[A-Z]{2,3}\s*[:|\-]\s*|^\|[A-Z]{2,3}\|\s*/, ''); });
     var sub = [ev.desc, names.length ? names.join(' · ') + (ev.channels.length > 3 ? ' +' + (ev.channels.length - 3) : '') : (ev.next ? 'Kanalerna kommer dagen före matchen' : '')].filter(function (x) { return x; }).join('   ·   ');
     u.el('div', 'now', t, sub);

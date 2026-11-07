@@ -43,6 +43,8 @@ NOT = re.compile(r'highlight|höjdpunkt|sammandrag|magasin|magazine|revista|repr
                  r'this week|learning center|the cut\b|\bhl\b|\breview\b|reaction|the week|weekly|round-?up|'
                  r'tactics|\bgoals\b|\bgoles\b|\bmål\b|pr[oó]ximo partido|next match|\bprevio\b|\bfilm\b|confidential|'
                  r'revelado|behind the|all access|on the fly|parc ferm[eé]|\bvlog\b', re.I)
+# "Herhaling van …", "Repetición: …": a replay told only by its description's first word.
+REPLAY_DESC = re.compile(r'\s*(herhaling|repetici[oó]n|repris|replay|reprise|wiederholung|powt[oó]rka|opakov[aá]n[ií]|reprise)\b', re.I)
 MATCH = re.compile(r'\S\s+(?:vs\.?|v\.?|–|—|-|x)\s+\S', re.I)
 EVENT = re.compile(r'grand prix|\bgp\b|formula|f[oó]rmula|formel|\bf1\b|motogp|nascar|indycar|rally|ufc|boxing|boxeo|'
                    r'boxning|\bmma\b|\bwwe\b|tour de|giro|vuelta|\batp\b|\bwta\b|wimbledon|roland|open\b|masters|golf|'
@@ -63,7 +65,8 @@ LIVE = re.compile(r'\blive\b|\bdirekt\b|\ben vivo\b|\ben directo\b|\bdirecto\b|\
 SPORTS = [
     ('f1', re.compile(r'\bf1\b|formula\s*1|f[oó]rmula\s*1|formel\s*1', re.I)),
     ('motor', re.compile(r'motogp|moto\s*gp|nascar|indycar|rally|\bwrc\b|superbike|\bdtm\b|formula\s*e\b|le mans|motorsport|'
-                         r'grand prix|\bgp\b|speedway|motocross|supercars', re.I)),
+                         r'grand prix|\bgp\b|speedway|motocross|supercars|\bwec\b|endurance|porsche|carrera cup|supercup|autorace|'
+                         r'\d+\s*(?:horas|hours|uur|timmar|heures|ore)\b|\bgt3?\b|\btcr\b|touring car|dakar|karting', re.I)),
     ('basket', re.compile(r'\bnba\b|\bwnba\b|basket|baloncesto|b[aà]squet|euroleague|euroliga|\bacb\b|basketligan', re.I)),
     ('hockey', re.compile(r'\bnhl\b|hockey|\bshl\b|\bkhl\b|hockeyallsvenskan', re.I)),
     ('tennis', re.compile(r'tennis|tenis|\batp\b|\bwta\b|wimbledon|roland garros|us open|australian open|davis cup|billie jean', re.I)),
@@ -250,7 +253,7 @@ def main():
             lg = language(cname, cid)
             seen.setdefault(lg, set()).add(cname)
         why = ''
-        if NOT.search(text) or (NOT.search(cats) and not MATCH.search(text)):
+        if NOT.search(text) or (NOT.search(cats) and not MATCH.search(text)) or REPLAY_DESC.match(desc):
             why = 'not'
         elif not (MATCH.search(text) or EVENT.search(text)):
             # A competition's block ("LaLiga EA Sports", "Fotboll: Tyska Bundesliga") as long as a match, or "Live" with
