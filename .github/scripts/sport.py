@@ -41,7 +41,8 @@ NOT = re.compile(r'highlight|höjdpunkt|sammandrag|magasin|magazine|revista|repr
                  r'\bmagacín|\bshow\b|\bkick ?off show|warm[- ]?up|vorbericht|diferido|delayed|build[- ]?up|welcome to|overtime|'
                  r'pre-?game|post-?game|hoogtepunten|samenvatting|antevis[aã]o|resumo|zusammenfassung|skr[oó]t|sestřih|'
                  r'this week|learning center|the cut\b|\bhl\b|\breview\b|reaction|the week|weekly|round-?up|'
-                 r'tactics|\bgoals\b|\bgoles\b|\bmål\b', re.I)
+                 r'tactics|\bgoals\b|\bgoles\b|\bmål\b|pr[oó]ximo partido|next match|\bprevio\b|\bfilm\b|confidential|'
+                 r'revelado|behind the|all access|on the fly|parc ferm[eé]|\bvlog\b', re.I)
 MATCH = re.compile(r'\S\s+(?:vs\.?|v\.?|–|—|-|x)\s+\S', re.I)
 EVENT = re.compile(r'grand prix|\bgp\b|formula|f[oó]rmula|formel|\bf1\b|motogp|nascar|indycar|rally|ufc|boxing|boxeo|'
                    r'boxning|\bmma\b|\bwwe\b|tour de|giro|vuelta|\batp\b|\bwta\b|wimbledon|roland|open\b|masters|golf|'
@@ -159,6 +160,19 @@ def name_match(title, desc, start, now):
     return '%s: %s – %s' % (league, near[0][1], near[0][2])
 
 
+FILLER_SKIP = {'tv', 'hd', 'fhd', 'uhd', '4k', 'the', 'de', 'la', 'el', 'channel', 'canal'}
+
+
+def filler(title, channel):
+    """A title made of the channel's own name ("LALIGA TV HYPERMOTION 3" on Laliga Hypermotion 3, "M+ Liga de
+    Campeones 2" on Movistar Liga de Campeones 2): what the channel shows between broadcasts."""
+    own = set(re.findall(r'[a-z0-9]+', fold(channel)))
+    if 'movistar' in own:
+        own.add('m')
+    words = [w for w in re.findall(r'[a-z0-9]+', fold(title)) if w not in FILLER_SKIP]
+    return bool(words) and all(w in own for w in words)
+
+
 def sport_of(cats, title, desc, channel):
     """The sport: the guide's own category first, then the title, the description and the channel's name."""
     for text in (cats, title, desc, channel):
@@ -246,6 +260,8 @@ def main():
             live = LIVE.search(' '.join((text, desc[:120]))) and SPORT_CAT.search(cats)
             if not (block or live) or flat(title)[:8] in flat(cname) or flat(cname)[:8] in flat(title):
                 why = 'plain'
+        if not why and filler(title, cname):
+            why = 'plain'
         if why:
             if debug and lg in ('es', 'sv', 'en'):
                 dropped.setdefault((lg, why), []).append('%s | %s | %s | %s | %s' % (cname[:24], title[:50], sub[:30], cats[:20], desc[:50].replace('\n', ' ')))
