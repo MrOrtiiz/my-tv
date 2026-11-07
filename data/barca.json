@@ -1,5 +1,5 @@
 {
- "updated": 1794035831973,
+ "updated": 1794042453311,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -28,9 +28,9 @@
  ],
  "guide": {
   "channels": 5627,
-  "programmes": 203590,
-  "barca_listings": 17,
-  "until": "2026-11-08T07:00:00+01:00"
+  "programmes": 196544,
+  "barca_listings": 20,
+  "until": "2026-11-08T10:30:00+01:00"
  },
  "barca_titles_seen": [
   "11-08 00:00 | WEC - 6 Horas de Barcelona - Corrida  | 90 min",
@@ -51,12 +51,13 @@
   "11-08 01:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 03:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
+  "11-08 08:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 120 min",
   "11-08 01:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 01:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 03:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
-  "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
-  "11-08 03:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min"
+  "11-08 08:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 120 min",
+  "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min"
  ],
  "table": {
   "league": "LaLiga",
