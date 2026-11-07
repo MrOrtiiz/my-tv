@@ -5,7 +5,8 @@
  * - All of it from sport.json on the repo's branch sport-data: the GitHub job (.github/scripts/sport.py) reads the whole
  *   IPTV guide every 3 hours and keeps the sport broadcasts, in every language, each with all its channels. Here they
  *   are found in the list (by guide id, else name), in the language order Spanish, English, Swedish, others; channels in
- *   hidden or locked groups are left out (Barça and Sirius keep hidden ones; locked ones never).
+ *   hidden or locked groups are left out (Barça and Sirius keep hidden ones; locked ones never). Matches with a
+ *   Spanish, English or Swedish channel come before those only on channels in other languages.
  * - Barça's next match also from data/barca.json (the same as Free My TV's Barça box).
  * - Without sport.json (or when it is older than 12 hours): the guide of the sport channels read here, as many of each
  *   language (at most 180 in all), so English and Swedish ones aren't crowded out by the Spanish.
@@ -233,9 +234,11 @@ var Sport = (function () {
       ev.live = ev.start <= now && now < ev.stop;
       if (!ev.sport) ev.sport = sportOf(ev);
       ev.fav = favOf(ev.title);
+      // On a Spanish, English or Swedish channel (0), or only in other languages (1).
+      ev.other = ev.channels.length && Lang.rank(ev.channels[0].name, ev.channels[0].epg) >= 3 ? 1 : 0;
     });
-    // Favourites first, then what's on now, then by time.
-    list.sort(function (a, b) { return (!!b.fav - !!a.fav) || (b.live - a.live) || (a.start - b.start); });
+    // Favourites first, then what's on in Spanish, English or Swedish (now first, then by time), then the rest.
+    list.sort(function (a, b) { return (!!b.fav - !!a.fav) || (a.other - b.other) || (b.live - a.live) || (a.start - b.start); });
     V.all = list;
     // The groups: Fotboll always, the others when they have something.
     var n = {}, cats = [];

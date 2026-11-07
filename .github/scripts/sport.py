@@ -34,7 +34,10 @@ NOT = re.compile(r'highlight|höjdpunkt|sammandrag|magasin|magazine|revista|repr
                  r'klassiker|preview|previa|pre-?match|post-?match|post-?partido|optakt|studio|estudio|förhands|dokument|'
                  r'documentar|\(r\)|\brep\b|reprise|resumen|res[uú]menes|noticias|\bnews\b|nyheter|an[aá]lisis|analysis|'
                  r'tertulia|programa\b|countdown|best of|lo mejor|goles de|goals of|the debate|talk|podcast|teletienda|'
-                 r'\bmagacín|\bshow\b|\bkick ?off show|warm[- ]?up|vorbericht|diferido|delayed', re.I)
+                 r'\bmagacín|\bshow\b|\bkick ?off show|warm[- ]?up|vorbericht|diferido|delayed|build[- ]?up|welcome to|overtime|'
+                 r'pre-?game|post-?game|hoogtepunten|samenvatting|antevis[aã]o|resumo|zusammenfassung|skr[oó]t|sestřih|'
+                 r'this week|learning center|the cut\b|\bhl\b|\breview\b|reaction|the week|weekly|round-?up|'
+                 r'tactics|\bgoals\b|\bgoles\b|\bmål\b', re.I)
 MATCH = re.compile(r'\S\s+(?:vs\.?|v\.?|–|—|-|x)\s+\S', re.I)
 EVENT = re.compile(r'grand prix|\bgp\b|formula|f[oó]rmula|formel|\bf1\b|motogp|nascar|indycar|rally|ufc|boxing|boxeo|'
                    r'boxning|\bmma\b|\bwwe\b|tour de|giro|vuelta|\batp\b|\bwta\b|wimbledon|roland|open\b|masters|golf|'
@@ -54,6 +57,11 @@ SPORTS = [
     ('cycling', re.compile(r'cycling|ciclismo|cykling|tour de france|giro d|vuelta a|\buci\b|paris-roubaix', re.I)),
     ('handball', re.compile(r'handball|balonmano|handboll|\behf\b', re.I)),
     ('rugby', re.compile(r'rugby|six nations|seis naciones', re.I)),
+    ('other', re.compile(r'snooker|darts|dardos|athletics|atletismo|atletika|friidrott|marat[oó]n|marathon|swimming|'
+                         r'nataci[oó]n|simning|biathlon|skiskytte|ski jumping|alpine|alpint|längdskidor|bandy|volley|'
+                         r'voleibol|padel|p[aá]del|\bfip\b|figure skating|patinaje|konståk|artistik buz|esports|'
+                         r'baseball|b[eé]isbol|\bmlb\b|cricket|futsal|floorball|innebandy|curling|equestrian|h[aä]st|'
+                         r'\btrav\b|horse ?racing|hästsport', re.I)),
     ('football', re.compile(r'f[uú]tbol|football|soccer|fotboll|laliga|la liga|premier league|champions|europa league|'
                             r'conference league|allsvenskan|superettan|serie a|bundesliga|ligue 1|eredivisie|primeira|liga mx|'
                             r'copa|supercopa|uefa|fifa|\bfc\b|\bcf\b|\bif\b|\bfk\b|\bsk\b|united|\bcity\b|real |atl[eé]tico|'
@@ -72,17 +80,29 @@ def sport_of(cats, title, desc, channel):
 
 
 TEAM_WORDS = re.compile(r'\b(fc|cf|sc|ac|afc|cd|ud|rcd|sd|club|deportivo|calcio|if|ik|bk|fk|sk|ff|the)\b')
+SEP = re.compile(r'\s+(?:vs\.?|v\.?|–|—|-|x)\s+', re.I)
+
+
+def teams(title):
+    """The two sides of "LaLiga EA Sports - Matchday 12: Valencia vs Real Madrid (Direto)": Valencia, Real Madrid."""
+    part = re.split(r'\s*[:|]\s+', title)
+    for p in reversed(part):
+        m = SEP.split(p, maxsplit=1)
+        # "Liga Portugal 2 2026-27 - FC Felgueiras x Leixões SC": the league before the first dash, the match after.
+        while len(m) == 2 and SEP.search(m[1]):
+            m = SEP.split(m[1], maxsplit=1)
+        if len(m) == 2:
+            return m[0], re.split(r'[(\[|,]', m[1])[0]
+    return None
 
 
 def key_of(title, start):
-    """The same match on several channels: its two teams (as the guide writes them, without FC/CF…) and the half hour."""
-    m = re.split(r'\s+(?:vs\.?|v\.?|–|—|-|x)\s+', title, maxsplit=1, flags=re.I)
-    if len(m) == 2:
-        a = m[0].split(':')[-1]
-        b = re.split(r'[(\[|,]', m[1])[0]
-        teams = [re.sub(r'[^a-z0-9]', '', TEAM_WORDS.sub('', fold(t))) for t in (a, b)]
-        if all(teams):
-            return '%s|%s|%d' % (teams[0][:8], teams[1][:8], int(start.timestamp()) // 1800)
+    """The same match on several channels: its two teams (without FC, CF…) and the half hour, else the title."""
+    t = teams(title)
+    if t:
+        names = [re.sub(r'[^a-z0-9]', '', TEAM_WORDS.sub('', fold(x))) for x in t]
+        if all(names):
+            return '%s|%s|%d' % (names[0][:7], names[1][:7], int(start.timestamp()) // 1800)
     return '%s|%d' % (re.sub(r'[^a-z0-9]', '', fold(title))[:40], int(start.timestamp()) // 1800)
 
 
@@ -123,8 +143,10 @@ def main():
         text = ' '.join((title, sub))
         if NOT.search(text) or (NOT.search(cats) and not MATCH.search(text)):
             continue
-        if not (MATCH.search(text) or EVENT.search(text) or LIVE.search(' '.join((text, cats, desc[:120])))):
-            continue
+        if not (MATCH.search(text) or EVENT.search(text)):
+            # Only "Live" to go on: a sport category, and a title that isn't just the channel's name.
+            if not (LIVE.search(' '.join((text, desc[:120]))) and SPORT_CAT.search(cats)) or fold(title)[:8] in fold(cname):
+                continue
         if (stop - start) < timedelta(minutes=20) or (stop - start) > timedelta(hours=10):
             continue
         # A generic title with the match in its sub-title: "LaLiga" / "Real Madrid - Sevilla".
@@ -136,15 +158,21 @@ def main():
         sp = sport_of(cats, shown, desc[:200], cname)
         # An F1 session is the same in every language, whatever each channel calls it.
         k = 'f1|%d' % (int(start.timestamp()) // 1800) if sp == 'f1' else key_of(shown, start)
+        lang = language(cname, cid)
+        rank = LANG_ORDER.index(lang)
         ev = events.get(k)
         if ev is None:
             ev = events[k] = {'t': shown, 'd': re.split(r'[.\n]', desc)[0][:90], 's': start, 'e': stop,
-                              'sp': sp, 'c': [], 'ids': set()}
-        elif len(shown) < len(ev['t']) and MATCH.search(shown):
-            ev['t'] = shown
+                              'sp': sp, 'c': [], 'ids': set(), 'r': rank}
+        elif rank < ev['r'] or (rank == ev['r'] and len(shown) < len(ev['t']) and MATCH.search(shown)):
+            # The title (and description) as the Spanish, else English, else Swedish channel writes it.
+            ev['t'], ev['r'] = shown, rank
+            ev['d'] = re.split(r'[.\n]', desc)[0][:90] or ev['d']
+            if ev['sp'] == 'other':
+                ev['sp'] = sp
         if cid not in ev['ids']:
             ev['ids'].add(cid)
-            ev['c'].append([cname, cid, language(cname, cid)])
+            ev['c'].append([cname, cid, lang])
     # The channels once, the broadcasts by their numbers: [name, guide id, language].
     table, at, out, counts = [], {}, [], {}
     for ev in sorted(events.values(), key=lambda e: e['s']):

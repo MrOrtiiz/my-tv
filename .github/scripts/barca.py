@@ -38,6 +38,8 @@ COUNTRY_LANG = {
     'za': 'en', 'ng': 'en', 'ke': 'en', 'gh': 'en',
     'se': 'sv', 'swe': 'sv', 'sw': 'sv', 'sv': 'sv',
 }
+# Other countries' tags count too: "V Sport Live 1 NO" or "TV3 Sport DK" isn't Swedish because of its name.
+COUNTRY_LANG.update({c: 'xx' for c in 'nl pt br cz sk pl gr tr de at fr it be ch bg hu si hr rs ba mk al ro lt lv ee dk no fi ru ua by qa sa ae sg hk jp kr cn il eg ma iq ir pk'.split()})
 LANG_WORDS = [
     ('es', re.compile(r'movistar|\bm\+|dazn\s*(laliga|f1|es)|laliga\s*(tv\s*)?hypermotion|espn\s*deportes|deportes|'
                       r'\bgol\b|vamos|\btudn\b|univision|telemundo|tyc\s*sports|win\s*sports|\bcdo\b|tnt\s*sports\s*(chile|arg)|'
