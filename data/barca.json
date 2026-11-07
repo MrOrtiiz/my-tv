@@ -1,5 +1,5 @@
 {
- "updated": 1794014225079,
+ "updated": 1794024162714,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -28,15 +28,14 @@
  ],
  "guide": {
   "channels": 5627,
-  "programmes": 223443,
-  "barca_listings": 13,
-  "until": "2026-11-08T03:00:00+01:00"
+  "programmes": 216505,
+  "barca_listings": 15,
+  "until": "2026-11-08T04:30:00+01:00"
  },
  "barca_titles_seen": [
   "11-06 22:30 | Koszykówka mężczyzn: Euroliga - mecz: Hapoel IBI Tel Awiw - Barca  | 450 min",
   "11-08 00:00 | WEC - 6 Horas de Barcelona - Corrida  | 90 min",
   "11-07 16:00 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
-  "11-07 02:05 | LaLiga EA Sports - Matchday 30: Atletico Madrid vs Barcelona  | 115 min",
   "11-07 04:00 | LaLiga 14/15: Barcelona v Atlético Mad  | 120 min",
   "11-07 07:10 | LaLiga HL 23/24: Barcelona v A Madrid  | 5 min",
   "11-07 10:55 | LaLiga EA Sports - Matchday 19: Barcelona vs Atletico Madrid  | 115 min",
@@ -52,10 +51,13 @@
   "11-07 09:05 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 85 min",
   "11-08 01:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
+  "11-08 03:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 01:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 01:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
-  "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min"
+  "11-08 03:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
+  "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
+  "11-08 03:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min"
  ],
  "table": {
   "league": "LaLiga",
