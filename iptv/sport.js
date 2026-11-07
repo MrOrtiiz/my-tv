@@ -1,110 +1,193 @@
 /*
- * Sport: what's on now and the rest of the day on the sport channels, one group per sport on the left (Fotboll first,
- * then Basket, F1, Motorsport, Tennis, Hockey, Kampsport, Amerikansk fotboll, Övrig sport; only those with something on).
- * Under Fotboll the favourite teams (Barça, Sirius) come first, marked ★; every other match follows.
- * - Barça: the next match from data/barca.json in the repo (the same file as Free My TV's Barça box), with its
- *   channels found in the list, also in hidden groups (not locked ones); and every programme in the guide with Barça in
- *   its title.
- * - The rest: the guide of the sport channels (groups or channels named sport, deportes, LaLiga, DAZN, Sky Sports, ESPN,
- *   TV4 Sport…; Spanish, English and Swedish first, at most 160), read a few at a time. Programmes that look like a
- *   match ("A – B", "A vs B") or a race or a fight; the same match on several channels is one row, its channels in the
- *   language order. Replays, highlights and studio shows are left out.
- * OK plays the match: ▲ ▼ (or the channel keys) switch between its channels, as from the Barça box.
+ * Sport: every match and sports event of the next 24 hours on your channels, one group per sport on the left (Fotboll
+ * first, then Basket, F1, Motorsport, Tennis, Hockey, Kampsport, Amerikansk fotboll, Golf, Cykling, Handboll, Rugby,
+ * Övrig sport; only those with something on). Under Fotboll the favourite teams (Barça, Sirius) come first, marked ★.
+ * - All of it from sport.json on the repo's branch sport-data: the GitHub job (.github/scripts/sport.py) reads the whole
+ *   IPTV guide every 3 hours and keeps the sport broadcasts, in every language, each with all its channels. Here they
+ *   are found in the list (by guide id, else name), in the language order Spanish, English, Swedish, others; channels in
+ *   hidden or locked groups are left out (Barça and Sirius keep hidden ones; locked ones never).
+ * - Barça's next match also from data/barca.json (the same as Free My TV's Barça box).
+ * - Without sport.json (or when it is older than 12 hours): the guide of the sport channels read here, as many of each
+ *   language (at most 180 in all), so English and Swedish ones aren't crowded out by the Spanish.
+ * OK plays the match: ▲ ▼ (or the channel keys) switch between its channels, as from the Barça box. A match more than
+ * 10 minutes away gets a reminder instead.
  * Uses App.u (app.js). ES5 only.
  */
 var Sport = (function () {
   'use strict';
   var BARCA_API = 'https://api.github.com/repos/MrOrtiiz/my-tv/contents/data/barca.json?ref=main';
-  var MAX = 160, AHEAD = 16 * 3600000;
-  var SPORT = /sport|deport|\bnba\b|basket|\bf1\b|formula|motor|eurosport|tennis|tenis|hockey|\bnhl\b|\bufc\b|fight|f[uú]tbol|football|soccer|laliga|la liga|premier|champions|dazn|espn|bein|eleven|movistar\s*(liga|deport|campeones|f[uú]tbol)|m\+\s*(liga|deport|campeones)|tnt sport|sky sport|tv4 sport|v sport|viaplay sport|c more (fotboll|sport)|arena|\btudn\b|\bgol\b|win sports|tyc|fox sports|supersport|setanta|ziggo sport|canal\+\s*sport/i;
+  var FEED = ['https://raw.githubusercontent.com/MrOrtiiz/my-tv/sport-data/sport.json',
+    'https://api.github.com/repos/MrOrtiiz/my-tv/contents/sport.json?ref=sport-data'];
+  var MAX = 180, AHEAD = 24 * 3600000, STALE = 12 * 3600000;
+  var SPORT = /sport|deport|\bnba\b|basket|\bf1\b|formula|motor|eurosport|tennis|tenis|hockey|\bnhl\b|\bufc\b|fight|golf|rugby|cycling|ciclismo|f[uú]tbol|football|soccer|fotboll|laliga|la liga|premier|champions|dazn|espn|bein|eleven|movistar\s*(liga|deport|campeones|f[uú]tbol)|m\+\s*(liga|deport|campeones)|tnt sport|sky sport|tv4 sport|v sport|viaplay|c more|arena|\btudn\b|\bgol\b|win sports|tyc|fox sports|supersport|setanta|ziggo sport|canal\+\s*sport/i;
   var MATCH = /\S\s+(vs\.?|v\.?|–|—|-)\s+\S/i;
-  var EVENT = /grand prix|\bgp\b|formula|f[oó]rmula 1|\bf1\b|motogp|ufc|boxing|boxeo|boxning|\bnba\b|\bnhl\b|\bnfl\b|tour de|giro|vuelta|atp|wta|wimbledon|roland|open\b/i;
+  var EVENT = /grand prix|\bgp\b|formula|f[oó]rmula 1|\bf1\b|motogp|ufc|boxing|boxeo|boxning|\bnba\b|\bnhl\b|\bnfl\b|tour de|giro|vuelta|atp|wta|wimbledon|roland|open\b|golf|\bpga\b|race|carrera/i;
   var NOT = /highlight|resumen|res[uú]menes|magazine|revista|noticias|news|preview|previa|post[\s-]?partido|an[aá]lisis|tertulia|programa|repetici[oó]n|replay|\(r\)|\brepris|diferido|\bclassic|cl[aá]sico hist|documental|studio|estudio|the debate|countdown|goals? of|goles de|best of|lo mejor/i;
   var FOOTBALL = /laliga|la liga|premier league|champions|europa league|conference league|allsvenskan|superettan|serie a|bundesliga|ligue 1|eredivisie|primeira|liga mx|copa|supercopa|f[uú]tbol|football|soccer|fotboll|uefa|fifa|mundial|world cup|eurocopa|\bfc\b|\bcf\b|\bif\b|\bfk\b|\bsk\b|united|\bcity\b|real |atl[eé]tico|barcelona|bar[cç]a|madrid|sevilla|valencia|betis|villarreal|athletic|osasuna|girona|liverpool|chelsea|arsenal|tottenham|newcastle|juventus|milan|inter|napoli|roma|bayern|dortmund|leverkusen|psg|marseille|ajax|psv|benfica|porto|sporting|celtic|rangers|aik|djurg[aå]rden|hammarby|malm[oö]|g[oö]teborg|elfsborg|h[aä]cken|boca|river|am[eé]rica|chivas|tigres|monterrey/i;
   var BARCA = /bar[cç]a|barcelona/i;
   /** The favourite teams: first under their sport, marked ★ (Barça also has its own colours). */
   var FAVS = [['Barça', BARCA], ['Sirius', /\bsirius\b/i]];
-  /** The sports, in the order of the groups; the first that matches a programme (title, description, channel) wins. */
+  /** The sports, in the order of the groups (the ids are sport.py's); here the first that matches a programme wins. */
   var SPORTS = [
     ['f1', 'F1', /\bf1\b|formula\s*1|f[oó]rmula\s*1|formel\s*1|grand prix de f|\bf1 (gp|grand)/i],
-    ['motor', 'Motorsport', /motogp|moto\s*gp|nascar|indycar|rally|\bwrc\b|superbike|\bdtm\b|formula\s*e\b|le mans|grand prix|\bgp\b/i],
-    ['basket', 'Basket', /\bnba\b|\bwnba\b|basket|baloncesto|euroleague|euroliga|\bacb\b|ncaa.*basket|basketligan/i],
+    ['motor', 'Motorsport', /motogp|moto\s*gp|nascar|indycar|rally|\bwrc\b|superbike|\bdtm\b|formula\s*e\b|le mans|grand prix|\bgp\b|speedway|motocross/i],
+    ['basket', 'Basket', /\bnba\b|\bwnba\b|basket|baloncesto|b[aà]squet|euroleague|euroliga|\bacb\b|basketligan/i],
     ['hockey', 'Hockey', /\bnhl\b|hockey|\bshl\b|\bkhl\b|hockeyallsvenskan/i],
     ['tennis', 'Tennis', /tennis|tenis|\batp\b|\bwta\b|wimbledon|roland garros|us open|australian open|davis cup/i],
     ['fight', 'Kampsport', /\bufc\b|\bmma\b|boxing|boxeo|boxning|\bwwe\b|kickbox|fight night/i],
-    ['nfl', 'Amerikansk fotboll', /\bnfl\b|super bowl|american football|f[uú]tbol americano/i],
+    ['nfl', 'Amerikansk fotboll', /\bnfl\b|super bowl|american football|f[uú]tbol americano|college football/i],
+    ['golf', 'Golf', /\bgolf|\bpga\b|dp world tour|ryder cup|\blpga\b/i],
+    ['cycling', 'Cykling', /cycling|ciclismo|cykling|tour de france|giro d|vuelta a|\buci\b/i],
+    ['handball', 'Handboll', /handball|balonmano|handboll|\behf\b/i],
+    ['rugby', 'Rugby', /rugby|six nations|seis naciones/i],
     ['football', 'Fotboll', null],
     ['other', 'Övrig sport', null]
   ];
+  var FOOTBALL_AT = 11;
 
-  var V = null, focused = false, barca = null, barcaAt = 0;
+  var V = null, focused = false, barca = null, barcaAt = 0, feed = null, feedAt = 0, feedTried = 0;
 
   function U() { return App.u; }
   function clean(t) { return String(t || '').replace(/^\s*(live|en vivo|en directo|directo|direkt)\s*[:\-–|]\s*|^\s*\((d|en vivo|directo|live)\)\s*/i, '').replace(/\s*\((en )?(vivo|directo|live)\)\s*/ig, ' ').replace(/\s+/g, ' ').trim(); }
   function nkey(t) { return clean(t).toLowerCase().replace(/[^a-z0-9]+/g, ''); }
+  function favOf(t) { for (var f = 0; f < FAVS.length; f++) if (FAVS[f][1].test(t)) return FAVS[f][0]; return ''; }
 
-  /** The sport channels: open groups (not hidden or locked) or channels named like sport, languages in Yuri's order. */
-  function sportChannels() {
-    var u = U(), out = [];
-    u.shown().forEach(function (g) {
-      if (Lock.locked(g)) return;
-      var all = u.channelsOf(g), byGroup = SPORT.test(g.name);
-      for (var i = 0; i < all.length; i++) if (byGroup || SPORT.test(all[i].name)) out.push({c: all[i], r: Lang.rank(g.name) * 10 + Lang.rank(all[i].name, all[i].epg)});
-    });
-    out.sort(function (a, b) { return a.r - b.r; });
-    return out.slice(0, MAX).map(function (x) { return x.c; });
+  function get(url, done) {
+    var x = new XMLHttpRequest();
+    try { x.open('GET', url, true); if (url.indexOf('api.github.com') >= 0) x.setRequestHeader('Accept', 'application/vnd.github.raw+json'); } catch (e) { done(null); return; }
+    x.timeout = 20000;
+    x.onreadystatechange = function () {
+      if (x.readyState !== 4) return;
+      var d = null;
+      try { if (x.status === 200) d = JSON.parse(x.responseText); } catch (e) {}
+      done(d);
+    };
+    x.send();
   }
 
   function loadBarca(done) {
     if (barca && Date.now() - barcaAt < 30 * 60000) { done(); return; }
-    var x = new XMLHttpRequest();
-    try { x.open('GET', BARCA_API, true); x.setRequestHeader('Accept', 'application/vnd.github.raw+json'); } catch (e) { done(); return; }
-    x.timeout = 15000;
-    x.onreadystatechange = function () {
-      if (x.readyState !== 4) return;
-      try { var d = JSON.parse(x.responseText); if (d && d.matches) { barca = d; barcaAt = Date.now(); } } catch (e) {}
-      done();
-    };
-    x.send();
+    get(BARCA_API, function (d) { if (d && d.matches) { barca = d; barcaAt = Date.now(); } done(); });
+  }
+
+  /** sport.json: the sport broadcasts of the whole guide (kept 15 minutes; tried again after 2 if it failed). */
+  function loadFeed(done) {
+    if (feed && Date.now() - feedAt < 15 * 60000) { done(); return; }
+    if (!feed && Date.now() - feedTried < 2 * 60000) { done(); return; }
+    feedTried = Date.now();
+    (function next(i) {
+      if (i >= FEED.length) { done(); return; }
+      get(FEED[i] + (i === 0 ? '?t=' + Math.floor(Date.now() / 300000) : ''), function (d) {
+        if (d && d.ev && d.ch) { feed = d; feedAt = Date.now(); done(); } else next(i + 1);
+      });
+    })(0);
+  }
+  function feedOk() { return !!(feed && Date.now() - feed.updated < STALE); }
+
+  /** The sport channels for the guide read here: from open groups, as many of each language, at most MAX. */
+  function sportChannels() {
+    var u = U(), by = {es: [], en: [], sv: [], xx: []}, out = [];
+    u.shown().forEach(function (g) {
+      if (Lock.locked(g)) return;
+      var all = u.channelsOf(g), byGroup = SPORT.test(g.name);
+      for (var i = 0; i < all.length; i++) if (byGroup || SPORT.test(all[i].name)) {
+        var l = Lang.of ? Lang.of(g.name) : 'xx';
+        if (l === 'xx' && Lang.of) l = Lang.of(all[i].name, all[i].epg);
+        (by[l] || by.xx).push(all[i]);
+      }
+    });
+    for (var n = 0; out.length < MAX; n++) {
+      var any = false;
+      ['es', 'en', 'sv', 'xx'].forEach(function (l) { if (by[l][n] && out.length < MAX) { out.push(by[l][n]); any = true; } });
+      if (!any) break;
+    }
+    return out;
   }
 
   function build(main) {
     var u = U();
     main.className = 'sport';
     var fHost = u.el('div', 'col groups glass', main), eHost = u.el('div', 'col events glass', main);
-    V = {zone: 'events', events: [], read: 0, chans: [], filter: 'all'};
+    V = {zone: 'events', events: [], read: 0, chans: [], filter: 'all', loading: true};
     V.status = u.el('div', 'sstatus', fHost);
     V.filters = new u.List(u.el('div', 'flist', fHost), 76, function (f, r) { u.el('div', 'name', r, f[1]); if (f[3]) u.el('span', 'n', r, String(f[3])); });
     V.list = new u.List(eHost, 112, row);
-    V.list.emptyText = 'Läser tablån för sportkanalerna…';
-    V.filters.set([SPORTS[7].concat([null, 0])], 0);
+    V.list.emptyText = 'Hämtar sporten…';
+    V.filters.set([SPORTS[FOOTBALL_AT].concat([0])], 0);
     V.list.set([]);
     focus(focused);
-    V.chans = sportChannels();
-    var mine = V;
-    loadBarca(function () { if (V === mine) collect(); });
-    var left = V.chans.length;
-    if (!left) { V.list.emptyText = 'Hittade inga sportkanaler i din lista.'; collect(); }
-    V.chans.forEach(function (ch) {
-      u.guideOf(ch, function () {
-        if (V !== mine) return;
-        V.read++;
-        if (--left === 0 || V.read % 12 === 0) collect();
-        status();
-      });
-    });
     status();
+    var mine = V, waiting = 2;
+    function ready() {
+      if (V !== mine || --waiting) return;
+      V.loading = false;
+      if (feedOk()) { collect(); return; }
+      // No sport.json: read the sport channels' guides here.
+      V.chans = sportChannels();
+      var left = V.chans.length;
+      if (!left) { V.list.emptyText = 'Hittade inga sportkanaler i din lista.'; collect(); return; }
+      V.chans.forEach(function (ch) {
+        u.guideOf(ch, function () {
+          if (V !== mine) return;
+          V.read++;
+          if (--left === 0 || V.read % 12 === 0) collect();
+          status();
+        });
+      });
+      status();
+    }
+    loadBarca(ready);
+    loadFeed(ready);
   }
 
   function status() {
     if (!V) return;
-    V.status.textContent = V.read < V.chans.length ? 'Läser tablån: ' + V.read + ' av ' + V.chans.length + ' sportkanaler' : V.chans.length + ' sportkanaler · ' + V.events.length + ' sändningar';
+    var u = U();
+    if (V.loading) V.status.textContent = 'Hämtar sporten…';
+    else if (V.fromFeed) V.status.textContent = V.all.length + ' sändningar · hela tablån ' + u.hm(feed.updated);
+    else V.status.textContent = V.read < V.chans.length ? 'Läser tablån: ' + V.read + ' av ' + V.chans.length + ' sportkanaler' : V.chans.length + ' sportkanaler · ' + V.events.length + ' sändningar';
   }
 
-  /** The matches and events of the guides read so far, Barça's first. */
-  function collect() {
-    if (!V) return;
-    var u = U(), now = Date.now(), end = now + AHEAD, byKey = {}, list = [];
+  /** sport.json's channels in the list: every stream with the guide id (FHD, HD…), else the one with the name. */
+  function feedChannels() {
+    var u = U(), all = u.channels(), byEpg = {}, out = [], i;
+    if (feed._list === all) return feed._map;
+    for (i = 0; i < all.length; i++) if (all[i].epg) (byEpg[all[i].epg] = byEpg[all[i].epg] || []).push(all[i]);
+    for (i = 0; i < feed.ch.length; i++) {
+      var f = feed.ch[i], got = (f[1] && byEpg[f[1]]) ? byEpg[f[1]].slice(0, 4) : [];
+      if (!got.length) { var c = u.find(f[0], ''); if (c) got = [c]; }
+      out.push(got);
+    }
+    feed._list = all; feed._map = out;
+    return out;
+  }
+
+  /** May the channel be used for this event: never from a locked group, from a hidden one only for a favourite. */
+  function allowed(c, fav, hidden) {
+    var g = U().groupById(c.cat);
+    if (!g) return true;
+    if (Lock.locked(g)) return false;
+    return !hidden[g.id] || !!fav;
+  }
+
+  function fromFeed(now, end) {
+    var map = feedChannels(), hidden = Store.hidden(), list = [];
+    for (var i = 0; i < feed.ev.length; i++) {
+      var e = feed.ev[i];
+      if (e.e <= now || e.s >= end) continue;
+      var t = clean(e.t), fav = favOf(t), chans = [];
+      for (var j = 0; j < e.c.length; j++) {
+        var got = map[e.c[j]] || [];
+        for (var k = 0; k < got.length; k++) if (chans.indexOf(got[k]) < 0 && allowed(got[k], fav, hidden)) chans.push(got[k]);
+      }
+      if (!chans.length) continue;
+      list.push({title: t, desc: e.d || '', start: e.s, stop: e.e, channels: chans, sport: e.sp || 'other', barca: BARCA.test(t), text: t});
+    }
+    return list;
+  }
+
+  function fromGuides(now, end) {
+    var u = U(), byKey = {}, list = [];
     V.chans.forEach(function (ch) {
       u.guideOf(ch, function (progs) {
         for (var i = 0; i < progs.length; i++) {
@@ -122,26 +205,34 @@ var Sport = (function () {
         }
       });
     });
+    return list;
+  }
+
+  /** The matches and events, Barça's first. */
+  function collect() {
+    if (!V) return;
+    var u = U(), now = Date.now(), end = now + AHEAD;
+    V.fromFeed = feedOk();
+    var list = V.fromFeed ? fromFeed(now, end) : fromGuides(now, end);
     // Barça's next match from barca.json (its channels are filled in the day before).
     var bm = barca && barca.matches && barca.matches[0];
     if (bm && bm.stop > now) {
       var found = null;
-      for (var i = 0; i < list.length; i++) if (list[i].barca && Math.abs(list[i].start - bm.start) < 3 * 3600000) found = list[i];
+      for (var i = 0; i < list.length; i++) if (list[i].barca && (!list[i].sport || list[i].sport === 'football') && Math.abs(list[i].start - bm.start) < 3 * 3600000 && (!found || list[i].channels.length > found.channels.length)) found = list[i];
       var chans = [];
       // Barça's channels even from hidden groups (hiding is for the lists, not for Barça); locked ones stay out.
       (bm.channels || []).forEach(function (n, j) {
         var c = u.find(n, (bm.channel_ids || [])[j]), g = c && u.groupById(c.cat);
         if (c && chans.indexOf(c) < 0 && !(g && Lock.locked(g))) chans.push(c);
       });
-      if (found) { found.title = bm.title; found.desc = bm.competition || found.desc; chans.forEach(function (c) { if (found.channels.indexOf(c) < 0) found.channels.push(c); }); found.next = true; }
+      if (found) { found.title = bm.title; found.desc = bm.competition || found.desc; chans.forEach(function (c) { if (found.channels.indexOf(c) < 0) found.channels.push(c); }); found.next = true; found.sport = 'football'; }
       else list.push({title: bm.title, desc: bm.competition || '', start: bm.start, stop: bm.stop, channels: chans, sport: 'football', barca: true, next: true, text: bm.title});
     }
     list.forEach(function (ev) {
       ev.channels.sort(function (a, b) { return Lang.rank(a.name, a.epg) - Lang.rank(b.name, b.epg); });
       ev.live = ev.start <= now && now < ev.stop;
       if (!ev.sport) ev.sport = sportOf(ev);
-      ev.fav = '';
-      for (var f = 0; f < FAVS.length; f++) if (FAVS[f][1].test(ev.title)) { ev.fav = FAVS[f][0]; break; }
+      ev.fav = favOf(ev.title);
     });
     // Favourites first, then what's on now, then by time.
     list.sort(function (a, b) { return (!!b.fav - !!a.fav) || (b.live - a.live) || (a.start - b.start); });
@@ -149,8 +240,8 @@ var Sport = (function () {
     // The groups: Fotboll always, the others when they have something.
     var n = {}, cats = [];
     list.forEach(function (e) { n[e.sport] = (n[e.sport] || 0) + 1; });
-    SPORTS.forEach(function (sp) { if (sp[0] === 'football' || n[sp[0]]) cats.push([sp[0], sp[1], sp[2], n[sp[0]] || 0]); });
-    cats.sort(function (a, b) { return (b[0] === 'football') - (a[0] === 'football'); });
+    cats.push(SPORTS[FOOTBALL_AT].concat([n.football || 0]));
+    SPORTS.forEach(function (sp) { if (sp[0] !== 'football' && n[sp[0]]) cats.push(sp.concat([n[sp[0]]])); });
     var cur = V.filters.current(), at = 0;
     for (var c = 0; c < cats.length; c++) if (cur && cats[c][0] === cur[0]) at = c;
     V.filters.set(cats, at);
@@ -164,7 +255,6 @@ var Sport = (function () {
     for (var i = 0; i < SPORTS.length; i++) if (SPORTS[i][2] && SPORTS[i][2].test(ev.text)) return SPORTS[i][0];
     if (FOOTBALL.test(ev.text)) return 'football';
     for (i = 0; i < SPORTS.length; i++) if (SPORTS[i][2] && SPORTS[i][2].test(names)) return SPORTS[i][0];
-    if (MATCH.test(ev.title) && /f[uú]tbol|football|fotboll|soccer|laliga|liga|premier|champions|calcio|bundesliga/i.test(names)) return 'football';
     return MATCH.test(ev.title) ? 'football' : 'other';
   }
 
@@ -172,7 +262,7 @@ var Sport = (function () {
     var f = (V.filters.current() || ['football'])[0], cur = V.list.current();
     V.events = (V.all || []).filter(function (e) { return e.sport === f; });
     var at = cur ? V.events.indexOf(cur) : 0;
-    V.list.emptyText = V.read < V.chans.length ? 'Läser tablån för sportkanalerna…' : 'Inget i tablån de närmaste timmarna.';
+    V.list.emptyText = V.loading ? 'Hämtar sporten…' : !V.fromFeed && V.read < V.chans.length ? 'Läser tablån för sportkanalerna…' : 'Inget i tablån de närmaste timmarna.';
     V.list.set(V.events, at < 0 ? 0 : at);
     status();
   }

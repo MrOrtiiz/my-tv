@@ -1,4 +1,5 @@
-# FC Barcelona on your IPTV, for the home screen's Barça box: every 3 hours, and by hand (Actions → Barça → Run workflow).
+# FC Barcelona on your IPTV, for the home screen's Barça box, and every sport broadcast for the IPTV app's Sport page:
+# every 3 hours, and by hand (Actions → Barça → Run workflow).
 name: Barça
 on:
   schedule:
@@ -7,14 +8,14 @@ on:
   # And right after a change to how it reads the guide.
   push:
     branches: [main]
-    paths: ['.github/scripts/barca.py', '.github/workflows/barca.yml']
+    paths: ['.github/scripts/barca.py', '.github/scripts/sport.py', '.github/workflows/barca.yml']
 permissions:
   contents: write
 concurrency: barca
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - name: Read the guide
@@ -31,3 +32,20 @@ jobs:
           if [ "$(git diff --cached --numstat | awk '{s+=$1} END {print s}')" = "1" ] && ! git show HEAD:data/barca.json | grep -q '"updated": 0'; then echo "Only the time changed."; exit 0; fi
           git commit -m "Barça: the coming matches on your channels"
           git push
+      # All the sport of the next 30 hours, as sport.json on the branch sport-data: one commit, replaced each time.
+      - name: Read the sport
+        env:
+          EPG_URL: ${{ secrets.EPG_URL }}
+          SPORT_OUT: ${{ runner.temp }}/sport/sport.json
+        run: python3 .github/scripts/sport.py
+      - name: Publish the sport
+        env:
+          OUT: ${{ runner.temp }}/sport/sport.json
+        run: |
+          if [ ! -s "$OUT" ]; then echo "No sport this time."; exit 0; fi
+          git checkout -q --orphan sport-data
+          git rm -rqf --cached .
+          cp "$OUT" sport.json
+          git add sport.json
+          git commit -qm "Sport: every broadcast of the coming 30 hours"
+          git push -qf origin sport-data
