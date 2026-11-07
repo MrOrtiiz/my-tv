@@ -7,7 +7,7 @@
  */
 var App = (function () {
   'use strict';
-  var VERSION = '1.3';
+  var VERSION = '1.4';
   var K = {left: 37, up: 38, right: 39, down: 40, ok: 13, back: 10009, chUp: 427, chDown: 428,
     play: 415, pause: 19, playPause: 10252, ff: 417, rew: 412, stop: 413};
   var TABS = [['live', 'Live'], ['sport', 'Sport'], ['guide', 'TV-guide'], ['films', 'Filmer'], ['series', 'Serier'], ['favs', 'Favoriter'], ['settings', 'Inställningar']];
@@ -401,9 +401,20 @@ var App = (function () {
     fn(function (err, cats) {
       if (tab !== kind) return;
       if (err) { V.cats.emptyText = 'Kunde inte hämta: ' + err.message + '.'; V.cats.draw(); return; }
+      var h = Store.vodHidden();
+      cats = vodOrdered(kind, cats).filter(function (c) { return !h[kind + ':' + c.id]; });
+      cats.push({id: '*edit', name: '✎  Ordna, dölj och lås'});
       V.cats.set(cats, V['catAt_' + kind] || 0);
       showCat();
     });
+  }
+
+  /** Film or series categories in Yuri's order (Inställningar → Filmer/Serier), new ones after, in language order. */
+  function vodOrdered(kind, cats) {
+    var order = Store.vodOrder(kind), at = {}, i;
+    for (i = 0; i < order.length; i++) at[order[i]] = i;
+    var known = cats.filter(function (c) { return at.hasOwnProperty(c.id); }).sort(function (a, b) { return at[a.id] - at[b.id]; });
+    return known.concat(cats.filter(function (c) { return !at.hasOwnProperty(c.id); }));
   }
 
   var catSeq = 0;
@@ -411,6 +422,7 @@ var App = (function () {
     var c = V.cats.current(), mine = ++catSeq;
     if (!c) return;
     V['catAt_' + V.kind] = V.cats.at;
+    if (c.id === '*edit') { V.grid.emptyText = 'OK öppnar: flytta kategorier, dölj dem du inte vill se och lås dem med föräldralåset.'; V.grid.set([]); return; }
     if (Lock.locked({id: V.kind + ':' + c.id, name: c.name})) { V.grid.emptyText = '🔒  Låst med föräldralåset. Tryck OK och skriv PIN-koden.'; V.grid.set([]); return; }
     V.grid.emptyText = 'Hämtar…';
     V.grid.set([]);
@@ -579,8 +591,10 @@ var App = (function () {
         Store.forget(); toast('Hämtar kanallistan…'); loadChannels(true, function () { toast(loadErr ? 'Kunde inte läsa listan: ' + loadErr.message : channels.length + ' kanaler'); buildSettings(); });
       }],
       ['Grupper', 'ordna, dölj och lås', function () { Lock.editor(); }],
+      ['Filmer', 'ordna, dölj och lås', function () { Lock.editor('films'); }],
+      ['Serier', 'ordna, dölj och lås', function () { Lock.editor('series'); }],
       ['Föräldralås', Store.pin() ? (Lock.open() ? 'på · upplåst nu' : 'på') : 'av', function () { Lock.settings(); }],
-      ['Återställ grupperna', 'ordning och dolda', function () { Store.resetGroups(); toast('Grupperna har sin vanliga ordning igen, inga är dolda.'); V = {}; buildSettings(); }],
+      ['Återställ grupperna', 'ordning och dolda', function () { Store.resetGroups(); toast('Grupperna, filmerna och serierna har sin vanliga ordning igen, inga är dolda.'); V = {}; buildSettings(); }],
       ['Rensa senast sedda', '', function () { try { localStorage.removeItem('iptv.recent'); } catch (e) {} toast('Rensat'); }],
       ['Om appen', 'IPTV ' + VERSION + ' · laddas från GitHub', function () {}]
     ];
@@ -740,6 +754,7 @@ var App = (function () {
         var cnow = V.cats.current();
         if (k === K.up) { if (!V.cats.move(-1)) zone = 'tabs'; else showCat(); }
         else if (k === K.down) { if (V.cats.move(1)) showCat(); }
+        else if (k === K.ok && cnow && cnow.id === '*edit') { Lock.editor(V.kind); return; }
         else if (k === K.ok && cnow && Lock.locked({id: V.kind + ':' + cnow.id, name: cnow.name})) { Lock.ask(function (ok) { if (ok) { V.cats.draw(); showCat(); } }); return; }
         else if ((k === K.right || k === K.ok) && V.grid.items.length) zone = 'grid';
         break;
@@ -818,7 +833,7 @@ var App = (function () {
           var ch = find(play.channels[i], (play.channel_ids || [])[i]);
           if (ch && items.indexOf(ch) < 0) items.push(ch);
         }
-        if (items.length) Player.open(items, 0, {title: play.title || '', onClose: function (c) { tab = 'live'; drawScreen(); }});
+        if (items.length) Player.open(items, 0, {title: play.title || '', onClose: function (c) { tab = 'sport'; tabAt = 1; zone = 'mod'; drawScreen(); }});
         else toast('Matchens kanaler finns inte i din IPTV-lista.', 6000);
       }
     });
@@ -830,11 +845,16 @@ var App = (function () {
       for (var i = 0; i < keys.length; i++) window.tizen.tvinputdevice.registerKey(keys[i]);
     } catch (e) {}
     document.addEventListener('keydown', key);
-    window.addEventListener('appcontrol', handleLaunch);   // opened again by Free My TV while running
+    // Opened again (by Free My TV, or from the apps) while running: on Sport again, unless something is playing.
+    window.addEventListener('appcontrol', function () {
+      if (!Player.playing() && !overlay && tab !== 'sport') { if (V.mod && V.mod.leave) V.mod.leave(); V = {}; tab = 'sport'; tabAt = 1; zone = 'mod'; }
+      handleLaunch();
+    });
     tickClock();
     drawTabs();
     $('main').innerHTML = '<div class="loading">Hämtar dina kanaler…</div>';
-    tab = 'live'; zone = 'chans';
+    // Always opens on Sport.
+    tab = 'sport'; tabAt = 1; zone = 'mod';
     handleLaunch();
   }
 
@@ -842,7 +862,7 @@ var App = (function () {
   var U = {
     el: el, img: img, hm: hm, two: two, List: List, toast: toast, guideOf: guideOf, find: find,
     channels: function () { return channels; }, groups: function () { return groups; }, ordered: orderedGroups, shown: shownGroups,
-    channelsOf: channelsOf, groupItems: groupItems, open: open_, groupById: groupById,
+    channelsOf: channelsOf, groupItems: groupItems, open: open_, groupById: groupById, vodOrdered: vodOrdered,
     overlay: function (o) { if (arguments.length) { overlay = o; if (!o) closeOverlay(); } return overlay; },
     redraw: function () { V = {}; drawScreen(); }, focusTabs: function () { zone = 'tabs'; focusZone(); }
   };

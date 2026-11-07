@@ -136,10 +136,48 @@ var Api = (function () {
   }
 
   /** The programmes of a channel from now on: [{title, desc, start, stop}] (ms); [] without a guide. */
+  // The guide from the net: guide.json on the repo's branch sport-data, made every 3 hours by the GitHub job
+  // (.github/scripts/guide.py) from epgshare01's open guides, for the channels the IPTV guide has nothing for. By the
+  // channel's name, or its guide id.
+  var NET = ['https://raw.githubusercontent.com/MrOrtiiz/my-tv/sport-data/guide.json',
+    'https://api.github.com/repos/MrOrtiiz/my-tv/contents/guide.json?ref=sport-data'];
+  var net = null, netAt = 0, netWait = null;
+  function loadNet(done) {
+    if (net && Date.now() - netAt < (net.g.length ? 3 * 3600000 : 10 * 60000)) { done(); return; }
+    if (netWait) { netWait.push(done); return; }
+    netWait = [done];
+    (function next(i) {
+      function finish(d) {
+        net = d && d.m && d.g ? d : (net || {m: {}, g: []}); netAt = Date.now();
+        var w = netWait; netWait = null; for (var j = 0; j < w.length; j++) w[j]();
+      }
+      if (i >= NET.length) { finish(null); return; }
+      var x = new XMLHttpRequest();
+      try { x.open('GET', NET[i] + (i === 0 ? '?t=' + Math.floor(Date.now() / 1800000) : ''), true); if (i) x.setRequestHeader('Accept', 'application/vnd.github.raw+json'); } catch (e) { next(i + 1); return; }
+      x.timeout = 30000;
+      x.onreadystatechange = function () {
+        if (x.readyState !== 4) return;
+        var d = null;
+        try { if (x.status === 200) d = JSON.parse(x.responseText); } catch (e) {}
+        if (d && d.m) finish(d); else next(i + 1);
+      };
+      x.send();
+    })(0);
+  }
+  function netGuide(ch, done) {
+    loadNet(function () {
+      var m = net.m, i = m.hasOwnProperty(ch.name) ? m[ch.name] : ch.epg && m.hasOwnProperty('#' + ch.epg) ? m['#' + ch.epg] : -1;
+      var l = i >= 0 ? net.g[i] || [] : [], out = [], now = Date.now();
+      for (var j = 0; j < l.length; j++) if (l[j][1] > now) out.push({start: l[j][0], stop: l[j][1], title: l[j][2], desc: l[j][3] || '', net: true});
+      done(null, out);
+    });
+  }
+
+  /** What's on a channel: the IPTV server's guide, else the one from the net. */
   function guide(ch, done, limit) {
-    if (!src || !src.x) { done(null, []); return; }
+    if (!src || !src.x) { netGuide(ch, done); return; }
     api('get_short_epg', '&stream_id=' + encodeURIComponent(ch.id) + '&limit=' + (limit || 12), function (err, v) {
-      if (err || !v) { done(null, []); return; }
+      if (err || !v) { netGuide(ch, done); return; }
       var l = v.epg_listings || [], out = [], now = Date.now();
       for (var i = 0; i < l.length; i++) {
         var start = (+l[i].start_timestamp || Date.parse(String(l[i].start).replace(' ', 'T') + 'Z') / 1000) * 1000;
@@ -147,6 +185,7 @@ var Api = (function () {
         if (stop > now) out.push({title: b64(l[i].title), desc: b64(l[i].description), start: start, stop: stop});
       }
       out.sort(function (a, b) { return a.start - b.start; });
+      if (!out.length) { netGuide(ch, done); return; }
       done(null, out);
     });
   }

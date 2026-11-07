@@ -8,7 +8,8 @@ var Player = (function () {
   var HLSJS = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.20/dist/hls.min.js';
   var MPEGTS = 'https://cdn.jsdelivr.net/npm/mpegts.js@1.8.0/dist/mpegts.min.js';
   var TRY = 15000;
-  var box, video, bar, st = null, hls = null, ts = null, seq = 0, tryTimer = 0, barTimer = 0, saveTimer = 0, tick = 0;
+  var box, video, bar, mstat, st = null, hls = null, ts = null, seq = 0, tryTimer = 0, barTimer = 0, saveTimer = 0, tick = 0;
+  var mini = null;   // the preview in the TV guide: {item}
 
   function el(tag, cls, parent, text) {
     var n = document.createElement(tag);
@@ -28,6 +29,9 @@ var Player = (function () {
     video = el('video', '', box);
     video.setAttribute('playsinline', '');
     bar = el('div', 'bar glass', box);
+    mstat = el('div', 'mstat', box);
+    // The app sent to the background: no preview playing behind it.
+    document.addEventListener('visibilitychange', function () { if (document.hidden && mini) preview(null); });
   }
 
   var libs = {};
@@ -71,7 +75,7 @@ var Player = (function () {
     var mine = ++seq, list = ways(item), n = 0;
     function next() {
       if (mine !== seq) return;
-      if (n >= list.length) { stopStream(); status('Det gick inte att spela. ' + (st.kind === 'live' ? 'Prova en annan kanal med ▲ ▼.' : ''), true); return; }
+      if (n >= list.length) { stopStream(); status('Det gick inte att spela. ' + (st && st.kind === 'live' ? 'Prova en annan kanal med ▲ ▼.' : ''), true); return; }
       var w = list[n++];
       stopStream();
       tryTimer = setTimeout(next, TRY);
@@ -111,7 +115,35 @@ var Player = (function () {
 
   // MARK: - The bar: the channel and what's on, or the film and where it is
 
-  function status(text, keep) { st.status = text; draw(keep || !!text); }
+  function status(text, keep) {
+    if (!st) { if (mstat) mstat.textContent = mini ? (text === 'Startar…' ? 'Startar ' + mini.item.name + '…' : text) : ''; return; }
+    st.status = text; draw(keep || !!text);
+  }
+
+  /** Where a box of the page is, in the app's 1920 × 1080 (offsets, so a scaled page doesn't matter). */
+  function place(host) {
+    var x = 0, y = 0, n = host;
+    while (n && n !== document.body) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
+    box.style.left = x + 'px'; box.style.top = y + 'px';
+    box.style.width = host.offsetWidth + 'px'; box.style.height = host.offsetHeight + 'px';
+  }
+
+  /** The TV guide's preview: the channel playing small in the box host; preview(null) stops it. The full player
+   *  (open) takes over from it. */
+  function preview(item, host) {
+    ensure();
+    if (st) return;
+    if (!item || !host) {
+      if (mini) { mini = null; seq++; stopStream(); box.className = ''; box.removeAttribute('style'); mstat.textContent = ''; }
+      return;
+    }
+    if (mini && mini.item === item) { place(host); return; }
+    mini = {item: item};
+    box.className = 'on mini';
+    bar.className = 'bar glass';
+    place(host);
+    start(item, 0);
+  }
 
   function draw(keep) {
     if (!st) return;
@@ -176,6 +208,7 @@ var Player = (function () {
   function open(list, at, opts) {
     ensure();
     opts = opts || {};
+    if (mini) { mini = null; box.removeAttribute('style'); mstat.textContent = ''; }
     st = {list: list, at: at || 0, kind: list[at || 0].kind && list[at || 0].kind !== 'live' ? 'vod' : 'live', title: opts.title || '', onClose: opts.onClose, status: ''};
     box.className = 'on';
     playAt(st.at);
@@ -225,5 +258,5 @@ var Player = (function () {
     return true;
   }
 
-  return {open: open, close: close, key: key, playing: function () { return !!st; }};
+  return {open: open, close: close, key: key, preview: preview, playing: function () { return !!st; }};
 })();

@@ -2,6 +2,7 @@
  * TV-guide as a grid: the groups on the left, then the channels of the group under a timeline of 2½ hours, from now and
  * as far ahead as the guide reaches. ◀ ▶ go from programme to programme (the timeline follows), ▲ ▼ between channels.
  * OK on what's on now plays the channel; OK on something later sets a reminder (🔔), OK again takes it away.
+ * Preview: the channel you're on plays small in the corner, after a moment on it (Player.preview).
  * Reminders: a minute before the start a card comes up, wherever you are in the app (a film or a match too): OK
  * switches to the channel. They're kept on the TV; the app has to be open for them to show.
  * Uses App.u (app.js). ES5 only.
@@ -90,6 +91,9 @@ var Epg = (function () {
     V.head = u.el('div', 'ghead', area);
     V.body = u.el('div', 'gbody', area);
     V.info = u.el('div', 'ginfo', area);
+    // The preview: the channel you're on, playing small (the player puts its video over this box).
+    V.pv = u.el('div', 'gpv', area);
+    u.el('div', 'pvh', V.pv, 'Förhandsvisning');
     var items = u.groupItems().filter(function (g) { return g.id !== '*edit' && g.id !== '*recent'; });
     var start = 0;
     for (var i = 0; i < items.length; i++) if (items[i].id === '*fav' && u.channelsOf(items[i]).length) { start = i; break; } else if (items[i].id === '*all') start = i;
@@ -134,6 +138,7 @@ var Epg = (function () {
     if (!V.rows.length) {
       u.el('div', 'empty', V.body, V.lockedGroup ? '🔒  Låst med föräldralåset. Tryck OK och skriv PIN-koden.' : 'Inga kanaler här.');
       V.info.innerHTML = '';
+      stopPreview();
       return;
     }
     var rows = Math.max(1, Math.floor(V.body.clientHeight / ROW));
@@ -141,7 +146,20 @@ var Epg = (function () {
     if (V.row >= V.first + rows) V.first = V.row - rows + 1;
     for (var i = V.first; i < V.rows.length && i < V.first + rows; i++) drawRow(V.rows[i], i, (i - V.first) * ROW);
     drawInfo();
+    later();
   }
+
+  // The preview starts when you stay on a channel a moment (not on every step through the list).
+  var pvTimer = 0;
+  function later() {
+    clearTimeout(pvTimer);
+    pvTimer = setTimeout(function () {
+      if (!V || !document.body.contains(V.pv)) return;
+      var ch = !V.lockedGroup && V.rows[V.row];
+      Player.preview(ch || null, V.pv);
+    }, 900);
+  }
+  function stopPreview() { clearTimeout(pvTimer); Player.preview(null); }
 
   function drawRow(ch, i, top) {
     var u = U(), r = u.el('div', 'grow' + (i === V.row ? ' sel' : ''), V.body);
@@ -251,5 +269,5 @@ var Epg = (function () {
   // The now line and the reminders' marks move with the clock.
   setInterval(function () { if (V && document.body.contains(V.area)) { if (V.t0 + STEP <= floorStep(Date.now()) && V.tc < Date.now()) V.t0 = floorStep(Date.now()); draw(); } }, 60000);
 
-  return {build: build, key: key, focus: focus, leave: function () { V = null; }, reminders: reminders, toggle: toggle, remindKey: remindKey, _check: check};
+  return {build: build, key: key, focus: focus, leave: function () { stopPreview(); V = null; }, reminders: reminders, toggle: toggle, remindKey: remindKey, _check: check};
 })();

@@ -59,7 +59,14 @@ var Store = (function () {
       if (arguments.length > 1) { if (ids) all[gid] = ids; else delete all[gid]; write('corder', all); }
       return all[gid] || null;
     },
-    resetGroups: function () { write('gorder', undefined); write('ghidden', undefined); write('corder', undefined); },
+    resetGroups: function () { write('gorder', undefined); write('ghidden', undefined); write('corder', undefined); write('vorder', undefined); write('vhidden', undefined); },
+    // Film and series categories: their order per kind (ids) and the hidden ones ('films:12' → true).
+    vodOrder: function (kind, ids) {
+      var all = read('vorder', {});
+      if (arguments.length > 1) { all[kind] = ids; write('vorder', all); }
+      return all[kind] || [];
+    },
+    vodHidden: function (v) { if (arguments.length) write('vhidden', v); return read('vhidden', {}); },
 
     // The parental lock: the PIN (only on the TV), and the groups locked or opened by hand (id → true/false; the rest by name).
     pin: function (v) { if (arguments.length) write('pin', v || undefined); return read('pin', ''); },

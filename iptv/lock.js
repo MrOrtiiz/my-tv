@@ -4,8 +4,9 @@
  *   themselves; any other can be locked by hand under Grupper. A locked group shows 🔒 and nothing in it until the PIN
  *   is typed; then everything is open until the app is closed, at most 3 hours. Locked groups' channels also stay out
  *   of Alla kanaler, Favoriter, Senast sedda, the guide and Sport.
- * - Grupper: every group in Yuri's order: OK lifts one (▲ ▼ moves it, OK puts it down), a group can be hidden, and
- *   locked or opened.
+ * - Grupper, Filmer, Serier (Inställningar, or ✎ last in Live, Filmer and Serier): every group or category in Yuri's
+ *   order: OK lifts one (▲ ▼ moves it, OK puts it down), each can be hidden, and locked or opened; on top, Lås alla /
+ *   Öppna alla and Dölj alla / Visa alla.
  * Uses App.u (app.js). ES5 only.
  */
 var Lock = (function () {
@@ -153,71 +154,135 @@ var Lock = (function () {
     });
   }
 
-  // MARK: - Grupper: order, hide, lock
+  // MARK: - Grupper, Filmer, Serier: order, hide, lock
 
-  function editor() {
+  var KINDS = {live: 'Grupper', films: 'Filmer', series: 'Serier'};
+
+  /** The editor for the live groups (kind 'live' or none) or the film or series categories ('films', 'series'). */
+  function editor(kind) {
+    var u = U();
+    kind = KINDS[kind] ? kind : 'live';
+    if (kind === 'live') {
+      var groups = u.ordered();
+      if (!groups.length) { u.toast('Inga grupper än: kanallistan är inte hämtad.'); return; }
+      sheet(kind, groups, Store.hidden(), function (h) { Store.hidden(h); },
+        function (items) { Store.groupOrder(items.map(function (g) { return g.id; })); });
+      return;
+    }
+    if (!Store.link()) { u.toast('Lägg in din IPTV-länk först.'); return; }
+    Api.use(Store.link());
+    u.toast('Hämtar kategorierna…', 1500);
+    (kind === 'films' ? Api.filmCats : Api.seriesCats)(function (err, cats) {
+      if (err || !cats || !cats.length) { u.toast(err ? 'Kunde inte hämta: ' + err.message : 'Inga kategorier.'); return; }
+      // Their lock and hidden ids are kind:id (as in the Filmer and Serier tabs).
+      var items = u.vodOrdered(kind, cats).map(function (c) { return {id: kind + ':' + c.id, cid: c.id, name: c.name, lang: Lang.tag(c.name)}; });
+      sheet(kind, items, Store.vodHidden(), function (h) { Store.vodHidden(h); },
+        function (list) { Store.vodOrder(kind, list.map(function (c) { return c.cid; })); });
+    });
+  }
+
+  function sheet(kind, list, hidden, saveHidden, saveOrder) {
     var u = U(), o = $('overlay');
-    var list = u.ordered();
-    if (!list.length) { u.toast('Inga grupper än: kanallistan är inte hämtad.'); return; }
     o.innerHTML = '';
     o.className = 'on';
-    var st = {kind: 'groups', col: 0, grab: false};
-    var sheet = u.el('div', 'sheet edit glass', o);
-    u.el('div', 'dtitle', sheet, 'Grupper');
-    var hint = u.el('div', 'psub', sheet, '');
-    var host = u.el('div', 'elist', sheet);
-    var hidden = Store.hidden();
+    // bar: the row of buttons on top (Lås alla / Öppna alla, Dölj alla / Visa alla), reached with ▲ from the first row.
+    var st = {kind: 'groups', col: 0, grab: false, bar: false, barAt: 0};
+    var box = u.el('div', 'sheet edit glass', o);
+    u.el('div', 'dtitle', box, KINDS[kind] + ' – ordna, dölj och lås');
+    var hint = u.el('div', 'psub', box, '');
+    var bar = u.el('div', 'ebar', box);
+    var host = u.el('div', 'elist', box);
+    var word = kind === 'live' ? 'gruppen' : 'kategorin';
     var L = new u.List(host, 74, function (g, r, i) {
       if (st.grab && i === L.at) r.className += ' grab';
       u.el('div', 'name', r, (st.grab && i === L.at ? '↕  ' : '') + g.name);
       if (g.lang) u.el('span', 'lang lang-' + g.lang.toLowerCase(), r, g.lang);
       var pills = u.el('div', 'pills', r);
-      var p1 = u.el('span', 'pill' + (hidden[g.id] ? ' off' : '') + (i === L.at && L.focused && st.col === 1 ? ' focus' : ''), pills, hidden[g.id] ? 'Dold' : 'Visas');
+      u.el('span', 'pill' + (hidden[g.id] ? ' off' : '') + (i === L.at && L.focused && st.col === 1 ? ' focus' : ''), pills, hidden[g.id] ? 'Dold' : 'Visas');
       var lk = on() && lockedBy(g);
-      var p2 = u.el('span', 'pill' + (lk ? ' lock' : '') + (i === L.at && L.focused && st.col === 2 ? ' focus' : ''), pills, lk ? '🔒 Låst' : 'Öppen');
+      u.el('span', 'pill' + (lk ? ' lock' : '') + (i === L.at && L.focused && st.col === 2 ? ' focus' : ''), pills, lk ? '🔒 Låst' : 'Öppen');
       if (i === L.at && L.focused && st.col === 0) r.className += ' focus';
       else if (i === L.at) r.className = r.className.replace(' focus', '');
     });
-    function setHint() {
-      hint.textContent = st.grab ? '▲ ▼ flyttar gruppen · OK släpper den'
-        : st.col === 0 ? 'OK lyfter gruppen så att du kan flytta den · ▶ dölj eller lås · Tillbaka sparar'
-        : st.col === 1 ? 'OK döljer eller visar gruppen' : on() ? 'OK låser eller öppnar gruppen (PIN-kod)' : 'OK: välj en PIN-kod för att kunna låsa grupper';
+    function allLocked() { return on() && L.items.every(function (g) { return lockedBy(g); }); }
+    function allShown() { return L.items.every(function (g) { return !hidden[g.id]; }); }
+    function buttons() {
+      return [[allLocked() ? 'Öppna alla' : '🔒  Lås alla', function () { lockAll(!allLocked()); }],
+        [allShown() ? 'Dölj alla' : 'Visa alla', function () { showAll(!allShown()); }]];
     }
-    function save() { Store.groupOrder(L.items.map(function (g) { return g.id; })); }
+    function drawBar() {
+      bar.innerHTML = '';
+      var b = buttons();
+      for (var i = 0; i < b.length; i++) u.el('span', 'pill ebtn' + (st.bar && st.barAt === i ? ' focus' : ''), bar, b[i][0]);
+    }
+    function draw() { L.focused = !st.bar; L.draw(); drawBar(); setHint(); }
+    function setHint() {
+      hint.textContent = st.bar ? (st.barAt === 0 ? 'OK låser eller öppnar alla på en gång (PIN-kod)' : 'OK visar eller döljer alla på en gång') + ' · ▼ tillbaka till listan'
+        : st.grab ? '▲ ▼ flyttar ' + word + ' · OK släpper den'
+        : st.col === 0 ? 'OK lyfter ' + word + ' så att du kan flytta den · ▶ dölj eller lås · ▲ överst: alla på en gång · Tillbaka sparar'
+        : st.col === 1 ? 'OK döljer eller visar ' + word : on() ? 'OK låser eller öppnar ' + word + ' (PIN-kod)' : 'OK: välj en PIN-kod för att kunna låsa';
+    }
+    function reopen(at, col, onBar) {
+      // After a PIN pad: the same sheet again, where it was.
+      sheet(kind, L.items, hidden, saveHidden, saveOrder);
+      var s2 = u.overlay();
+      if (s2 && s2.list) { s2.list.at = at; s2.col = col; s2.bar = !!onBar; s2.barAt = st.barAt; s2.redraw(); }
+    }
+    function withPin(then) {
+      var at = L.at, col = st.col, onBar = st.bar;
+      if (!on()) { newPin(function () { u.toast('Föräldralåset är på'); then(); reopen(at, col, onBar); }); return; }
+      ask(function (ok) { if (ok) then(); reopen(at, col, onBar); });
+    }
+    function lockAll(lock) {
+      withPin(function () {
+        var l = Store.locks();
+        L.items.forEach(function (g) { l[g.id] = lock; });
+        Store.locks(l);
+        u.toast(lock ? 'Alla är låsta' : 'Alla är öppna');
+      });
+    }
+    function showAll(show) {
+      L.items.forEach(function (g) { if (show) delete hidden[g.id]; else hidden[g.id] = true; });
+      saveHidden(hidden);
+      u.toast(show ? 'Alla visas' : 'Alla är dolda');
+      draw();
+    }
+    function save() { saveOrder(L.items); }
     st.handle = function (k) {
       var g = L.current();
+      if (st.bar) {
+        if (k === 37 && st.barAt > 0) st.barAt--;
+        else if (k === 39 && st.barAt < 1) st.barAt++;
+        else if (k === 40) st.bar = false;
+        else if (k === 13) { buttons()[st.barAt][1](); return; }
+        else if (k === 10009 || k === 27) { u.overlay(null); u.toast('Sparat'); u.redraw(); return; }
+        draw();
+        return;
+      }
       if (st.grab) {
         if (k === 38 || k === 40) {
           var a = L.at, b = a + (k === 38 ? -1 : 1);
           if (b >= 0 && b < L.items.length) { var t = L.items[a]; L.items[a] = L.items[b]; L.items[b] = t; L.at = b; save(); }
         } else if (k === 13 || k === 10009 || k === 27) { st.grab = false; save(); }
-        L.draw(); setHint();
+        draw();
         return;
       }
-      if (k === 38) L.move(-1);
+      if (k === 38) { if (!L.move(-1)) st.bar = true; }
       else if (k === 40) L.move(1);
       else if (k === 37 && st.col > 0) st.col--;
       else if (k === 39 && st.col < 2) st.col++;
       else if (k === 13 && g) {
         if (st.col === 0) st.grab = true;
-        else if (st.col === 1) { hidden[g.id] = !hidden[g.id]; if (!hidden[g.id]) delete hidden[g.id]; Store.hidden(hidden); }
-        else if (!on()) { newPin(function () { u.toast('Föräldralåset är på'); editor(); }); return; }
-        else {
-          ask(function (ok) {
-            if (!ok) { editor(); return; }
-            var l = Store.locks(); l[g.id] = !lockedBy(g); Store.locks(l);
-            var at = L.at; editor(); var s2 = u.overlay(); if (s2 && s2.list) { s2.list.at = at; s2.col = 2; s2.list.draw(); }
-          });
-          return;
-        }
+        else if (st.col === 1) { hidden[g.id] = !hidden[g.id]; if (!hidden[g.id]) delete hidden[g.id]; saveHidden(hidden); }
+        else { withPin(function () { var l = Store.locks(); l[g.id] = !lockedBy(g); Store.locks(l); }); return; }
       } else if (k === 10009 || k === 27) { u.overlay(null); u.toast('Sparat'); u.redraw(); return; }
-      L.draw(); setHint();
+      draw();
     };
     st.list = L;
+    st.redraw = draw;
     u.overlay(st);
-    L.focused = true;
     L.set(list, 0);
-    setHint();
+    draw();
   }
 
   return {locked: locked, lockedBy: lockedBy, on: on, open: isOpen, ask: ask, settings: settings, editor: editor};

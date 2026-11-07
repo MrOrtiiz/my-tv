@@ -153,7 +153,9 @@ body { font-family: 'Inter', 'SamsungOneUI', 'Helvetica Neue', Arial, sans-serif
 /* MARK: - Moving a channel, the groups editor, the PIN pad */
 .row.grab, .row.grab.focus { background: #EDBB00; color: #111; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); }
 .sheet.edit { left: 360px; right: 360px; top: 70px; bottom: 70px; padding: 44px 50px; }
-.sheet.edit .elist { position: absolute; left: 36px; right: 36px; top: 170px; bottom: 30px; }
+.sheet.edit .elist { position: absolute; left: 36px; right: 36px; top: 236px; bottom: 30px; }
+.sheet.edit .ebar { position: absolute; left: 50px; right: 50px; top: 160px; height: 60px; }
+.sheet.edit .ebar .ebtn { display: inline-block; margin: 0 18px 0 0; padding: 0 28px; height: 54px; line-height: 54px; font-size: 23px; }
 .sheet.edit .elist .inner { left: 0; right: 0; top: 0; bottom: 0; }
 .sheet.edit .row .name { display: inline-block; line-height: 66px; max-width: 560px; }
 .sheet.edit .row .lang { right: 330px; top: 21px; }
@@ -183,7 +185,7 @@ body { font-family: 'Inter', 'SamsungOneUI', 'Helvetica Neue', Arial, sans-serif
 .epg .grid { left: 410px; right: 0; }
 .ghead { position: absolute; left: 20px; right: 20px; top: 18px; height: 40px; }
 .ghead .tick { position: absolute; top: 0; font-size: 22px; font-weight: 600; color: rgba(245, 245, 247, 0.6); padding-left: 8px; border-left: 2px solid rgba(255, 255, 255, 0.15); }
-.gbody { position: absolute; left: 20px; right: 20px; top: 66px; bottom: 214px; overflow: hidden; }
+.gbody { position: absolute; left: 20px; right: 20px; top: 66px; bottom: 270px; overflow: hidden; }
 .nowline { position: absolute; top: 0; bottom: 0; width: 3px; margin-left: -1px; background: #EDBB00; z-index: 2; box-shadow: 0 0 10px rgba(237, 187, 0, 0.6); }
 .grow { position: absolute; left: 0; right: 0; height: 82px; }
 .gch { position: absolute; left: 0; top: 0; width: 286px; height: 82px; border-radius: 18px; background: rgba(255, 255, 255, 0.05); overflow: hidden; }
@@ -198,11 +200,18 @@ body { font-family: 'Inter', 'SamsungOneUI', 'Helvetica Neue', Arial, sans-serif
 .cell .ct { display: block; padding: 0 16px; line-height: 82px; font-size: 21px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: rgba(245, 245, 247, 0.85); }
 .cell.focus { background: #fff; box-shadow: 0 0 0 3px rgba(237, 187, 0, 0.95); z-index: 3; }
 .cell.focus .ct { color: #111; }
-.ginfo { position: absolute; left: 34px; right: 34px; bottom: 26px; height: 170px; }
+.ginfo { position: absolute; left: 34px; right: 470px; bottom: 26px; height: 220px; }
+/* The preview, bottom right: the player's video comes over it (#player.mini). */
+.gpv { position: absolute; right: 30px; bottom: 22px; width: 400px; height: 225px; border-radius: 18px; background: rgba(0, 0, 0, 0.55); overflow: hidden; }
+.gpv .pvh { position: absolute; left: 0; right: 0; top: 96px; text-align: center; font-size: 20px; color: rgba(245, 245, 247, 0.4); }
+#player.mini { z-index: 15; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+#player.mini .bar { display: none; }
+#player .mstat { display: none; }
+#player.mini .mstat { display: block; position: absolute; left: 14px; right: 14px; bottom: 12px; font-size: 18px; line-height: 24px; color: rgba(255, 255, 255, 0.85); text-shadow: 0 1px 4px #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ginfo .it { font-size: 32px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ginfo .im { margin-top: 4px; font-size: 23px; color: #EDBB00; }
 .ginfo .id { margin-top: 8px; font-size: 21px; line-height: 29px; color: rgba(245, 245, 247, 0.6); max-height: 58px; overflow: hidden; }
-.ginfo .ik { position: absolute; right: 0; top: 6px; font-size: 20px; color: rgba(245, 245, 247, 0.45); }
+.ginfo .ik { margin-top: 10px; font-size: 20px; color: rgba(245, 245, 247, 0.45); }
 
 /* MARK: - Sport */
 .sport .groups { left: 0; width: 380px; }
@@ -234,3 +243,6 @@ body { font-family: 'Inter', 'SamsungOneUI', 'Helvetica Neue', Arial, sans-serif
 .settings .setlist { height: 760px; }
 .events .row.fav { background: linear-gradient(90deg, rgba(237, 187, 0, 0.22), rgba(255, 255, 255, 0.05)); }
 .events .row.fav.focus { background: #fff; }
+/* IK Sirius: black and blue, as Barça has blaugrana. */
+.events .row.sirius { background: linear-gradient(90deg, rgba(0, 0, 0, 0.75), rgba(0, 86, 179, 0.55)); box-shadow: inset 6px 0 0 #0A5FC4; }
+.events .row.sirius.focus { background: #fff; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 0 3px #0A5FC4; }

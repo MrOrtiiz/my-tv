@@ -8,14 +8,14 @@ on:
   # And right after a change to how it reads the guide.
   push:
     branches: [main]
-    paths: ['.github/scripts/barca.py', '.github/scripts/sport.py', '.github/workflows/barca.yml']
+    paths: ['.github/scripts/barca.py', '.github/scripts/sport.py', '.github/scripts/guide.py', '.github/workflows/barca.yml']
 permissions:
   contents: write
 concurrency: barca
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - name: Read the guide
@@ -34,20 +34,34 @@ jobs:
           git push
       # All the sport of the next 30 hours, as sport.json on the branch sport-data: one commit, replaced each time.
       - name: Read the sport
+        continue-on-error: true
         env:
           EPG_URL: ${{ secrets.EPG_URL }}
           SPORT_OUT: ${{ runner.temp }}/sport/sport.json
           # Run by hand: also what it saw and left out on the Spanish, English and Swedish channels.
           SPORT_DEBUG: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
         run: python3 .github/scripts/sport.py
-      - name: Publish the sport
+      # A guide for the channels without one, from epgshare01's open guides, as guide.json beside it.
+      - name: Read the guides from the net
+        continue-on-error: true
         env:
-          OUT: ${{ runner.temp }}/sport/sport.json
+          EPG_URL: ${{ secrets.EPG_URL }}
+          GUIDE_OUT: ${{ runner.temp }}/sport/guide.json
+        run: python3 .github/scripts/guide.py
+      - name: Publish the sport and the guide
+        env:
+          DIR: ${{ runner.temp }}/sport
         run: |
-          if [ ! -s "$OUT" ]; then echo "No sport this time."; exit 0; fi
+          if [ ! -s "$DIR/sport.json" ] && [ ! -s "$DIR/guide.json" ]; then echo "Nothing this time."; exit 0; fi
+          # What isn't new this time stays as it was.
+          git fetch -q origin sport-data || true
+          for f in sport.json guide.json; do
+            if [ ! -s "$DIR/$f" ]; then git show FETCH_HEAD:$f > "$DIR/$f" 2>/dev/null || rm -f "$DIR/$f"; fi
+          done
           git checkout -q --orphan sport-data
           git rm -rqf --cached .
-          cp "$OUT" sport.json
-          git add sport.json
-          git commit -qm "Sport: every broadcast of the coming 30 hours"
+          for f in sport.json guide.json; do
+            if [ -s "$DIR/$f" ]; then cp "$DIR/$f" "$f"; git add "$f"; fi
+          done
+          git commit -qm "Sport and guide: the coming 30 hours"
           git push -qf origin sport-data

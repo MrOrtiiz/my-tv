@@ -294,6 +294,7 @@ var Sport = (function () {
   function row(ev, r) {
     var u = U(), now = Date.now();
     if (ev.barca) r.className += ' barca';
+    else if (ev.fav === 'Sirius') r.className += ' sirius';
     else if (ev.fav) r.className += ' fav';
     // The time on its own line, the day (imorgon, lör 8 nov) small above it: nothing runs into the title.
     var time = u.el('div', 'etime' + (ev.live ? ' live' : ''), r);
