@@ -16,7 +16,28 @@ var Play = (function () {
   var CORES = 'https://cdn.jsdelivr.net/npm/@emulatorjs/core-';
   var VER = '@4.2.3/';
 
-  var frame = null, game = null, em = null, menuOn = false, menuAt = 0, onEnd = null, started = false, padTimer = null;
+  var frame = null, game = null, em = null, menuOn = false, menuAt = 0, onEnd = null, started = false, padTimer = null, watchdog = null;
+
+  // A log of each start (kept in localStorage, shown under Inställningar): where a start that hangs stopped.
+  var run = null;
+  function log(step) {
+    if (!run) return;
+    run.steps.push(Math.round((Date.now() - run.at) / 100) / 10 + ' s: ' + step);
+    if (run.steps.length > 40) run.steps.splice(1, 1);
+    try { localStorage.setItem('spel.lastrun', JSON.stringify(run)); } catch (e) {}
+    var l = document.getElementById('emuload');
+    if (l && !started) l.setAttribute('data-step', step);
+  }
+  function lastRun() { try { return JSON.parse(localStorage.getItem('spel.lastrun')); } catch (e) { return null; } }
+  function support() {
+    var out = [];
+    out.push('WebAssembly ' + (typeof WebAssembly === 'object' ? 'ja' : 'NEJ'));
+    try { var c = document.createElement('canvas'); out.push('WebGL2 ' + (c.getContext('webgl2') ? 'ja' : 'nej') + ', WebGL ' + (c.getContext('webgl') ? 'ja' : 'NEJ')); } catch (e) { out.push('WebGL fel'); }
+    out.push('ljud ' + (window.AudioContext || window.webkitAudioContext ? 'ja' : 'nej'));
+    try { if (performance && performance.memory) out.push('minne ' + Math.round(performance.memory.jsHeapSizeLimit / 1048576) + ' MB'); } catch (e) {}
+    out.push(navigator.userAgent.replace(/.*(Chrome\/[0-9.]+).*/, '$1'));
+    return out.join(', ');
+  }
   var K = {back: 10009, ok: 13, left: 37, up: 38, right: 39, down: 40, red: 403, green: 404, yellow: 405, blue: 406,
     play: 415, pause: 19, playPause: 10252, chUp: 427, chDown: 428, exit: 10182};
 
@@ -50,6 +71,8 @@ var Play = (function () {
     stop(true);
     game = g; onEnd = end; started = false; menuOn = false;
     var sys = Library.system(g.system);
+    run = {game: g.title, system: sys.name, at: Date.now(), ok: false, steps: []};
+    log('start, ' + Math.round(rom.length / 1024) + ' kB, kärna ' + sys.core + ' · ' + support());
     frame = document.createElement('iframe');
     frame.id = 'emu';
     frame.setAttribute('allow', 'gamepad; autoplay; fullscreen');
@@ -71,24 +94,39 @@ var Play = (function () {
     doc.write('<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}'
       + '#game{width:100%;height:100%}.ejs_menu_bar,.ejs_context_menu{display:none!important}</style></head><body><div id="game"></div>'
       + '<script>(function(){var c=parent.Play._config;for(var k in c)window[k]=c[k];window.EJS_gameUrl=new Uint8Array(parent.Play._rom);'
-      + 'window.EJS_onGameStart=function(){parent.Play._started();};})();<\/script>'
-      + '<script src="' + EJS + 'loader.js"><\/script></body></html>');
+      + 'window.onerror=function(m,u,l){parent.Play._log("fel: "+m+" ("+String(u||"").split("/").pop()+":"+l+")");};'
+      + 'window.addEventListener("unhandledrejection",function(e){parent.Play._log("fel: "+(e.reason&&e.reason.message||e.reason));});'
+      + 'window.EJS_ready=function(){parent.Play._log("emulatorn redo, hämtar kärnan");};'
+      + 'window.EJS_onGameStart=function(){parent.Play._started();};parent.Play._log("ramen klar, hämtar EmulatorJS");})();<\/script>'
+      + '<script src="' + EJS + 'loader.js" onload="parent.Play._log(\'laddaren hämtad\')" onerror="parent.Play._log(\'laddaren kunde inte hämtas\')"><\/script></body></html>');
     doc.close();
     frame.contentWindow.addEventListener('keydown', inFrameKey, true);
     loading('Startar ' + g.title + '…');
     watchPad();
+    // A start that never gets going: stop it after 45 s instead of leaving a black screen.
+    clearTimeout(watchdog);
+    watchdog = setTimeout(function () {
+      if (started || !frame) return;
+      log('gav upp efter 45 s');
+      stop(false);
+      App.toast('Spelet startade inte. Se Inställningar → Senaste start.');
+    }, 45000);
   }
 
   function loading(text) {
     var l = $('emuload');
     if (!l) { l = document.createElement('div'); l.id = 'emuload'; $('stage').appendChild(l); }
     l.textContent = text || '';
+    if (!text) l.removeAttribute('data-step');
     l.style.display = text ? 'block' : 'none';
   }
 
   /** EmulatorJS has the game running. */
   function onStarted() {
     started = true;
+    clearTimeout(watchdog);
+    log('spelet igång');
+    if (run) { run.ok = true; log('klart'); }
     em = frame && frame.contentWindow.EJS_emulator;
     loading('');
     if (!em) return;
@@ -185,6 +223,8 @@ var Play = (function () {
   }
 
   function stop(quiet) {
+    clearTimeout(watchdog);
+    if (frame && !started) log('avbruten innan start');
     if (padTimer) { clearInterval(padTimer); padTimer = null; }
     var m = $('emumenu'); if (m) m.style.display = 'none';
     loading('');
@@ -236,5 +276,6 @@ var Play = (function () {
     }, 60);
   }
 
-  return {start: start, key: key, playing: function () { return !!frame; }, _started: onStarted, _rom: null, _config: null, _state: null};
+  return {start: start, key: key, playing: function () { return !!frame; }, lastRun: lastRun, support: support,
+    _started: onStarted, _log: log, _rom: null, _config: null, _state: null};
 })();

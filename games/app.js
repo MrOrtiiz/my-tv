@@ -237,6 +237,11 @@ var App = (function () {
         Store.dbClear('roms', function () { Store.dbClear('covers', function () { coverUrls = {}; toast('Spelfilerna hämtas från Drive igen nästa gång. Dina sparade lägen finns kvar.'); }); });
       }});
     }
+    var lr = Play.lastRun();
+    if (lr) {
+      el('div', 'small', c, 'Senaste start: ' + lr.game + ' (' + lr.system + ')' + (lr.ok ? ', startade.' : ', STARTADE INTE. Ta gärna en bild av det här.'));
+      el('div', 'log', c, lr.steps.join('\n'));
+    } else el('div', 'small', c, 'TV:n: ' + Play.support());
     el('div', 'small', c, 'Kontroller: en handkontroll (Bluetooth eller USB) fungerar som på konsolen. Med fjärrkontrollen: pilar, OK = A, röd = B, grön = Y, gul = X, blå = Select, ▶ = Start. '
       + 'Tillbaka (eller Select + Start på handkontrollen) öppnar menyn i spelet. Spel · version ' + VERSION + ' · EmulatorJS 4.2.3 (GPL-3.0).');
     markCard();
@@ -413,6 +418,14 @@ var App = (function () {
   document.addEventListener('keydown', key);
 
   setupTv();
+  (function () {
+    var lr = Play.lastRun();
+    if (lr && !lr.ok && !lr.seen && Date.now() - lr.at < 6 * 3600 * 1000) {
+      setTimeout(function () { toast('Förra spelstarten (' + lr.game + ') fastnade. Se Inställningar → Senaste start.'); }, 800);
+      lr.seen = true; lr.steps.push('(appen startades om)');
+      try { localStorage.setItem('spel.lastrun', JSON.stringify(lr)); } catch (e) {}
+    }
+  })();
   if (!link()) zone = 'side';
   refresh(false);
   if (!games.length) draw();

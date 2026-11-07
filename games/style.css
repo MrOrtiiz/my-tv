@@ -71,6 +71,7 @@ input.link.focus, input.link:focus { box-shadow: inset 0 0 0 3px #fff; }
 /* A game running */
 #emu { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; border: 0; background: #000; z-index: 30; }
 #emuload { position: absolute; left: 0; top: 500px; width: 1920px; text-align: center; font-size: 30px; font-weight: 600; color: rgba(255, 255, 255, 0.8); z-index: 31; display: none; }
+#emuload:after { content: attr(data-step); display: block; margin-top: 18px; font-size: 21px; font-weight: 500; color: rgba(255, 255, 255, 0.5); }
 #emumenu { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: rgba(0, 0, 0, 0.55); z-index: 40; display: none; }
 .playing #side, .playing #main { visibility: hidden; }
 
@@ -78,3 +79,5 @@ input.link.focus, input.link:focus { box-shadow: inset 0 0 0 3px #fff; }
   border-radius: 32px; background: rgba(44, 44, 48, 0.96); font-size: 24px; font-weight: 600; z-index: 60; opacity: 0; -webkit-transition: opacity 0.25s; transition: opacity 0.25s;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); white-space: nowrap; }
 #toast.on { opacity: 1; }
+
+.card .log { margin-top: 18px; padding: 18px 24px; border-radius: 18px; background: rgba(0, 0, 0, 0.3); font: 500 17px/26px 'Menlo', monospace; color: rgba(235, 235, 245, 0.7); max-height: 300px; overflow: hidden; white-space: pre-wrap; }
