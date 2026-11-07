@@ -27,7 +27,7 @@ var Sport = (function () {
   var FOOTBALL = /laliga|la liga|premier league|champions|europa league|conference league|allsvenskan|superettan|serie a|bundesliga|ligue 1|eredivisie|primeira|liga mx|copa|supercopa|f[uú]tbol|football|soccer|fotboll|uefa|fifa|mundial|world cup|eurocopa|\bfc\b|\bcf\b|\bif\b|\bfk\b|\bsk\b|united|\bcity\b|real |atl[eé]tico|barcelona|bar[cç]a|madrid|sevilla|valencia|betis|villarreal|athletic|osasuna|girona|liverpool|chelsea|arsenal|tottenham|newcastle|juventus|milan|inter|napoli|roma|bayern|dortmund|leverkusen|psg|marseille|ajax|psv|benfica|porto|sporting|celtic|rangers|aik|djurg[aå]rden|hammarby|malm[oö]|g[oö]teborg|elfsborg|h[aä]cken|boca|river|am[eé]rica|chivas|tigres|monterrey/i;
   var BARCA = /bar[cç]a|barcelona/i;
   /** The favourite teams: first under their sport, marked ★ (Barça also has its own colours). */
-  var FAVS = [['Barça', BARCA], ['Sirius', /\bsirius\b/i]];
+  var FAVS = [['Barça', BARCA], ['Sirius', /\bsirius\b/i]];  // Sirius = IK Sirius FK (football only, see collect)
   /** The sports, in the order of the groups (the ids are sport.py's); here the first that matches a programme wins. */
   var SPORTS = [
     ['f1', 'F1', /\bf1\b|formula\s*1|f[oó]rmula\s*1|formel\s*1|grand prix de f|\bf1 (gp|grand)/i],
@@ -229,6 +229,16 @@ var Sport = (function () {
       if (found) { found.title = bm.title; found.desc = bm.competition || found.desc; chans.forEach(function (c) { if (found.channels.indexOf(c) < 0) found.channels.push(c); }); found.next = true; found.sport = 'football'; }
       else list.push({title: bm.title, desc: bm.competition || '', start: bm.start, stop: bm.stop, channels: chans, sport: 'football', barca: true, next: true, text: bm.title});
     }
+    // The other favourites' next match (sport.json's fav, from ESPN): on its row if the guide has it, else a row of its own.
+    var favs = feedOk() && feed.fav || [], nextOf = {};
+    favs.forEach(function (m) {
+      if (m.e <= now || nextOf[m.team]) return;
+      nextOf[m.team] = m;
+      var hit = null;
+      for (var i = 0; i < list.length; i++) if ((!list[i].sport || list[i].sport === 'football') && favOf(list[i].title) === m.team && Math.abs(list[i].start - m.s) < 90 * 60000) hit = list[i];
+      if (hit) hit.next = true;
+      else list.push({title: m.t, desc: m.comp, start: m.s, stop: m.e, channels: [], sport: 'football', next: true, text: m.t});
+    });
     list.forEach(function (ev) {
       ev.channels.sort(function (a, b) { return Lang.rank(a.name, a.epg) - Lang.rank(b.name, b.epg); });
       ev.live = ev.start <= now && now < ev.stop;
@@ -236,9 +246,12 @@ var Sport = (function () {
       // A favourite is a football match of the team ("Porsche Cup … in Barcelona" or "6 Horas de Barcelona" isn't), and
       // Barça's only when barca.json has a match then: any other Barça match today is a replay.
       ev.fav = ev.sport === 'football' && MATCH.test(ev.title) ? favOf(ev.title) : '';
-      if (ev.fav === 'Barça' && !ev.next && barca && barca.matches) {
+      // A favourite's match at a time its schedule doesn't have is a replay (Barça: barca.json; the others: sport.json).
+      var known = ev.fav === 'Barça' ? (barca && barca.matches ? barca.matches.map(function (m) { return m.start; }) : null)
+        : ev.fav && feedOk() && feed.fav_ok ? favs.filter(function (m) { return m.team === ev.fav; }).map(function (m) { return m.s; }) : null;
+      if (ev.fav && !ev.next && known) {
         var real = false;
-        barca.matches.forEach(function (m) { if (Math.abs(m.start - ev.start) < 90 * 60000) real = true; });
+        known.forEach(function (t) { if (Math.abs(t - ev.start) < 90 * 60000) real = true; });
         if (!real) { ev.fav = ''; ev.replay = true; }
       }
       ev.barca = ev.fav === 'Barça';

@@ -115,32 +115,64 @@ LEAGUES = [
     (re.compile(r'\bnhl\b', re.I), 'hockey/nhl', 'NHL'),
     (re.compile(r'\bnfl\b', re.I), 'football/nfl', 'NFL'),
 ]
-FIXTURES = {}
+FIXTURES, BOARDS = {}, {}
+
+
+def scoreboard(path, day):
+    """One day of a league's scoreboard from ESPN: [(kick-off, home, away, words of the arena and city)], or None."""
+    key = (path, day.strftime('%Y%m%d'))
+    if key not in BOARDS:
+        out = None
+        try:
+            data = json.loads(fetch(ESPN % (path, key[1])))
+            out = []
+            for ev in data.get('events') or []:
+                try:
+                    kick = datetime.fromisoformat(ev['date'].replace('Z', '+00:00'))
+                    comp = (ev.get('competitions') or [{}])[0]
+                    sides = {c.get('homeAway'): c.get('team', {}).get('displayName', '') for c in comp.get('competitors', [])}
+                    venue = comp.get('venue') or {}
+                    place = fold(' '.join((venue.get('fullName') or '', (venue.get('address') or {}).get('city') or '')))
+                except Exception:
+                    continue
+                if sides.get('home') and sides.get('away'):
+                    out.append((kick, sides['home'], sides['away'], place))
+        except Exception:
+            pass
+        BOARDS[key] = out
+    return BOARDS[key]
 
 
 def fixtures_of(path, now):
-    """The matches of a league yesterday, today and tomorrow (ESPN's days are American): [(kick-off, home, away, words of the arena and city)]."""
-    if path in FIXTURES:
-        return FIXTURES[path]
-    out = []
-    for day in (now - timedelta(days=1), now, now + timedelta(days=1)):
-        try:
-            data = json.loads(fetch(ESPN % (path, day.strftime('%Y%m%d'))))
-        except Exception:
-            continue
-        for ev in data.get('events') or []:
-            try:
-                kick = datetime.fromisoformat(ev['date'].replace('Z', '+00:00'))
-                comp = (ev.get('competitions') or [{}])[0]
-                sides = {c.get('homeAway'): c.get('team', {}).get('displayName', '') for c in comp.get('competitors', [])}
-                venue = comp.get('venue') or {}
-                place = fold(' '.join((venue.get('fullName') or '', (venue.get('address') or {}).get('city') or '')))
-            except Exception:
-                continue
-            if sides.get('home') and sides.get('away'):
-                out.append((kick, sides['home'], sides['away'], place))
-    FIXTURES[path] = out
-    return out
+    """The matches of a league yesterday, today and tomorrow (ESPN's days are American)."""
+    if path not in FIXTURES:
+        FIXTURES[path] = [f for d in (-1, 0, 1) for f in (scoreboard(path, now + timedelta(days=d)) or [])]
+    return FIXTURES[path]
+
+
+# The favourite teams besides Barça (whose matches come from barca.json): their matches of the coming two weeks, so
+# the Sport page shows the next one before the guide has it, and knows a match of theirs at another time is a replay.
+FAV_TEAMS = [('Sirius', re.compile(r'\bsirius\b', re.I), [('soccer/swe.1', 'Allsvenskan'), ('soccer/swe.cup', 'Svenska cupen')])]
+FAV_DAYS = 14
+
+
+def favourites(now):
+    """[{team, t, comp, s, e}] and whether every schedule could be read."""
+    out, ok = [], True
+    for team, rx, leagues in FAV_TEAMS:
+        for path, league in leagues:
+            for d in range(-1, FAV_DAYS):
+                day = scoreboard(path, now + timedelta(days=d))
+                if day is None:
+                    ok = ok and path != leagues[0][0]
+                    continue
+                for kick, home, away, _ in day:
+                    if (rx.search(home) or rx.search(away)) and kick + timedelta(hours=2) > now:
+                        m = {'team': team, 't': '%s – %s' % (home, away), 'comp': league,
+                             's': int(kick.timestamp() * 1000), 'e': int((kick + timedelta(hours=2)).timestamp() * 1000)}
+                        if m not in out:
+                            out.append(m)
+    return sorted(out, key=lambda m: m['s']), ok
 
 
 def name_match(title, desc, start, now):
@@ -157,6 +189,11 @@ def name_match(title, desc, start, now):
         named = [f for f in near if any(w in words for w in
                  [x for x in re.findall(r'[a-z0-9]{4,}', f[3]) if x not in ('arena', 'stadium', 'stadion', 'estadio', 'park', 'city')]
                  + [x for x in re.findall(r'[a-z0-9]{4,}', fold(f[1] + ' ' + f[2])) if x not in ('real', 'city', 'united')])]
+        if len(named) != 1:
+            # Several at once and the block doesn't say which: if one is a favourite's, say the block may hold it.
+            fav = [f for f in near if any(rx.search(f[1]) or rx.search(f[2]) for _, rx, _ in FAV_TEAMS)]
+            if len(fav) == 1:
+                return '%s: %s – %s m.fl.' % (league, fav[0][1], fav[0][2])
         near = named if len(named) == 1 else []
     if len(near) != 1:
         return None
@@ -198,7 +235,7 @@ def teams(title):
         while len(m) == 2 and SEP.search(m[1]):
             m = SEP.split(m[1], maxsplit=1)
         if len(m) == 2:
-            return m[0], re.split(r'[(\[|,]', m[1])[0]
+            return m[0], re.split(r'[(\[|,]|\sm\.fl', m[1])[0]
     return None
 
 
@@ -314,8 +351,10 @@ def main():
         counts[ev['sp']] = counts.get(ev['sp'], 0) + 1
         if len(out) >= MAX_EVENTS:
             break
+    fav, fav_ok = favourites(now)
     data = {'updated': int(now.timestamp() * 1000), 'hours': HOURS, 'channels': len(names), 'programmes': read,
-            'counts': counts, 'ch': table, 'ev': out}
+            'counts': counts, 'ch': table, 'ev': out, 'fav': fav, 'fav_ok': fav_ok}
+    print('Favourites: %s%s' % ([m['t'] for m in fav], '' if fav_ok else ' (a schedule could not be read)'))
     os.makedirs(os.path.dirname(os.path.abspath(OUT)), exist_ok=True)
     with open(OUT, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, separators=(',', ':'))
