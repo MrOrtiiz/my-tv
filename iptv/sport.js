@@ -1,5 +1,7 @@
 /*
- * Sport: what's on now and the rest of the day on the sport channels, football first, Barça at the top.
+ * Sport: what's on now and the rest of the day on the sport channels, one group per sport on the left (Fotboll first,
+ * then Basket, F1, Motorsport, Tennis, Hockey, Kampsport, Amerikansk fotboll, Övrig sport; only those with something on).
+ * Under Fotboll the favourite teams (Barça, Sirius) come first, marked ★; every other match follows.
  * - Barça: the next match from data/barca.json in the repo (the same file as Free My TV's Barça box), with its
  *   channels found in the list, also in hidden groups (not locked ones); and every programme in the guide with Barça in
  *   its title.
@@ -14,14 +16,26 @@ var Sport = (function () {
   'use strict';
   var BARCA_API = 'https://api.github.com/repos/MrOrtiiz/my-tv/contents/data/barca.json?ref=main';
   var MAX = 160, AHEAD = 16 * 3600000;
-  var SPORT = /sport|deport|f[uú]tbol|football|soccer|laliga|la liga|premier|champions|dazn|espn|bein|eleven|movistar\s*(liga|deport|campeones|f[uú]tbol)|m\+\s*(liga|deport|campeones)|tnt sport|sky sport|tv4 sport|v sport|viaplay sport|c more (fotboll|sport)|arena|\btudn\b|\bgol\b|win sports|tyc|fox sports|supersport|setanta|ziggo sport|canal\+\s*sport/i;
+  var SPORT = /sport|deport|\bnba\b|basket|\bf1\b|formula|motor|eurosport|tennis|tenis|hockey|\bnhl\b|\bufc\b|fight|f[uú]tbol|football|soccer|laliga|la liga|premier|champions|dazn|espn|bein|eleven|movistar\s*(liga|deport|campeones|f[uú]tbol)|m\+\s*(liga|deport|campeones)|tnt sport|sky sport|tv4 sport|v sport|viaplay sport|c more (fotboll|sport)|arena|\btudn\b|\bgol\b|win sports|tyc|fox sports|supersport|setanta|ziggo sport|canal\+\s*sport/i;
   var MATCH = /\S\s+(vs\.?|v\.?|–|—|-)\s+\S/i;
   var EVENT = /grand prix|\bgp\b|formula|f[oó]rmula 1|\bf1\b|motogp|ufc|boxing|boxeo|boxning|\bnba\b|\bnhl\b|\bnfl\b|tour de|giro|vuelta|atp|wta|wimbledon|roland|open\b/i;
   var NOT = /highlight|resumen|res[uú]menes|magazine|revista|noticias|news|preview|previa|post[\s-]?partido|an[aá]lisis|tertulia|programa|repetici[oó]n|replay|\(r\)|\brepris|diferido|\bclassic|cl[aá]sico hist|documental|studio|estudio|the debate|countdown|goals? of|goles de|best of|lo mejor/i;
   var FOOTBALL = /laliga|la liga|premier league|champions|europa league|conference league|allsvenskan|superettan|serie a|bundesliga|ligue 1|eredivisie|primeira|liga mx|copa|supercopa|f[uú]tbol|football|soccer|fotboll|uefa|fifa|mundial|world cup|eurocopa|\bfc\b|\bcf\b|\bif\b|\bfk\b|\bsk\b|united|\bcity\b|real |atl[eé]tico|barcelona|bar[cç]a|madrid|sevilla|valencia|betis|villarreal|athletic|osasuna|girona|liverpool|chelsea|arsenal|tottenham|newcastle|juventus|milan|inter|napoli|roma|bayern|dortmund|leverkusen|psg|marseille|ajax|psv|benfica|porto|sporting|celtic|rangers|aik|djurg[aå]rden|hammarby|malm[oö]|g[oö]teborg|elfsborg|h[aä]cken|boca|river|am[eé]rica|chivas|tigres|monterrey/i;
-  var NOT_FOOTBALL = /\bnba\b|\bnhl\b|\bnfl\b|basket|baloncesto|hockey|tennis|tenis|f1\b|formula|motogp|ufc|boxing|boxeo|golf|rugby|cricket|handball|balonmano|volley/i;
   var BARCA = /bar[cç]a|barcelona/i;
-  var FILTERS = [['Alla', 'all'], ['Fotboll', 'football'], ['Övrig sport', 'other']];
+  /** The favourite teams: first under their sport, marked ★ (Barça also has its own colours). */
+  var FAVS = [['Barça', BARCA], ['Sirius', /\bsirius\b/i]];
+  /** The sports, in the order of the groups; the first that matches a programme (title, description, channel) wins. */
+  var SPORTS = [
+    ['f1', 'F1', /\bf1\b|formula\s*1|f[oó]rmula\s*1|formel\s*1|grand prix de f|\bf1 (gp|grand)/i],
+    ['motor', 'Motorsport', /motogp|moto\s*gp|nascar|indycar|rally|\bwrc\b|superbike|\bdtm\b|formula\s*e\b|le mans|grand prix|\bgp\b/i],
+    ['basket', 'Basket', /\bnba\b|\bwnba\b|basket|baloncesto|euroleague|euroliga|\bacb\b|ncaa.*basket|basketligan/i],
+    ['hockey', 'Hockey', /\bnhl\b|hockey|\bshl\b|\bkhl\b|hockeyallsvenskan/i],
+    ['tennis', 'Tennis', /tennis|tenis|\batp\b|\bwta\b|wimbledon|roland garros|us open|australian open|davis cup/i],
+    ['fight', 'Kampsport', /\bufc\b|\bmma\b|boxing|boxeo|boxning|\bwwe\b|kickbox|fight night/i],
+    ['nfl', 'Amerikansk fotboll', /\bnfl\b|super bowl|american football|f[uú]tbol americano/i],
+    ['football', 'Fotboll', null],
+    ['other', 'Övrig sport', null]
+  ];
 
   var V = null, focused = false, barca = null, barcaAt = 0;
 
@@ -60,10 +74,10 @@ var Sport = (function () {
     var fHost = u.el('div', 'col groups glass', main), eHost = u.el('div', 'col events glass', main);
     V = {zone: 'events', events: [], read: 0, chans: [], filter: 'all'};
     V.status = u.el('div', 'sstatus', fHost);
-    V.filters = new u.List(u.el('div', 'flist', fHost), 76, function (f, r) { u.el('div', 'name', r, f[0]); });
+    V.filters = new u.List(u.el('div', 'flist', fHost), 76, function (f, r) { u.el('div', 'name', r, f[1]); if (f[3]) u.el('span', 'n', r, String(f[3])); });
     V.list = new u.List(eHost, 112, row);
     V.list.emptyText = 'Läser tablån för sportkanalerna…';
-    V.filters.set(FILTERS, 0);
+    V.filters.set([SPORTS[7].concat([null, 0])], 0);
     V.list.set([]);
     focus(focused);
     V.chans = sportChannels();
@@ -100,9 +114,8 @@ var Sport = (function () {
           var k = nkey(t) + '|' + Math.round(p.start / 600000);
           var ev = byKey[k];
           if (!ev) {
-            var all = t + ' ' + (p.desc || '').slice(0, 200);
             ev = byKey[k] = {title: t, desc: (p.desc || '').split(/[.\n]/)[0].slice(0, 90), start: p.start, stop: p.stop, channels: [],
-              football: FOOTBALL.test(all) && !NOT_FOOTBALL.test(t), barca: BARCA.test(t)};
+              text: t + ' ' + (p.desc || '').slice(0, 200), barca: BARCA.test(t)};
             list.push(ev);
           }
           if (ev.channels.indexOf(ch) < 0) ev.channels.push(ch);
@@ -121,24 +134,45 @@ var Sport = (function () {
         if (c && chans.indexOf(c) < 0 && !(g && Lock.locked(g))) chans.push(c);
       });
       if (found) { found.title = bm.title; found.desc = bm.competition || found.desc; chans.forEach(function (c) { if (found.channels.indexOf(c) < 0) found.channels.push(c); }); found.next = true; }
-      else list.push({title: bm.title, desc: bm.competition || '', start: bm.start, stop: bm.stop, channels: chans, football: true, barca: true, next: true});
+      else list.push({title: bm.title, desc: bm.competition || '', start: bm.start, stop: bm.stop, channels: chans, sport: 'football', barca: true, next: true, text: bm.title});
     }
     list.forEach(function (ev) {
       ev.channels.sort(function (a, b) { return Lang.rank(a.name, a.epg) - Lang.rank(b.name, b.epg); });
       ev.live = ev.start <= now && now < ev.stop;
+      if (!ev.sport) ev.sport = sportOf(ev);
+      ev.fav = '';
+      for (var f = 0; f < FAVS.length; f++) if (FAVS[f][1].test(ev.title)) { ev.fav = FAVS[f][0]; break; }
     });
-    list.sort(function (a, b) {
-      return (b.barca - a.barca) || (b.live - a.live) || (a.live && b.live ? (b.football - a.football) : 0) || (a.start - b.start) || (b.football - a.football);
-    });
+    // Favourites first, then what's on now, then by time.
+    list.sort(function (a, b) { return (!!b.fav - !!a.fav) || (b.live - a.live) || (a.start - b.start); });
     V.all = list;
+    // The groups: Fotboll always, the others when they have something.
+    var n = {}, cats = [];
+    list.forEach(function (e) { n[e.sport] = (n[e.sport] || 0) + 1; });
+    SPORTS.forEach(function (sp) { if (sp[0] === 'football' || n[sp[0]]) cats.push([sp[0], sp[1], sp[2], n[sp[0]] || 0]); });
+    cats.sort(function (a, b) { return (b[0] === 'football') - (a[0] === 'football'); });
+    var cur = V.filters.current(), at = 0;
+    for (var c = 0; c < cats.length; c++) if (cur && cats[c][0] === cur[0]) at = c;
+    V.filters.set(cats, at);
     show();
   }
 
+  /** The sport of a match: by its title and description, then its channels' names; a match ("A – B") on a football
+   *  channel, or with a football word, is football. */
+  function sportOf(ev) {
+    var names = ev.channels.map(function (c) { return c.name; }).join(' ');
+    for (var i = 0; i < SPORTS.length; i++) if (SPORTS[i][2] && SPORTS[i][2].test(ev.text)) return SPORTS[i][0];
+    if (FOOTBALL.test(ev.text)) return 'football';
+    for (i = 0; i < SPORTS.length; i++) if (SPORTS[i][2] && SPORTS[i][2].test(names)) return SPORTS[i][0];
+    if (MATCH.test(ev.title) && /f[uú]tbol|football|fotboll|soccer|laliga|liga|premier|champions|calcio|bundesliga/i.test(names)) return 'football';
+    return MATCH.test(ev.title) ? 'football' : 'other';
+  }
+
   function show() {
-    var f = V.filters.current()[1], cur = V.list.current();
-    V.events = (V.all || []).filter(function (e) { return f === 'all' || (f === 'football' ? e.football : !e.football) || e.barca && f === 'football'; });
+    var f = (V.filters.current() || ['football'])[0], cur = V.list.current();
+    V.events = (V.all || []).filter(function (e) { return e.sport === f; });
     var at = cur ? V.events.indexOf(cur) : 0;
-    V.list.emptyText = V.read < V.chans.length ? 'Läser tablån för sportkanalerna…' : 'Inga matcher i tablån de närmaste timmarna.';
+    V.list.emptyText = V.read < V.chans.length ? 'Läser tablån för sportkanalerna…' : 'Inget i tablån de närmaste timmarna.';
     V.list.set(V.events, at < 0 ? 0 : at);
     status();
   }
@@ -146,10 +180,11 @@ var Sport = (function () {
   function row(ev, r) {
     var u = U(), now = Date.now();
     if (ev.barca) r.className += ' barca';
+    else if (ev.fav) r.className += ' fav';
     var time = u.el('div', 'etime' + (ev.live ? ' live' : ''), r, ev.live ? 'NU' : u.hm(ev.start));
     if (!ev.live && new Date(ev.start).getDate() !== new Date().getDate()) time.textContent = (ev.start - now > 2 * 86400000 ? new Date(ev.start).toLocaleDateString('sv-SE', {weekday: 'short', day: 'numeric', month: 'short'}) + ' ' : 'imorgon ') + u.hm(ev.start);
     var t = u.el('div', 'text', r);
-    u.el('div', 'name', t, (ev.barca ? '🔵🔴  ' : '') + ev.title);
+    u.el('div', 'name', t, (ev.fav ? '★  ' : '') + ev.title);
     var names = ev.channels.slice(0, 3).map(function (c) { var tag = Lang.tag(c.name, c.epg); return (tag ? tag + ' ' : '') + c.name.replace(/^\s*[A-Z]{2,3}\s*[:|\-]\s*|^\|[A-Z]{2,3}\|\s*/, ''); });
     var sub = [ev.desc, names.length ? names.join(' · ') + (ev.channels.length > 3 ? ' +' + (ev.channels.length - 3) : '') : (ev.next ? 'Kanalerna kommer dagen före matchen' : '')].filter(function (x) { return x; }).join('   ·   ');
     u.el('div', 'now', t, sub);
