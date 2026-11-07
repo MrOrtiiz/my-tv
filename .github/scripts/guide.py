@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from barca import fetch, guide, when, fold, kind  # noqa: E402
 
 OUT = os.environ.get('GUIDE_OUT') or os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'guide.json')
-BACK, AHEAD = timedelta(hours=1), timedelta(hours=30)
+BACK, AHEAD = timedelta(hours=1), timedelta(hours=26)
 SHARE = 'https://epgshare01.online/epgshare01/epg_ripper_%s.xml.gz'
 # A channel's country, from the tag in its name or group ("ES:", "|UK|", "SE ·", "… FHD MX"), → epgshare01's files.
 COUNTRY_FILES = {
@@ -32,7 +32,7 @@ COUNTRY_FILES = {
 ALWAYS = ['ES1', 'UK1', 'SE1', 'US2', 'US_SPORTS1']
 MAX_FILES = 14
 QUALITY = re.compile(r'\b(fhd|uhd|hd|sd|4k|8k|hevc|h\.?265|h\.?264|hdr|50fps|60fps|fps|backup|raw|vip|multi[- ]?audio|'
-                     r'plus\+?|ᴴᴰ|ᶠᴴᴰ|ᵁᴴᴰ|ˢᴰ|ʰᵈ|ʳᵃʷ)\b', re.I)
+                     r'ᴴᴰ|ᶠᴴᴰ|ᵁᴴᴰ|ˢᴰ|ʰᵈ|ʳᵃʷ)\b', re.I)
 
 
 def norm(name):
@@ -42,8 +42,16 @@ def norm(name):
     s = re.sub(r'[\[(][^\])]*[\])]', ' ', s)
     s = QUALITY.sub(' ', s)
     s = re.sub(r'\s+(es|uk|gb|se|us|usa|mx|ar|co|cl|pe|ca|ie|au|de|fr|it|pt|nl|dk|no|fi|pl|tr|br)\s*$', '', s)
+    # Movistar's channels go by "M+ …" and "Movistar …" (and "Movistar Plus+ …").
+    s = re.sub(r'^\s*(m\s*\+|movistar\s*(plus\s*\+?|\+)?)\s*', 'movistar ', s)
     s = s.replace('+', 'plus').replace('&', 'and')
     return re.sub(r'[^a-z0-9]', '', s)
+
+
+def keys(name):
+    """A name's keys: as normalised, and without an "hd" glued on ("BBCScotlandHD")."""
+    k = norm(name)
+    return [k, k[:-2]] if k.endswith('hd') and len(k) > 4 else [k]
 
 
 def country(name, group, gid=''):
@@ -110,10 +118,10 @@ def share(code, wanted, now):
     for _, el in ET.iterparse(io.BytesIO(raw), events=('end',)):
         if el.tag == 'channel':
             cid = el.get('id') or ''
-            keys = [norm(d.text or '') for d in el.findall('display-name')] + [norm(cid.rsplit('.', 1)[0])]
+            ks = [k for d in el.findall('display-name') for k in keys(d.text or '')] + keys(cid.rsplit('.', 1)[0])
             if os.environ.get('GUIDE_DEBUG') == '1':
-                SEEN.setdefault(code, []).append('%s=%s' % (cid, keys[0] if keys else ''))
-            for k in keys:
+                SEEN.setdefault(code, []).append('%s=%s' % (cid, ks[0] if ks else ''))
+            for k in ks:
                 if k and k in wanted and k not in names:
                     names[k] = code + ':' + cid
             el.clear()
@@ -123,7 +131,7 @@ def share(code, wanted, now):
             if start and stop and stop > now - BACK and start < now + AHEAD:
                 progs.setdefault(cid, []).append([int(start.timestamp() * 1000), int(stop.timestamp() * 1000),
                                                   (el.findtext('title') or '').strip()[:90],
-                                                  re.split(r'(?<=[.!?])\s', (el.findtext('desc') or '').strip())[0][:140]])
+                                                  re.split(r'(?<=[.!?])\s', (el.findtext('desc') or '').strip())[0][:90]])
             el.clear()
     used = set(names.values())
     progs = {c: sorted(p) for c, p in progs.items() if c in used}
