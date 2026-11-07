@@ -90,6 +90,9 @@ def listed(src, now):
     return have
 
 
+SEEN = {}   # with GUIDE_DEBUG: every name of each file, to show what didn't match
+
+
 def share(code, wanted, now):
     """Of one epgshare01 file: the channels named like a wanted name ({norm: ext id}) and their listings."""
     try:
@@ -108,6 +111,8 @@ def share(code, wanted, now):
         if el.tag == 'channel':
             cid = el.get('id') or ''
             keys = [norm(d.text or '') for d in el.findall('display-name')] + [norm(cid.rsplit('.', 1)[0])]
+            if os.environ.get('GUIDE_DEBUG') == '1':
+                SEEN.setdefault(code, []).append('%s=%s' % (cid, keys[0] if keys else ''))
             for k in keys:
                 if k and k in wanted and k not in names:
                     names[k] = code + ':' + cid
@@ -180,6 +185,15 @@ def main():
             m[name] = at[ext]
             if gid:
                 m['#' + gid] = at[ext]
+    if os.environ.get('GUIDE_DEBUG') == '1':
+        import random
+        random.seed(2)
+        for cc in ('es', 'se', 'uk', 'us', ''):
+            miss = [(name, n) for name, _, n in by_country.get(cc, []) if name not in m]
+            print('== %s: %d without a match, e.g.: %s' % (cc or '?', len(miss), ' | '.join('%s→%s' % x for x in random.sample(miss, min(60, len(miss))))))
+        for code in ('ES1', 'SE1', 'UK1'):
+            names = SEEN.get(code, [])
+            print('== %s has %d channels, e.g.: %s' % (code, len(names), ' | '.join(random.sample(names, min(80, len(names))))))
     data = {'updated': int(now.timestamp() * 1000), 'm': m, 'g': table}
     os.makedirs(os.path.dirname(os.path.abspath(OUT)), exist_ok=True)
     with open(OUT, 'w', encoding='utf-8') as f:

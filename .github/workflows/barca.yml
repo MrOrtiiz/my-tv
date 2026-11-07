@@ -47,6 +47,7 @@ jobs:
         env:
           EPG_URL: ${{ secrets.EPG_URL }}
           GUIDE_OUT: ${{ runner.temp }}/sport/guide.json
+          GUIDE_DEBUG: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
         run: python3 .github/scripts/guide.py
       - name: Publish the sport and the guide
         env:
