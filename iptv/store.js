@@ -48,6 +48,27 @@ var Store = (function () {
     },
     lastChannel: function () { var r = read('recent', []); for (var i = 0; i < r.length; i++) if (r[i].kind === 'live') return r[i]; return null; },
 
+    /** All favourites in a new order (the channels moved; films and series keep their places after them). */
+    setFavs: function (list) { write('favs', list); },
+
+    // Groups: Yuri's own order (ids), the hidden ones, and each group's own channel order (ids).
+    groupOrder: function (v) { if (arguments.length) write('gorder', v); return read('gorder', []); },
+    hidden: function (v) { if (arguments.length) write('ghidden', v); return read('ghidden', {}); },
+    chanOrder: function (gid, ids) {
+      var all = read('corder', {});
+      if (arguments.length > 1) { if (ids) all[gid] = ids; else delete all[gid]; write('corder', all); }
+      return all[gid] || null;
+    },
+    resetGroups: function () { write('gorder', undefined); write('ghidden', undefined); write('corder', undefined); },
+
+    // The parental lock: the PIN (only on the TV), and the groups locked or opened by hand (id → true/false; the rest by name).
+    pin: function (v) { if (arguments.length) write('pin', v || undefined); return read('pin', ''); },
+    locks: function (v) { if (arguments.length) write('locks', v); return read('locks', {}); },
+
+    // Reminders from the guide: [{key, ch, title, start, stop}].
+    reminders: function (v) { if (arguments.length) write('reminders', v); return read('reminders', []); },
+    slim: slim,
+
     cache: function (k, v) { if (arguments.length > 1) write('cache.' + k, v); return read('cache.' + k, null); },
     forget: function () { write('cache.live', undefined); }
   };

@@ -7,10 +7,10 @@
  */
 var App = (function () {
   'use strict';
-  var VERSION = '1.1';
+  var VERSION = '1.2';
   var K = {left: 37, up: 38, right: 39, down: 40, ok: 13, back: 10009, chUp: 427, chDown: 428,
     play: 415, pause: 19, playPause: 10252, ff: 417, rew: 412, stop: 413};
-  var TABS = [['live', 'Live'], ['guide', 'TV-guide'], ['films', 'Filmer'], ['series', 'Serier'], ['favs', 'Favoriter'], ['settings', 'Inställningar']];
+  var TABS = [['live', 'Live'], ['sport', 'Sport'], ['guide', 'TV-guide'], ['films', 'Filmer'], ['series', 'Serier'], ['favs', 'Favoriter'], ['settings', 'Inställningar']];
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, parent, text) {
@@ -128,20 +128,54 @@ var App = (function () {
 
   // MARK: - Channels
 
+  /** All groups in Yuri's order (moved ones where he put them, new ones in the language order after). */
+  function orderedGroups() {
+    var order = Store.groupOrder(), idx = {}, i;
+    for (i = 0; i < order.length; i++) idx[order[i]] = i;
+    var list = [];
+    for (i = 0; i < groups.length; i++) list.push({g: groups[i], r: idx.hasOwnProperty(groups[i].id) ? idx[groups[i].id] : order.length + i});
+    list.sort(function (a, b) { return a.r - b.r; });
+    return list.map(function (x) { return x.g; });
+  }
+  /** The groups shown: not hidden. */
+  function shownGroups() { var h = Store.hidden(); return orderedGroups().filter(function (g) { return !h[g.id]; }); }
+  function groupById(id) { for (var i = 0; i < groups.length; i++) if (groups[i].id === id) return groups[i]; return null; }
+  /** May a channel be shown now: its group isn't hidden or locked. */
+  function open_(ch) {
+    var g = groupById(ch.cat);
+    if (!g) return true;
+    return !Store.hidden()[g.id] && !Lock.locked(g);
+  }
+
   function groupItems() {
-    var out = [{id: '*fav', name: '★  Favoriter'}, {id: '*recent', name: 'Senast sedda'}, {id: '*all', name: 'Alla kanaler', n: channels.length}];
-    return out.concat(groups);
+    var all = channels.filter(open_);
+    var out = [{id: '*fav', name: '★  Favoriter'}, {id: '*recent', name: 'Senast sedda'}, {id: '*all', name: 'Alla kanaler', n: all.length}];
+    out = out.concat(shownGroups());
+    if (groups.length) out.push({id: '*edit', name: '✎  Ordna, dölj och lås'});
+    return out;
+  }
+
+  /** A group's channels in its own order (moved ones first where he put them). */
+  function ordered(gid, list) {
+    var ids = Store.chanOrder(gid);
+    if (!ids) return list;
+    var idx = {}, i, out = [];
+    for (i = 0; i < ids.length; i++) idx[ids[i]] = i;
+    for (i = 0; i < list.length; i++) out.push({c: list[i], r: idx.hasOwnProperty(list[i].id) ? idx[list[i].id] : ids.length + i});
+    out.sort(function (a, b) { return a.r - b.r; });
+    return out.map(function (x) { return x.c; });
   }
 
   function channelsOf(g) {
-    if (!g) return [];
-    if (g.id === '*all') return channels;
+    if (!g || g.id === '*edit') return [];
+    if (g.id === '*all') return channels.filter(open_);
     if (g.id === '*fav' || g.id === '*recent') {
       var src = g.id === '*fav' ? Store.favs() : Store.recent(), out = [];
-      for (var i = 0; i < src.length; i++) if (src[i].kind === 'live') out.push(src[i]);
+      for (var i = 0; i < src.length; i++) if (src[i].kind === 'live' && open_(src[i])) out.push(src[i]);
       return out;
     }
-    return byCat[g.id] || [];
+    if (Lock.locked(g)) return [];
+    return ordered(g.id, byCat[g.id] || []);
   }
 
   function loadChannels(fresh, done) {
@@ -216,7 +250,8 @@ var App = (function () {
   // MARK: - Live and TV-guide
 
   function chanRow(guideMode) {
-    return function (ch, r) {
+    return function (ch, r, i) {
+      if (V.grab && V.chans && i === V.chans.at) r.className += ' grab';
       img(el('div', 'logo', r), '', ch.logo);
       var t = el('div', 'text', r);
       el('div', 'name', t, ch.name);
@@ -240,7 +275,8 @@ var App = (function () {
     V.groups = new List(gHost, 76, function (g, r) {
       el('div', 'name', r, g.name);
       if (g.lang) el('span', 'lang lang-' + g.lang.toLowerCase(), r, g.lang);
-      if (g.n) el('span', 'n', r, String(g.n));
+      if (Lock.locked(g)) el('span', 'n', r, '🔒');
+      else if (g.n) el('span', 'n', r, String(g.n));
     });
     V.chans = new List(cHost, guideMode ? 112 : 84, chanRow(guideMode));
     V.chans.emptyText = 'Inga kanaler här.';
@@ -257,6 +293,9 @@ var App = (function () {
   function showGroup(selectCh) {
     var g = V.groups.current(), list = channelsOf(g), at = 0;
     V.groupAt = V.groups.at;
+    V.grab = false;
+    V.chans.emptyText = g && g.id === '*edit' ? 'OK öppnar: flytta grupper, dölj dem du inte vill se och lås grupper med föräldralåset.'
+      : g && Lock.locked(g) ? '🔒  Låst med föräldralåset. Tryck OK och skriv PIN-koden.' : 'Inga kanaler här.';
     if (selectCh) for (var i = 0; i < list.length; i++) if (list[i].id === selectCh.id) { at = i; break; }
     V.chans.set(list, at);
     sideFor();
@@ -277,6 +316,10 @@ var App = (function () {
       V.buttons = [['Spela', function () { playChannel(); }], [Store.isFav(ch) ? '★  Ta bort från favoriter' : '☆  Lägg till i favoriter', function () {
         var on = Store.toggleFav(ch); toast(on ? 'Tillagd i favoriter' : 'Borttagen från favoriter'); V.chans.draw(); sideFor();
       }]];
+      var g = V.groups.current();
+      if (g && g.id !== '*all' && g.id !== '*recent' && V.chans.items.length > 1) V.buttons.push(['↕  Flytta i listan', function () {
+        V.grab = true; zone = 'chans'; toast('▲ ▼ flyttar kanalen · OK släpper', 5000); focusZone();
+      }]);
       for (var b = 0; b < V.buttons.length; b++) el('div', 'button' + (zone === 'side' && V.btnAt === b ? ' focus' : ''), btns, V.buttons[b][0]);
     } else el('div', 'keys', side, 'OK spelar  ·  ▲ ▼ kanaler  ·  ◀ grupper');
     clearTimeout(sideTimer);
@@ -300,6 +343,21 @@ var App = (function () {
         }
       });
     }, 250);
+  }
+
+  /** Moves the grabbed channel one step, and keeps the new order (the group's, or the favourites'). */
+  function moveChannel(d) {
+    var l = V.chans.items, a = V.chans.at, b = a + d;
+    if (b < 0 || b >= l.length) return;
+    var t = l[a]; l[a] = l[b]; l[b] = t;
+    V.chans.at = b;
+    var g = V.groups.current();
+    if (g.id === '*fav') {
+      var favs = Store.favs(), lives = l.slice(), out = [], k = 0;
+      for (var i = 0; i < favs.length; i++) out.push(favs[i].kind === 'live' && k < lives.length ? lives[k++] : favs[i]);
+      Store.setFavs(out);
+    } else Store.chanOrder(g.id, l.map(function (c) { return c.id; }));
+    V.chans.draw();
   }
 
   function playChannel() {
@@ -329,6 +387,7 @@ var App = (function () {
       el('div', 'name', r, c.name);
       var tag = Lang.tag(c.name);
       if (tag) el('span', 'lang lang-' + tag.toLowerCase(), r, tag);
+      if (Lock.locked({id: kind + ':' + c.id, name: c.name})) el('span', 'n', r, '🔒');
     });
     V.grid = new Grid(gHost, 6, 215, 362, posterTile);
     V.kind = kind;
@@ -352,6 +411,7 @@ var App = (function () {
     var c = V.cats.current(), mine = ++catSeq;
     if (!c) return;
     V['catAt_' + V.kind] = V.cats.at;
+    if (Lock.locked({id: V.kind + ':' + c.id, name: c.name})) { V.grid.emptyText = '🔒  Låst med föräldralåset. Tryck OK och skriv PIN-koden.'; V.grid.set([]); return; }
     V.grid.emptyText = 'Hämtar…';
     V.grid.set([]);
     (V.kind === 'films' ? Api.films : Api.series)(c.id, function (err, items) {
@@ -458,7 +518,7 @@ var App = (function () {
 
   // MARK: - Favourites and history
 
-  var FAV_SECTIONS = [['Kanaler', 'live'], ['Filmer', 'film'], ['Serier', 'series'], ['Senast sedda', 'recent']];
+  var FAV_SECTIONS = [['Kanaler', 'live'], ['Filmer', 'film'], ['Serier', 'series'], ['Senast sedda', 'recent'], ['Påminnelser', 'rem']];
   function buildFavs() {
     var main = $('main');
     main.innerHTML = '';
@@ -468,7 +528,7 @@ var App = (function () {
       img(el('div', 'logo', r), '', it.logo || it.poster);
       var t = el('div', 'text', r);
       el('div', 'name', t, it.kind === 'episode' ? it.seriesName + '  ·  S' + it.season + ' A' + it.n : it.name);
-      var sub = it.kind === 'live' ? 'Kanal' : it.kind === 'film' ? 'Film' : it.kind === 'series' ? 'Serie' : it.title || 'Avsnitt';
+      var sub = it.kind === 'live' ? 'Kanal' : it.kind === 'film' ? 'Film' : it.kind === 'series' ? 'Serie' : it.kind === 'rem' ? it.title : it.title || 'Avsnitt';
       if (it.pos && it.len) sub += '  ·  ' + Math.floor(it.pos / 60) + ' av ' + Math.floor(it.len / 60) + ' min';
       el('div', 'now', t, sub);
     });
@@ -480,11 +540,18 @@ var App = (function () {
   function showSection() {
     var s = V.sections.current(), src = s[1] === 'recent' ? Store.recent() : Store.favs(), out = [];
     V.secAt = V.sections.at;
-    for (var i = 0; i < src.length; i++) if (s[1] === 'recent' || src[i].kind === s[1]) out.push(src[i]);
+    if (s[1] === 'rem') {
+      var rem = Epg.reminders();
+      V.items.emptyText = 'Inga påminnelser. Välj ett kommande program i TV-guiden och tryck OK.';
+      V.items.set(rem.map(function (r) { return {kind: 'rem', rem: r, name: r.title, logo: r.ch.logo, title: hm(r.start) + '  ·  ' + r.ch.name + '  ·  OK tar bort'}; }));
+      return;
+    }
+    for (var i = 0; i < src.length; i++) if ((s[1] === 'recent' || src[i].kind === s[1]) && (src[i].kind !== 'live' || open_(src[i]))) out.push(src[i]);
     V.items.emptyText = s[1] === 'recent' ? 'Inget sett än.' : 'Inga favoriter här än. Lägg till med ☆ på en kanal, film eller serie.';
     V.items.set(out);
   }
   function openFavItem(it) {
+    if (it.kind === 'rem') { Epg.toggle(it.rem.ch, it.rem); showSection(); return; }
     if (it.kind === 'live') {
       var lives = [], at = 0;
       for (var i = 0; i < V.items.items.length; i++) if (V.items.items[i].kind === 'live') { if (V.items.items[i] === it) at = lives.length; lives.push(V.items.items[i]); }
@@ -511,6 +578,9 @@ var App = (function () {
       ['Uppdatera kanallistan', channels.length ? channels.length + ' kanaler' : '', function () {
         Store.forget(); toast('Hämtar kanallistan…'); loadChannels(true, function () { toast(loadErr ? 'Kunde inte läsa listan: ' + loadErr.message : channels.length + ' kanaler'); buildSettings(); });
       }],
+      ['Grupper', 'ordna, dölj och lås', function () { Lock.editor(); }],
+      ['Föräldralås', Store.pin() ? (Lock.open() ? 'på · upplåst nu' : 'på') : 'av', function () { Lock.settings(); }],
+      ['Återställ grupperna', 'ordning och dolda', function () { Store.resetGroups(); toast('Grupperna har sin vanliga ordning igen, inga är dolda.'); V = {}; buildSettings(); }],
       ['Rensa senast sedda', '', function () { try { localStorage.removeItem('iptv.recent'); } catch (e) {} toast('Rensat'); }],
       ['Om appen', 'IPTV ' + VERSION + ' · laddas från GitHub', function () {}]
     ];
@@ -555,7 +625,7 @@ var App = (function () {
   // MARK: - Screens and focus
 
   function openTab(name) {
-    if (tab !== name) V = {};
+    if (tab !== name) { if (V.mod && V.mod.leave) V.mod.leave(); V = {}; }
     tab = name;
     for (var i = 0; i < TABS.length; i++) if (TABS[i][0] === name) tabAt = i;
     drawScreen();
@@ -563,7 +633,9 @@ var App = (function () {
 
   function drawScreen() {
     drawTabs();
-    if (tab === 'live' || tab === 'guide') buildChannels(tab === 'guide');
+    if (tab === 'live') buildChannels(false);
+    else if (tab === 'guide') { $('main').innerHTML = ''; V.mod = Epg; Epg.build($('main')); }
+    else if (tab === 'sport') { $('main').innerHTML = ''; V.mod = Sport; Sport.build($('main')); }
     else if (tab === 'films' || tab === 'series') buildVod(tab);
     else if (tab === 'favs') buildFavs();
     else buildSettings();
@@ -578,13 +650,15 @@ var App = (function () {
     if (V.sections) V.sections.focus(zone === 'sections');
     if (V.items) V.items.focus(zone === 'items');
     if (V.set) V.set.focus(zone === 'set');
+    if (V.mod) V.mod.focus(zone === 'mod');
   }
 
   function firstZone() {
-    return tab === 'live' || tab === 'guide' ? 'chans' : tab === 'films' || tab === 'series' ? 'cats' : tab === 'favs' ? 'items' : 'set';
+    return tab === 'live' ? 'chans' : tab === 'guide' || tab === 'sport' ? 'mod' : tab === 'films' || tab === 'series' ? 'cats' : tab === 'favs' ? 'items' : 'set';
   }
 
   function keyOverlay(k) {
+    if (overlay.handle) { overlay.handle(k); return; }
     if (overlay.kind === 'input') {
       if (k === K.back) { closeOverlay(); return; }
       if (k === K.down || k === K.up) { overlay.input.blur(); }
@@ -618,8 +692,9 @@ var App = (function () {
   function key(e) {
     var k = e.keyCode;
     if (overlay && overlay.kind === 'input' && document.activeElement === overlay.input && k !== K.back && k !== 27 && k !== K.up && k !== K.down) return;
-    if (k === 27 || k === 8) k = K.back;   // Esc and Backspace when trying it on a computer
+    if (k === 27 || (k === 8 && !(overlay && overlay.kind === 'pin'))) k = K.back;   // Esc and Backspace when trying it on a computer
     e.preventDefault();
+    if (Epg.remindKey(k, K)) return;
     if (Player.key(k, K)) return;
     if (overlay) { keyOverlay(k); return; }
     if (zone === 'tabs') {
@@ -629,12 +704,22 @@ var App = (function () {
       else if (k === K.back) exit();
       return;
     }
+    if (V.grab && zone === 'chans') {
+      if (k === K.up) moveChannel(-1);
+      else if (k === K.down) moveChannel(1);
+      else if (k === K.ok || k === K.back) { V.grab = false; toast('Sparat'); V.chans.draw(); sideFor(); }
+      return;
+    }
+    if (zone === 'mod' && V.mod) { if (V.mod.key(k, K) === 'tabs') { zone = 'tabs'; focusZone(); } return; }
     if (k === K.back) { zone = 'tabs'; focusZone(); return; }
     switch (zone) {
       case 'groups':
+        var gnow = V.groups.current();
         if (k === K.up) { if (!V.groups.move(-1)) { zone = 'tabs'; } else showGroup(); }
         else if (k === K.down) { if (V.groups.move(1)) showGroup(); }
-        else if (k === K.right || k === K.ok) zone = 'chans';
+        else if (k === K.ok && gnow && gnow.id === '*edit') { Lock.editor(); return; }
+        else if (k === K.ok && gnow && Lock.locked(gnow)) { Lock.ask(function (ok) { if (ok) { V.groups.set(groupItems(), V.groups.at); showGroup(); zone = 'chans'; focusZone(); } }); return; }
+        else if ((k === K.right || k === K.ok) && V.chans.items.length) zone = 'chans';
         break;
       case 'chans':
         if (k === K.up) { if (!V.chans.move(-1)) zone = 'tabs'; else if (!V.guideMode) sideFor(); else sideFor(); }
@@ -652,8 +737,10 @@ var App = (function () {
         sideFor();
         break;
       case 'cats':
+        var cnow = V.cats.current();
         if (k === K.up) { if (!V.cats.move(-1)) zone = 'tabs'; else showCat(); }
         else if (k === K.down) { if (V.cats.move(1)) showCat(); }
+        else if (k === K.ok && cnow && Lock.locked({id: V.kind + ':' + cnow.id, name: cnow.name})) { Lock.ask(function (ok) { if (ok) { V.cats.draw(); showCat(); } }); return; }
         else if ((k === K.right || k === K.ok) && V.grid.items.length) zone = 'grid';
         break;
       case 'grid':
@@ -751,7 +838,15 @@ var App = (function () {
     handleLaunch();
   }
 
-  return {start: start, version: VERSION};
+  /** What lock.js, epg.js and sport.js use. */
+  var U = {
+    el: el, img: img, hm: hm, two: two, List: List, toast: toast, guideOf: guideOf, find: find,
+    channels: function () { return channels; }, groups: function () { return groups; }, ordered: orderedGroups, shown: shownGroups,
+    channelsOf: channelsOf, groupItems: groupItems, open: open_, groupById: groupById,
+    overlay: function (o) { if (arguments.length) { overlay = o; if (!o) closeOverlay(); } return overlay; },
+    redraw: function () { V = {}; drawScreen(); }, focusTabs: function () { zone = 'tabs'; focusZone(); }
+  };
+
+  return {start: start, version: VERSION, u: U};
 })();
 
-App.start();
