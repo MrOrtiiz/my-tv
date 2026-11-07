@@ -32,7 +32,7 @@ var Play = (function () {
   function support() {
     var out = [];
     out.push('WebAssembly ' + (typeof WebAssembly === 'object' ? 'ja' : 'NEJ'));
-    try { var c = document.createElement('canvas'); out.push('WebGL2 ' + (c.getContext('webgl2') ? 'ja' : 'nej') + ', WebGL ' + (c.getContext('webgl') ? 'ja' : 'NEJ')); } catch (e) { out.push('WebGL fel'); }
+    try { out.push('WebGL2 ' + (document.createElement('canvas').getContext('webgl2') ? 'ja' : 'nej') + ', WebGL ' + (document.createElement('canvas').getContext('webgl') ? 'ja' : 'NEJ')); } catch (e) { out.push('WebGL fel'); }
     out.push('ljud ' + (window.AudioContext || window.webkitAudioContext ? 'ja' : 'nej'));
     try { if (performance && performance.memory) out.push('minne ' + Math.round(performance.memory.jsHeapSizeLimit / 1048576) + ' MB'); } catch (e) {}
     out.push(navigator.userAgent.replace(/.*(Chrome\/[0-9.]+).*/, '$1'));
