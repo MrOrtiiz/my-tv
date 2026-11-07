@@ -1,7 +1,8 @@
 /*
  * Sport: what's on now and the rest of the day on the sport channels, football first, Barça at the top.
  * - Barça: the next match from data/barca.json in the repo (the same file as Free My TV's Barça box), with its
- *   channels found in the list; and every programme in the guide with Barça in its title.
+ *   channels found in the list, also in hidden groups (not locked ones); and every programme in the guide with Barça in
+ *   its title.
  * - The rest: the guide of the sport channels (groups or channels named sport, deportes, LaLiga, DAZN, Sky Sports, ESPN,
  *   TV4 Sport…; Spanish, English and Swedish first, at most 160), read a few at a time. Programmes that look like a
  *   match ("A – B", "A vs B") or a race or a fight; the same match on several channels is one row, its channels in the
@@ -114,7 +115,11 @@ var Sport = (function () {
       var found = null;
       for (var i = 0; i < list.length; i++) if (list[i].barca && Math.abs(list[i].start - bm.start) < 3 * 3600000) found = list[i];
       var chans = [];
-      (bm.channels || []).forEach(function (n, j) { var c = u.find(n, (bm.channel_ids || [])[j]); if (c && chans.indexOf(c) < 0 && u.open(c)) chans.push(c); });
+      // Barça's channels even from hidden groups (hiding is for the lists, not for Barça); locked ones stay out.
+      (bm.channels || []).forEach(function (n, j) {
+        var c = u.find(n, (bm.channel_ids || [])[j]), g = c && u.groupById(c.cat);
+        if (c && chans.indexOf(c) < 0 && !(g && Lock.locked(g))) chans.push(c);
+      });
       if (found) { found.title = bm.title; found.desc = bm.competition || found.desc; chans.forEach(function (c) { if (found.channels.indexOf(c) < 0) found.channels.push(c); }); found.next = true; }
       else list.push({title: bm.title, desc: bm.competition || '', start: bm.start, stop: bm.stop, channels: chans, football: true, barca: true, next: true});
     }
