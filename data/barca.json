@@ -1,5 +1,5 @@
 {
- "updated": 1794001981813,
+ "updated": 1794014225079,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -28,16 +28,14 @@
  ],
  "guide": {
   "channels": 5627,
-  "programmes": 233829,
-  "barca_listings": 8,
-  "until": "2026-11-07T19:20:00+01:00"
+  "programmes": 223443,
+  "barca_listings": 13,
+  "until": "2026-11-08T03:00:00+01:00"
  },
  "barca_titles_seen": [
   "11-06 22:30 | Koszykówka mężczyzn: Euroliga - mecz: Hapoel IBI Tel Awiw - Barca  | 450 min",
+  "11-08 00:00 | WEC - 6 Horas de Barcelona - Corrida  | 90 min",
   "11-07 16:00 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
-  "11-07 00:00 | Unicaja vs. Barcelona  | 120 min",
-  "11-06 20:55 | LaLiga Santander - Matchday 15: Atletico Madrid vs Barcelona  | 120 min",
-  "11-07 01:00 | LaLiga HL 22/23: Barcelona v A Madrid  | 5 min",
   "11-07 02:05 | LaLiga EA Sports - Matchday 30: Atletico Madrid vs Barcelona  | 115 min",
   "11-07 04:00 | LaLiga 14/15: Barcelona v Atlético Mad  | 120 min",
   "11-07 07:10 | LaLiga HL 23/24: Barcelona v A Madrid  | 5 min",
@@ -50,10 +48,14 @@
   "11-07 22:35 | LaLiga EA Sports Blitz Highlights - Matchday 29: Atletico Madrid vs Barcelona  | 5 min",
   "11-07 18:45 | UCL HL 26/27: Barcelona v A Villa  | 5 min",
   "11-07 22:20 | UCL HL 26/27: Barcelona v A Villa  | 5 min",
-  "11-07 00:20 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 70 min",
   "11-07 09:05 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 85 min",
-  "11-07 00:20 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 70 min",
-  "11-07 09:05 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 85 min"
+  "11-07 09:05 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 85 min",
+  "11-08 01:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
+  "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
+  "11-08 01:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
+  "11-08 01:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
+  "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
+  "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min"
  ],
  "table": {
   "league": "LaLiga",
@@ -113,8 +115,8 @@
     "team": "Sevilla",
     "short": "Sevilla",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/243.png",
-    "points": 17,
-    "played": 11,
+    "points": 18,
+    "played": 12,
     "gd": -2,
     "barca": false
    },
@@ -140,6 +142,16 @@
    },
    {
     "rank": 9,
+    "team": "Alavés",
+    "short": "Alavés",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/96.png",
+    "points": 13,
+    "played": 12,
+    "gd": -2,
+    "barca": false
+   },
+   {
+    "rank": 10,
     "team": "Villarreal",
     "short": "Villarreal",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
@@ -149,23 +161,13 @@
     "barca": false
    },
    {
-    "rank": 10,
+    "rank": 11,
     "team": "Celta Vigo",
     "short": "Celta Vigo",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
     "points": 12,
     "played": 11,
     "gd": 0,
-    "barca": false
-   },
-   {
-    "rank": 11,
-    "team": "Alavés",
-    "short": "Alavés",
-    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/96.png",
-    "points": 12,
-    "played": 11,
-    "gd": -2,
     "barca": false
    },
    {
