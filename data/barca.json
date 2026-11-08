@@ -1,5 +1,5 @@
 {
- "updated": 1794088169623,
+ "updated": 1794100980837,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -28,28 +28,27 @@
  ],
  "guide": {
   "channels": 5627,
-  "programmes": 146234,
-  "barca_listings": 17,
-  "until": "2026-11-08T21:50:00+01:00"
+  "programmes": 131506,
+  "barca_listings": 14,
+  "until": "2026-11-09T01:00:00+01:00"
  },
  "barca_titles_seen": [
   "11-08 21:00 | FIA WEC HL '26: 6 Hours of Barcelona  | 60 min",
-  "11-08 00:00 | WEC - 6 Horas de Barcelona - Corrida  | 90 min",
   "11-08 22:30 | LaLiga EA Sports Blitz Highlights - Matchday 18: Barcelona vs Atletico Madrid  | 5 min",
   "11-08 22:35 | LaLiga HL 23/24: A Madrid v Barcelona  | 5 min",
   "11-08 22:40 | LaLiga EA Sports Blitz Highlights - Matchday 15: Barcelona vs Atletico Madrid  | 5 min",
+  "11-08 22:45 | LaLiga EA Sports Blitz Highlights - Matchday 19: Barcelona vs Atletico Madrid  | 5 min",
+  "11-08 22:50 | LaLiga EA Sports Blitz Highlights - Matchday 30: Atletico Madrid vs Barcelona  | 5 min",
+  "11-08 22:55 | LaLiga EA Sports - Matchday 12: Atletico Madrid vs Barcelona  | 125 min",
   "11-08 05:35 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 85 min",
   "11-08 05:35 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 85 min",
   "11-08 01:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
-  "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 03:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 08:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 120 min",
   "11-08 01:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 01:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
-  "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 03:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 08:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 120 min",
-  "11-08 00:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 03:00 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 90 min",
   "11-08 08:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 120 min",
   "11-08 20:30 | Europakonzert 2023 : le Berliner Philharmoniker à Barcelona  | 80 min",
@@ -71,22 +70,22 @@
    },
    {
     "rank": 2,
+    "team": "Real Madrid",
+    "short": "Real Madrid",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/86.png",
+    "points": 30,
+    "played": 12,
+    "gd": 21,
+    "barca": false
+   },
+   {
+    "rank": 3,
     "team": "Atlético Madrid",
     "short": "Atlético",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
     "points": 28,
     "played": 11,
     "gd": 14,
-    "barca": false
-   },
-   {
-    "rank": 3,
-    "team": "Real Madrid",
-    "short": "Real Madrid",
-    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/86.png",
-    "points": 27,
-    "played": 11,
-    "gd": 18,
     "barca": false
    },
    {
@@ -245,8 +244,8 @@
     "short": "Valencia",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
     "points": 9,
-    "played": 11,
-    "gd": -9,
+    "played": 12,
+    "gd": -12,
     "barca": false
    },
    {
