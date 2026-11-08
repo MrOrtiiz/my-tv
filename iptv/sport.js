@@ -11,8 +11,9 @@
  * - Without sport.json (or when it is older than 12 hours): the guide of the sport channels read here, as many of each
  *   language (at most 180 in all), so English and Swedish ones aren't crowded out by the Spanish.
  * Preview: the marked match's first channel plays small at the bottom left after a moment on it (Player.preview).
- * OK plays the match: ▲ ▼ (or the channel keys) switch between its channels, as from the Barça box. A match more than
- * 10 minutes away gets a reminder instead.
+ * OK on a match lists every channel it's on (language order, with what each shows now): OK on one plays it, and ▲ ▼
+ * (or the channel keys) then switch between the match's channels, as from the Barça box. A match more than 10 minutes
+ * away has "Påminn mig" first in that list. A match on a single channel plays at once.
  * Uses App.u (app.js). ES5 only.
  */
 var Sport = (function () {
@@ -317,12 +318,67 @@ var Sport = (function () {
   function play(ev) {
     var u = U();
     if (!ev.channels.length) { u.toast(ev.next ? 'Kanalerna för matchen fylls i dagen före.' : 'Ingen kanal hittades.'); return; }
-    if (!ev.live && ev.start - Date.now() > 10 * 60000) {
-      Epg.toggle(ev.channels[0], {title: ev.title, start: ev.start, stop: ev.stop});
-      V.list.draw();
-      return;
-    }
-    Player.open(ev.channels, 0, {title: ev.title + (ev.channels.length > 1 ? '  ·  ▲ ▼ byter kanal' : ''), onClose: function () { later(); }});
+    var soon = !ev.live && ev.start - Date.now() > 10 * 60000;
+    if (ev.channels.length === 1 && !soon) { playFrom(ev, 0); return; }
+    pick(ev, soon);
+  }
+
+  function playFrom(ev, at) {
+    Player.open(ev.channels, at, {title: ev.title + (ev.channels.length > 1 ? '  ·  ▲ ▼ byter kanal' : ''), onClose: function () { later(); }});
+  }
+
+  /** OK on a match: every channel it's on, in the language order, to choose from (and its reminder when it's later). */
+  function pick(ev, soon) {
+    var u = U(), o = document.getElementById('overlay');
+    Player.preview(null);
+    o.innerHTML = '';
+    o.className = 'on';
+    var sheet = u.el('div', 'sheet chpick glass', o);
+    u.el('div', 'dtitle', sheet, ev.title);
+    var when = ev.live ? 'Pågår nu' : (new Date(ev.start).getDate() !== new Date().getDate() ? new Date(ev.start).toLocaleDateString('sv-SE', {weekday: 'long', day: 'numeric', month: 'short'}) + ' ' : 'Idag ') + u.hm(ev.start);
+    u.el('div', 'psub', sheet, [when, ev.desc, ev.channels.length + (ev.channels.length === 1 ? ' kanal' : ' kanaler')].filter(function (x) { return x; }).join('   ·   '));
+    var items = [], nowOf = {};
+    if (soon) items.push({rem: true});
+    ev.channels.forEach(function (c, i) { items.push({ch: c, i: i}); });
+    var list = new u.List(u.el('div', 'plist', sheet), 84, function (it, r) {
+      if (it.rem) {
+        var on = Epg.has(ev.channels[0], {start: ev.start});
+        u.el('div', 'name', r, (on ? '🔔  Ta bort påminnelsen' : '🔔  Påminn mig när matchen börjar'));
+        return;
+      }
+      var tag = Lang.tag(it.ch.name, it.ch.epg);
+      var t = u.el('div', 'text', r);
+      u.el('div', 'name', t, it.ch.name.replace(/^\s*[A-Z]{2,3}\s*[:|\-]\s*|^\|[A-Z]{2,3}\|\s*/, ''));
+      u.el('div', 'now', t, nowOf[it.ch.id] || '');
+      if (tag) u.el('span', 'lang lang-' + tag.toLowerCase(), r, tag);
+      u.img(u.el('div', 'logo', r), '', it.ch.logo);
+    });
+    list.set(items, 0);
+    list.focus(true);
+    u.el('div', 'hint', sheet, 'OK spelar kanalen (▲ ▼ byter sedan mellan matchens kanaler).  Tillbaka stänger.');
+    // What each channel shows now, from its guide, as it comes.
+    var st = {kind: 'chpick'};
+    ev.channels.forEach(function (c) {
+      u.guideOf(c, function (progs) {
+        if (u.overlay() !== st) return;
+        var now = Date.now();
+        for (var i = 0; i < (progs || []).length; i++) if (progs[i].start <= now && now < progs[i].stop) { nowOf[c.id] = 'Nu: ' + progs[i].title; break; }
+        list.draw();
+      });
+    });
+    st.handle = function (k) {
+      if (k === 38) list.move(-1);
+      else if (k === 40) list.move(1);
+      else if (k === 13) {
+        var it = list.current();
+        if (!it) return;
+        if (it.rem) { Epg.toggle(ev.channels[0], {title: ev.title, start: ev.start, stop: ev.stop}); list.draw(); if (V) V.list.draw(); return; }
+        u.overlay(null);
+        playFrom(ev, it.i);
+        return;
+      } else if (k === 10009 || k === 27 || k === 8) { u.overlay(null); later(); }
+    };
+    u.overlay(st);
   }
 
   function key(k, K) {

@@ -193,6 +193,20 @@ body { font-family: 'Inter', 'SamsungOneUI', 'Helvetica Neue', Arial, sans-serif
 .gch .logo { position: absolute; left: 12px; top: 15px; width: 72px; height: 52px; border-radius: 10px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
 .gch .logo img { width: 100%; height: 100%; object-fit: contain; }
 .gch .name { position: absolute; left: 96px; right: 10px; top: 0; line-height: 82px; font-size: 21px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gch .gstar { position: absolute; right: 8px; top: 4px; font-size: 18px; color: #EDBB00; }
+.grow .gch.focus { background: #fff; color: #111; box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(237, 187, 0, 0.95); }
+.gch.focus .name { line-height: 50px; }
+.gch .gbtn { position: absolute; left: 96px; right: 8px; top: 46px; font-size: 16px; font-weight: 700; color: #8A6A00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* The channels a match is on (OK on it under Sport). */
+.sheet.chpick { left: 460px; right: 460px; top: 80px; bottom: 80px; padding: 44px 50px; }
+.sheet.chpick .dtitle { font-size: 40px; line-height: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sheet.chpick .plist { position: absolute; left: 36px; right: 36px; top: 170px; bottom: 90px; }
+.sheet.chpick .plist .inner { left: 0; right: 0; top: 0; bottom: 0; }
+.sheet.chpick .row .name { line-height: 44px; }
+.sheet.chpick .row .text { top: 6px; }
+.sheet.chpick .row .lang { right: 22px; top: 26px; }
+.sheet.chpick .row > .name { line-height: 76px; }
+.sheet.chpick .hint { position: absolute; left: 50px; right: 50px; bottom: 22px; padding: 0; font-size: 20px; }
 .lane { position: absolute; left: 300px; right: 0; top: 0; height: 82px; }
 .cell { position: absolute; top: 0; height: 82px; border-radius: 16px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
 .cell.now { background: rgba(255, 255, 255, 0.16); }

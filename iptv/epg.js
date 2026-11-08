@@ -164,9 +164,13 @@ var Epg = (function () {
   function drawRow(ch, i, top) {
     var u = U(), r = u.el('div', 'grow' + (i === V.row ? ' sel' : ''), V.body);
     r.style.top = top + 'px';
-    var c = u.el('div', 'gch', r);
+    var onCh = i === V.row && focused && V.zone === 'chan', fav = Store.isFav(ch);
+    var c = u.el('div', 'gch' + (onCh ? ' focus' : ''), r);
     u.img(u.el('div', 'logo', c), '', ch.logo);
     u.el('div', 'name', c, ch.name);
+    if (fav) u.el('span', 'gstar', c, '★');
+    // The channel's own button (◀ from its first programme): OK adds it to the favourites or takes it away.
+    if (onCh) u.el('div', 'gbtn', c, fav ? '★  Ta bort favorit' : '☆  Lägg till favorit');
     var lane = u.el('div', 'lane', r);
     progsOf(ch, function (list) {
       if (!V || V.rows[i] !== ch) return;
@@ -193,13 +197,20 @@ var Epg = (function () {
     progsOf(ch, function (list) {
       if (!V || V.rows[V.row] !== ch) return;
       V.info.innerHTML = '';
-      var p = progAt(list, V.tc);
-      if (!p) { u.el('div', 'it', V.info, ch.name); u.el('div', 'ik', V.info, 'Ingen tablå för den här kanalen · OK spelar'); return; }
+      var p = progAt(list, V.tc), fav = Store.isFav(ch);
+      if (V.zone === 'chan') {
+        u.el('div', 'it', V.info, (fav ? '★  ' : '') + ch.name);
+        u.el('div', 'im', V.info, fav ? 'Finns i dina favoriter' : 'Inte bland dina favoriter');
+        u.el('div', 'ik', V.info, (fav ? 'OK tar bort kanalen från favoriterna' : 'OK lägger till kanalen i favoriterna') + '  ·  ▶ tillbaka till tablån  ·  ◀ grupperna');
+        return;
+      }
+      if (!p) { u.el('div', 'it', V.info, ch.name); u.el('div', 'ik', V.info, 'Ingen tablå för den här kanalen · OK spelar  ·  ◀ ' + (fav ? '★ favorit' : '☆ lägg till i favoriter')); return; }
       var live = p.start <= Date.now();
       u.el('div', 'it', V.info, (has(ch, p) ? '🔔  ' : '') + p.title);
       u.el('div', 'im', V.info, u.hm(p.start) + '–' + u.hm(p.stop) + '  ·  ' + ch.name + (live ? '  ·  Pågår' : ''));
       if (p.desc) u.el('div', 'id', V.info, p.desc);
-      u.el('div', 'ik', V.info, live ? 'OK spelar kanalen' : has(ch, p) ? 'OK tar bort påminnelsen' : 'OK påminner dig när det börjar');
+      u.el('div', 'ik', V.info, (live ? 'OK spelar kanalen' : has(ch, p) ? 'OK tar bort påminnelsen' : 'OK påminner dig när det börjar')
+        + (live ? '  ·  ◀ ' + (fav ? '★ favorit' : '☆ lägg till i favoriter') : ''));
     });
   }
 
@@ -248,11 +259,23 @@ var Epg = (function () {
       focus(true);
       return;
     }
+    if (V.zone === 'chan') {   // the channel's button, left of its programmes
+      if (k === K.up) { if (V.row > 0) V.row--; else return 'tabs'; }
+      else if (k === K.down) { if (V.row < V.rows.length - 1) V.row++; }
+      else if (k === K.chUp) V.row = Math.max(0, V.row - 6);
+      else if (k === K.chDown) V.row = Math.min(V.rows.length - 1, V.row + 6);
+      else if (k === K.left) V.zone = 'groups';
+      else if (k === K.right) { V.zone = 'grid'; V.tc = Date.now(); }
+      else if (k === K.ok && V.rows[V.row]) { var on = Store.toggleFav(V.rows[V.row]); u.toast(on ? 'Tillagd i favoriter' : 'Borttagen från favoriter'); }
+      else if (k === K.back) return 'tabs';
+      focus(true);
+      return;
+    }
     if (k === K.up) { if (V.row > 0) V.row--; else return 'tabs'; }
     else if (k === K.down) { if (V.row < V.rows.length - 1) V.row++; }
     else if (k === K.chUp) V.row = Math.max(0, V.row - 6);
     else if (k === K.chDown) V.row = Math.min(V.rows.length - 1, V.row + 6);
-    else if (k === K.left) { if (!step(-1)) { V.zone = 'groups'; V.tc = Date.now(); V.t0 = floorStep(Date.now()); } }
+    else if (k === K.left) { if (!step(-1)) { V.zone = 'chan'; V.tc = Date.now(); V.t0 = floorStep(Date.now()); } }
     else if (k === K.right) step(1);
     else if (k === K.ok) { activate(); return; }
     else if (k === K.back) { if (V.tc > Date.now() + 60000) { V.tc = Date.now(); V.t0 = floorStep(Date.now()); } else return 'tabs'; }
@@ -269,5 +292,5 @@ var Epg = (function () {
   // The now line and the reminders' marks move with the clock.
   setInterval(function () { if (V && document.body.contains(V.area)) { if (V.t0 + STEP <= floorStep(Date.now()) && V.tc < Date.now()) V.t0 = floorStep(Date.now()); draw(); } }, 60000);
 
-  return {build: build, key: key, focus: focus, leave: function () { stopPreview(); V = null; }, reminders: reminders, toggle: toggle, remindKey: remindKey, _check: check};
+  return {build: build, key: key, focus: focus, leave: function () { stopPreview(); V = null; }, reminders: reminders, toggle: toggle, has: has, remindKey: remindKey, _check: check};
 })();
