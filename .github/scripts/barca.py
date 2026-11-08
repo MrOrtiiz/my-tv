@@ -336,6 +336,15 @@ def fail(now, why):
     print(why)
 
 
+def league_block(title, desc, start, now):
+    """'LaLiga: Atlético Madrid – Barcelona' for a league block at that kick-off, else None."""
+    try:
+        import sport  # it imports this file: only here, when both are loaded
+        return sport.name_match(title, desc, start, now)
+    except Exception:
+        return None
+
+
 def main():
     now = datetime.now(timezone.utc)
     url = os.environ.get('EPG_URL', '').strip()
@@ -378,7 +387,15 @@ def main():
             if not start or not stop or stop <= now or start > until:
                 continue
             if not TEAM.search(text):
-                continue
+                # A league block ("LaLiga EA Sports", "Fútbol: LaLiga") doesn't name its match: ESPN's scoreboard
+                # does (sport.py's name_match, the same that names them on the Sport page).
+                named = None
+                if start - now < timedelta(hours=30) and timedelta(minutes=80) <= stop - start <= timedelta(hours=5) \
+                        and not NOT_LIVE.search(' '.join((text, cats))):
+                    named = league_block(title, desc, start, now)
+                if not named or not TEAM.search(named):
+                    continue
+                text = named
             if len(seen) < 25:
                 seen.append('%s | %s | %d min' % (start.strftime('%m-%d %H:%M'), text[:90], (stop - start).total_seconds() // 60))
             if NOT_LIVE.search(' '.join((text, cats))) or OTHER_SPORT.search(' '.join((text, cats))):
