@@ -2,6 +2,7 @@
  * Sport: every match and sports event of the next 24 hours on your channels, one group per sport on the left (Fotboll
  * first, then Basket, F1, Motorsport, Tennis, Hockey, Kampsport, Amerikansk fotboll, Golf, Cykling, Handboll, Rugby,
  * Övrig sport; only those with something on). Under Fotboll the favourite teams (Barça, Sirius) come first, marked ★.
+ * Above them all a Barça group: Barça's matches only, with every coming one from barca.json (up to five).
  * - All of it from sport.json on the repo's branch sport-data: the GitHub job (.github/scripts/sport.py) reads the whole
  *   IPTV guide every 3 hours and keeps the sport broadcasts, in every language, each with all its channels. Here they
  *   are found in the list (by guide id, else name), in the language order Spanish, English, Swedish, others; channels in
@@ -47,6 +48,8 @@ var Sport = (function () {
     ['other', 'Övrig sport', null]
   ];
   var FOOTBALL_AT = 11;
+  /** The Barça group: first, before Fotboll, with all of barca.json's coming matches (not only the next 24 hours). */
+  var BARCA_CAT = ['barca', 'Barça', null];
 
   var V = null, focused = false, barca = null, barcaAt = 0, feed = null, feedAt = 0, feedTried = 0;
 
@@ -116,10 +119,10 @@ var Sport = (function () {
     // The preview: the marked match's first channel, playing small at the bottom left (as in the TV guide).
     V.pv = u.el('div', 'spv', fHost);
     u.el('div', 'pvh', V.pv, 'Förhandsvisning');
-    V.filters = new u.List(u.el('div', 'flist', fHost), 76, function (f, r) { u.el('div', 'name', r, f[1]); if (f[3]) u.el('span', 'n', r, String(f[3])); });
+    V.filters = new u.List(u.el('div', 'flist', fHost), 76, function (f, r) { if (f[0] === 'barca') r.className += ' barca'; u.el('div', 'name', r, f[1]); if (f[3]) u.el('span', 'n', r, String(f[3])); });
     V.list = new u.List(eHost, 112, row);
     V.list.emptyText = 'Hämtar sporten…';
-    V.filters.set([SPORTS[FOOTBALL_AT].concat([0])], 0);
+    V.filters.set([BARCA_CAT.concat([0]), SPORTS[FOOTBALL_AT].concat([0])], 1);
     V.list.set([]);
     focus(focused);
     status();
@@ -225,12 +228,7 @@ var Sport = (function () {
     if (bm && bm.stop > now) {
       var found = null;
       for (var i = 0; i < list.length; i++) if (list[i].barca && (!list[i].sport || list[i].sport === 'football') && Math.abs(list[i].start - bm.start) < 3 * 3600000 && (!found || list[i].channels.length > found.channels.length)) found = list[i];
-      var chans = [];
-      // Barça's channels even from hidden groups (hiding is for the lists, not for Barça); locked ones stay out.
-      (bm.channels || []).forEach(function (n, j) {
-        var c = u.find(n, (bm.channel_ids || [])[j]), g = c && u.groupById(c.cat);
-        if (c && chans.indexOf(c) < 0 && !(g && Lock.locked(g))) chans.push(c);
-      });
+      var chans = barcaChans(bm);
       if (found) { found.title = bm.title; found.desc = bm.competition || found.desc; chans.forEach(function (c) { if (found.channels.indexOf(c) < 0) found.channels.push(c); }); found.next = true; found.sport = 'football'; }
       else list.push({title: bm.title, desc: bm.competition || '', start: bm.start, stop: bm.stop, channels: chans, sport: 'football', barca: true, next: true, text: bm.title});
     }
@@ -266,15 +264,35 @@ var Sport = (function () {
     // Favourites first, then what's on in Spanish, English or Swedish (now first, then by time), then the rest.
     list.sort(function (a, b) { return (!!b.fav - !!a.fav) || (a.other - b.other) || (b.live - a.live) || (a.start - b.start); });
     V.all = list;
-    // The groups: Fotboll always, the others when they have something.
+    // Barça's later matches (barca.json has the next five): only in the Barça group.
+    V.barcaMore = [];
+    ((barca && barca.matches) || []).forEach(function (m) {
+      if (m.stop <= now) return;
+      for (var i = 0; i < list.length; i++) if (list[i].barca && Math.abs(list[i].start - m.start) < 3 * 3600000) return;
+      V.barcaMore.push({title: m.title, desc: m.competition || '', start: m.start, stop: m.stop, channels: barcaChans(m), sport: 'football',
+        barca: true, fav: 'Barça', next: true, other: 0, live: m.start <= now && now < m.stop, text: m.title});
+    });
+    // The groups: Barça and Fotboll always, the others when they have something.
     var n = {}, cats = [];
-    list.forEach(function (e) { n[e.sport] = (n[e.sport] || 0) + 1; });
+    list.forEach(function (e) { n[e.sport] = (n[e.sport] || 0) + 1; if (e.barca) n.barca = (n.barca || 0) + 1; });
+    cats.push(BARCA_CAT.concat([(n.barca || 0) + V.barcaMore.length]));
     cats.push(SPORTS[FOOTBALL_AT].concat([n.football || 0]));
     SPORTS.forEach(function (sp) { if (sp[0] !== 'football' && n[sp[0]]) cats.push(sp.concat([n[sp[0]]])); });
-    var cur = V.filters.current(), at = 0;
+    var cur = V.filters.current(), at = 1;   // Fotboll unless another group was picked
     for (var c = 0; c < cats.length; c++) if (cur && cats[c][0] === cur[0]) at = c;
     V.filters.set(cats, at);
     show();
+  }
+
+  /** A barca.json match's channels in the list, even from hidden groups (hiding is for the lists, not for Barça);
+   *  locked ones stay out. */
+  function barcaChans(m) {
+    var u = U(), chans = [];
+    (m.channels || []).forEach(function (n, j) {
+      var c = u.find(n, (m.channel_ids || [])[j]), g = c && u.groupById(c.cat);
+      if (c && chans.indexOf(c) < 0 && !(g && Lock.locked(g))) chans.push(c);
+    });
+    return chans;
   }
 
   /** The sport of a match: by its title and description, then its channels' names; a match ("A – B") on a football
@@ -289,7 +307,9 @@ var Sport = (function () {
 
   function show() {
     var f = (V.filters.current() || ['football'])[0], cur = V.list.current();
-    V.events = (V.all || []).filter(function (e) { return e.sport === f; });
+    V.events = f === 'barca'
+      ? (V.all || []).filter(function (e) { return e.barca; }).concat(V.barcaMore || []).sort(function (a, b) { return a.start - b.start; })
+      : (V.all || []).filter(function (e) { return e.sport === f; });
     var at = cur ? V.events.indexOf(cur) : 0;
     V.list.emptyText = V.loading ? 'Hämtar sporten…' : !V.fromFeed && V.read < V.chans.length ? 'Läser tablån för sportkanalerna…' : 'Inget i tablån de närmaste timmarna.';
     V.list.set(V.events, at < 0 ? 0 : at);
