@@ -1,5 +1,5 @@
 {
- "updated": 1794164318121,
+ "updated": 1794174618947,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -11,7 +11,7 @@
    "stop": 1794175200000,
    "live": true,
    "channels": [
-    "SuperSport La Liga",
+    "LaLiga HD",
     "Premier Sports 1 Ireland UK",
     "Go3 Sport FHD LT",
     "Spiler 2 HD HU",
@@ -20,7 +20,7 @@
     "Ziggo Sport  Select HD NL"
    ],
    "channel_ids": [
-    "supersportlaliga.za",
+    "mlaliga.es",
     "premiersports1.ie",
     "go3sport.lt",
     "spiler2.hu",
@@ -29,7 +29,7 @@
     "ziggosportselect.nl"
    ],
    "channel_langs": [
-    "en",
+    "es",
     "en",
     "xx",
     "xx",
@@ -64,36 +64,36 @@
  ],
  "guide": {
   "channels": 5627,
-  "programmes": 76220,
-  "barca_listings": 22,
-  "until": "2026-11-09T19:00:00+01:00"
+  "programmes": 89796,
+  "barca_listings": 27,
+  "until": "2026-11-09T23:45:00+01:00"
  },
  "barca_titles_seen": [
-  "11-08 21:00 | FIA WEC HL '26: 6 Hours of Barcelona  | 60 min",
   "11-09 17:00 | Barcelona (Esp) vs. Aston Villa (Ing)  | 120 min",
   "11-09 05:30 | Atl. de Madrid vs. Barcelona  | 60 min",
   "11-09 16:00 | Atl. de Madrid vs. Barcelona  | 60 min",
-  "11-08 21:15 | Barcelona Campeón  | 15 min",
+  "11-09 21:00 | Atl. de Madrid vs. Barcelona  | 120 min",
   "11-09 03:40 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min",
+  "11-09 22:00 | Atl. de Madrid vs. Barcelona  | 60 min",
   "11-09 04:00 | Atl. de Madrid vs. Barcelona  | 60 min",
   "11-08 20:55 | LaLiga: Atlético Madrid – Barcelona | 145 min",
   "11-09 17:00 | Barcelona (Esp) vs. Aston Villa (Ing)  | 120 min",
   "11-08 20:50 | LaLiga: Atlético Madrid – Barcelona | 130 min",
+  "11-09 22:00 | Atl. de Madrid vs. Barcelona  | 60 min",
   "11-08 20:55 | Atlético Madrid - FC Barcelona (120)  | 155 min",
   "11-09 07:00 | Atlético Madrid - FC Barcelona (120)  | 120 min",
   "11-08 20:55 | LaLiga: Atlético Madrid – Barcelona | 125 min",
   "11-08 20:55 | LaLiga: Atlético Madrid – Barcelona | 125 min",
+  "11-09 09:49 | Barcelona Bridal Fashion Week  | 32 min",
+  "11-09 12:15 | Hípica: CSIO Barcelona Salto Gran Premio Ciudad De Barcelona  | 58 min",
+  "11-08 20:54 | LaLiga: Atlético Madrid – Barcelona | 126 min",
+  "11-08 20:54 | LaLiga: Atlético Madrid – Barcelona | 126 min",
+  "11-08 20:54 | LaLiga: Atlético Madrid – Barcelona | 126 min",
   "11-09 11:40 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min",
-  "11-08 20:25 | LaLiga: Atlético Madrid – Barcelona | 125 min",
-  "11-08 22:30 | LaLiga EA Sports Blitz Highlights - Matchday 18: Barcelona vs Atletico Madrid  | 5 min",
-  "11-08 22:35 | LaLiga EA Sports Blitz Highlights - Matchday 29: Atletico Madrid vs Barcelona  | 5 min",
-  "11-08 22:40 | LaLiga EA Sports Blitz Highlights - Matchday 15: Barcelona vs Atletico Madrid  | 5 min",
-  "11-08 22:45 | LaLiga EA Sports Blitz Highlights - Matchday 19: Barcelona vs Atletico Madrid  | 5 min",
   "11-08 22:50 | LaLiga EA Sports Blitz Highlights - Matchday 30: Atletico Madrid vs Barcelona  | 5 min",
   "11-08 22:55 | LaLiga EA Sports - Matchday 12: Atletico Madrid vs Barcelona  | 125 min",
   "11-09 03:00 | LaLiga 26/27: A Madrid v Barcelona  | 120 min",
-  "11-09 07:00 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min",
-  "11-09 07:30 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min"
+  "11-09 07:00 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min"
  ],
  "table": {
   "league": "LaLiga",
@@ -170,6 +170,16 @@
    },
    {
     "rank": 8,
+    "team": "Villarreal",
+    "short": "Villarreal",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
+    "points": 15,
+    "played": 12,
+    "gd": 2,
+    "barca": false
+   },
+   {
+    "rank": 9,
     "team": "Deportivo",
     "short": "Deportivo",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/90.png",
@@ -179,7 +189,7 @@
     "barca": false
    },
    {
-    "rank": 9,
+    "rank": 10,
     "team": "Racing Santander",
     "short": "Racing",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/87.png",
@@ -189,33 +199,23 @@
     "barca": false
    },
    {
-    "rank": 10,
+    "rank": 11,
+    "team": "Celta Vigo",
+    "short": "Celta Vigo",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
+    "points": 13,
+    "played": 12,
+    "gd": 0,
+    "barca": false
+   },
+   {
+    "rank": 12,
     "team": "Alavés",
     "short": "Alavés",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/96.png",
     "points": 13,
     "played": 12,
     "gd": -2,
-    "barca": false
-   },
-   {
-    "rank": 11,
-    "team": "Villarreal",
-    "short": "Villarreal",
-    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
-    "points": 12,
-    "played": 11,
-    "gd": 0,
-    "barca": false
-   },
-   {
-    "rank": 12,
-    "team": "Celta Vigo",
-    "short": "Celta Vigo",
-    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
-    "points": 12,
-    "played": 11,
-    "gd": 0,
     "barca": false
    },
    {
@@ -244,8 +244,8 @@
     "short": "Getafe",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2922.png",
     "points": 12,
-    "played": 11,
-    "gd": -8,
+    "played": 12,
+    "gd": -10,
     "barca": false
    },
    {
@@ -263,8 +263,8 @@
     "team": "Levante",
     "short": "Levante",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1538.png",
-    "points": 10,
-    "played": 11,
+    "points": 11,
+    "played": 12,
     "gd": -5,
     "barca": false
    },
