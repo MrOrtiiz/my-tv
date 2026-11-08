@@ -7,10 +7,10 @@
  */
 var App = (function () {
   'use strict';
-  var VERSION = '1.7';
+  var VERSION = '1.8';
   var K = {left: 37, up: 38, right: 39, down: 40, ok: 13, back: 10009, chUp: 427, chDown: 428,
     play: 415, pause: 19, playPause: 10252, ff: 417, rew: 412, stop: 413};
-  var TABS = [['live', 'Live'], ['sport', 'Sport'], ['guide', 'TV-guide'], ['films', 'Filmer'], ['series', 'Serier'], ['favs', 'Favoriter'], ['settings', 'Inställningar']];
+  var TABS = [['favs', 'Favoriter'], ['sport', 'Sport'], ['live', 'Live'], ['guide', 'TV-guide'], ['films', 'Filmer'], ['series', 'Serier'], ['settings', 'Inställningar']];
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, parent, text) {
