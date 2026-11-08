@@ -7,6 +7,7 @@
  *   it's TMDB's own search on the words.
  * - The phone: a page (phone/ in the repo) paired with a QR code. What's said there arrives here through ntfy.sh, on a
  *   topic only the TV and the phone know, and the results go back to the phone, where a tap opens them on the TV.
+ *   The phone also copies this TV's settings to the other TVs it's paired with (getprefs / setprefs, below).
  * - Plex: linked with a code at plex.tv/link (no password typed on the TV); films and episodes play in the IPTV app's
  *   player (or the one in this app).
  *
@@ -868,17 +869,86 @@ var Search = (function () {
       try { m = JSON.parse(e.data); } catch (x) { return; }
       if (!m || m.event !== 'message') return;
       if (m.id) { lastId = m.id; cfg.lastId = m.id; save(); }
-      if (m.time && Date.now() / 1000 - m.time > 180) return;   // left from a while ago: not acted on now
+      var old = m.time && Date.now() / 1000 - m.time > 180;
       try { o = JSON.parse(m.message); } catch (x) { return; }
+      if (o && o.t === 'part') { o = joinPart(o); if (!o) return; }
+      // Left from a while ago: not acted on now. Settings sent to all the TVs are, though: ntfy keeps them 12 hours,
+      // so a TV that was off gets them when Free My TV starts.
+      if (old && !(o && o.t === 'setprefs')) return;
       fromPhone(o);
     };
   }
 
+  // ntfy takes 4096 bytes a message: anything longer goes in parts ({t: 'part', id, i, n, d}), put together here.
+  var parts = {};
+  function joinPart(o) {
+    if (!o.id || !(o.n > 0) || o.n > 20) return null;
+    var p = parts[o.id] || (parts[o.id] = []);
+    p[o.i] = String(o.d || '');
+    for (var i = 0; i < o.n; i++) if (p[i] === undefined) return null;
+    delete parts[o.id];
+    try { return JSON.parse(p.join('')); } catch (e) { return null; }
+  }
+
   function tellPhone(o) {
     if (!cfg.topic) return;
-    var body = JSON.stringify(o);
-    if (body.length > 3800) body = JSON.stringify({t: o.t, q: o.q, say: o.say, items: (o.items || []).slice(0, 5)});
-    http('POST', RELAY + cfg.topic + '-ph?cache=no', {}, body, 10000, function () {});
+    var body = JSON.stringify(o), url = RELAY + cfg.topic + '-ph?cache=no';
+    if (body.length > 3800 && o.t === 'res') body = JSON.stringify({t: o.t, q: o.q, say: o.say, items: (o.items || []).slice(0, 5)});
+    if (body.length <= 3800) { http('POST', url, {}, body, 10000, function () {}); return; }
+    var id = rid(8), n = Math.ceil(body.length / 3000), i = 0;
+    (function next() {   // one after the other, so they arrive in order
+      if (i >= n) return;
+      var d = body.slice(i * 3000, (i + 1) * 3000);
+      http('POST', url, {}, JSON.stringify({t: 'part', id: id, i: i++, n: n, d: d}), 10000, next);
+    })();
+  }
+
+  // MARK: - The same settings on all the TVs
+  //
+  // The phone page keeps every TV it was paired with. "Hämta" there asks one TV for its settings (getprefs → prefs);
+  // "Skicka" sends them to the others (setprefs), which take them and start again. Only what's set on the TV goes:
+  // fmtv.prefs (the home screen's settings, the TMDB key, the IPTV link), the Claude key and the Plex link. The
+  // favourites only go between TVs of the same kind (an app's id on a Samsung means nothing on an LG).
+
+  var tvModel = '';
+  try { TV.about(function (i) { tvModel = (i && i.model) || ''; }); } catch (e) {}
+
+  /** What the phone calls this TV until it's given a name there. */
+  function tvName() {
+    var m = String(tvModel).toUpperCase();
+    if (/LS0[0-9]/.test(m)) return 'The Frame';
+    if (/FREESTYLE|LFF|^SP-/.test(m)) return 'Projektorn';
+    var kind = TV.name === 'webos' ? 'LG' : TV.name === 'tizen' ? 'Samsung' : 'TV';
+    return m ? kind + ' ' + tvModel : kind;
+  }
+
+  function savedPrefs() { try { return JSON.parse(localStorage.getItem('fmtv.prefs')) || {}; } catch (e) { return {}; } }
+
+  function snapshot() {
+    var p = savedPrefs();
+    delete p.shelfConfig;
+    return {v: 1, at: Date.now(), from: tvName(), platform: TV.name, prefs: p, claude: cfg.claude || '', plex: plexOn() ? cfg.plex : null};
+  }
+
+  function applyPrefs(s) {
+    if (!s || s.v !== 1 || !s.prefs) return;
+    if (cfg.prefsAt && s.at <= cfg.prefsAt) return;   // already taken (or older than what was)
+    var mine = savedPrefs(), keys = {}, k;
+    for (k in mine) if (mine.hasOwnProperty(k)) keys[k] = true;
+    for (k in s.prefs) if (s.prefs.hasOwnProperty(k)) keys[k] = true;
+    for (k in keys) {
+      if (!keys.hasOwnProperty(k) || k === 'shelfConfig') continue;
+      if (k === 'shelf' && s.platform !== TV.name) continue;   // another kind of TV: its apps' ids aren't these
+      if ((k === 'tmdbKey' || k === 'iptv') && !s.prefs[k]) continue;   // none there: this TV keeps its own
+      Prefs.set(k, s.prefs[k]);
+    }
+    if (s.claude) cfg.claude = s.claude;
+    if (s.plex && s.plex.token) cfg.plex = s.plex;
+    cfg.prefsAt = s.at;
+    save();
+    tellPhone({t: 'note', say: 'Inställningarna från ' + (s.from || 'den andra TV:n') + ' är sparade på ' + tvName() + '.', tv: tvName(), saved: s.at});
+    toast('Inställningar från ' + (s.from || 'mobilen') + '. Startar om…');
+    setTimeout(function () { try { location.reload(); } catch (e) {} }, 1800);
   }
 
   function sendResults() {
@@ -891,7 +961,9 @@ var Search = (function () {
     if (!o || !o.t) return;
     phoneConnected = true;
     if (window.FreeMyTV && FreeMyTV.poke) FreeMyTV.poke();
-    if (o.t === 'hello') { tellPhone({t: 'note', say: 'Ansluten till TV:n.', claude: claudeOn(), plex: plexOn()}); if (opened && panel && panel.kind === 'phone') draw(); return; }
+    if (o.t === 'hello') { tellPhone({t: 'note', say: 'Ansluten till ' + tvName() + '.', claude: claudeOn(), plex: plexOn(), tv: tvName(), platform: TV.name}); if (opened && panel && panel.kind === 'phone') draw(); return; }
+    if (o.t === 'getprefs') { tellPhone({t: 'prefs', tv: tvName(), s: snapshot()}); return; }
+    if (o.t === 'setprefs') { applyPrefs(o.s); return; }
     if (o.t === 'ask') { ask(o.q, 'phone'); return; }
     if (o.t === 'open') {
       var t = results[o.r], s = t && t.sources[o.s];

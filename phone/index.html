@@ -12,6 +12,8 @@
   The phone side of Free My TV's search (tv/search.js): opened from the QR code on the TV, which puts the TV's secret
   topic after the #. What's said here goes to the TV through ntfy.sh (topic-tv); the TV answers with the titles it found
   and where each one is (topic-ph), and a tap here opens it on the TV. Nothing is kept anywhere but this phone and the TV.
+  Every TV scanned is kept here (fmtv.tvs): chips pick the one to search on, and "Samma inställningar på alla TV:ar"
+  fetches one TV's settings (getprefs) and sends them to the others (setprefs, kept 12 hours by ntfy for a TV that's off).
 -->
 <style>
   :root { color-scheme: dark; --bg: #0B0B0D; --card: #1C1C1E; --line: rgba(255,255,255,0.1); --dim: rgba(235,235,245,0.6); --accent: #FFD60A; }
@@ -48,6 +50,24 @@
   summary { font-weight: 600; color: #fff; font-size: 16px; }
   details p { margin: 10px 0; }
   details form { margin-top: 8px; }
+  .tvs { display: flex; flex-wrap: wrap; gap: 7px; margin: 10px 0 0; }
+  .tvs button { border: 0; border-radius: 15px; padding: 6px 13px; font-size: 14px; font-weight: 600; background: var(--card); color: var(--dim); }
+  .tvs button.on { background: #fff; color: #0B0B0D; }
+  .sync { margin-top: 30px; border-top: 1px solid var(--line); padding-top: 14px; font-size: 15px; color: var(--dim); }
+  .sync h2 { color: #fff; font-size: 19px; margin: 0 0 6px; }
+  .sync p { margin: 8px 0; }
+  .tvrow { display: flex; align-items: center; gap: 12px; padding: 11px 2px; border-top: 1px solid var(--line); color: #fff; font-size: 16px; }
+  .tvrow input { width: 22px; height: 22px; flex: none; accent-color: #30D158; }
+  .tvrow .n { flex: 1; min-width: 0; }
+  .tvrow .s { display: block; font-size: 13px; color: var(--dim); }
+  .tvrow .dot { width: 9px; height: 9px; border-radius: 50%; background: #48484A; flex: none; }
+  .tvrow .dot.on { background: #30D158; }
+  .tvrow .ren { border: 0; background: none; color: var(--dim); font-size: 14px; padding: 4px; }
+  .wide { display: block; width: 100%; height: 48px; margin-top: 10px; border: 0; border-radius: 14px; font-size: 16px; font-weight: 600; background: #2C2C2E; color: #fff; }
+  .wide.go { background: #fff; color: #0B0B0D; }
+  .wide:disabled { opacity: 0.4; }
+  .snap { margin: 10px 0 0; padding: 12px 14px; border-radius: 14px; background: var(--card); color: #fff; font-size: 14px; }
+  .snap .s { color: var(--dim); }
   .pair { text-align: center; margin-top: 80px; color: var(--dim); }
   .pair h2 { color: #fff; }
 </style>
@@ -55,6 +75,7 @@
 <body>
 <h1>Vad vill du se?</h1>
 <div class="state" id="state">Ansluter till TV:n…</div>
+<div class="tvs" id="tvs" hidden></div>
 
 <div id="app">
   <button class="mic" id="mic" aria-label="Prata">
@@ -67,6 +88,16 @@
   <form id="ask"><input id="q" placeholder="…eller skriv här" autocomplete="off" enterkeyhint="search"><button>Sök</button></form>
   <div class="say plain" id="say"></div>
   <div id="list"></div>
+
+  <div class="sync" id="sync">
+    <h2>Samma inställningar på alla TV:ar</h2>
+    <p>Hämta inställningarna från en TV (TMDB-nyckel, IPTV-länk, Claude, Plex och hemskärmen) och skicka dem till de andra.
+      Koppla varje TV en gång: Sök → Koppla mobilen på TV:n, och skanna QR-koden.</p>
+    <div id="tvlist"></div>
+    <button class="wide" id="fetch">Hämta från TV:n</button>
+    <div class="snap" id="snap" hidden></div>
+    <button class="wide go" id="push" disabled>Skicka till de valda TV:arna</button>
+  </div>
 
   <details>
     <summary>Inställningar</summary>
@@ -90,38 +121,198 @@
   'use strict';
   var RELAY = (/[?&]relay=([^&#]+)/.exec(location.search) || [])[1];
   RELAY = RELAY ? decodeURIComponent(RELAY) : 'https://ntfy.sh/';
-  var topic = (location.hash || '').replace(/^#/, '');
-  try {
-    if (/^fmtv-[A-Za-z0-9]{10,}$/.test(topic)) localStorage.setItem('fmtv.topic', topic);
-    else topic = localStorage.getItem('fmtv.topic') || '';
-  } catch (e) {}
   var $ = function (id) { return document.getElementById(id); };
-  if (!topic) { $('app').hidden = true; $('pair').hidden = false; $('state').textContent = ''; return; }
-  if (!location.hash) history.replaceState(null, '', '#' + topic);
+  function load(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v === null ? d : v; } catch (e) { return d; } }
+  function keep(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 
-  function send(o, nocache) {
-    return fetch(RELAY + topic + '-tv' + (nocache ? '?cache=no' : ''), {method: 'POST', body: JSON.stringify(o)})
-      .catch(function () { state('Kunde inte nå TV:n just nu', true); });
+  // Every TV this phone was paired with: [{topic, name, own}] (own: a name given here). The one in use is in the #.
+  var OK_TOPIC = /^fmtv-[A-Za-z0-9]{10,}$/;
+  var tvs = load('fmtv.tvs', []);
+  var topic = (location.hash || '').replace(/^#/, '');
+  var before = '';
+  try { before = localStorage.getItem('fmtv.topic') || ''; } catch (e) {}
+  if (!tvs.length && OK_TOPIC.test(before)) tvs.push({topic: before, name: 'TV'});   // paired before there was a list
+  if (!OK_TOPIC.test(topic)) topic = before;
+  if (OK_TOPIC.test(topic) && !tvs.some(function (t) { return t.topic === topic; })) tvs.push({topic: topic, name: 'TV ' + (tvs.length + 1)});
+  keep('fmtv.tvs', tvs);
+  if (!OK_TOPIC.test(topic)) { $('app').hidden = true; $('pair').hidden = false; $('state').textContent = ''; return; }
+  try { localStorage.setItem('fmtv.topic', topic); } catch (e) {}
+  if (location.hash !== '#' + topic) history.replaceState(null, '', '#' + topic);
+
+  function tvOf(t) { for (var i = 0; i < tvs.length; i++) if (tvs[i].topic === t) return tvs[i]; return null; }
+  function nameOf(t) { var x = tvOf(t); return x ? x.name : 'TV:n'; }
+
+  function post(to, body, nocache) {
+    return fetch(RELAY + to + '-tv' + (nocache ? '?cache=no' : ''), {method: 'POST', body: body});
+  }
+  /** To a TV (the one in use unless told): in parts when it's longer than ntfy takes in one message. */
+  function send(o, nocache, to) {
+    to = to || topic;
+    var body = JSON.stringify(o);
+    var done = body.length <= 3800 ? post(to, body, nocache) : (function () {
+      var id = Math.random().toString(36).slice(2, 10), n = Math.ceil(body.length / 3000), chain = Promise.resolve();
+      for (var i = 0; i < n; i++) (function (i) {
+        chain = chain.then(function () { return post(to, JSON.stringify({t: 'part', id: id, i: i, n: n, d: body.slice(i * 3000, (i + 1) * 3000)}), nocache); });
+      })(i);
+      return chain;
+    })();
+    return done.catch(function () { if (to === topic) state('Kunde inte nå TV:n just nu', true); throw new Error('send'); });
   }
   function state(text, bad) { var s = $('state'); s.className = 'state' + (bad ? ' off' : ''); s.innerHTML = text; }
 
-  // What the TV says back.
-  var tvSeen = false, results = [];
-  var es = new EventSource(RELAY + topic + '-ph/sse');
-  es.onopen = function () { if (!tvSeen) state('Väntar på TV:n…'); };
+  var parts = {};
+  function joinPart(o) {
+    if (!o.id || !(o.n > 0) || o.n > 20) return null;
+    var p = parts[o.id] || (parts[o.id] = []);
+    p[o.i] = String(o.d || '');
+    for (var i = 0; i < o.n; i++) if (p[i] === undefined) return null;
+    delete parts[o.id];
+    try { return JSON.parse(p.join('')); } catch (e) { return null; }
+  }
+
+  // What the TVs say back: all of them on one connection (topicA-ph,topicB-ph).
+  var seen = {}, tvSeen = false, results = [];
+  var es = new EventSource(RELAY + tvs.map(function (t) { return t.topic + '-ph'; }).join(',') + '/sse');
+  es.onopen = function () { if (!tvSeen) state('Väntar på ' + nameOf(topic) + '…'); };
   es.onerror = function () { state('Tappade kontakten, försöker igen…', true); };
   es.onmessage = function (e) {
     var m, o;
     try { m = JSON.parse(e.data); o = JSON.parse(m.message); } catch (x) { return; }
+    if (o && o.t === 'part') o = joinPart(o);
     if (!o || !o.t) return;
+    var from = String(m.topic || '').replace(/-ph$/, ''), tv = tvOf(from);
+    if (!tv) return;
+    seen[from] = true;
+    if (o.tv && !tv.own && tv.name !== o.tv) { tv.name = o.tv; keep('fmtv.tvs', tvs); }
+    drawTvs();
+    if (o.t === 'prefs') { gotSnap(from, o.s); return; }
+    if (o.saved) { savedOn.push(o.say); drawSnap(sentText); }
+    if (from !== topic) return;   // the rest is about the search on the TV in use
     tvSeen = true;
-    state('<b>●</b> Ansluten till TV:n');
-    if (o.t === 'note') { say(o.say, false); }
+    state('<b>●</b> Ansluten till ' + nameOf(topic));
+    if (o.t === 'note') { if (!o.saved) say(o.say, false); }
     else if (o.t === 'busy') { say(o.say || 'Letar…', false); }
     else if (o.t === 'res') { results = o.items || []; say(o.say || (results.length ? '' : 'Hittade inget.'), true); draw(); }
   };
-  setTimeout(function () { send({t: 'hello'}); }, 800);
-  setTimeout(function () { if (!tvSeen) state('TV:n svarar inte. Är Free My TV öppen?', true); }, 9000);
+  setTimeout(function () { tvs.forEach(function (t) { send({t: 'hello'}, true, t.topic).catch(function () {}); }); }, 800);
+  setTimeout(function () { if (!tvSeen) state(nameOf(topic) + ' svarar inte. Är Free My TV öppen?', true); }, 9000);
+
+  // The TV in use (chips when there are more than one).
+  function use(t) {
+    if (t === topic) return;
+    topic = t; tvSeen = !!seen[t]; results = []; draw(); say('', false);
+    try { localStorage.setItem('fmtv.topic', topic); } catch (e) {}
+    history.replaceState(null, '', '#' + topic);
+    state(seen[t] ? '<b>●</b> Ansluten till ' + nameOf(t) : 'Väntar på ' + nameOf(t) + '…');
+    send({t: 'hello'}, true).catch(function () {});
+    drawTvs();
+  }
+
+  // MARK: The same settings on all the TVs
+  var snap = load('fmtv.snap', null), chosen = load('fmtv.sendTo', {});
+  var savedOn = [], sentText = '';
+  function sync(text) { var b = $('snap'); b.hidden = false; drawSnap(text); }
+
+  function drawTvs() {
+    var bar = $('tvs');
+    bar.hidden = tvs.length < 2;
+    bar.innerHTML = '';
+    tvs.forEach(function (t) {
+      var b = document.createElement('button');
+      b.textContent = t.name; b.className = t.topic === topic ? 'on' : '';
+      b.onclick = function () { use(t.topic); };
+      bar.appendChild(b);
+    });
+    var list = $('tvlist');
+    list.innerHTML = '';
+    tvs.forEach(function (t) {
+      var row = document.createElement('label'); row.className = 'tvrow';
+      var c = document.createElement('input'); c.type = 'checkbox';
+      var source = snap && snap.topic === t.topic;
+      c.checked = !source && chosen[t.topic] !== false;
+      c.disabled = !!source;
+      c.onchange = function () { chosen[t.topic] = c.checked; keep('fmtv.sendTo', chosen); drawSnap(); };
+      row.appendChild(c);
+      var n = document.createElement('span'); n.className = 'n'; n.textContent = t.name;
+      var sub = document.createElement('span'); sub.className = 's';
+      sub.textContent = source ? 'Inställningarna kommer härifrån' : (t.topic === topic ? 'Den du söker på' : '');
+      n.appendChild(sub);
+      row.appendChild(n);
+      var d = document.createElement('span'); d.className = 'dot' + (seen[t.topic] ? ' on' : ''); d.title = seen[t.topic] ? 'Free My TV är öppen' : 'Inte hörd av';
+      row.appendChild(d);
+      var r = document.createElement('button'); r.className = 'ren'; r.textContent = 'Byt namn';
+      r.onclick = function (e) {
+        e.preventDefault();
+        var v = prompt('Namn på TV:n', t.name);
+        if (v && v.trim()) { t.name = v.trim(); t.own = true; keep('fmtv.tvs', tvs); drawTvs(); drawSnap(); }
+      };
+      row.appendChild(r);
+      list.appendChild(row);
+    });
+    $('fetch').textContent = 'Hämta från ' + nameOf(topic);
+  }
+
+  function targets() { return tvs.filter(function (t) { return (!snap || t.topic !== snap.topic) && chosen[t.topic] !== false; }); }
+
+  function drawSnap(text) {
+    var b = $('snap');
+    $('push').disabled = !snap || !targets().length;
+    if (!snap && !text) { b.hidden = true; return; }
+    b.hidden = false;
+    b.innerHTML = '';
+    if (snap) {
+      var s = snap.s, p = s.prefs || {}, have = [];
+      if (p.tmdbKey) have.push('TMDB-nyckel');
+      if (p.iptv) have.push('IPTV-länk');
+      if (s.claude) have.push('Claude');
+      if (s.plex) have.push('Plex');
+      have.push('hemskärmen' + (p.shelf ? ' med ' + p.shelf.length + ' favoritappar' : ''));
+      var when = new Date(s.at), d = document.createElement('div');
+      d.textContent = 'Från ' + nameOf(snap.topic) + ', hämtad ' + when.toLocaleString('sv-SE', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'}) + ': ' + have.join(', ') + '.';
+      b.appendChild(d);
+    }
+    if (text) { var t = document.createElement('div'); t.className = 's'; t.style.marginTop = '6px'; t.textContent = text; b.appendChild(t); }
+    savedOn.forEach(function (line) { var k = document.createElement('div'); k.style.marginTop = '6px'; k.textContent = '✓ ' + line; b.appendChild(k); });
+  }
+
+  var asked = null;
+  function gotSnap(from, s) {
+    if (!s || s.v !== 1) return;
+    if (asked !== from) return;   // only an answer to "Hämta"
+    asked = null; savedOn = []; sentText = '';
+    snap = {topic: from, s: s};
+    keep('fmtv.snap', snap);
+    drawTvs();
+    drawSnap('Välj TV:arna och tryck Skicka.');
+  }
+
+  $('fetch').onclick = function () {
+    asked = topic;
+    sync('Frågar ' + nameOf(topic) + '…');
+    send({t: 'getprefs'}, true).catch(function () {});
+    setTimeout(function () { if (asked === topic) { asked = null; drawSnap(nameOf(topic) + ' svarade inte. Free My TV behöver vara öppen där.'); } }, 10000);
+  };
+
+  $('push').onclick = function () {
+    var to = targets();
+    if (!snap || !to.length) return;
+    var s = JSON.parse(JSON.stringify(snap.s));
+    s.at = Date.now();   // a new sending: also taken by a TV that took these settings before
+    s.from = nameOf(snap.topic);
+    $('push').disabled = true;
+    savedOn = []; sentText = '';
+    drawSnap('Skickar…');
+    Promise.all(to.map(function (t) {
+      return send({t: 'setprefs', s: s}, false, t.topic).then(function () { return t.name; }, function () { return null; });
+    })).then(function (names) {
+      var ok = names.filter(Boolean);
+      drawSnap(sentText = ok.length ? 'Skickat till ' + ok.join(' och ') + '. En TV med Free My TV öppen tar dem direkt och startar om; '
+        + 'en som är avstängd får dem när Free My TV startar (inom 12 timmar).' : 'Det gick inte att skicka. Har mobilen internet?');
+    });
+  };
+
+  drawTvs();
+  drawSnap();
 
   function say(text, claude) { var s = $('say'); s.textContent = text || ''; s.className = 'say' + (claude ? '' : ' plain'); }
 
