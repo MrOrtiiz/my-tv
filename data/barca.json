@@ -1,5 +1,5 @@
 {
- "updated": 1794110768710,
+ "updated": 1794122359853,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -28,12 +28,13 @@
  ],
  "guide": {
   "channels": 5627,
-  "programmes": 124718,
-  "barca_listings": 10,
+  "programmes": 112225,
+  "barca_listings": 8,
   "until": "2026-11-09T03:45:00+01:00"
  },
  "barca_titles_seen": [
   "11-08 21:00 | FIA WEC HL '26: 6 Hours of Barcelona  | 60 min",
+  "11-09 05:30 | Atl. de Madrid vs. Barcelona  | 60 min",
   "11-09 03:40 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min",
   "11-09 04:00 | Atl. de Madrid vs. Barcelona  | 60 min",
   "11-08 22:30 | LaLiga EA Sports Blitz Highlights - Matchday 18: Barcelona vs Atletico Madrid  | 5 min",
@@ -43,9 +44,13 @@
   "11-08 22:50 | LaLiga EA Sports Blitz Highlights - Matchday 30: Atletico Madrid vs Barcelona  | 5 min",
   "11-08 22:55 | LaLiga EA Sports - Matchday 12: Atletico Madrid vs Barcelona  | 125 min",
   "11-09 03:00 | LaLiga 26/27: A Madrid v Barcelona  | 120 min",
-  "11-08 05:35 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 85 min",
+  "11-09 07:00 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min",
+  "11-09 07:30 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min",
+  "11-09 08:00 | LaLiga EA Sports Blitz Highlights - Matchday 12: Atletico Madrid vs Barcelona  | 5 min",
+  "11-09 05:00 | FIA WEC HL '26: 6 Hours of Barcelona  | 60 min",
+  "11-09 07:20 | Voetbal Samenvatting: Atlético Madrid - FC Barcelona Samenvatting  | 15 min",
+  "11-09 07:20 | Voetbal Samenvatting: Atlético Madrid - FC Barcelona Samenvatting  | 15 min",
   "11-09 02:25 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 80 min",
-  "11-08 05:35 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 85 min",
   "11-09 02:25 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 80 min",
   "11-08 08:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 120 min",
   "11-08 08:30 | Endurance Autoraces: FIA WEC: 6 uur van Barcelona  | 120 min",
