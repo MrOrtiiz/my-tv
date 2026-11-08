@@ -101,6 +101,9 @@
 
   <details>
     <summary>Inställningar</summary>
+    <p><b>IPTV-länk.</b> Din M3U-länk eller Xtream-inloggning. Klistra in den här så provas den och sparas på TV:n du har valt ovan
+      (Free My TV behöver vara öppen där). Den sparas inte i mobilen.</p>
+    <form id="iptvform"><input id="iptv" placeholder="http://…/get.php?username=…" autocomplete="off" autocapitalize="off" spellcheck="false"><button>Skicka</button></form>
     <p><b>Claude-nyckel.</b> Med en egen nyckel från console.anthropic.com förstår sökningen fria önskemål ("något roligt med Adam Sandler").
       Nyckeln skickas direkt till TV:n och sparas bara där.</p>
     <form id="keyform"><input id="key" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" spellcheck="false"><button>Skicka</button></form>
@@ -356,6 +359,15 @@
     send({t: 'key', claude: k}, true);
     $('key').value = '';
     say('Nyckeln skickades till TV:n…', false);
+  };
+
+  $('iptvform').onsubmit = function (e) {
+    e.preventDefault();
+    var u = $('iptv').value.replace(/\s+/g, '');
+    if (!/^https?:\/\/[^\s\/]+/i.test(u)) { say('Länken ska börja med http:// eller https://.', false); return; }
+    send({t: 'iptv', link: u}, true).catch(function () {});
+    $('iptv').value = '';
+    say('IPTV-länken skickades till ' + nameOf(topic) + '…', false);
   };
 
   $('gamesform').onsubmit = function (e) {

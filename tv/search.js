@@ -922,6 +922,19 @@ var Search = (function () {
     return m ? kind + ' ' + tvModel : kind;
   }
 
+  /** The IPTV link pasted on the phone (Inställningar → IPTV-länk): tried first, like Genvägar → IPTV-länk on the TV. */
+  function saveIptvLink(link) {
+    if (!/^https?:\/\/[^\s\/]+/i.test(link)) { tellPhone({t: 'note', say: 'Det ser inte ut som en IPTV-länk (den börjar med http:// eller https://).'}); return; }
+    if (!window.IPTV || !IPTV.check) { tellPhone({t: 'note', say: 'IPTV-delen har inte laddats på ' + tvName() + '. Starta om Free My TV.'}); return; }
+    tellPhone({t: 'note', say: 'Provar IPTV-länken på ' + tvName() + '…'});
+    IPTV.check(link, function (err, n) {
+      if (err) { tellPhone({t: 'note', say: 'Kunde inte läsa listan: ' + err.message + '.'}); return; }
+      Prefs.set('iptv', link);
+      toast('IPTV-länken är sparad. ' + n + ' kanaler.');
+      tellPhone({t: 'note', say: 'IPTV-länken är sparad på ' + tvName() + '. ' + n + ' kanaler hittades.'});
+    });
+  }
+
   function savedPrefs() { try { return JSON.parse(localStorage.getItem('fmtv.prefs')) || {}; } catch (e) { return {}; } }
 
   function snapshot() {
@@ -971,6 +984,7 @@ var Search = (function () {
       return;
     }
     if (o.t === 'key' && o.claude) { saveClaude(o.claude, true); return; }
+    if (o.t === 'iptv') { saveIptvLink(String(o.link || '').replace(/\s+/g, '')); return; }
     if (o.t === 'games' && /^https:\/\/script\.google\.com\/.+/.test(o.url || '')) {   // for the Spel app (games/), given to it when it's opened
       try { localStorage.setItem('fmtv.games', o.url); } catch (e) {}
       toast('Spel-appen får din Google Drive-mapp när du öppnar den härifrån.');
