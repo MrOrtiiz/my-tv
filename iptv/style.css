@@ -264,3 +264,5 @@ body { font-family: 'Inter', 'SamsungOneUI', 'Helvetica Neue', Arial, sans-serif
 .events .row.sirius.focus { background: #fff; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 0 3px #0A5FC4; }
 .sport .groups .row.barca { background: linear-gradient(90deg, rgba(0, 77, 152, 0.5), rgba(165, 0, 68, 0.45)); }
 .sport .groups .row.barca.focus { background: #fff; }
+/* Favoriter → Kanaler: the TV guide's grid of the favourite channels, where the list is. */
+.favs .grid.fixed { left: 500px; right: 0; }

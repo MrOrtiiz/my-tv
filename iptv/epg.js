@@ -78,8 +78,22 @@ var Epg = (function () {
 
   // MARK: - The grid
 
-  function build(main) {
+  /** The TV guide in main. With opts.rows (a function giving the channels), only those channels and no groups column:
+   *  the favourite channels under Favoriter → Kanaler; ◀ from a channel then answers 'left'. */
+  function build(main, opts) {
     var u = U();
+    if (opts && opts.rows) {
+      var host = u.el('div', 'col grid glass fixed', main);
+      V = {zone: 'grid', row: 0, first: 0, t0: floorStep(Date.now()), tc: Date.now(), rows: opts.rows(), area: host, fixed: opts.rows, groups: null};
+      V.head = u.el('div', 'ghead', host);
+      V.body = u.el('div', 'gbody', host);
+      V.info = u.el('div', 'ginfo', host);
+      V.pv = u.el('div', 'gpv', host);
+      u.el('div', 'pvh', V.pv, 'Förhandsvisning');
+      V.empty = opts.empty;
+      draw();
+      return;
+    }
     main.className = 'epg';
     var gHost = u.el('div', 'col groups glass', main), area = u.el('div', 'col grid glass', main);
     V = {zone: 'grid', row: 0, first: 0, t0: floorStep(Date.now()), tc: Date.now(), rows: [], area: area};
@@ -136,7 +150,7 @@ var Epg = (function () {
     nl.style.left = 300 + px(now) + 'px';
     nl.style.display = now >= V.t0 && now < V.t0 + SPAN ? 'block' : 'none';
     if (!V.rows.length) {
-      u.el('div', 'empty', V.body, V.lockedGroup ? '🔒  Låst med föräldralåset. Tryck OK och skriv PIN-koden.' : 'Inga kanaler här.');
+      u.el('div', 'empty', V.body, V.lockedGroup ? '🔒  Låst med föräldralåset. Tryck OK och skriv PIN-koden.' : V.empty || 'Inga kanaler här.');
       V.info.innerHTML = '';
       stopPreview();
       return;
@@ -264,9 +278,14 @@ var Epg = (function () {
       else if (k === K.down) { if (V.row < V.rows.length - 1) V.row++; }
       else if (k === K.chUp) V.row = Math.max(0, V.row - 6);
       else if (k === K.chDown) V.row = Math.min(V.rows.length - 1, V.row + 6);
-      else if (k === K.left) V.zone = 'groups';
+      else if (k === K.left) { if (V.fixed) return 'left'; V.zone = 'groups'; }
       else if (k === K.right) { V.zone = 'grid'; V.tc = Date.now(); }
-      else if (k === K.ok && V.rows[V.row]) { var on = Store.toggleFav(V.rows[V.row]); u.toast(on ? 'Tillagd i favoriter' : 'Borttagen från favoriter'); }
+      else if (k === K.ok && V.rows[V.row]) {
+        var on = Store.toggleFav(V.rows[V.row]);
+        u.toast(on ? 'Tillagd i favoriter' : 'Borttagen från favoriter');
+        // Under Favoriter the list is the favourites: a channel taken away goes.
+        if (V.fixed) { V.rows = V.fixed(); V.row = Math.min(V.row, Math.max(0, V.rows.length - 1)); if (!V.rows.length) { focus(true); return 'left'; } }
+      }
       else if (k === K.back) return 'tabs';
       focus(true);
       return;
@@ -275,7 +294,7 @@ var Epg = (function () {
     else if (k === K.down) { if (V.row < V.rows.length - 1) V.row++; }
     else if (k === K.chUp) V.row = Math.max(0, V.row - 6);
     else if (k === K.chDown) V.row = Math.min(V.rows.length - 1, V.row + 6);
-    else if (k === K.left) { if (!step(-1)) { V.zone = 'chan'; V.tc = Date.now(); V.t0 = floorStep(Date.now()); } }
+    else if (k === K.left) { if (!V.rows.length) return V.fixed ? 'left' : undefined; if (!step(-1)) { V.zone = 'chan'; V.tc = Date.now(); V.t0 = floorStep(Date.now()); } }
     else if (k === K.right) step(1);
     else if (k === K.ok) { activate(); return; }
     else if (k === K.back) { if (V.tc > Date.now() + 60000) { V.tc = Date.now(); V.t0 = floorStep(Date.now()); } else return 'tabs'; }
@@ -285,7 +304,7 @@ var Epg = (function () {
   function focus(on) {
     focused = on;
     if (!V) return;
-    V.groups.focus(on && V.zone === 'groups');
+    if (V.groups) V.groups.focus(on && V.zone === 'groups');
     draw();
   }
 

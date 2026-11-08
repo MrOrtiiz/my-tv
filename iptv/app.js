@@ -7,7 +7,7 @@
  */
 var App = (function () {
   'use strict';
-  var VERSION = '1.6';
+  var VERSION = '1.7';
   var K = {left: 37, up: 38, right: 39, down: 40, ok: 13, back: 10009, chUp: 427, chDown: 428,
     play: 415, pause: 19, playPause: 10252, ff: 417, rew: 412, stop: 413};
   var TABS = [['live', 'Live'], ['sport', 'Sport'], ['guide', 'TV-guide'], ['films', 'Filmer'], ['series', 'Serier'], ['favs', 'Favoriter'], ['settings', 'Inställningar']];
@@ -536,7 +536,8 @@ var App = (function () {
     main.innerHTML = '';
     main.className = 'favs';
     V.sections = new List(el('div', 'col groups glass', main), 76, function (s, r) { el('div', 'name', r, s[0]); });
-    V.items = new List(el('div', 'col items glass', main), 92, function (it, r) {
+    V.itemsHost = el('div', 'col items glass', main);
+    V.items = new List(V.itemsHost, 92, function (it, r) {
       img(el('div', 'logo', r), '', it.logo || it.poster);
       var t = el('div', 'text', r);
       el('div', 'name', t, it.kind === 'episode' ? it.seriesName + '  ·  S' + it.season + ' A' + it.n : it.name);
@@ -546,12 +547,29 @@ var App = (function () {
     });
     V.sections.set(FAV_SECTIONS, V.secAt || 0);
     showSection();
-    if (zone !== 'tabs') zone = 'items';
+    if (zone !== 'tabs') zone = V.mod ? 'mod' : 'items';
     focusZone();
+  }
+  /** The favourite channels as they are in the list now (else as kept), the locked ones left out. */
+  function favChannels() {
+    var f = Store.favs(), out = [];
+    for (var i = 0; i < f.length; i++) if (f[i].kind === 'live' && open_(f[i])) out.push(find(f[i].name, f[i].epg) || f[i]);
+    return out;
   }
   function showSection() {
     var s = V.sections.current(), src = s[1] === 'recent' ? Store.recent() : Store.favs(), out = [];
     V.secAt = V.sections.at;
+    // Kanaler: the favourite channels as in the TV guide (the grid, with what's on now and later).
+    if (V.mod) { V.mod.leave(); V.mod = null; if (V.favGrid) { $('main').removeChild(V.favGrid); V.favGrid = null; } }
+    V.itemsHost.style.display = s[1] === 'live' ? 'none' : '';
+    if (s[1] === 'live') {
+      var before = $('main').children.length;
+      Epg.build($('main'), {rows: favChannels, empty: 'Inga favoritkanaler än. Lägg till med ☆ i Live, eller ◀ på en kanal i TV-guiden.'});
+      V.favGrid = $('main').children[before];
+      V.mod = Epg;
+      V.items.set([]);
+      return;
+    }
     if (s[1] === 'rem') {
       var rem = Epg.reminders();
       V.items.emptyText = 'Inga påminnelser. Välj ett kommande program i TV-guiden och tryck OK.';
@@ -668,7 +686,7 @@ var App = (function () {
   }
 
   function firstZone() {
-    return tab === 'live' ? 'chans' : tab === 'guide' || tab === 'sport' ? 'mod' : tab === 'films' || tab === 'series' ? 'cats' : tab === 'favs' ? 'items' : 'set';
+    return tab === 'live' ? 'chans' : tab === 'guide' || tab === 'sport' ? 'mod' : tab === 'films' || tab === 'series' ? 'cats' : tab === 'favs' ? (V.mod ? 'mod' : 'items') : 'set';
   }
 
   function keyOverlay(k) {
@@ -724,7 +742,12 @@ var App = (function () {
       else if (k === K.ok || k === K.back) { V.grab = false; toast('Sparat'); V.chans.draw(); sideFor(); }
       return;
     }
-    if (zone === 'mod' && V.mod) { if (V.mod.key(k, K) === 'tabs') { zone = 'tabs'; focusZone(); } return; }
+    if (zone === 'mod' && V.mod) {
+      var to = V.mod.key(k, K);
+      if (to === 'tabs') { zone = 'tabs'; focusZone(); }
+      else if (to === 'left' && V.sections) { zone = 'sections'; focusZone(); }
+      return;
+    }
     if (k === K.back) { zone = 'tabs'; focusZone(); return; }
     switch (zone) {
       case 'groups':
@@ -768,7 +791,7 @@ var App = (function () {
       case 'sections':
         if (k === K.up) { if (!V.sections.move(-1)) zone = 'tabs'; else showSection(); }
         else if (k === K.down) { if (V.sections.move(1)) showSection(); }
-        else if (k === K.right || k === K.ok) zone = 'items';
+        else if (k === K.right || k === K.ok) zone = V.mod ? 'mod' : 'items';
         break;
       case 'items':
         if (k === K.up) { if (!V.items.move(-1)) zone = 'tabs'; }
