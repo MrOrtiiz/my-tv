@@ -1,5 +1,5 @@
 {
- "updated": 1794131907854,
+ "updated": 1794143242959,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -9,6 +9,18 @@
    "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
    "start": 1794168000000,
    "stop": 1794175200000,
+   "live": false,
+   "channels": [],
+   "channel_ids": [],
+   "channel_langs": [],
+   "more": 0
+  },
+  {
+   "title": "Barcelona – Villarreal",
+   "competition": "LaLiga",
+   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
+   "start": 1795352400000,
+   "stop": 1795359600000,
    "live": false,
    "channels": [],
    "channel_ids": [],
@@ -28,7 +40,7 @@
  ],
  "guide": {
   "channels": 5627,
-  "programmes": 104805,
+  "programmes": 95233,
   "barca_listings": 8,
   "until": "2026-11-09T12:25:00+01:00"
  },
@@ -37,6 +49,7 @@
   "11-09 05:30 | Atl. de Madrid vs. Barcelona  | 60 min",
   "11-09 03:40 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min",
   "11-09 04:00 | Atl. de Madrid vs. Barcelona  | 60 min",
+  "11-09 11:40 | LaLiga EA Sports Blitz Highlights - Matchday 12: Atletico Madrid vs Barcelona  | 5 min",
   "11-08 22:30 | LaLiga EA Sports Blitz Highlights - Matchday 18: Barcelona vs Atletico Madrid  | 5 min",
   "11-08 22:35 | LaLiga HL 23/24: A Madrid v Barcelona  | 5 min",
   "11-08 22:40 | LaLiga EA Sports Blitz Highlights - Matchday 15: Barcelona vs Atletico Madrid  | 5 min",
@@ -56,8 +69,7 @@
   "11-09 02:25 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 80 min",
   "11-09 02:25 | Porsche Sprint Cup Challenge SE: Barcelona Club Division Race 2  | 80 min",
   "11-08 20:30 | Europakonzert 2023 : le Berliner Philharmoniker à Barcelona  | 80 min",
-  "11-08 20:30 | Europakonzert 2023 : le Berliner Philharmoniker à Barcelona  | 80 min",
-  "11-08 20:00 | Atletico Madrid vs Barcelona - Spanish LaLiga 2026/2027 - Week 12  | 1380 min"
+  "11-08 20:30 | Europakonzert 2023 : le Berliner Philharmoniker à Barcelona  | 80 min"
  ],
  "table": {
   "league": "LaLiga",
