@@ -1,5 +1,5 @@
 {
- "updated": 1794251438259,
+ "updated": 1794261522407,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -28,16 +28,15 @@
  ],
  "guide": {
   "channels": 5628,
-  "programmes": 269493,
-  "barca_listings": 34,
-  "until": "2026-11-10T19:30:00+01:00"
+  "programmes": 268888,
+  "barca_listings": 33,
+  "until": "2026-11-11T00:15:00+01:00"
  },
  "barca_titles_seen": [
   "11-10 05:00 | Košarka - Euroleague: Hapoel Tel Aviv - Barcelona  | 120 min",
   "11-10 05:00 | Košarka - Euroleague: Hapoel Tel Aviv - Barcelona  | 120 min",
   "11-10 17:30 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
   "11-10 17:30 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
-  "11-09 20:35 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
   "11-10 13:45 | Košarka - Španjolska liga: Barcelona - Breogan  | 95 min",
   "11-09 21:00 | Atl Madrid-Barcelona  | 120 min",
   "11-09 21:00 | Piłka nożna: Liga hiszpańska - mecz: Atletico Madryt - FC Barcelona  | 135 min",
@@ -45,7 +44,6 @@
   "11-09 21:00 | Atl Madrid-Barcelona  | 120 min",
   "11-10 00:00 | LaLiga EA Sports: Atlético - Barcelona  | 120 min",
   "11-09 21:00 | Atl. de Madrid vs. Barcelona  | 120 min",
-  "11-09 20:35 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
   "11-10 13:45 | Košarka - Španjolska liga: Barcelona - Breogan  | 95 min",
   "11-10 05:50 | Hotel Barcelona, Episode 1  | 95 min",
   "11-09 22:00 | Atl. de Madrid vs. Barcelona  | 60 min",
@@ -57,7 +55,9 @@
   "11-10 15:00 | Elche vs Barcelona  | 104 min",
   "11-10 00:00 | Barcelona vs. Aston Villa  | 120 min",
   "11-09 21:00 | Atl Madrid-Barcelona  | 120 min",
-  "11-09 22:00 | Atl. de Madrid vs. Barcelona  | 60 min"
+  "11-10 20:55 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
+  "11-09 22:00 | Atl. de Madrid vs. Barcelona  | 60 min",
+  "11-10 00:50 | Atlético Madrid - FC Barcelona (120)  | 110 min"
  ],
  "table": {
   "league": "LaLiga",
