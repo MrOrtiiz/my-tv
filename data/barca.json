@@ -1,5 +1,5 @@
 {
- "updated": 1794187563476,
+ "updated": 1794197547293,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -28,23 +28,21 @@
  ],
  "guide": {
   "channels": 5627,
-  "programmes": 271611,
-  "barca_listings": 58,
+  "programmes": 272621,
+  "barca_listings": 45,
   "until": "2026-11-10T02:40:00+01:00"
  },
  "barca_titles_seen": [
   "11-09 12:00 | Košarka - Euroleague: Hapoel Tel Aviv - Barcelona  | 120 min",
+  "11-10 05:00 | Košarka - Euroleague: Hapoel Tel Aviv - Barcelona  | 120 min",
   "11-09 12:00 | Košarka - Euroleague: Hapoel Tel Aviv - Barcelona  | 120 min",
-  "11-09 01:25 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
-  "11-09 01:15 | Košarka - Španjolska liga: Barcelona - Breogan  | 90 min",
+  "11-10 05:00 | Košarka - Euroleague: Hapoel Tel Aviv - Barcelona  | 120 min",
   "11-09 20:35 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
   "11-09 09:40 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
   "11-09 14:10 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
-  "11-09 02:00 | Atl Madrid-Barcelona  | 120 min",
   "11-09 21:00 | Atl Madrid-Barcelona  | 120 min",
   "11-09 09:00 | Piłka nożna: Liga hiszpańska - mecz: Atletico Madryt - FC Barcelona  | 140 min",
   "11-09 21:00 | Piłka nożna: Liga hiszpańska - mecz: Atletico Madryt - FC Barcelona  | 135 min",
-  "11-09 02:00 | Atl Madrid-Barcelona  | 120 min",
   "11-09 21:00 | Atl Madrid-Barcelona  | 120 min",
   "11-09 09:40 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
   "11-10 00:00 | LaLiga EA Sports: Atlético - Barcelona  | 120 min",
@@ -52,12 +50,14 @@
   "11-09 05:30 | Atl. de Madrid vs. Barcelona  | 60 min",
   "11-09 16:00 | Atl. de Madrid vs. Barcelona  | 60 min",
   "11-09 21:00 | Atl. de Madrid vs. Barcelona  | 120 min",
-  "11-09 03:40 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min",
-  "11-09 01:25 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
-  "11-09 01:15 | Košarka - Španjolska liga: Barcelona - Breogan  | 90 min",
   "11-09 20:35 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
   "11-09 09:40 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
-  "11-09 14:10 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min"
+  "11-09 14:10 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
+  "11-09 22:00 | Atl. de Madrid vs. Barcelona  | 60 min",
+  "11-10 04:00 | Atl. de Madrid vs. Barcelona  | 60 min",
+  "11-09 09:50 | Endurance: 6 Hours of Barcelona  | 70 min",
+  "11-09 12:55 | UEFA Champions League 26/27 - Barcelona x Aston Villa  | 125 min",
+  "11-09 12:55 | UEFA Champions League 26/27 - Barcelona x Aston Villa  | 125 min"
  ],
  "table": {
   "league": "LaLiga",
