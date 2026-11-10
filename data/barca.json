@@ -1,5 +1,5 @@
 {
- "updated": 1794337933805,
+ "updated": 1794347641750,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -28,14 +28,16 @@
  ],
  "guide": {
   "channels": 5628,
-  "programmes": 278381,
-  "barca_listings": 33,
-  "until": "2026-11-11T21:00:00+01:00"
+  "programmes": 273562,
+  "barca_listings": 36,
+  "until": "2026-11-12T00:00:00+01:00"
  },
  "barca_titles_seen": [
   "11-11 06:00 | LaLiga EA Sports: Atlético - Barcelona  | 120 min",
+  "11-11 22:05 | LaLiga EA Sports: Atlético - Barcelona  | 115 min",
   "11-11 06:00 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 165 min",
   "11-11 08:45 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 165 min",
+  "11-11 21:30 | Koszykówka mężczyzn: Superpuchar Hiszpanii - mecz półfinałowy: Valencia Basket - Barca  | 150 min",
   "11-11 04:00 | Barcelona (Esp) vs. Aston Villa (Ing)  | 120 min",
   "11-11 05:50 | Hotel Barcelona, Episode 2  | 95 min",
   "11-11 11:30 | Endurance: 6 Hours of Barcelona  | 60 min",
@@ -43,6 +45,7 @@
   "11-11 18:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-11 18:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-11 06:00 | LaLiga EA Sports: Atlético - Barcelona  | 120 min",
+  "11-11 22:05 | LaLiga EA Sports: Atlético - Barcelona  | 115 min",
   "11-11 11:30 | Endurance: 6 Hours of Barcelona  | 60 min",
   "11-11 07:00 | Elche vs Barcelona  | 104 min",
   "11-11 11:00 | Barcelona vs. Aston Villa  | 120 min",
@@ -53,11 +56,8 @@
   "11-11 12:00 | Atlético Madrid - FC Barcelona  | 120 min",
   "11-10 23:00 | Atlético Madrid - FC Barcelona (120)  | 110 min",
   "11-11 06:00 | LaLiga EA Sports: Atlético - Barcelona  | 120 min",
-  "11-11 04:15 | Barcelona Heat  | 30 min",
-  "11-11 04:15 | Barcelona Heat  | 30 min",
-  "11-11 11:00 | Atletico Madrid vs Barcelona - Spanish LaLiga 2026/2027 - Week 12  | 120 min",
-  "11-11 11:00 | Atletico Madrid vs Barcelona - Spanish LaLiga 2026/2027 - Week 12  | 120 min",
-  "11-11 11:00 | Atletico Madrid vs Barcelona - Spanish LaLiga 2026/2027 - Week 12  | 120 min"
+  "11-11 22:05 | LaLiga EA Sports: Atlético - Barcelona  | 115 min",
+  "11-11 04:15 | Barcelona Heat  | 30 min"
  ],
  "table": {
   "league": "LaLiga",
