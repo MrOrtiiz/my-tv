@@ -1,5 +1,5 @@
 {
- "updated": 1794392043311,
+ "updated": 1794403618316,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -28,36 +28,36 @@
  ],
  "guide": {
   "channels": 5628,
-  "programmes": 290801,
-  "barca_listings": 52,
-  "until": "2026-11-12T12:15:00+01:00"
+  "programmes": 287848,
+  "barca_listings": 55,
+  "until": "2026-11-12T16:30:00+01:00"
  },
  "barca_titles_seen": [
+  "11-12 14:00 | Košarka - Španska liga: Barcelona - Breogan  | 120 min",
+  "11-12 14:00 | Košarka - Španska liga: Barcelona - Breogan  | 120 min",
   "11-11 16:55 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
   "11-11 21:00 | Atl Madrid-Barcelona  | 120 min",
   "11-11 21:00 | Atl Madrid-Barcelona  | 120 min",
   "11-11 22:05 | LaLiga EA Sports: Atlético - Barcelona  | 115 min",
-  "11-11 08:45 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 165 min",
   "11-11 21:30 | Koszykówka mężczyzn: Superpuchar Hiszpanii - mecz półfinałowy: Valencia Basket - Barca  | 150 min",
   "11-12 08:40 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 155 min",
   "11-11 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 130 min",
+  "11-12 11:45 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min",
   "11-11 16:55 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
   "11-11 22:45 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
-  "11-11 11:30 | Endurance: 6 Hours of Barcelona  | 60 min",
   "11-11 18:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-11 18:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-11 18:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-12 06:58 | Europakonzert 2023 : The Berliner Philharmoniker In Barcelona  | 80 min",
   "11-11 22:05 | LaLiga EA Sports: Atlético - Barcelona  | 115 min",
-  "11-11 11:30 | Endurance: 6 Hours of Barcelona  | 60 min",
-  "11-11 11:00 | Barcelona vs. Aston Villa  | 120 min",
   "11-12 05:20 | Extreme Barcelona  | 70 min",
   "11-11 21:00 | Atl Madrid-Barcelona  | 120 min",
+  "11-12 13:10 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
   "11-12 05:20 | Extreme Barcelona  | 70 min",
-  "11-11 11:30 | Endurance: 6 Hours of Barcelona  | 60 min",
   "11-11 23:00 | BARCELONA - ASTON VILLA  | 120 min",
-  "11-11 12:00 | Atlético Madrid - FC Barcelona  | 120 min",
-  "11-12 06:00 | Atlético Madrid - FC Barcelona  | 120 min"
+  "11-12 06:00 | Atlético Madrid - FC Barcelona  | 120 min",
+  "11-11 21:00 | Atlético Madrid - FC Barcelona (120)  | 120 min",
+  "11-11 22:05 | LaLiga EA Sports: Atlético - Barcelona  | 115 min"
  ],
  "table": {
   "league": "LaLiga",
