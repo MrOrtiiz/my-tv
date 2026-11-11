@@ -1,64 +1,8 @@
 {
- "updated": 1794360084477,
- "status": "ok",
- "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
- "matches": [
-  {
-   "title": "Barcelona – Villarreal",
-   "competition": "LaLiga",
-   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
-   "start": 1795352400000,
-   "stop": 1795359600000,
-   "live": false,
-   "channels": [],
-   "channel_ids": [],
-   "channel_langs": [],
-   "more": 0
-  }
- ],
- "source": [
-  "espn esp.1",
-  "espn uefa.champions",
-  "espn esp.copa_del_rey",
-  "espn esp.super_cup",
-  "espn club.friendly"
- ],
- "source_errors": [
-  "thesportsdb: HTTPError"
- ],
- "guide": {
-  "channels": 5628,
-  "programmes": 297576,
-  "barca_listings": 44,
-  "until": "2026-11-12T03:30:00+01:00"
- },
- "barca_titles_seen": [
-  "11-11 16:55 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
-  "11-11 21:00 | Atl Madrid-Barcelona  | 120 min",
-  "11-11 21:00 | Atl Madrid-Barcelona  | 120 min",
-  "11-11 06:00 | LaLiga EA Sports: Atlético - Barcelona  | 120 min",
-  "11-11 22:05 | LaLiga EA Sports: Atlético - Barcelona  | 115 min",
-  "11-11 06:00 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 165 min",
-  "11-11 08:45 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 165 min",
-  "11-11 21:30 | Koszykówka mężczyzn: Superpuchar Hiszpanii - mecz półfinałowy: Valencia Basket - Barca  | 150 min",
-  "11-11 04:00 | Barcelona (Esp) vs. Aston Villa (Ing)  | 120 min",
-  "11-11 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 130 min",
-  "11-11 16:55 | Nogomet - Španjolska liga: Atletico Madrid - Barcelona  | 110 min",
-  "11-11 05:50 | Hotel Barcelona, Episode 2  | 95 min",
-  "11-11 22:45 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
-  "11-11 11:30 | Endurance: 6 Hours of Barcelona  | 60 min",
-  "11-11 18:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
-  "11-11 18:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
-  "11-11 18:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
-  "11-11 06:00 | LaLiga EA Sports: Atlético - Barcelona  | 120 min",
-  "11-11 22:05 | LaLiga EA Sports: Atlético - Barcelona  | 115 min",
-  "11-11 11:30 | Endurance: 6 Hours of Barcelona  | 60 min",
-  "11-11 07:00 | Elche vs Barcelona  | 104 min",
-  "11-11 11:00 | Barcelona vs. Aston Villa  | 120 min",
-  "11-11 04:00 | Barcelona (Esp) vs. Aston Villa (Ing)  | 120 min",
-  "11-11 21:00 | Atl Madrid-Barcelona  | 120 min",
-  "11-11 11:30 | Endurance: 6 Hours of Barcelona  | 60 min"
- ],
+ "updated": 1794370249218,
+ "status": "error",
+ "error": "The guide answered HTTP 502.",
+ "matches": [],
  "table": {
   "league": "LaLiga",
   "rows": [
