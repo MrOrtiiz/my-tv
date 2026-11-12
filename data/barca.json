@@ -1,5 +1,5 @@
 {
- "updated": 1794435412591,
+ "updated": 1794446933479,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -40,35 +40,35 @@
  ],
  "guide": {
   "channels": 5632,
-  "programmes": 280230,
-  "barca_listings": 54,
-  "until": "2026-11-13T00:45:00+01:00"
+  "programmes": 305272,
+  "barca_listings": 63,
+  "until": "2026-11-13T04:00:00+01:00"
  },
  "barca_titles_seen": [
   "11-12 14:00 | Košarka - Španska liga: Barcelona - Breogan  | 120 min",
   "11-12 14:00 | Košarka - Španska liga: Barcelona - Breogan  | 120 min",
-  "11-11 22:05 | LaLiga EA Sports: Atlético - Barcelona  | 115 min",
-  "11-11 21:30 | Koszykówka mężczyzn: Superpuchar Hiszpanii - mecz półfinałowy: Valencia Basket - Barca  | 150 min",
+  "11-12 12:15 | Futboll: Liga e Kampioneve Galatasaray - Barcelona  | 130 min",
+  "11-12 08:20 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 140 min",
   "11-12 08:40 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 155 min",
   "11-12 22:25 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 165 min",
+  "11-12 22:40 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 155 min",
   "11-12 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 130 min",
   "11-12 11:45 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min",
   "11-12 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
-  "11-11 22:45 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
   "11-12 22:45 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
   "11-12 22:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-12 22:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-12 22:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-12 06:58 | Europakonzert 2023 : The Berliner Philharmoniker In Barcelona  | 80 min",
-  "11-11 22:05 | LaLiga EA Sports: Atlético - Barcelona  | 115 min",
   "11-12 05:20 | Extreme Barcelona  | 70 min",
   "11-12 13:10 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
   "11-12 05:20 | Extreme Barcelona  | 70 min",
-  "11-11 23:00 | BARCELONA - ASTON VILLA  | 120 min",
   "11-12 06:00 | Atlético Madrid - FC Barcelona  | 120 min",
+  "11-13 02:00 | Atlético Madrid - FC Barcelona  | 120 min",
   "11-12 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
-  "11-11 22:05 | LaLiga EA Sports: Atlético - Barcelona  | 115 min",
+  "11-12 09:00 | Atlético Madrid - FC Barcelona (120)  | 120 min",
   "11-12 07:00 | Barcelona vs Aston Villa - UEFA Champions League MD4  | 120 min",
+  "11-12 10:25 | Barcelona vs Aston Villa - UEFA Champions League MD4  | 110 min",
   "11-12 10:30 | Barcelona vs Aston Villa - UEFA Champions League MD4  | 105 min"
  ],
  "table": {
