@@ -1,5 +1,5 @@
 {
- "updated": 1794490165094,
+ "updated": 1794500273504,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -40,16 +40,16 @@
  ],
  "guide": {
   "channels": 5632,
-  "programmes": 292285,
-  "barca_listings": 36,
-  "until": "2026-11-13T16:00:00+01:00"
+  "programmes": 288955,
+  "barca_listings": 20,
+  "until": "2026-11-13T19:15:00+01:00"
  },
  "barca_titles_seen": [
-  "11-12 14:00 | Košarka - Španska liga: Barcelona - Breogan  | 120 min",
-  "11-12 14:00 | Košarka - Španska liga: Barcelona - Breogan  | 120 min",
+  "11-13 17:00 | Piłka nożna: Liga hiszpańska - mecz: Atletico Madryt - FC Barcelona  | 135 min",
   "11-12 22:25 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 165 min",
   "11-12 22:40 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 155 min",
   "11-13 08:30 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Casademont Saragossa  | 160 min",
+  "11-13 15:00 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 150 min",
   "11-12 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 130 min",
   "11-12 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
   "11-12 22:45 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
@@ -60,16 +60,16 @@
   "11-13 06:00 | Endurance: 6 Hours of Barcelona  | 65 min",
   "11-13 07:00 | Elche vs Barcelona  | 104 min",
   "11-13 07:00 | Extreme Barcelona  | 65 min",
-  "11-12 13:10 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
   "11-13 07:00 | Extreme Barcelona  | 65 min",
   "11-13 06:00 | Endurance: 6 Hours of Barcelona  | 65 min",
   "11-13 03:00 | BARCELONA - ASTON VILLA  | 120 min",
+  "11-13 14:30 | Barcelona vs. Basket Zaragoza  | 120 min",
   "11-13 02:00 | Atlético Madrid - FC Barcelona  | 120 min",
   "11-13 14:00 | Atlético Madrid - FC Barcelona  | 120 min",
   "11-12 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
   "11-12 18:35 | Barcelona vs Arsenal - UEFA Women’s Champions League 2026/2027 - MD4  | 385 min",
-  "11-12 15:00 | Atletico Madrid vs Barcelona - Spanish LaLiga 2026/2027 - Week 12  | 105 min",
-  "11-12 13:45 | Barcelona vs Aston Villa - UEFA Champions League MD4  | 120 min"
+  "11-12 18:35 | Barcelona vs Arsenal - UEFA Women’s Champions League 2026/2027 - MD4  | 385 min",
+  "11-13 13:39 | Barcelona Bridal Fashion Week  | 32 min"
  ],
  "table": {
   "league": "LaLiga",
