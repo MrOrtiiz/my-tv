@@ -1,5 +1,5 @@
 {
- "updated": 1794500273504,
+ "updated": 1794510750634,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -40,9 +40,9 @@
  ],
  "guide": {
   "channels": 5632,
-  "programmes": 288955,
-  "barca_listings": 20,
-  "until": "2026-11-13T19:15:00+01:00"
+  "programmes": 284943,
+  "barca_listings": 25,
+  "until": "2026-11-13T20:30:00+01:00"
  },
  "barca_titles_seen": [
   "11-13 17:00 | Piłka nożna: Liga hiszpańska - mecz: Atletico Madryt - FC Barcelona  | 135 min",
@@ -50,26 +50,26 @@
   "11-12 22:40 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 155 min",
   "11-13 08:30 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Casademont Saragossa  | 160 min",
   "11-13 15:00 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 150 min",
+  "11-13 17:30 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 140 min",
+  "11-13 19:50 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 145 min",
   "11-12 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 130 min",
   "11-12 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
+  "11-13 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
   "11-12 22:45 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
   "11-13 06:00 | Endurance: 6 Hours of Barcelona  | 65 min",
   "11-12 22:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
+  "11-13 19:00 | UEFA Champions League 26/27 - Barcelona x Aston Villa  | 135 min",
   "11-12 22:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
+  "11-13 19:00 | UEFA Champions League 26/27 - Barcelona x Aston Villa  | 135 min",
   "11-12 22:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
+  "11-13 19:00 | UEFA Champions League 26/27 - Barcelona x Aston Villa  | 135 min",
   "11-13 06:00 | Endurance: 6 Hours of Barcelona  | 65 min",
   "11-13 07:00 | Elche vs Barcelona  | 104 min",
   "11-13 07:00 | Extreme Barcelona  | 65 min",
   "11-13 07:00 | Extreme Barcelona  | 65 min",
   "11-13 06:00 | Endurance: 6 Hours of Barcelona  | 65 min",
   "11-13 03:00 | BARCELONA - ASTON VILLA  | 120 min",
-  "11-13 14:30 | Barcelona vs. Basket Zaragoza  | 120 min",
-  "11-13 02:00 | Atlético Madrid - FC Barcelona  | 120 min",
-  "11-13 14:00 | Atlético Madrid - FC Barcelona  | 120 min",
-  "11-12 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
-  "11-12 18:35 | Barcelona vs Arsenal - UEFA Women’s Champions League 2026/2027 - MD4  | 385 min",
-  "11-12 18:35 | Barcelona vs Arsenal - UEFA Women’s Champions League 2026/2027 - MD4  | 385 min",
-  "11-13 13:39 | Barcelona Bridal Fashion Week  | 32 min"
+  "11-13 14:30 | Barcelona vs. Basket Zaragoza  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
