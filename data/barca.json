@@ -1,8 +1,76 @@
 {
- "updated": 1794456593152,
- "status": "error",
- "error": "The guide answered HTTP 502.",
- "matches": [],
+ "updated": 1794468943628,
+ "status": "ok",
+ "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
+ "matches": [
+  {
+   "title": "Barcelona – Villarreal",
+   "competition": "LaLiga",
+   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
+   "start": 1795352400000,
+   "stop": 1795359600000,
+   "live": false,
+   "channels": [],
+   "channel_ids": [],
+   "channel_langs": [],
+   "more": 0
+  },
+  {
+   "title": "Sabah FK – Barcelona",
+   "competition": "Champions League",
+   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/21922.png",
+   "start": 1795628700000,
+   "stop": 1795635900000,
+   "live": false,
+   "channels": [],
+   "channel_ids": [],
+   "channel_langs": [],
+   "more": 0
+  }
+ ],
+ "source": [
+  "espn esp.1",
+  "espn uefa.champions",
+  "espn esp.copa_del_rey",
+  "espn esp.super_cup",
+  "espn club.friendly"
+ ],
+ "source_errors": [
+  "thesportsdb: HTTPError"
+ ],
+ "guide": {
+  "channels": 5632,
+  "programmes": 300839,
+  "barca_listings": 57,
+  "until": "2026-11-13T08:44:59+01:00"
+ },
+ "barca_titles_seen": [
+  "11-12 14:00 | Košarka - Španska liga: Barcelona - Breogan  | 120 min",
+  "11-12 14:00 | Košarka - Španska liga: Barcelona - Breogan  | 120 min",
+  "11-12 12:15 | Futboll: Liga e Kampioneve Galatasaray - Barcelona  | 130 min",
+  "11-12 08:20 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 140 min",
+  "11-12 08:40 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 155 min",
+  "11-12 22:25 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 165 min",
+  "11-12 22:40 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 155 min",
+  "11-13 08:30 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Casademont Saragossa  | 160 min",
+  "11-12 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 130 min",
+  "11-12 11:45 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min",
+  "11-12 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
+  "11-12 22:45 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
+  "11-13 06:00 | Endurance: 6 Hours of Barcelona  | 65 min",
+  "11-12 22:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
+  "11-12 22:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
+  "11-12 22:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
+  "11-13 06:00 | Endurance: 6 Hours of Barcelona  | 65 min",
+  "11-13 07:00 | Elche vs Barcelona  | 104 min",
+  "11-13 07:00 | Extreme Barcelona  | 65 min",
+  "11-12 13:10 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
+  "11-13 07:00 | Extreme Barcelona  | 65 min",
+  "11-13 06:00 | Endurance: 6 Hours of Barcelona  | 65 min",
+  "11-13 03:00 | BARCELONA - ASTON VILLA  | 120 min",
+  "11-13 02:00 | Atlético Madrid - FC Barcelona  | 120 min",
+  "11-12 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min"
+ ],
  "table": {
   "league": "LaLiga",
   "rows": [
