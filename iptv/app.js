@@ -320,7 +320,10 @@ var App = (function () {
       if (g && g.id !== '*all' && g.id !== '*recent' && V.chans.items.length > 1) V.buttons.push(['↕  Flytta i listan', function () {
         V.grab = true; zone = 'chans'; toast('▲ ▼ flyttar kanalen · OK släpper', 5000); focusZone();
       }]);
-      for (var b = 0; b < V.buttons.length; b++) el('div', 'button' + (zone === 'side' && V.btnAt === b ? ' focus' : ''), btns, V.buttons[b][0]);
+      for (var b = 0; b < V.buttons.length; b++) el('div', 'button' + (zone === 'side' && !V.sideRow && V.btnAt === b ? ' focus' : ''), btns, V.buttons[b][0]);
+      // The channel's sound and subtitles (Ts.tracks), when it has more than one sound or any subtitles.
+      V.trHost = el('div', 'dtracks chtr', side);
+      chanTracks(ch);
     } else el('div', 'keys', side, 'OK spelar  ·  ▲ ▼ kanaler  ·  ◀ grupper');
     clearTimeout(sideTimer);
     var mine = ch;
@@ -345,6 +348,81 @@ var App = (function () {
     }, 250);
   }
 
+  // MARK: - A channel's sound and subtitles, chosen before playing
+
+  /** The side's buttons' focus again, without building the side anew (which would read the guide again). */
+  function drawSideButtons() {
+    var bs = V.side && V.side.querySelectorAll('.buttons .button');
+    if (!bs) return;
+    for (var i = 0; i < bs.length; i++) bs[i].className = 'button' + (zone === 'side' && !V.sideRow && V.btnAt === i ? ' focus' : '');
+  }
+
+  var chTimer = 0;
+  /** Reads the marked channel's tracks once you stay on it a moment (it opens the stream for a second). */
+  function chanTracks(ch) {
+    if (!V.tr || V.tr.ch !== ch) {
+      V.tr = {ch: ch, loading: true};
+      V.sideRow = null;
+      clearTimeout(chTimer);
+      var known = Ts.known(ch);
+      if (known !== undefined) setTracks(ch, known);
+      else chTimer = setTimeout(function () {
+        if (!V.chans || V.chans.current() !== ch) return;
+        Ts.tracks(ch, function (t) { if (V.tr && V.tr.ch === ch) { setTracks(ch, t); drawChanTracks(); } });
+      }, 1200);
+    }
+    drawChanTracks();
+  }
+  function setTracks(ch, t) {
+    var tr = V.tr = {ch: ch, loading: false};
+    if (!t || !(t.audio.length > 1 || t.subs.length)) return;
+    var want = Store.tracks(), a = 0, sb = -1, i;
+    for (i = 0; i < t.audio.length; i++) if (want.audio && Player.base(t.audio[i].lang) === want.audio) { a = i; break; }
+    for (i = 0; i < t.subs.length; i++) if (want.sub && want.sub !== 'off' && Player.base(t.subs[i].lang) === want.sub) { sb = i; break; }
+    tr.audio = t.audio; tr.subs = t.subs; tr.a = a; tr.s = sb; tr.at = {audio: a, subs: sb + 1};
+  }
+  function chanRows() {
+    var t = V.tr, r = [];
+    if (t && t.audio && t.audio.length > 1) r.push('audio');
+    if (t && t.subs && t.subs.length) r.push('subs');
+    return r;
+  }
+  function drawChanTracks() {
+    var h = V.trHost, t = V.tr;
+    if (!h || !t) return;
+    h.innerHTML = '';
+    if (t.loading) return;
+    chanRows().forEach(function (row) {
+      var line = el('div', 'trline' + (V.sideRow === row ? ' on' : ''), h);
+      el('div', 'trlabel', line, row === 'audio' ? 'Ljud' : 'Undertext');
+      var pills = el('div', 'trpills', line), list = row === 'audio' ? t.audio : [{name: 'Av', lang: 'off'}].concat(t.subs);
+      list.forEach(function (x, i) {
+        var picked = row === 'audio' ? t.a === i : t.s + 1 === i;
+        el('span', 'tp' + (picked ? ' sel' : '') + (zone === 'side' && V.sideRow === row && t.at[row] === i ? ' focus' : ''), pills,
+          (picked ? '✓ ' : '') + (i === 0 && row === 'subs' ? 'Av' : Player.trackName(x, i)));
+      });
+    });
+  }
+  /** Keys on the channel's rows; false when the key leaves them. */
+  function chanTrackKey(k) {
+    var t = V.tr, rows = chanRows(), row = V.sideRow, at = rows.indexOf(row), n = row === 'audio' ? t.audio.length : t.subs.length + 1;
+    if (k === K.up) { if (at > 0) V.sideRow = rows[at - 1]; else { V.sideRow = null; V.btnAt = V.buttons.length - 1; } }
+    else if (k === K.down) { if (at < rows.length - 1) V.sideRow = rows[at + 1]; }
+    else if (k === K.left) { if (t.at[row] > 0) t.at[row]--; else { V.sideRow = null; zone = 'chans'; } }
+    else if (k === K.right) { if (t.at[row] < n - 1) t.at[row]++; }
+    else if (k === K.ok) {
+      var want = Store.tracks();
+      if (row === 'audio') { t.a = t.at.audio; want.audio = Player.base(t.audio[t.a].lang); }
+      else { t.s = t.at.subs - 1; want.sub = t.s < 0 ? 'off' : Player.base(t.subs[t.s].lang); }
+      Store.tracks(want);
+    }
+  }
+  function chanPick(ch) {
+    var t = V.tr;
+    if (!t || t.ch !== ch || !chanRows().length) return null;
+    return {audio: t.audio.length > 1 ? {i: t.a, lang: t.audio[t.a].lang} : null, sub: !t.subs.length ? null : t.s < 0 ? 'off' : {i: t.s, lang: t.subs[t.s].lang}};
+  }
+
   /** Moves the grabbed channel one step, and keeps the new order (the group's, or the favourites'). */
   function moveChannel(d) {
     var l = V.chans.items, a = V.chans.at, b = a + d;
@@ -363,7 +441,9 @@ var App = (function () {
   function playChannel() {
     var list = V.chans.items, at = V.chans.at;
     if (!list.length) return;
-    Player.open(list, at, {onClose: function (ch) {
+    clearTimeout(chTimer);
+    Ts.abort();
+    Player.open(list, at, {pick: chanPick(list[at]), onClose: function (ch) {
       // Back on the channel last watched, in the same list.
       for (var i = 0; i < V.chans.items.length; i++) if (V.chans.items[i].id === ch.id) { V.chans.at = i; break; }
       V.chans.draw(); sideFor();
@@ -859,9 +939,11 @@ var App = (function () {
         else if (k === K.chUp || k === K.chDown) { V.chans.move(k === K.chUp ? -1 : 1); sideFor(); }
         break;
       case 'side':
+        if (V.sideRow) { chanTrackKey(k); drawSideButtons(); drawChanTracks(); if (zone !== 'side') focusZone(); return; }
         if (k === K.left) { zone = 'chans'; }
         else if (k === K.up && V.btnAt > 0) V.btnAt--;
         else if (k === K.down && V.btnAt < V.buttons.length - 1) V.btnAt++;
+        else if (k === K.down && chanRows().length) { V.sideRow = chanRows()[0]; drawSideButtons(); drawChanTracks(); return; }
         else if (k === K.ok) { V.buttons[V.btnAt][1](); return; }
         sideFor();
         break;

@@ -172,13 +172,21 @@ var Player = (function () {
       }
       return out;
     }
+    // A channel with more than one sound (or subtitles, or a choice made before playing): AVPlay on its .ts first,
+    // which can switch them (mpegts.js can't, and the TV's own HTML5 player doesn't say what it has).
+    if (A() && !mini && item.ts && multi(item)) out.push({how: 'avplay', url: item.ts, live: true});
     if (item.hls) { out.push({how: 'native', url: item.hls}); out.push({how: 'hls', url: item.hls}); }
     if (item.ts) { out.push({how: 'mpegts', url: item.ts, live: true}); out.push({how: 'native', url: item.ts}); }
     return out;
   }
 
+  /** A channel known to have more than one sound or any subtitles (Ts, read on its side), or one chosen for. */
+  function multi(item) {
+    var t = window.Ts && Ts.known(item);
+    return !!((st && st.pick && st.list[st.at] === item) || (t && (t.audio.length > 1 || t.subs.length)));
+  }
   function start(item, from) {
-    if (item.kind && item.kind !== 'live' && !mini && !A() && !avTried) { var m0 = ++seq; avReady(function () { if (m0 === seq) start(item, from); }); return; }
+    if (((item.kind && item.kind !== 'live') || multi(item)) && !mini && !A() && !avTried) { var m0 = ++seq; avReady(function () { if (m0 === seq) start(item, from); }); return; }
     var mine = ++seq, list = ways(item), n = 0;
     preferred = {};
     closeMenu();

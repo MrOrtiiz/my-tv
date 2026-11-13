@@ -302,3 +302,9 @@ html.avplay body > *:not(#player) { visibility: hidden; }
 .dtracks .tp.focus { background: #fff; color: #111; box-shadow: 0 0 0 3px rgba(237, 187, 0, 0.95); }
 .sheet.series .dplot { max-height: 102px; }
 .sheet.series .episodes { top: 420px; }
+/* A channel's sound and subtitles, under its buttons in Live (narrow: the label above, the choices wrapping; not .side, the panel's own class). */
+.side .dtracks.chtr { margin-top: 18px; }
+.side .dtracks.chtr .trline { white-space: normal; margin-top: 14px; }
+.side .dtracks.chtr .trlabel { display: block; width: auto; margin-bottom: 8px; }
+.side .dtracks.chtr .trpills { display: block; max-width: none; white-space: normal; }
+.side .dtracks.chtr .tp { margin-bottom: 10px; }
