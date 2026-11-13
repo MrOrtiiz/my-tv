@@ -1,5 +1,5 @@
 {
- "updated": 1794597071792,
+ "updated": 1794607079712,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -40,36 +40,36 @@
  ],
  "guide": {
   "channels": 5632,
-  "programmes": 284160,
-  "barca_listings": 29,
-  "until": "2026-11-14T21:00:00+01:00"
+  "programmes": 277750,
+  "barca_listings": 27,
+  "until": "2026-11-14T23:20:00+01:00"
  },
  "barca_titles_seen": [
-  "11-13 20:15 | LIVE: Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
   "11-14 07:55 | Košarka - Euroleague: Panathinaikos - Barcelona  | 95 min",
   "11-13 23:10 | Košarka - Euroleague: Panathinaikos - Barcelona  | 95 min",
   "11-14 09:00 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - Racing Santander  | 135 min",
   "11-14 13:55 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - Real Madryt CF  | 135 min",
   "11-14 16:10 | Piłka nożna: Liga hiszpańska - mecz: Atletico Madryt - FC Barcelona  | 130 min",
   "11-14 07:55 | Košarka - Euroleague: Panathinaikos - Barcelona  | 95 min",
-  "11-13 19:50 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 145 min",
   "11-14 08:35 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Casademont Saragossa  | 170 min",
   "11-14 17:10 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 165 min",
   "11-14 07:00 | 6 Hours of Barcelona, Fecha 7  | 60 min",
-  "11-13 20:15 | LIVE: Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
   "11-14 07:55 | Košarka - Euroleague: Panathinaikos - Barcelona  | 95 min",
   "11-13 23:10 | Košarka - Euroleague: Panathinaikos - Barcelona  | 95 min",
-  "11-13 18:30 | Barcelona (Esp) vs. Arsenal (Ing)  | 120 min",
   "11-14 17:00 | Endurance: 6 Hours of Barcelona  | 60 min",
-  "11-13 19:00 | UEFA Champions League 26/27 - Barcelona x Aston Villa  | 135 min",
   "11-13 23:45 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 110 min",
-  "11-13 19:00 | UEFA Champions League 26/27 - Barcelona x Aston Villa  | 135 min",
+  "11-14 21:30 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 110 min",
   "11-13 23:45 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 110 min",
-  "11-13 19:00 | UEFA Champions League 26/27 - Barcelona x Aston Villa  | 135 min",
+  "11-14 21:30 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 110 min",
   "11-13 23:45 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 110 min",
+  "11-14 21:30 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 110 min",
   "11-14 19:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-14 19:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
-  "11-14 19:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min"
+  "11-14 19:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
+  "11-14 17:00 | Endurance: 6 Hours of Barcelona  | 60 min",
+  "11-14 18:30 | Barcelona vs Getafe  | 124 min",
+  "11-14 19:00 | Barcelona vs. Aston Villa  | 120 min",
+  "11-14 03:25 | Extreme Barcelona  | 135 min"
  ],
  "table": {
   "league": "LaLiga",
