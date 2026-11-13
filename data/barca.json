@@ -1,5 +1,5 @@
 {
- "updated": 1794533113985,
+ "updated": 1794542956643,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -40,9 +40,9 @@
  ],
  "guide": {
   "channels": 5632,
-  "programmes": 302678,
-  "barca_listings": 28,
-  "until": "2026-11-14T03:00:00+01:00"
+  "programmes": 301232,
+  "barca_listings": 27,
+  "until": "2026-11-14T05:40:00+01:00"
  },
  "barca_titles_seen": [
   "11-13 20:15 | LIVE: Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
@@ -65,11 +65,11 @@
   "11-13 06:00 | Endurance: 6 Hours of Barcelona  | 65 min",
   "11-13 07:00 | Elche vs Barcelona  | 104 min",
   "11-13 07:00 | Extreme Barcelona  | 65 min",
+  "11-14 03:25 | Extreme Barcelona  | 135 min",
   "11-13 07:00 | Extreme Barcelona  | 65 min",
+  "11-14 03:25 | Extreme Barcelona  | 135 min",
   "11-13 06:00 | Endurance: 6 Hours of Barcelona  | 65 min",
-  "11-13 03:00 | BARCELONA - ASTON VILLA  | 120 min",
-  "11-13 22:00 | Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
-  "11-14 00:00 | Barcelona 6 Saat  | 90 min"
+  "11-13 22:00 | Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
