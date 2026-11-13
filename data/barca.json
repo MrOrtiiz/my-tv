@@ -1,5 +1,5 @@
 {
- "updated": 1794576367747,
+ "updated": 1794585742998,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -40,9 +40,9 @@
  ],
  "guide": {
   "channels": 5632,
-  "programmes": 290605,
-  "barca_listings": 29,
-  "until": "2026-11-14T16:10:00+01:00"
+  "programmes": 287594,
+  "barca_listings": 26,
+  "until": "2026-11-14T18:20:00+01:00"
  },
  "barca_titles_seen": [
   "11-13 20:15 | LIVE: Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
@@ -51,6 +51,7 @@
   "11-13 17:00 | Piłka nożna: Liga hiszpańska - mecz: Atletico Madryt - FC Barcelona  | 135 min",
   "11-14 09:00 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - Racing Santander  | 135 min",
   "11-14 13:55 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - Real Madryt CF  | 135 min",
+  "11-14 16:10 | Piłka nożna: Liga hiszpańska - mecz: Atletico Madryt - FC Barcelona  | 130 min",
   "11-14 07:55 | Košarka - Euroleague: Panathinaikos - Barcelona  | 95 min",
   "11-13 15:00 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 150 min",
   "11-13 17:30 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 140 min",
@@ -68,8 +69,7 @@
   "11-13 19:00 | UEFA Champions League 26/27 - Barcelona x Aston Villa  | 135 min",
   "11-13 23:45 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 110 min",
   "11-14 03:25 | Extreme Barcelona  | 135 min",
-  "11-14 03:25 | Extreme Barcelona  | 135 min",
-  "11-14 09:00 | Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min"
+  "11-14 03:25 | Extreme Barcelona  | 135 min"
  ],
  "table": {
   "league": "LaLiga",
