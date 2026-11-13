@@ -2,8 +2,8 @@
  * The player: live channels (▲ ▼ zap through the list they were picked from, OK shows what's on) and films and episodes
  * (◀ ▶ jump 10 s, held longer 60 s, OK pauses; where you stop is kept). HLS natively or through hls.js, MPEG-TS through
  * mpegts.js, files (mp4, mkv) natively; the libraries come from jsDelivr only when needed. ES5 only.
- * Sound and subtitles: when a film (or a channel) has more than one sound track, or subtitles, the bar says which are on
- * and ▼ (on a channel ▶) opens a list to choose: through hls.js for HLS, else the video's own audioTracks and
+ * Sound and subtitles: when a film, an episode or a channel has more than one sound track, or subtitles, the bar says
+ * which are on and ▼ (on a channel ▶, as ▲ ▼ zap) opens a list to choose: through hls.js for HLS, else the video's own audioTracks and
  * textTracks (Tizen 5.5 and later switch the sound of a file). The choice is kept by language for the next film.
  */
 var Player = (function () {
@@ -123,24 +123,27 @@ var Player = (function () {
       }
     }
     status('Startar…', true);
-    // A film as HLS with its own sound or subtitle tracks: through hls.js first, which can switch them (the TV's own
-    // player doesn't say what it has).
+    // A film, an episode or a channel as HLS with its own sound or subtitle tracks: through hls.js first, which can
+    // switch them (the TV's own player doesn't say what it has). Not for the small preview.
     var m3u8 = null;
     for (var i = 0; i < list.length; i++) if (list[i].how === 'hls') { m3u8 = list[i]; break; }
-    if (!m3u8 || !item.kind || item.kind === 'live') { next(); return; }
-    probe(m3u8.url, function (multi) {
+    if (!m3u8 || mini) { next(); return; }
+    probe(m3u8.url, !item.kind || item.kind === 'live', function (multi) {
       if (mine !== seq) return;
       if (multi) { list.splice(list.indexOf(m3u8), 1); list.unshift(m3u8); }
       next();
     });
   }
 
-  /** Whether an HLS playlist has more sound or subtitle tracks (#EXT-X-MEDIA); false when it can't be read in 4 s. */
-  function probe(url, done) {
+  /** Whether an HLS playlist has more sound or subtitle tracks (#EXT-X-MEDIA); false when it can't be read in time
+   *  (4 s for a film, 1.5 s for a channel, whose answer is kept so zapping back is quick). */
+  var probed = {};
+  function probe(url, live, done) {
+    if (probed.hasOwnProperty(url)) { done(probed[url]); return; }
     var x = new XMLHttpRequest(), over = false;
-    function end(v) { if (!over) { over = true; done(v); } }
+    function end(v) { if (!over) { over = true; if (live) probed[url] = v; done(v); } }
     try { x.open('GET', url, true); } catch (e) { end(false); return; }
-    x.timeout = 4000;
+    x.timeout = live ? 1500 : 4000;
     x.onload = function () { end(x.status === 200 && /#EXT-X-MEDIA:[^\n]*TYPE=(AUDIO|SUBTITLES)/.test(x.responseText || '')); };
     x.onerror = x.ontimeout = function () { end(false); };
     x.send();
