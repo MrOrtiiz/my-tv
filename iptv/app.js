@@ -459,9 +459,14 @@ var App = (function () {
       overlay.buttons.push([pos ? 'Spela från början' : 'Spela', function () { Store.watched(item, 0, 0); playVod([item], 0); }]);
       overlay.buttons.push([Store.isFav(item) ? '★  Ta bort från favoriter' : '☆  Lägg till i favoriter', function () { favToggle(item); }]);
       drawButtons();
+      overlay.trHost = el('div', 'dtracks', info);
+      loadTracks(item);
     } else {
       overlay.buttons.push([Store.isFav(item) ? '★  Ta bort från favoriter' : '☆  Lägg till i favoriter', function () { favToggle(item); }]);
       drawButtons();
+      // The marked episode's sound and subtitles, above the episodes.
+      overlay.trHost = el('div', 'dtracks', info);
+      sheet.className += ' series';
       var eps = el('div', 'episodes', info);
       var sHost = el('div', 'seasons', eps), eHost = el('div', 'eps', eps);
       overlay.sList = new List(sHost, 64, function (s, r) { el('div', 'name', r, 'Säsong ' + s.n); });
@@ -486,9 +491,86 @@ var App = (function () {
         overlay.eList.set(seasons[sAt] ? seasons[sAt].episodes : []);
         overlay.zone = 'eps';
         overlayFocus();
+        epTracks();
       });
     }
     overlayFocus();
+  }
+
+  // MARK: - Sound and subtitles before playing (MKV files: Mkv.tracks reads them from the file's start)
+
+  /** Reads a film's or an episode's tracks and shows them as two rows to choose from: Ljud, Undertext. */
+  function loadTracks(item) {
+    var o = overlay;
+    o.tr = null;
+    o.trItem = item;
+    if (!item || !/\.mkv(\?|$)/i.test(item.url || '')) { drawTracks(); return; }
+    o.trLoading = true;
+    drawTracks();
+    Mkv.tracks(item.url, function (t) {
+      if (overlay !== o || o.trItem !== item) return;
+      o.trLoading = false;
+      if (t && (t.audio.length > 1 || t.subs.length)) {
+        var want = Store.tracks(), a = 0, sb = -1, i;
+        for (i = 0; i < t.audio.length; i++) if (t.audio[i].def) { a = i; break; }
+        for (i = 0; i < t.audio.length; i++) if (want.audio && Player.base(t.audio[i].lang) === want.audio) { a = i; break; }
+        for (i = 0; i < t.subs.length; i++) if (want.sub && want.sub !== 'off' && Player.base(t.subs[i].lang) === want.sub && !t.subs[i].forced) { sb = i; break; }
+        o.tr = {audio: t.audio, subs: t.subs, a: a, s: sb, at: {audio: a, subs: sb + 1}};
+      }
+      if (!o.tr && (o.zone === 'audio' || o.zone === 'subs')) o.zone = 'buttons';
+      drawTracks();
+    });
+  }
+  var epTimer = 0;
+  function epTracks() {
+    clearTimeout(epTimer);
+    epTimer = setTimeout(function () { if (overlay && overlay.eList) loadTracks(overlay.eList.current()); }, 600);
+  }
+  /** The rows of the tracks there are: 'audio' (more than one sound) and 'subs' (any subtitles). */
+  function trRows() {
+    var t = overlay && overlay.tr, r = [];
+    if (t && t.audio.length > 1) r.push('audio');
+    if (t && t.subs.length) r.push('subs');
+    return r;
+  }
+  function drawTracks() {
+    var o = overlay, h = o && o.trHost;
+    if (!h) return;
+    h.innerHTML = '';
+    if (o.trLoading) { el('div', 'trnote', h, 'Läser ljud och undertexter…'); return; }
+    var t = o.tr;
+    if (!t) return;
+    trRows().forEach(function (row) {
+      var line = el('div', 'trline' + (o.zone === row ? ' on' : ''), h);
+      el('span', 'trlabel', line, row === 'audio' ? 'Ljud' : 'Undertext');
+      var pills = el('div', 'trpills', line), list = row === 'audio' ? t.audio : [{name: 'Av', lang: 'off'}].concat(t.subs);
+      list.forEach(function (x, i) {
+        var picked = row === 'audio' ? t.a === i : t.s + 1 === i;
+        var name = i === 0 && row === 'subs' ? 'Av' : Player.trackName(x, i) + (x.forced ? ' (tvingad)' : '');
+        el('span', 'tp' + (picked ? ' sel' : '') + (o.zone === row && t.at[row] === i ? ' focus' : ''), pills, (picked ? '✓ ' : '') + name);
+      });
+      var f = pills.querySelector('.focus');
+      if (f && f.offsetLeft + f.offsetWidth > pills.clientWidth) pills.scrollLeft = f.offsetLeft + f.offsetWidth - pills.clientWidth + 20;
+    });
+  }
+  /** Keys on the rows: ◀ ▶ through the choices, OK picks (and keeps it, by language, for the next film too). */
+  function trKey(k) {
+    var o = overlay, t = o.tr, row = o.zone, n = row === 'audio' ? t.audio.length : t.subs.length + 1;
+    if (k === K.left && t.at[row] > 0) t.at[row]--;
+    else if (k === K.right && t.at[row] < n - 1) t.at[row]++;
+    else if (k === K.ok) {
+      var want = Store.tracks();
+      if (row === 'audio') { t.a = t.at.audio; want.audio = Player.base(t.audio[t.a].lang); }
+      else { t.s = t.at.subs - 1; want.sub = t.s < 0 ? 'off' : Player.base(t.subs[t.s].lang); }
+      Store.tracks(want);
+    }
+    drawTracks();
+  }
+  /** What to play with: the chosen tracks by their place in the file, for the player. */
+  function trPick() {
+    var t = overlay && overlay.tr;
+    if (!t) return null;
+    return {audio: t.audio.length > 1 ? {i: t.a, lang: t.audio[t.a].lang} : null, sub: t.s < 0 ? 'off' : {i: t.s, lang: t.subs[t.s].lang}};
   }
 
   function favToggle(item) {
@@ -508,6 +590,7 @@ var App = (function () {
   function overlayFocus() {
     if (!overlay) return;
     drawButtons();
+    drawTracks();
     if (overlay.sList) { overlay.sList.focus(overlay.zone === 'seasons'); overlay.eList.focus(overlay.zone === 'eps'); }
   }
 
@@ -519,8 +602,10 @@ var App = (function () {
   }
 
   function playVod(list, at) {
-    var keep = overlay;
-    Player.open(list, at, {onClose: function () {
+    var keep = overlay, pick = overlay && overlay.trItem === list[at] ? trPick() : null;
+    clearTimeout(epTimer);
+    Mkv.abort();
+    Player.open(list, at, {pick: pick, onClose: function () {
       if (keep && keep.item && $('overlay').className === 'on') {
         // Back on the detail sheet, with where it was left.
         var item = keep.item; closeOverlay(); openDetail(item);
@@ -698,19 +783,26 @@ var App = (function () {
       return;
     }
     if (k === K.back) { closeOverlay(); focusZone(); return; }
-    var z = overlay.zone;
+    var z = overlay.zone, rows = trRows(), last = rows.length ? rows[rows.length - 1] : 'buttons';
     if (z === 'buttons') {
       if (k === K.left && overlay.btnAt > 0) overlay.btnAt--;
       else if (k === K.right && overlay.btnAt < overlay.buttons.length - 1) overlay.btnAt++;
+      else if (k === K.down && rows.length) overlay.zone = rows[0];
       else if (k === K.down && overlay.sList && overlay.seasons) overlay.zone = 'eps';
       else if (k === K.ok) { overlay.buttons[overlay.btnAt][1](); return; }
+    } else if (z === 'audio' || z === 'subs') {
+      var at = rows.indexOf(z);
+      if (k === K.up) overlay.zone = at > 0 ? rows[at - 1] : 'buttons';
+      else if (k === K.down) { if (at < rows.length - 1) overlay.zone = rows[at + 1]; else if (overlay.sList && overlay.seasons) overlay.zone = 'eps'; }
+      else trKey(k);
+      drawTracks();
     } else if (z === 'seasons') {
-      if (k === K.up) { if (!overlay.sList.move(-1)) overlay.zone = 'buttons'; else overlay.eList.set(overlay.sList.current().episodes); }
-      else if (k === K.down) { if (overlay.sList.move(1)) overlay.eList.set(overlay.sList.current().episodes); }
+      if (k === K.up) { if (!overlay.sList.move(-1)) overlay.zone = last; else { overlay.eList.set(overlay.sList.current().episodes); epTracks(); } }
+      else if (k === K.down) { if (overlay.sList.move(1)) { overlay.eList.set(overlay.sList.current().episodes); epTracks(); } }
       else if (k === K.right || k === K.ok) overlay.zone = 'eps';
     } else if (z === 'eps') {
-      if (k === K.up) { if (!overlay.eList.move(-1)) overlay.zone = 'buttons'; }
-      else if (k === K.down) overlay.eList.move(1);
+      if (k === K.up) { if (!overlay.eList.move(-1)) overlay.zone = last; else epTracks(); }
+      else if (k === K.down) { if (overlay.eList.move(1)) epTracks(); }
       else if (k === K.left) overlay.zone = 'seasons';
       else if (k === K.ok && overlay.eList.current()) {
         // The episode, and the season's following episodes after it with ▲ ▼? No: one at a time, where it was left.

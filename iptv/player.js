@@ -5,6 +5,9 @@
  * Sound and subtitles: when a film, an episode or a channel has more than one sound track, or subtitles, the bar says
  * which are on and ▼ (on a channel ▶, as ▲ ▼ zap) opens a list to choose: through hls.js for HLS, else the video's own audioTracks and
  * textTracks (Tizen 5.5 and later switch the sound of a file). The choice is kept by language for the next film.
+ * Film files (mkv, mp4…) play through Samsung's own player, AVPlay, when the TV has it (webapis.avplay, loaded by the
+ * IPTV package's page): it switches a file's sound and shows its own subtitles (drawn here, from onsubtitlechange).
+ * The tracks chosen on the film's page before playing (opts.pick: by their place in the file) are put on at the start.
  */
 var Player = (function () {
   'use strict';
@@ -14,6 +17,8 @@ var Player = (function () {
   var box, video, bar, mstat, st = null, hls = null, ts = null, seq = 0, tryTimer = 0, barTimer = 0, saveTimer = 0, tick = 0;
   var mini = null;   // the preview in the TV guide: {item}
   var menu = null;   // the list of sound and subtitles: {rows, at, box}
+  var av = null;     // AVPlay playing: {at, dur, paused, sub, subs, audio}
+  var avobj, subBox, subTimer = 0;
 
   function el(tag, cls, parent, text) {
     var n = document.createElement(tag);
@@ -34,6 +39,7 @@ var Player = (function () {
     video.setAttribute('playsinline', '');
     bar = el('div', 'bar glass', box);
     mstat = el('div', 'mstat', box);
+    subBox = el('div', 'avsub', box);
     // A film's own tracks show up while it loads: then the kept choice is applied.
     function found() { if (st) { prefer(); draw(!!st.status); } }
     if (video.audioTracks && video.audioTracks.addEventListener) video.audioTracks.addEventListener('addtrack', found);
@@ -54,7 +60,96 @@ var Player = (function () {
     document.body.appendChild(s);
   }
 
+  // MARK: - AVPlay (Samsung's own player) for film files
+
+  function A() { return window.webapis && window.webapis.avplay; }
+  /** webapis.js: the IPTV package's page loads it; an older package's page doesn't, so try it from here once. */
+  var avTried = false;
+  function avReady(done) {
+    var first = !avTried;
+    avTried = true;
+    if (A() || !first || !window.tizen) { done(!!A()); return; }
+    var s = document.createElement('script'), base = location.href.replace(/[^\/]*([?#].*)?$/, '');
+    s.src = base + '$WEBAPIS/webapis/webapis.js';
+    s.onload = s.onerror = function () { done(!!A()); };
+    document.head.appendChild(s);
+  }
+  function avStart(w, from, mine, next) {
+    var P = A();
+    if (!avobj) {
+      avobj = document.createElement('object');
+      avobj.setAttribute('type', 'application/avplayer');
+      avobj.className = 'avobj';
+      box.insertBefore(avobj, box.firstChild);
+    }
+    document.documentElement.className += ' avplay';
+    box.className += ' av';
+    av = {at: (from || 0) * 1000, dur: 0, paused: false, sub: -1, mine: mine};
+    try {
+      try { P.close(); } catch (e) {}
+      P.open(w.url);
+      P.setDisplayRect(0, 0, 1920, 1080);
+      try { P.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX'); } catch (e) {}
+      P.setListener({
+        onbufferingstart: function () { if (av && av.mine === seq) status('Laddar…', true); },
+        onbufferingcomplete: function () { if (av && av.mine === seq) status(''); },
+        oncurrentplaytime: function (ms) { if (av && av.mine === seq) av.at = ms; },
+        onstreamcompleted: function () { if (av && av.mine === seq) { save(); close(); } },
+        onerror: function () { if (av && av.mine === seq) { avStop(); next(); } },
+        onsubtitlechange: function (dur, text) { if (av && av.mine === seq) showSub(text, dur); },
+        onevent: function () {}
+      });
+      P.prepareAsync(function () {
+        if (!av || av.mine !== seq) return;
+        clearTimeout(tryTimer);
+        try { av.dur = P.getDuration(); } catch (e) {}
+        P.play();
+        if (from) try { P.seekTo(Math.floor(from * 1000), function () {}, function () {}); } catch (e) {}
+        // The sound and subtitles chosen: once it plays (AVPlay switches tracks only while playing).
+        setTimeout(function () { if (av && av.mine === seq) { prefer(); draw(!!st && !!st.status); } }, 600);
+        status('');
+      }, function () { if (av && av.mine === seq) { avStop(); next(); } });
+    } catch (e) { avStop(); next(); }
+  }
+  function avStop() {
+    if (!av) return;
+    av = null;
+    var P = A();
+    try { P.stop(); } catch (e) {}
+    try { P.close(); } catch (e) {}
+    document.documentElement.className = document.documentElement.className.replace(/\s*avplay/g, '');
+    box.className = box.className.replace(/\s*\bav\b/g, '');
+    showSub('', 0);
+  }
+  function showSub(text, dur) {
+    clearTimeout(subTimer);
+    subBox.innerHTML = '';
+    if (!text || !av || av.sub < 0) return;
+    // Text subtitles may carry <i>, <b> and line breaks: kept as text, lines as lines.
+    String(text).replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').split(/\n|\\N/).forEach(function (l) { if (l.trim()) el('div', 'l', subBox, l); });
+    if (dur > 0) subTimer = setTimeout(function () { subBox.innerHTML = ''; }, dur);
+  }
+
+  // Where it is, how long, paused: from AVPlay or the video.
+  function tNow() { return av ? av.at / 1000 : video.currentTime; }
+  function tDur() { return av ? av.dur / 1000 : video.duration; }
+  function isPaused() { return av ? av.paused : video.paused; }
+  function seekBy(d) {
+    if (av) {
+      var to = Math.max(0, Math.min((av.dur || 1e12) - 2000, av.at + d * 1000));
+      av.at = to;
+      try { A().seekTo(Math.floor(to), function () {}, function () {}); } catch (e) {}
+      return;
+    }
+    try { video.currentTime = Math.max(0, Math.min((video.duration || 1e9) - 2, video.currentTime + d)); } catch (e) {}
+  }
+  function toggle() {
+    if (av) { try { if (av.paused) A().play(); else A().pause(); av.paused = !av.paused; } catch (e) {} return; }
+    if (video.paused) { var p = video.play(); if (p && p['catch']) p['catch'](function () {}); } else video.pause();
+  }
+
   function stopStream() {
+    avStop();
     clearTimeout(tryTimer);
     if (hls) { try { hls.destroy(); } catch (e) {} hls = null; }
     if (ts) { try { ts.unload(); ts.detachMediaElement(); ts.destroy(); } catch (e) {} ts = null; }
@@ -69,6 +164,8 @@ var Player = (function () {
     if (item.kind && item.kind !== 'live') {   // a film or an episode: its address, then any others (Plex: the file, then HLS)
       var urls = [item.url].concat(item.alt || []);
       for (var i = 0; i < urls.length; i++) {
+        // A file through AVPlay first (not for the small preview): it can switch sound and show the file's subtitles.
+        if (A() && !mini && !/\.(m3u8|ts)(\?|$)/i.test(urls[i])) out.push({how: 'avplay', url: urls[i]});
         if (/\.ts(\?|$)/i.test(urls[i])) out.push({how: 'mpegts', url: urls[i], live: false});
         out.push({how: 'native', url: urls[i]});
         if (/\.m3u8(\?|$)/i.test(urls[i])) out.push({how: 'hls', url: urls[i]});
@@ -81,6 +178,7 @@ var Player = (function () {
   }
 
   function start(item, from) {
+    if (item.kind && item.kind !== 'live' && !mini && !A() && !avTried) { var m0 = ++seq; avReady(function () { if (m0 === seq) start(item, from); }); return; }
     var mine = ++seq, list = ways(item), n = 0;
     preferred = {};
     closeMenu();
@@ -91,6 +189,7 @@ var Player = (function () {
       stopStream();
       tryTimer = setTimeout(next, TRY);
       video.onplaying = function () { if (mine !== seq) return; clearTimeout(tryTimer); status(''); };
+      if (w.how === 'avplay') { avStart(w, from, mine, next); return; }
       if (from) video.onloadedmetadata = function () { try { video.currentTime = from; } catch (e) {} from = 0; };
       if (w.how === 'native') {
         video.onerror = function () { if (mine === seq) next(); };
@@ -180,6 +279,23 @@ var Player = (function () {
   /** The film's sound and subtitles now: {audio: [{name, lang, on, pick()}], subs: [...]} (subs start with "Av"). */
   function tracks() {
     var audio = [], subs = [], i;
+    if (av) {
+      var P = A(), all = [], cur = {};
+      try { all = P.getTotalTrackInfo() || []; } catch (e) {}
+      try { var ci = P.getCurrentStreamInfo() || []; for (i = 0; i < ci.length; i++) cur[ci[i].type] = Number(ci[i].index); } catch (e) {}
+      for (i = 0; i < all.length; i++) {
+        var x = all[i], info = {};
+        try { info = JSON.parse(x.extra_info || '{}'); } catch (e) {}
+        var t = {lang: info.language || info.track_lang || info.lang || '', name: info.title || info.name || ''}, idx = Number(x.index);
+        if (x.type === 'AUDIO') audio.push({name: nameOf(t, audio.length), lang: t.lang, on: cur.AUDIO === idx, pick: (function (n) { return function () { P.setSelectTrack('AUDIO', n); }; })(idx)});
+        else if (x.type === 'TEXT' || x.type === 'SUBTITLE') subs.push({name: nameOf(t, subs.length), lang: t.lang, on: av.sub === idx, pick: (function (n) {
+          return function () { P.setSelectTrack('TEXT', n); P.setSilentSubtitle(false); av.sub = n; };
+        })(idx)});
+      }
+      if (audio.length && !current(audio)) audio[0].on = true;
+      if (subs.length) subs.unshift({name: 'Av', lang: 'off', on: av.sub < 0, pick: function () { try { P.setSilentSubtitle(true); } catch (e) {} av.sub = -1; showSub('', 0); }});
+      return {audio: audio, subs: subs};
+    }
     if (hls) {
       var at = hls.audioTrack, a = hls.audioTracks || [];
       for (i = 0; i < a.length; i++) audio.push({name: nameOf(a[i], i), lang: a[i].lang, on: i === at, pick: (function (n) { return function () { hls.audioTrack = n; }; })(i)});
@@ -210,7 +326,24 @@ var Player = (function () {
   // The kept choice, once per film and kind of track (so the film's own default isn't fought after Yuri picks).
   var preferred = {};
   function prefer() {
-    var t = tracks(), want = Store.tracks();
+    var t = tracks(), want = Store.tracks(), pick = st && st.pick;
+    // Chosen on the film's page: by its place among the file's tracks (subs: after "Av"), else by language.
+    if (pick) {
+      st.pick = null;
+      if (pick.audio && t.audio.length > 1) {
+        var a = t.audio[pick.audio.i];
+        if (!a || (pick.audio.lang && base(a.lang) !== base(pick.audio.lang))) for (var j = 0; j < t.audio.length; j++) if (base(t.audio[j].lang) === base(pick.audio.lang)) { a = t.audio[j]; break; }
+        if (a && !a.on) try { a.pick(); } catch (e) {}
+        preferred.audio = true;
+      }
+      if (pick.sub && t.subs.length) {
+        var sb = pick.sub === 'off' ? t.subs[0] : t.subs[pick.sub.i + 1];
+        if (pick.sub !== 'off' && (!sb || (pick.sub.lang && base(sb.lang) !== base(pick.sub.lang)))) for (var k2 = 1; k2 < t.subs.length; k2++) if (base(t.subs[k2].lang) === base(pick.sub.lang)) { sb = t.subs[k2]; break; }
+        if (sb && !sb.on) try { sb.pick(); } catch (e) {}
+        preferred.sub = true;
+      }
+      t = tracks();
+    }
     [['audio', t.audio], ['sub', t.subs]].forEach(function (k) {
       var l = k[1];
       if (preferred[k[0]] || !want[k[0]] || l.length < 2) return;
@@ -322,11 +455,11 @@ var Player = (function () {
       }
     } else {
       el('span', 'name', top, it.kind === 'episode' ? it.seriesName + '  ·  S' + it.season + ' A' + it.n + '  ·  ' + it.title : it.name);
-      var d = video.duration, c = video.currentTime;
+      var d = tDur(), c = tNow();
       if (d && isFinite(d)) {
         var pr2 = el('div', 'progress big', bar), f2 = el('div', 'fill', pr2);
         f2.style.width = (c / d * 100) + '%';
-        el('div', 'times', bar, clock(c) + '  /  ' + clock(d) + (video.paused ? '   ❚❚' : ''));
+        el('div', 'times', bar, clock(c) + '  /  ' + clock(d) + (isPaused() ? '   ❚❚' : ''));
       }
     }
     var tc = choice(), ca = tc && current(tc.audio), cs = tc && current(tc.subs);
@@ -357,8 +490,8 @@ var Player = (function () {
 
   function save() {
     if (!st || st.kind === 'live') return;
-    var d = video.duration;
-    if (video.currentTime > 5) Store.watched(st.list[st.at], video.currentTime, isFinite(d) ? d : 0);
+    var d = tDur(), c = tNow();
+    if (c > 5) Store.watched(st.list[st.at], c, isFinite(d) ? d : 0);
   }
 
   // MARK: - Opening, closing, keys
@@ -368,7 +501,7 @@ var Player = (function () {
     ensure();
     opts = opts || {};
     if (mini) { mini = null; box.removeAttribute('style'); mstat.textContent = ''; }
-    st = {list: list, at: at || 0, kind: list[at || 0].kind && list[at || 0].kind !== 'live' ? 'vod' : 'live', title: opts.title || '', onClose: opts.onClose, status: ''};
+    st = {list: list, at: at || 0, kind: list[at || 0].kind && list[at || 0].kind !== 'live' ? 'vod' : 'live', title: opts.title || '', onClose: opts.onClose, status: '', pick: opts.pick || null};
     box.className = 'on';
     playAt(st.at);
     clearInterval(saveTimer);
@@ -407,19 +540,19 @@ var Player = (function () {
       if (holdKey === k && now - holdAt < 400) tick++; else tick = 0;
       holdKey = k; holdAt = now;
       var step = tick > 4 ? 60 : 10, d = (k === K.left || k === K.rew) ? -step : step;
-      try { video.currentTime = Math.max(0, Math.min((video.duration || 1e9) - 2, video.currentTime + d)); } catch (e) {}
+      seekBy(d);
       draw();
       return true;
     }
     if (k === K.ok || k === K.play || k === K.pause || k === K.playPause) {
-      if (video.paused) { var p = video.play(); if (p && p['catch']) p['catch'](function () {}); } else video.pause();
+      toggle();
       save();
-      draw(video.paused);
+      draw(isPaused());
       return true;
     }
     draw();
     return true;
   }
 
-  return {open: open, close: close, key: key, preview: preview, playing: function () { return !!st; }};
+  return {open: open, close: close, key: key, preview: preview, base: base, trackName: nameOf, playing: function () { return !!st; }};
 })();
