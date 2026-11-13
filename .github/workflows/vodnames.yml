@@ -1,0 +1,14 @@
+# By hand only: how the IPTV list names its films' languages (for the IPTV app's sound and subtitle choices).
+name: Film-namn
+on:
+  workflow_dispatch:
+jobs:
+  names:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Look at the films
+        env:
+          EPG_URL: ${{ secrets.EPG_URL }}
+        run: python3 .github/scripts/vodnames.py
