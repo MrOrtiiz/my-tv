@@ -2,6 +2,9 @@
  * The player: live channels (▲ ▼ zap through the list they were picked from, OK shows what's on) and films and episodes
  * (◀ ▶ jump 10 s, held longer 60 s, OK pauses; where you stop is kept). HLS natively or through hls.js, MPEG-TS through
  * mpegts.js, files (mp4, mkv) natively; the libraries come from jsDelivr only when needed. ES5 only.
+ * Sound and subtitles: when a film (or a channel) has more than one sound track, or subtitles, the bar says which are on
+ * and ▼ (on a channel ▶) opens a list to choose: through hls.js for HLS, else the video's own audioTracks and
+ * textTracks (Tizen 5.5 and later switch the sound of a file). The choice is kept by language for the next film.
  */
 var Player = (function () {
   'use strict';
@@ -10,6 +13,7 @@ var Player = (function () {
   var TRY = 15000;
   var box, video, bar, mstat, st = null, hls = null, ts = null, seq = 0, tryTimer = 0, barTimer = 0, saveTimer = 0, tick = 0;
   var mini = null;   // the preview in the TV guide: {item}
+  var menu = null;   // the list of sound and subtitles: {rows, at, box}
 
   function el(tag, cls, parent, text) {
     var n = document.createElement(tag);
@@ -30,6 +34,11 @@ var Player = (function () {
     video.setAttribute('playsinline', '');
     bar = el('div', 'bar glass', box);
     mstat = el('div', 'mstat', box);
+    // A film's own tracks show up while it loads: then the kept choice is applied.
+    function found() { if (st) { prefer(); draw(!!st.status); } }
+    if (video.audioTracks && video.audioTracks.addEventListener) video.audioTracks.addEventListener('addtrack', found);
+    if (video.textTracks && video.textTracks.addEventListener) video.textTracks.addEventListener('addtrack', found);
+    video.addEventListener('loadedmetadata', found);
     // The app sent to the background: no preview playing behind it.
     document.addEventListener('visibilitychange', function () { if (document.hidden && mini) preview(null); });
   }
@@ -73,6 +82,8 @@ var Player = (function () {
 
   function start(item, from) {
     var mine = ++seq, list = ways(item), n = 0;
+    preferred = {};
+    closeMenu();
     function next() {
       if (mine !== seq) return;
       if (n >= list.length) { stopStream(); status('Det gick inte att spela. ' + (st && st.kind === 'live' ? 'Prova en annan kanal med ▲ ▼.' : ''), true); return; }
@@ -95,6 +106,8 @@ var Player = (function () {
           hls.loadSource(w.url);
           hls.attachMedia(video);
           hls.on(window.Hls.Events.MANIFEST_PARSED, function () { var p2 = video.play(); if (p2 && p2['catch']) p2['catch'](function () {}); });
+          hls.on(window.Hls.Events.AUDIO_TRACKS_UPDATED, function () { if (mine === seq && st) { prefer(); draw(!!st.status); } });
+          hls.on(window.Hls.Events.SUBTITLE_TRACKS_UPDATED, function () { if (mine === seq && st) { prefer(); draw(!!st.status); } });
         });
       } else {
         lib('mpegts', MPEGTS, function (ok) {
@@ -110,7 +123,146 @@ var Player = (function () {
       }
     }
     status('Startar…', true);
-    next();
+    // A film as HLS with its own sound or subtitle tracks: through hls.js first, which can switch them (the TV's own
+    // player doesn't say what it has).
+    var m3u8 = null;
+    for (var i = 0; i < list.length; i++) if (list[i].how === 'hls') { m3u8 = list[i]; break; }
+    if (!m3u8 || !item.kind || item.kind === 'live') { next(); return; }
+    probe(m3u8.url, function (multi) {
+      if (mine !== seq) return;
+      if (multi) { list.splice(list.indexOf(m3u8), 1); list.unshift(m3u8); }
+      next();
+    });
+  }
+
+  /** Whether an HLS playlist has more sound or subtitle tracks (#EXT-X-MEDIA); false when it can't be read in 4 s. */
+  function probe(url, done) {
+    var x = new XMLHttpRequest(), over = false;
+    function end(v) { if (!over) { over = true; done(v); } }
+    try { x.open('GET', url, true); } catch (e) { end(false); return; }
+    x.timeout = 4000;
+    x.onload = function () { end(x.status === 200 && /#EXT-X-MEDIA:[^\n]*TYPE=(AUDIO|SUBTITLES)/.test(x.responseText || '')); };
+    x.onerror = x.ontimeout = function () { end(false); };
+    x.send();
+  }
+
+  // MARK: - Sound and subtitles
+
+  var NAMES = {spa: 'Spanska', es: 'Spanska', esp: 'Spanska', cas: 'Spanska', lat: 'Spanska (Latinamerika)', 'es-419': 'Spanska (Latinamerika)',
+    eng: 'Engelska', en: 'Engelska', swe: 'Svenska', sv: 'Svenska', sve: 'Svenska', cat: 'Katalanska', ca: 'Katalanska',
+    nor: 'Norska', no: 'Norska', nob: 'Norska', nb: 'Norska', dan: 'Danska', da: 'Danska', fin: 'Finska', fi: 'Finska',
+    fre: 'Franska', fra: 'Franska', fr: 'Franska', ger: 'Tyska', deu: 'Tyska', de: 'Tyska', ita: 'Italienska', it: 'Italienska',
+    por: 'Portugisiska', pt: 'Portugisiska', 'pt-br': 'Portugisiska (Brasilien)', pol: 'Polska', pl: 'Polska',
+    dut: 'Nederländska', nld: 'Nederländska', nl: 'Nederländska', tur: 'Turkiska', tr: 'Turkiska', ara: 'Arabiska', ar: 'Arabiska',
+    rus: 'Ryska', ru: 'Ryska', jpn: 'Japanska', ja: 'Japanska', kor: 'Koreanska', ko: 'Koreanska', chi: 'Kinesiska', zho: 'Kinesiska',
+    zh: 'Kinesiska', hin: 'Hindi', hi: 'Hindi', gre: 'Grekiska', ell: 'Grekiska', el: 'Grekiska', heb: 'Hebreiska', he: 'Hebreiska',
+    und: '', unk: ''};
+  /** The same language whatever the file calls it: 'spa', 'es', 'es-ES' → 'es'. */
+  function base(code) {
+    code = String(code || '').toLowerCase();
+    var n = NAMES[code] !== undefined ? NAMES[code] : NAMES[code.split(/[-_]/)[0]];
+    for (var k in NAMES) if (NAMES.hasOwnProperty(k) && NAMES[k] && NAMES[k] === n && k.length === 2) return k;
+    return code.split(/[-_]/)[0];
+  }
+  function nameOf(t, i) {
+    var code = String(t.lang || t.language || '').toLowerCase(), n = NAMES[code] !== undefined ? NAMES[code] : NAMES[code.split(/[-_]/)[0]];
+    var label = String(t.name || t.label || '').trim();
+    if (/latin|latam|mexic/i.test(label) && (!n || /^Spanska/.test(n))) return 'Spanska (Latinamerika)';
+    // A label that is only the language in its own words adds nothing ("Español", "English", "Svenska").
+    if (/^(espa[ñn]ol|castellano|english|svenska|fran[cç]ais|deutsch|italiano|portugu[eê]s|catal[aà]|norsk|dansk|suomi|nederlands|polski)$/i.test(label)) label = '';
+    if (n && label && label.toLowerCase() !== code && label.toLowerCase().indexOf(n.toLowerCase()) < 0 && !/^(track|audio|subtitle|text|sub|spår)?[\s_-]*\d*$/i.test(label)) return n + ' · ' + label;
+    return n || label || code.toUpperCase() || ('Spår ' + (i + 1));
+  }
+
+  /** The film's sound and subtitles now: {audio: [{name, lang, on, pick()}], subs: [...]} (subs start with "Av"). */
+  function tracks() {
+    var audio = [], subs = [], i;
+    if (hls) {
+      var at = hls.audioTrack, a = hls.audioTracks || [];
+      for (i = 0; i < a.length; i++) audio.push({name: nameOf(a[i], i), lang: a[i].lang, on: i === at, pick: (function (n) { return function () { hls.audioTrack = n; }; })(i)});
+      var stt = hls.subtitleTrack, sl = hls.subtitleTracks || [];
+      for (i = 0; i < sl.length; i++) subs.push({name: nameOf(sl[i], i), lang: sl[i].lang, on: i === stt, pick: (function (n) { return function () { hls.subtitleDisplay = true; hls.subtitleTrack = n; }; })(i)});
+      if (subs.length) subs.unshift({name: 'Av', lang: 'off', on: stt < 0, pick: function () { hls.subtitleTrack = -1; }});
+      return {audio: audio, subs: subs};
+    }
+    var va = video.audioTracks;
+    if (va) for (i = 0; i < va.length; i++) audio.push({name: nameOf(va[i], i), lang: va[i].language, on: !!va[i].enabled, pick: (function (n) {
+      return function () { for (var j = 0; j < va.length; j++) va[j].enabled = j === n; };
+    })(i)});
+    var vt = video.textTracks, list = [];
+    if (vt) for (i = 0; i < vt.length; i++) if (vt[i].kind === 'subtitles' || vt[i].kind === 'captions') list.push(vt[i]);
+    for (i = 0; i < list.length; i++) subs.push({name: nameOf(list[i], i), lang: list[i].language, on: list[i].mode === 'showing', pick: (function (n) {
+      return function () { for (var j = 0; j < list.length; j++) list[j].mode = j === n ? 'showing' : 'disabled'; };
+    })(i)});
+    if (subs.length) {
+      var none = true;
+      for (i = 0; i < subs.length; i++) if (subs[i].on) none = false;
+      subs.unshift({name: 'Av', lang: 'off', on: none, pick: function () { for (var j = 0; j < list.length; j++) list[j].mode = 'disabled'; }});
+    }
+    return {audio: audio, subs: subs};
+  }
+  function choice() { var t = tracks(); return t.audio.length > 1 || t.subs.length > 0 ? t : null; }
+  function current(l) { for (var i = 0; i < l.length; i++) if (l[i].on) return l[i]; return null; }
+
+  // The kept choice, once per film and kind of track (so the film's own default isn't fought after Yuri picks).
+  var preferred = {};
+  function prefer() {
+    var t = tracks(), want = Store.tracks();
+    [['audio', t.audio], ['sub', t.subs]].forEach(function (k) {
+      var l = k[1];
+      if (preferred[k[0]] || !want[k[0]] || l.length < 2) return;
+      preferred[k[0]] = true;
+      for (var i = 0; i < l.length; i++) if (base(l[i].lang) === want[k[0]] || (want[k[0]] === 'off' && l[i].lang === 'off')) { if (!l[i].on) try { l[i].pick(); } catch (e) {} return; }
+    });
+  }
+
+  function openMenu() {
+    var t = choice();
+    if (!t) return false;
+    menu = {at: 0, box: el('div', 'tmenu glass', box)};
+    drawMenu();
+    for (var i = 0; i < menu.rows.length; i++) if (menu.rows[i].t && menu.rows[i].t.on) { menu.at = i; break; }
+    drawMenu();
+    bar.className = 'bar glass';
+    return true;
+  }
+  function closeMenu() { if (menu) { if (menu.box.parentNode) menu.box.parentNode.removeChild(menu.box); menu = null; } }
+  function drawMenu() {
+    var t = tracks(), rows = [];
+    if (t.audio.length > 1) { rows.push({h: 'Ljud'}); t.audio.forEach(function (a) { rows.push({t: a, kind: 'audio'}); }); }
+    if (t.subs.length) { rows.push({h: 'Undertexter'}); t.subs.forEach(function (a) { rows.push({t: a, kind: 'sub'}); }); }
+    menu.rows = rows;
+    if (!rows[menu.at] || rows[menu.at].h) for (var i = 0; i < rows.length; i++) if (!rows[i].h) { if (i >= menu.at || !rows[menu.at]) { menu.at = i; break; } }
+    menu.box.innerHTML = '';
+    el('div', 'thead', menu.box, 'Ljud och undertexter');
+    var list = el('div', 'tlist', menu.box);
+    rows.forEach(function (r, i) {
+      if (r.h) { el('div', 'tsec', list, r.h); return; }
+      var row = el('div', 'trow' + (i === menu.at ? ' focus' : '') + (r.t.on ? ' on' : ''), list);
+      el('span', 'tick', row, r.t.on ? '✓' : '');
+      el('span', 'tname', row, r.t.name);
+    });
+    el('div', 'tkeys', menu.box, '▲ ▼ välj  ·  OK byter  ·  Tillbaka stänger');
+    var f = list.querySelector('.focus');
+    if (f && f.offsetTop + f.offsetHeight > list.clientHeight) list.scrollTop = f.offsetTop + f.offsetHeight - list.clientHeight + 20;
+    else if (f && f.offsetTop < list.scrollTop) list.scrollTop = f.offsetTop - 60;
+  }
+  function menuKey(k, K) {
+    var r = menu.rows, i;
+    if (k === K.up) { for (i = menu.at - 1; i >= 0; i--) if (!r[i].h) { menu.at = i; break; } }
+    else if (k === K.down) { for (i = menu.at + 1; i < r.length; i++) if (!r[i].h) { menu.at = i; break; } }
+    else if (k === K.ok && r[menu.at] && r[menu.at].t) {
+      var row = r[menu.at];
+      try { row.t.pick(); } catch (e) {}
+      var want = Store.tracks();
+      want[row.kind] = row.t.lang === 'off' ? 'off' : base(row.t.lang);
+      Store.tracks(want);
+      preferred[row.kind] = true;
+      // The video takes a moment to switch; draw again after it.
+      setTimeout(function () { if (menu) drawMenu(); }, 400);
+    } else if (k === K.back || k === K.left) { closeMenu(); draw(); return true; }
+    drawMenu();
+    return true;
   }
 
   // MARK: - The bar: the channel and what's on, or the film and where it is
@@ -174,9 +326,13 @@ var Player = (function () {
         el('div', 'times', bar, clock(c) + '  /  ' + clock(d) + (video.paused ? '   ❚❚' : ''));
       }
     }
+    var tc = choice(), ca = tc && current(tc.audio), cs = tc && current(tc.subs);
+    if (tc) el('div', 'tracks', bar, (tc.audio.length > 1 ? '🔊 ' + (ca ? ca.name : '–') + ' (' + tc.audio.length + ' ljudspår)' : '')
+      + (tc.audio.length > 1 && tc.subs.length ? '     ' : '') + (tc.subs.length ? 'Undertext: ' + (cs ? cs.name : 'Av') + ' (' + (tc.subs.length - 1) + ' st)' : ''));
     if (st.status) el('div', 'status', bar, st.status);
-    el('div', 'keys', bar, st.kind === 'live' ? (st.list.length > 1 ? '▲ ▼ byter kanal  ·  ' : '') + 'OK visar vad som går  ·  Tillbaka till listan'
-      : '◀ ▶ spolar  ·  OK pausar  ·  Tillbaka till listan');
+    var tk = tc ? (st.kind === 'live' ? '▶' : '▼') + ' ljud och undertext  ·  ' : '';
+    el('div', 'keys', bar, st.kind === 'live' ? (st.list.length > 1 ? '▲ ▼ byter kanal  ·  ' : '') + tk + 'OK visar vad som går  ·  Tillbaka till listan'
+      : '◀ ▶ spolar  ·  ' + tk + 'OK pausar  ·  Tillbaka till listan');
     bar.className = 'bar glass on';
     clearTimeout(barTimer);
     if (!keep) barTimer = setTimeout(function () { bar.className = 'bar glass'; }, 5000);
@@ -222,6 +378,7 @@ var Player = (function () {
     clearInterval(saveTimer);
     seq++;
     stopStream();
+    closeMenu();
     var it = st.list[st.at], cb = st.onClose;
     st = null;
     box.className = '';
@@ -232,7 +389,10 @@ var Player = (function () {
   /** A key while playing: true when the player took it. */
   function key(k, K) {
     if (!st) return false;
+    if (menu) return menuKey(k, K);
     if (k === K.back) { close(); return true; }
+    if (st.kind === 'live' && k === K.right && openMenu()) return true;
+    if (st.kind !== 'live' && (k === K.down || k === K.up) && openMenu()) return true;
     if (st.kind === 'live') {
       if (k === K.up || k === K.chUp) { if (st.list.length > 1) playAt(st.at - 1); else draw(); return true; }
       if (k === K.down || k === K.chDown) { if (st.list.length > 1) playAt(st.at + 1); else draw(); return true; }

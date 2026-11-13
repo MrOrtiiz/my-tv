@@ -266,3 +266,16 @@ body { font-family: 'Inter', 'SamsungOneUI', 'Helvetica Neue', Arial, sans-serif
 .sport .groups .row.barca.focus { background: #fff; }
 /* Favoriter → Kanaler: the TV guide's grid of the favourite channels, where the list is. */
 .favs .grid.fixed { left: 500px; right: 0; }
+
+/* Sound and subtitles: the line in the player's bar, and the list (▼ / ▶) on the right. */
+#player .tracks { margin-top: 10px; font-size: 23px; color: #EDBB00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#player .tmenu { position: absolute; right: 80px; top: 80px; width: 560px; max-height: 760px; padding: 28px 0 22px; border-radius: 28px; background: rgba(16, 16, 22, 0.94); z-index: 2; }
+#player .tmenu .thead { padding: 0 34px 14px; font-size: 30px; font-weight: 700; }
+#player .tmenu .tlist { position: relative; max-height: 600px; overflow: hidden; }
+#player .tmenu .tsec { padding: 18px 34px 8px; font-size: 20px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(255, 255, 255, 0.45); }
+#player .tmenu .trow { margin: 4px 18px; padding: 0 16px; height: 62px; line-height: 62px; border-radius: 16px; font-size: 26px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: rgba(255, 255, 255, 0.85); }
+#player .tmenu .trow.on { color: #fff; font-weight: 700; }
+#player .tmenu .trow.focus { background: #fff; color: #111; }
+#player .tmenu .tick { display: inline-block; width: 40px; color: #EDBB00; }
+#player .tmenu .trow.focus .tick { color: #111; }
+#player .tmenu .tkeys { padding: 16px 34px 0; font-size: 19px; color: rgba(255, 255, 255, 0.45); }

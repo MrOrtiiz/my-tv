@@ -66,6 +66,8 @@ var Store = (function () {
       if (arguments.length > 1) { all[kind] = ids; write('vorder', all); }
       return all[kind] || [];
     },
+    // The chosen sound and subtitles, by language, for the next film too: {audio: 'spa', sub: 'swe' or 'off'}.
+    tracks: function (v) { if (arguments.length) write('tracks', v); return read('tracks', {}); },
     vodHidden: function (v) { if (arguments.length) write('vhidden', v); return read('vhidden', {}); },
 
     // The parental lock: the PIN (only on the TV), and the groups locked or opened by hand (id → true/false; the rest by name).
