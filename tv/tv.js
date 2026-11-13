@@ -274,6 +274,7 @@ var TV = (function () {
         if (store) out = out.filter(function (x) { return x.id.indexOf('org.tizen.netflix') !== 0; });
         // Smart Hub keeps its own order, which isn't readable: the same alphabetical order as All Apps elsewhere.
         out.sort(function (x, y) { var a = x.title.toLowerCase(), b = y.title.toLowerCase(); return a < b ? -1 : a > b ? 1 : 0; });
+        knownIds = out.map(function (x) { return x.id; });
         done(out);
       }, function () { done([]); });
     } catch (e) {
@@ -351,6 +352,105 @@ var TV = (function () {
       return;
     }
     launch(dial ? function () { dialLaunch(dial, done); } : failed);
+  }
+
+  /**
+   * Back to Free My TV when an app opened from here closes. Samsung's Back on an app's first screen closes it (or puts
+   * it away) and Smart Hub's own home comes up, as Free My TV is only an app. Free My TV keeps running behind the app
+   * (background-support in config.xml), looks every 1.5 s at which apps run, and opens itself again once the app it
+   * opened has stopped, or, where the TV's own server tells, isn't on screen any more. Another app opened meanwhile
+   * (from Smart Hub's bar) ends the watch: that's where the person went. Gives up after 8 hours.
+   */
+  var knownIds = [], watch = null, NO_WATCH = /^(org\.tizen\.(tv-viewer|menu|setting)|source:)/;
+
+  function contexts(done) {
+    try {
+      window.tizen.application.getAppsContext(function (list) {
+        done(list.map(function (c) { return c.appId; }));
+      }, function () { done(null); });
+    } catch (e) { done(null); }
+  }
+
+  /** The TV's own server: {running, visible} for an app, or null where it doesn't answer (only some ids do). */
+  function shown(id, done) {
+    var x = new XMLHttpRequest(), over = false;
+    function end(v) { if (!over) { over = true; done(v); } }
+    try {
+      x.open('GET', 'http://127.0.0.1:8001/api/v2/applications/' + encodeURIComponent(id), true);
+      x.timeout = 1200;
+      x.onreadystatechange = function () {
+        if (x.readyState !== 4) return;
+        var o = null;
+        try { o = x.status === 200 ? JSON.parse(x.responseText) : null; } catch (e) {}
+        end(o && typeof o.visible === 'boolean' ? o : null);
+      };
+      x.ontimeout = x.onerror = function () { end(null); };
+      x.send();
+    } catch (e) { end(null); }
+  }
+
+  function unwatch() {
+    if (!watch) return;
+    clearInterval(watch.timer);
+    if (watch.listener != null) { try { window.tizen.application.removeAppStatusChangeListener(watch.listener); } catch (e) {} }
+    watch = null;
+  }
+
+  function comeBack() {
+    unwatch();
+    if (!document.hidden) return;
+    try {
+      window.tizen.application.launch(self, function () {}, function () { post('/api/v2/applications/' + self, 8000); });
+    } catch (e) {
+      post('/api/v2/applications/' + self, 8000);
+    }
+  }
+
+  function watchApp(id) {
+    if (!samsung || !id || id === self || NO_WATCH.test(id)) return;
+    unwatch();
+    var w = watch = {id: id, at: Date.now(), seen: false, before: null, rest: true, wasShown: false, gone: 0, busy: false};
+    contexts(function (ids) { if (watch === w) w.before = ids || []; });
+    try {
+      if (window.tizen.application.addAppStatusChangeListener) {
+        w.listener = window.tizen.application.addAppStatusChangeListener(function (appId, status) {
+          if (watch === w && appId === w.id && status === 'DEACTIVATE') setTimeout(function () { if (watch === w) check(); }, 400);
+        });
+      }
+    } catch (e) {}
+    function check() {
+      if (watch !== w || w.busy) return;
+      if (!document.hidden && Date.now() - w.at > 4000) { unwatch(); return; }   // Free My TV is on screen again
+      if (Date.now() - w.at > 8 * 3600000) { unwatch(); return; }
+      w.busy = true;
+      contexts(function (ids) {
+        if (watch !== w) return;
+        if (!ids) { w.busy = false; return; }
+        var running = ids.indexOf(w.id) >= 0;
+        if (running) w.seen = true;
+        // Another of the TV's apps started since: the person went there.
+        for (var i = 0; w.before && i < ids.length; i++) {
+          var o = ids[i];
+          if (o !== w.id && o !== self && knownIds.indexOf(o) >= 0 && w.before.indexOf(o) < 0) { unwatch(); return; }
+        }
+        if (!running) {
+          if (w.seen) { comeBack(); return; }
+          if (Date.now() - w.at > 20000) { unwatch(); return; }   // never seen under this id: nothing to go by
+          w.busy = false;
+          return;
+        }
+        if (!w.rest) { w.busy = false; return; }
+        shown(w.id, function (o) {
+          if (watch !== w) return;
+          w.busy = false;
+          if (!o) { w.rest = false; return; }
+          if (o.visible) { w.wasShown = true; w.gone = 0; return; }
+          // Put away (still running, not on screen) twice running, after it was on screen.
+          if (w.wasShown && ++w.gone >= 2) comeBack();
+        });
+      });
+    }
+    w.timer = setInterval(check, 1500);
   }
 
   /**
@@ -561,7 +661,7 @@ var TV = (function () {
     launch: function (id, params, done) {
       if (samsung) {
         if (id.indexOf('source:') === 0) samsungSource(id, done);
-        else samsungLaunch(id, done);
+        else samsungLaunch(id, function (ok) { if (ok) watchApp(id); if (done) done(ok); });
         return;
       }
       if (!webos) {
@@ -617,7 +717,7 @@ var TV = (function () {
           try {
             var data = [new window.tizen.ApplicationControlData('PAYLOAD', ['#watch?v=' + video + '&launch=launcher'])];
             var c = new window.tizen.ApplicationControl('http://tizen.org/appcontrol/operation/default', null, null, null, data);
-            window.tizen.application.launchAppControl(c, ids[i], function () { if (done) done(true); }, function () { next(i + 1); });
+            window.tizen.application.launchAppControl(c, ids[i], function () { watchApp(ids[i]); if (done) done(true); }, function () { next(i + 1); });
           } catch (e) { next(i + 1); }
         })(0);
         return;
@@ -637,6 +737,9 @@ var TV = (function () {
 
     /** LG: keeps the TV's screensaver away while ours will take over (`hold` says when). */
     holdScreenSaver: holdScreenSaver,
+
+    /** Samsung: Free My TV comes back when this app (opened from here some other way) closes. */
+    watch: watchApp,
 
     /** Back on the first screen: back to wherever the person came from. */
     back: function () {

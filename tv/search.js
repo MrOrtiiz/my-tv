@@ -471,7 +471,7 @@ var Search = (function () {
     try {
       var data = [new tizen.ApplicationControlData('PAYLOAD', [link]), new tizen.ApplicationControlData('url', [link])];
       var c = new tizen.ApplicationControl('http://tizen.org/appcontrol/operation/view', link, null, null, data);
-      tizen.application.launchAppControl(c, src.app.id, function () {}, function () { TV.launch(src.app.id, null, function () {}); });
+      tizen.application.launchAppControl(c, src.app.id, function () { if (TV.watch) TV.watch(src.app.id); }, function () { TV.launch(src.app.id, null, function () {}); });
     } catch (e) { TV.launch(src.app.id, null, function () {}); }
   }
 

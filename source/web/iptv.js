@@ -340,7 +340,7 @@ var IPTV = (function () {
       var data = [new tizen.ApplicationControlData('link', [link()])];
       if (play) data.push(new tizen.ApplicationControlData('play', [JSON.stringify(play)]));
       var c = new tizen.ApplicationControl('http://tizen.org/appcontrol/operation/default', null, null, null, data);
-      tizen.application.launchAppControl(c, APP_ID, function () { if (done) done(true); }, function () { if (done) done(false); });
+      tizen.application.launchAppControl(c, APP_ID, function () { if (window.TV && TV.watch) TV.watch(APP_ID); if (done) done(true); }, function () { if (done) done(false); });
     } catch (e) { if (done) done(false); }
   }
 

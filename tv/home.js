@@ -1589,7 +1589,7 @@
     try {
       var data = [new tizen.ApplicationControlData('drive', [gamesLink()])];
       var c = new tizen.ApplicationControl('http://tizen.org/appcontrol/operation/default', null, null, null, data);
-      tizen.application.launchAppControl(c, GAMES_ID, function () { done(true); }, function () { done(false); });
+      tizen.application.launchAppControl(c, GAMES_ID, function () { if (TV.watch) TV.watch(GAMES_ID); done(true); }, function () { done(false); });
     } catch (e) { done(false); }
   }
 
@@ -2122,7 +2122,8 @@
   document.addEventListener('webOSRelaunch', reopened);   // LG: opened again while running
   window.addEventListener('appcontrol', reopened);        // Samsung: the same
   document.addEventListener('visibilitychange', function () {
-    if (document.hidden) { hideSaver(); hideAmbient(); return; }
+    // Free My TV now keeps running behind the apps it opens (to come back when they close): nothing plays back there.
+    if (document.hidden) { hideSaver(); hideAmbient(); if (window.IPTV && IPTV.close) IPTV.close(); if (trailerOpen()) closeTrailer(); return; }
     idleAt = Date.now();
     loadApps(function () { renderShelf(); renderDrawer(); updateFocus(); Data.refresh(); });
   });
@@ -2141,11 +2142,12 @@
     Data.refresh();
   });
   setInterval(function () {
+    if (document.hidden) return;   // behind another app: nothing to keep fresh until Free My TV is back
     checkNight();
     Data.refresh();
     applyDim();   // automatic: medium from 22:00, off again at 07:00
     if ((window.IPTV && IPTV.playing()) || (window.Search && Search.isOpen())) idleAt = Date.now();   // no screensaver over a match or a search
-    if (!saverOn && !ambientOn && !sheetOpen() && Date.now() - idleAt > SAVER_AFTER) {
+    if (!document.hidden && !saverOn && !ambientOn && !sheetOpen() && Date.now() - idleAt > SAVER_AFTER) {
       if (saverMode() === 'clock') showAmbient(); else showSaver();
     }
     if (saverOn) tickSaverClock($('saver').querySelector('.clock'));

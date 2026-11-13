@@ -387,7 +387,19 @@ var App = (function () {
     drawMain();
   }
 
-  function exit() { try { tizen.application.getCurrentApplication().exit(); } catch (e) {} }
+  // Back out: to Free My TV where it's installed (the TV's home screen here), else Samsung's.
+  function exit() {
+    var left = false;
+    function quit() { if (left) return; left = true; try { tizen.application.getCurrentApplication().exit(); } catch (e) {} }
+    try {
+      if (tizen.application.getAppInfo('FreeMyTVio.FreeMyTV')) {
+        tizen.application.launch('FreeMyTVio.FreeMyTV', function () { setTimeout(quit, 300); }, quit);
+        setTimeout(quit, 4000);
+        return;
+      }
+    } catch (e) {}
+    quit();
+  }
 
   // The controller in the library: pad or stick moves, bottom button OK, right button Back.
   function pad1() {

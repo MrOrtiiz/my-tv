@@ -982,8 +982,20 @@ var App = (function () {
     focusZone();
   }
 
+  /** Back out of the app: to Free My TV where it's installed (the TV's home screen here), else Samsung's. */
+  var HOME_ID = 'FreeMyTVio.FreeMyTV';
   function exit() {
-    try { window.tizen.application.getCurrentApplication().exit(); } catch (e) {}
+    var app = window.tizen && window.tizen.application, left = false;
+    function quit() { if (left) return; left = true; try { app.getCurrentApplication().exit(); } catch (e) {} }
+    if (!app) return;
+    try {
+      if (app.getAppInfo(HOME_ID)) {
+        app.launch(HOME_ID, function () { setTimeout(quit, 300); }, quit);
+        setTimeout(quit, 4000);
+        return;
+      }
+    } catch (e) {}
+    quit();
   }
 
   // MARK: - Opened by Free My TV: the link, and maybe a match to play

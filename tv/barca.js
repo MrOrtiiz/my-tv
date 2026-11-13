@@ -85,7 +85,7 @@ var BarcaBox = (function () {
     var m = liveMatch();
     if (!m || !on()) { if (live) { live = null; lastBarca = -1; render(); } liveTimer = setTimeout(pollLive, 60000); return; }
     if (liveFor !== m.start) { live = null; lastBarca = -1; }
-    if (!(live && live.state === 'post')) fetchLive(m, 0);
+    if (!(live && live.state === 'post') && !document.hidden) fetchLive(m, 0);
     liveTimer = setTimeout(pollLive, live && live.state === 'post' ? 5 * 60000 : LIVE_EVERY);
   }
   var CREST = 'https://a.espncdn.com/i/teamlogos/soccer/500/83.png';
