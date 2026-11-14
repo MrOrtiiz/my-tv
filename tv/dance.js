@@ -29,6 +29,9 @@ var Dance = (function () {
     return out;
   }
   function topic() { if (!cfg.topic) { cfg.topic = 'fmtv-dans-' + rid(20); save(); } return cfg.topic; }
+  /** A key only the TV and the QR code know: a gubbe sent through ntfy is locked with it. */
+  function secret() { if (!cfg.key) { cfg.key = rid(32); save(); } return cfg.key; }
+  var VERSION = '2026-11-14c';   // in the phone's link, so a phone never keeps an older page
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, parent, text) {
@@ -486,6 +489,7 @@ var Dance = (function () {
       try { m = JSON.parse(e.data); } catch (x) { return; }
       if (!m || m.event !== 'message') return;
       try { o = JSON.parse(m.message); } catch (x) { return; }
+      if (o && o.t === 'avatarfile' && m.attachment && m.attachment.url) { avatarFile(o, m.attachment.url); return; }
       if (o) fromPhone(o, false);
     };
   }
@@ -552,7 +556,7 @@ var Dance = (function () {
     if (o.t === 'hits') { for (var i = 0; i < (o.h || []).length; i++) hit(pl, o.h[i][0], o.h[i][1]); return; }
     if (o.t === 'leave') { leave(pl); return; }
     if (o.t === 'avp') { avatarPart(pl, o); return; }
-    if (o.t === 'avatar') { setAvatar(pl, o); return; }
+    if (o.t === 'avatar') { setAvatar(pl, o); send(pl, {t: 'gotavatar'}, false); drawPlayers(); return; }
     if (o.t === 'start' && state === 'lobby') { start(); return; }
   }
 
@@ -567,7 +571,31 @@ var Dance = (function () {
     var whole = null;
     try { whole = JSON.parse(bag.d.join('')); } catch (e) { whole = null; }
     pl.parts = null;
-    if (whole) setAvatar(pl, whole);
+    if (whole) { setAvatar(pl, whole); send(pl, {t: 'gotavatar'}, false); drawPlayers(); }
+  }
+
+  /** A gubbe that came through ntfy as a locked file: fetched, opened with the key, and used. */
+  function avatarFile(o, url) {
+    var pl = playerBy(o.p), subtle = window.crypto && window.crypto.subtle;
+    if (!pl || !subtle || !window.TextEncoder || !o.iv) return;
+    var x = new XMLHttpRequest();
+    x.open('GET', url, true);
+    x.responseType = 'arraybuffer';
+    x.onload = function () {
+      if (x.status !== 200) return;
+      var iv = Uint8Array.from(atob(o.iv), function (ch) { return ch.charCodeAt(0); });
+      subtle.digest('SHA-256', new TextEncoder().encode(secret())).then(function (raw) {
+        return subtle.importKey('raw', raw, {name: 'AES-GCM'}, false, ['decrypt']);
+      }).then(function (key) {
+        return subtle.decrypt({name: 'AES-GCM', iv: iv}, key, x.response);
+      }).then(function (plain) {
+        var obj = JSON.parse(new TextDecoder().decode(plain));
+        setAvatar(pl, obj);
+        send(pl, {t: 'gotavatar'}, true);
+        drawPlayers();
+      }).catch(function (e) { if (window.console) console.log('Dansgolvet: gubben gick inte att öppna', e && e.message); });
+    };
+    x.send();
   }
 
   function setAvatar(pl, o) {
@@ -634,6 +662,7 @@ var Dance = (function () {
     if (opened) return;
     if (!root) build();
     opened = true;
+    topic(); secret();   // made (and kept) now, not only when the QR code draws
     state = 'lobby'; sel = 0;
     root.className = 'layer on';
     listen();
@@ -657,7 +686,7 @@ var Dance = (function () {
 
   function isOpen() { return opened; }
 
-  function phoneUrl() { return PHONE + '#' + topic() + (RELAY !== 'https://ntfy.sh/' ? '|' + RELAY : ''); }
+  function phoneUrl() { return PHONE + '?v=' + VERSION + '#' + topic() + '|' + (RELAY !== 'https://ntfy.sh/' ? RELAY : '') + '|' + secret(); }
 
   var qrWait = null;
   function withQr(done) {
@@ -723,7 +752,7 @@ var Dance = (function () {
       var row = el('div', 'd-slot' + (pl ? ' in' : ''), box);
       var dot = el('span', 'd-dot', row); dot.style.background = COLORS[s];
       el('span', 'd-pname', row, pl ? pl.name : 'Ledig plats');
-      if (pl) el('span', 'd-link', row, pl.dc ? 'Ansluten' : 'Via nätet');
+      if (pl) el('span', 'd-link', row, (pl.avatar ? 'Egen gubbe · ' : '') + (pl.dc ? 'Ansluten' : 'Via nätet'));
     }
   }
 

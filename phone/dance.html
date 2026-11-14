@@ -103,7 +103,7 @@
 (function () {
   'use strict';
   var hash = decodeURIComponent(location.hash.slice(1)).split('|');
-  var TOPIC = hash[0], RELAY = hash[1] || 'https://ntfy.sh/';
+  var TOPIC = hash[0], RELAY = hash[1] || 'https://ntfy.sh/', KEY = hash[2] || '';
   var STORE = 'fmtv.dancephone', GRADES = ['Miss', 'Okej', 'Bra', 'Super', 'Perfekt!'], POINTS = [0, 50, 100, 150, 200];
   var me = {};
   try { me = JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { me = {}; }
@@ -175,7 +175,11 @@
     });
   }
 
-  function showLink() { $('link').textContent = link === 'rtc' ? 'Direkt ansluten till TV:n' : 'Ansluten via nätet (lite fördröjning)' + (chosen() ? '. Din gubbe syns bara när mobilen är direkt ansluten.' : ''); }
+  var avatarOk = false;
+  function showLink() {
+    $('link').textContent = (link === 'rtc' ? 'Direkt ansluten till TV:n' : 'Ansluten via nätet (lite fördröjning)')
+      + (chosen() ? (avatarOk ? ' · Din gubbe är på TV:n ✓' : ' · Skickar din gubbe…') : '');
+  }
 
   /** This phone's clock against the TV's: a few pings, the quickest one counts. */
   function sync(n, gap) {
@@ -192,10 +196,11 @@
       $('hello').textContent = 'Hej ' + (o.name || me.name) + '!';
       show(game ? 'play' : 'lobby');
       if (o.sdp && pc) pc.setRemoteDescription({type: 'answer', sdp: o.sdp}).catch(function () {});
-      setTimeout(function () { if (link !== 'rtc') { link = 'relay'; showLink(); sync(3, 1200); } }, 7000);
+      setTimeout(function () { if (link !== 'rtc') { link = 'relay'; showLink(); sync(3, 1200); sendAvatar(); } }, 7000);
       showLink();
       return;
     }
+    if (o.t === 'gotavatar') { avatarOk = true; showLink(); return; }
     if (o.t === 'full') { show('start'); $('startErr').textContent = 'Det är redan fyra spelare. Vänta tills nästa låt.'; return; }
     if (o.t === 'pong') {
       var now = Date.now(), rtt = now - o.c;
@@ -563,12 +568,30 @@
   $('cancelG').onclick = function () { src = null; made = null; show(welcomed ? 'lobby' : 'start'); };
   $('change').onclick = function () { show('start'); $('join').textContent = 'Klar'; };
 
-  /** The chosen gubbe to the TV, in parts (only over WebRTC: too big for ntfy). */
+  /**
+   * The chosen gubbe to the TV: over WebRTC in parts, or else through ntfy as one file locked with the key from the
+   * QR code (AES-GCM), so the relay only ever holds something it can't open.
+   */
   function sendAvatar() {
-    if (!dc || dc.readyState !== 'open') return;
+    avatarOk = false;
     var g = chosen(), body = JSON.stringify(g ? {t: 'avatar', head: g.head, colors: g.colors, full: g.full || null, gname: g.name} : {t: 'avatar', head: null});
-    var id = Math.random().toString(36).slice(2, 8), size = 15000, n = Math.ceil(body.length / size);
-    for (var i = 0; i < n; i++) send({t: 'avp', id: id, i: i, n: n, d: body.slice(i * size, (i + 1) * size)});
+    if (dc && dc.readyState === 'open') {
+      var id = Math.random().toString(36).slice(2, 8), size = 15000, n = Math.ceil(body.length / size);
+      for (var i = 0; i < n; i++) send({t: 'avp', id: id, i: i, n: n, d: body.slice(i * size, (i + 1) * size)});
+      showLink();
+      return;
+    }
+    if (!welcomed || !g || !KEY || !window.crypto || !crypto.subtle) { showLink(); return; }
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    crypto.subtle.digest('SHA-256', new TextEncoder().encode(KEY)).then(function (raw) {
+      return crypto.subtle.importKey('raw', raw, {name: 'AES-GCM'}, false, ['encrypt']);
+    }).then(function (key) {
+      return crypto.subtle.encrypt({name: 'AES-GCM', iv: iv}, key, new TextEncoder().encode(body));
+    }).then(function (locked) {
+      var note = JSON.stringify({t: 'avatarfile', p: me.p, iv: btoa(String.fromCharCode.apply(null, iv))});
+      return fetch(RELAY + TOPIC + '-tv?filename=gubbe.bin&message=' + encodeURIComponent(note), {method: 'PUT', body: locked});
+    }).catch(function () {});
+    showLink();
   }
 
   // MARK: - The motion sensor
