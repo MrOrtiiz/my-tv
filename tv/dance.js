@@ -31,7 +31,9 @@ var Dance = (function () {
   function topic() { if (!cfg.topic) { cfg.topic = 'fmtv-dans-' + rid(20); save(); } return cfg.topic; }
   /** A key only the TV and the QR code know: a gubbe sent through ntfy is locked with it. */
   function secret() { if (!cfg.key) { cfg.key = rid(32); save(); } return cfg.key; }
-  var VERSION = '2026-11-14d';   // in the phone's link, so a phone never keeps an older page
+  var VERSION = '2026-11-14e';
+  // The family's gubbar in Google Drive (phone/gubbar-script.gs): in every QR code, so no phone needs to paste it.
+  var DRIVE = (window.CONFIG && CONFIG.danceDrive) || 'https://script.google.com/macros/s/AKfycbxd3dQBeCmP0gwgkpr-o51zB7gsKxhW2hZOqqWfjoQ3ZYmYSNhFPUDbeKICpapCpgcXsQ/exec';   // in the phone's link, so a phone never keeps an older page
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, parent, text) {
@@ -701,7 +703,7 @@ var Dance = (function () {
   function isOpen() { return opened; }
 
   function phoneUrl() {
-    return PHONE + '?v=' + VERSION + '#' + topic() + '|' + (RELAY !== 'https://ntfy.sh/' ? RELAY : '') + '|' + secret() + (cfg.drive ? '|' + cfg.drive : '');
+    return PHONE + '?v=' + VERSION + '#' + topic() + '|' + (RELAY !== 'https://ntfy.sh/' ? RELAY : '') + '|' + secret() + ((cfg.drive || DRIVE) ? '|' + (cfg.drive || DRIVE) : '');
   }
 
   /** The Drive gubbar's script address, from a phone: kept here and put in the QR code for every phone. */

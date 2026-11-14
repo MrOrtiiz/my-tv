@@ -288,7 +288,8 @@
 
   // MARK: - Gubbar from the Drive folder (through his own Apps Script, phone/gubbar-script.gs)
 
-  function driveUrl() { return DRIVE_QR || me.drive || ''; }
+  var DRIVE_DEFAULT = 'https://script.google.com/macros/s/AKfycbxd3dQBeCmP0gwgkpr-o51zB7gsKxhW2hZOqqWfjoQ3ZYmYSNhFPUDbeKICpapCpgcXsQ/exec';   // the family's gubbar (phone/gubbar-script.gs)
+  function driveUrl() { return DRIVE_QR || me.drive || DRIVE_DEFAULT; }
 
   function loadDrive() {
     var url = driveUrl(), box = $('drive');
