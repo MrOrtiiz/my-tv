@@ -1,0 +1,89 @@
+/* Dansgolvet (dance.js): a dark stage with a neon dancer; the lobby on the left, the phones' QR code on the right. */
+#dance { z-index: 70; display: none; color: #fff; background: #0A0716; font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; }
+#dance.on { display: block; }
+#dance .d-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#dance .d-hud, #dance .d-panel { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#dance .d-dot { display: inline-block; width: 22px; height: 22px; border-radius: 11px; vertical-align: middle; margin-right: 16px;
+  box-shadow: 0 0 14px currentColor; }
+
+/* The lobby */
+#dance .lobby .d-left { position: absolute; left: 110px; top: 96px; width: 760px; }
+#dance .d-title { font-size: 104px; font-weight: 800; letter-spacing: -2px; line-height: 1.05; color: #FFF;
+  text-shadow: 0 0 18px #FF3DA5, 0 0 46px rgba(255, 61, 165, 0.7), 0 0 90px rgba(46, 230, 255, 0.45); }
+#dance .d-sub { margin: 14px 0 38px; font-size: 27px; line-height: 38px; color: rgba(255, 255, 255, 0.72); }
+#dance .d-song, #dance .d-level, #dance .d-go {
+  position: relative; height: 92px; line-height: 92px; margin-bottom: 18px; padding: 0 32px; border-radius: 26px;
+  background: rgba(255, 255, 255, 0.07); border: 2px solid rgba(255, 255, 255, 0.08); font-size: 34px; font-weight: 600;
+  -webkit-transition: -webkit-transform 0.15s, background 0.15s; transition: transform 0.15s, background 0.15s;
+}
+#dance .d-song.chosen { background: rgba(255, 255, 255, 0.13); }
+#dance .d-song .d-tempo { position: absolute; right: 32px; top: 0; font-size: 23px; font-weight: 500; color: rgba(255, 255, 255, 0.55); }
+#dance .d-level .d-label { color: rgba(255, 255, 255, 0.6); margin-right: 30px; }
+#dance .d-level .d-opt { display: inline-block; height: 56px; line-height: 56px; padding: 0 30px; margin-right: 12px; border-radius: 28px;
+  font-size: 28px; color: rgba(255, 255, 255, 0.55); }
+#dance .d-level .d-opt.on { background: #fff; color: #120A24; }
+#dance .d-go { text-align: center; font-size: 44px; font-weight: 800; margin-top: 30px; height: 104px; line-height: 104px;
+  background: linear-gradient(90deg, #FF3DA5, #B34DFF 55%, #2EE6FF); border: 0; }
+#dance .focus { -webkit-transform: scale(1.04); transform: scale(1.04); box-shadow: 0 0 0 4px #fff, 0 0 40px rgba(255, 255, 255, 0.35); }
+#dance .d-hint { margin-top: 26px; font-size: 21px; color: rgba(255, 255, 255, 0.45); }
+
+#dance .lobby .d-right { position: absolute; right: 110px; top: 110px; width: 420px; padding: 34px; border-radius: 34px;
+  background: rgba(16, 10, 34, 0.78); box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.14); text-align: center; }
+#dance .d-qr-title { font-size: 34px; font-weight: 700; }
+#dance .d-qr-sub { margin: 8px 0 22px; font-size: 21px; line-height: 29px; color: rgba(255, 255, 255, 0.65); }
+#dance .d-qr { width: 300px; height: 300px; margin: 0 auto; background: #fff; border-radius: 22px; overflow: hidden; color: #222; font-size: 20px; }
+#dance .d-qr svg { width: 300px; height: 300px; }
+#dance .d-players { margin-top: 26px; text-align: left; }
+#dance .d-slot { height: 58px; line-height: 58px; font-size: 25px; color: rgba(255, 255, 255, 0.35); }
+#dance .d-slot.in { color: #fff; font-weight: 600; }
+#dance .d-slot .d-link { float: right; font-size: 18px; font-weight: 500; color: rgba(255, 255, 255, 0.45); }
+
+/* Dancing */
+#dance .d-top { position: absolute; left: 70px; top: 52px; width: 560px; }
+#dance .d-songname { font-size: 34px; font-weight: 800; text-shadow: 0 0 20px currentColor; }
+#dance .d-progress { margin-top: 14px; height: 10px; border-radius: 5px; background: rgba(255, 255, 255, 0.14); overflow: hidden; }
+#dance .d-fill { height: 10px; width: 0; border-radius: 5px; background: linear-gradient(90deg, #FF3DA5, #2EE6FF); }
+#dance .d-scores { position: absolute; right: 60px; top: 46px; text-align: right; white-space: nowrap; }
+#dance .d-card { position: relative; display: inline-block; vertical-align: top; width: 290px; height: 96px; margin-left: 18px; padding: 0 24px;
+  box-sizing: border-box; line-height: 96px; text-align: left; border-radius: 26px; background: rgba(16, 10, 34, 0.72);
+  border: 3px solid rgba(255, 255, 255, 0.2); font-size: 26px; font-weight: 600; }
+#dance .d-card .d-pname { display: inline-block; max-width: 130px; overflow: hidden; vertical-align: top; }
+#dance .d-card .d-score { position: absolute; right: 24px; top: 0; font-size: 34px; font-weight: 800; }
+#dance .d-grade { position: absolute; left: 0; right: 0; top: 104px; text-align: center; line-height: 52px; font-size: 40px; font-weight: 900;
+  text-shadow: 0 0 22px rgba(0, 0, 0, 0.6); -webkit-animation: d-pop 0.35s ease-out; animation: d-pop 0.35s ease-out; }
+#dance .d-grade.g0 { color: rgba(255, 255, 255, 0.45); font-size: 32px; }
+#dance .d-grade.g1 { color: #C8C8D8; }
+#dance .d-grade.g2 { color: #9BE7FF; }
+#dance .d-grade.g4 { text-shadow: 0 0 18px currentColor, 0 0 40px currentColor; }
+@-webkit-keyframes d-pop { from { -webkit-transform: scale(0.4); opacity: 0; } 70% { -webkit-transform: scale(1.15); opacity: 1; } to { -webkit-transform: scale(1); } }
+@keyframes d-pop { from { transform: scale(0.4); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } to { transform: scale(1); } }
+
+#dance .d-next { position: absolute; right: 60px; top: 300px; width: 210px; padding: 18px 0 8px; border-radius: 28px; text-align: center;
+  background: rgba(16, 10, 34, 0.6); box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.1); }
+#dance .d-next-title { font-size: 21px; font-weight: 600; color: rgba(255, 255, 255, 0.5); text-transform: uppercase; letter-spacing: 2px; }
+#dance .d-thumb { margin: 6px 0 10px; opacity: 0.55; }
+#dance .d-thumb:first-of-type { opacity: 1; }
+#dance .d-thumb canvas { width: 150px; height: 190px; }
+#dance .d-tname { font-size: 20px; font-weight: 600; }
+#dance .d-now { position: absolute; left: 70px; bottom: 70px; width: 640px; }
+#dance .d-move { font-size: 64px; font-weight: 900; text-shadow: 0 0 20px rgba(255, 61, 165, 0.8), 0 0 50px rgba(255, 61, 165, 0.4); }
+#dance .d-beats { margin-top: 6px; font-size: 34px; letter-spacing: 10px; color: #FFD23D; }
+#dance .d-count { position: absolute; left: 0; right: 0; top: 330px; text-align: center; font-size: 170px; font-weight: 900; opacity: 0;
+  text-shadow: 0 0 30px #FF3DA5, 0 0 80px #B34DFF; -webkit-transition: opacity 0.2s; transition: opacity 0.2s; pointer-events: none; }
+#dance .d-count.on { opacity: 1; }
+
+/* Results */
+#dance .results .d-title { position: absolute; left: 110px; top: 110px; }
+#dance .d-ranks { position: absolute; left: 110px; top: 280px; width: 1060px; }
+#dance .d-ranks .d-sub { width: 820px; }
+#dance .d-rank { position: relative; height: 112px; line-height: 112px; margin-bottom: 20px; padding: 0 34px; border-radius: 30px;
+  background: rgba(16, 10, 34, 0.78); border: 3px solid rgba(255, 255, 255, 0.2); font-size: 34px; font-weight: 700; }
+#dance .d-place { display: inline-block; width: 66px; font-size: 40px; }
+#dance .d-rank .d-pname { display: inline-block; width: 260px; overflow: hidden; vertical-align: top; }
+#dance .d-stars { display: inline-block; width: 300px; color: #FFD23D; font-size: 44px; letter-spacing: 4px; text-shadow: 0 0 16px rgba(255, 210, 61, 0.6); }
+#dance .d-rank .d-score { display: inline-block; width: 140px; font-weight: 900; }
+#dance .d-perfects { position: absolute; right: 34px; top: 0; font-size: 22px; font-weight: 500; color: rgba(255, 255, 255, 0.55); }
+#dance .d-buttons { position: absolute; left: 110px; bottom: 110px; }
+#dance .d-btn { display: inline-block; height: 96px; line-height: 96px; padding: 0 54px; margin-right: 26px; border-radius: 48px;
+  background: rgba(255, 255, 255, 0.1); font-size: 34px; font-weight: 700;
+  -webkit-transition: -webkit-transform 0.15s; transition: transform 0.15s; }

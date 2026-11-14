@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0A0716">
+<title>Dansgolvet</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: #0A0716; color: #fff; font-family: -apple-system, 'Inter', 'Helvetica Neue', Arial, sans-serif; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 28px 22px calc(28px + env(safe-area-inset-bottom));
+    background: radial-gradient(120% 70% at 50% 0%, rgba(179, 77, 255, 0.35), transparent 60%), radial-gradient(90% 60% at 50% 100%, rgba(255, 61, 165, 0.25), transparent 60%), #0A0716; }
+  body.me { background: radial-gradient(120% 70% at 50% 0%, var(--c), transparent 62%), #0A0716; }
+  h1 { margin: 0; font-size: 48px; font-weight: 800; letter-spacing: -1px; text-shadow: 0 0 16px #FF3DA5, 0 0 40px rgba(255, 61, 165, 0.6); }
+  p { margin: 12px 0; font-size: 18px; line-height: 26px; color: rgba(255, 255, 255, 0.75); max-width: 360px; }
+  input { width: 100%; max-width: 340px; height: 58px; margin: 22px 0 14px; padding: 0 20px; border-radius: 18px; border: 0; outline: 0;
+    background: rgba(255, 255, 255, 0.12); color: #fff; font-size: 22px; text-align: center; }
+  button { width: 100%; max-width: 340px; height: 64px; margin-top: 10px; border: 0; border-radius: 32px; color: #fff; font-size: 24px; font-weight: 800;
+    background: linear-gradient(90deg, #FF3DA5, #B34DFF 55%, #2EE6FF); }
+  button.ghost { background: rgba(255, 255, 255, 0.12); font-weight: 600; font-size: 20px; height: 54px; }
+  .hide { display: none !important; }
+  .big { font-size: 64px; font-weight: 900; margin: 18px 0 6px; min-height: 80px; }
+  .g4 { color: var(--c, #FFD23D); text-shadow: 0 0 20px var(--c, #FFD23D); }
+  .g3 { color: #fff; } .g2 { color: #9BE7FF; } .g1 { color: #C8C8D8; } .g0 { color: rgba(255, 255, 255, 0.4); }
+  .score { font-size: 30px; font-weight: 800; }
+  .move { font-size: 22px; font-weight: 600; color: rgba(255, 255, 255, 0.7); min-height: 30px; }
+  .badge { display: inline-block; padding: 8px 18px; border-radius: 20px; background: rgba(0, 0, 0, 0.35); font-size: 16px; color: rgba(255, 255, 255, 0.7); margin-top: 18px; }
+  .hand { font-size: 90px; margin: 10px 0; }
+  .stars { font-size: 44px; color: #FFD23D; letter-spacing: 4px; text-shadow: 0 0 14px rgba(255, 210, 61, 0.6); }
+  .err { color: #FF8FA3; }
+</style>
+</head>
+<body>
+<div id="start">
+  <h1>Dansgolvet</h1>
+  <p>Var med och få poäng när ni dansar på TV:n. Dansgolvet måste vara öppet på TV:n.</p>
+  <input id="name" maxlength="14" placeholder="Ditt namn" autocomplete="off">
+  <button id="join">Var med!</button>
+  <p id="startErr" class="err"></p>
+</div>
+<div id="wait" class="hide">
+  <h1>Ansluter…</h1>
+  <p id="waitText">Letar efter TV:n.</p>
+</div>
+<div id="lobby" class="hide">
+  <div class="hand">🤚📱</div>
+  <h1 id="hello">Du är med!</h1>
+  <p>Håll mobilen i <b>höger hand</b> med skärmen mot dig. Gör som den <b>lysande handen</b> på TV:n, som i en spegel.</p>
+  <button id="go">Starta dansen</button>
+  <p class="badge" id="link"></p>
+</div>
+<div id="play" class="hide">
+  <div class="move" id="move"></div>
+  <div class="big" id="grade"></div>
+  <div class="score" id="score">0</div>
+  <p class="badge" id="song"></p>
+</div>
+<div id="done" class="hide">
+  <h1>Snyggt!</h1>
+  <div class="stars" id="stars"></div>
+  <div class="score" id="final"></div>
+  <p id="counts"></p>
+  <p>Välj en ny låt på TV:n, eller tryck här för att starta igen.</p>
+  <button id="again">Dansa igen</button>
+</div>
+<script>
+/*
+ * The phone half of Dansgolvet (tv/dance.js). It joins the TV through ntfy.sh, then talks to it over WebRTC on the
+ * home network (or through ntfy when that doesn't open). During a song it reads the motion sensor and scores each move
+ * here, against what the TV says the dancer's glowing hand does (how much it moves, and which way); only the grades
+ * go to the TV.
+ */
+(function () {
+  'use strict';
+  var hash = decodeURIComponent(location.hash.slice(1)).split('|');
+  var TOPIC = hash[0], RELAY = hash[1] || 'https://ntfy.sh/';
+  var STORE = 'fmtv.dancephone', GRADES = ['Miss', 'Okej', 'Bra', 'Super', 'Perfekt!'], POINTS = [0, 50, 100, 150, 200];
+  var me = {};
+  try { me = JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { me = {}; }
+  if (!me.p) { me.p = Math.random().toString(36).slice(2, 12); }
+  function save() { try { localStorage.setItem(STORE, JSON.stringify(me)); } catch (e) {} }
+  save();
+
+  function $(id) { return document.getElementById(id); }
+  function show(id) { ['start', 'wait', 'lobby', 'play', 'done'].forEach(function (s) { $(s).classList.toggle('hide', s !== id); }); }
+  function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+
+  if (!/^fmtv-dans-/.test(TOPIC)) { $('startErr').textContent = 'Skanna QR-koden på TV:n (Genvägar → Dansgolvet) för att öppna sidan.'; $('join').disabled = true; }
+  $('name').value = me.name || '';
+
+  // MARK: - Talking to the TV
+
+  var es = null, pc = null, dc = null, link = 'none', offset = 0, bestRtt = 1e9, joinedAt = 0, welcomed = false;
+
+  function post(o) {
+    return fetch(RELAY + TOPIC + '-tv?cache=no', {method: 'POST', body: JSON.stringify(o)}).catch(function () {});
+  }
+  function send(o) {
+    o.p = me.p;
+    if (dc && dc.readyState === 'open') { try { dc.send(JSON.stringify(o)); return; } catch (e) {} }
+    post(o);
+  }
+
+  function listen(ready) {
+    if (es) es.close();
+    es = new EventSource(RELAY + TOPIC + '-' + me.p + ',' + TOPIC + '-all/sse');
+    var opened = false;
+    es.onmessage = function (e) {
+      var m = null, o = null;
+      try { m = JSON.parse(e.data); } catch (x) { return; }
+      if (m && m.event === 'open' && !opened) { opened = true; ready(); return; }
+      if (!m || m.event !== 'message') return;
+      try { o = JSON.parse(m.message); } catch (x) { return; }
+      fromTv(o);
+    };
+    es.onopen = function () { setTimeout(function () { if (!opened) { opened = true; ready(); } }, 600); };
+    es.onerror = function () { if (!welcomed) $('waitText').textContent = 'Når inte reläet (ntfy.sh). Försöker igen…'; };
+  }
+
+  function offer(done) {
+    if (!window.RTCPeerConnection) { done(null); return; }
+    try { pc = new RTCPeerConnection({iceServers: [{urls: 'stun:stun.l.google.com:19302'}]}); } catch (e) { done(null); return; }
+    dc = pc.createDataChannel('dans', {ordered: true});
+    dc.onopen = function () { link = 'rtc'; showLink(); sync(5, 150); };
+    dc.onmessage = function (m) { var o = null; try { o = JSON.parse(m.data); } catch (x) {} if (o) fromTv(o); };
+    dc.onclose = function () { if (link === 'rtc') { link = 'relay'; showLink(); } };
+    var sent = false;
+    function finish() { if (!sent) { sent = true; done(pc.localDescription && pc.localDescription.sdp.length < 3500 ? pc.localDescription.sdp : null); } }
+    pc.onicecandidate = function (ev) { if (!ev.candidate) finish(); };
+    pc.createOffer().then(function (o) { return pc.setLocalDescription(o); }).then(function () { setTimeout(finish, 2500); }).catch(function () { done(null); });
+  }
+
+  function join() {
+    me.name = ($('name').value || '').trim().slice(0, 14) || 'Dansare';
+    save();
+    show('wait');
+    askMotion();
+    keepAwake();
+    listen(function () {
+      offer(function (sdp) {
+        joinedAt = Date.now();
+        post({t: 'join', p: me.p, name: me.name, sdp: sdp});
+        setTimeout(function () { if (!welcomed) $('waitText').textContent = 'TV:n svarar inte. Är Dansgolvet öppet på TV:n?'; }, 8000);
+      });
+    });
+  }
+
+  function showLink() { $('link').textContent = link === 'rtc' ? 'Direkt ansluten till TV:n' : 'Ansluten via nätet (lite fördröjning)'; }
+
+  /** This phone's clock against the TV's: a few pings, the quickest one counts. */
+  function sync(n, gap) {
+    var i = 0;
+    (function one() { if (i++ >= n) return; send({t: 'ping', c: Date.now()}); setTimeout(one, gap); })();
+  }
+
+  function fromTv(o) {
+    if (!o || !o.t) return;
+    if (o.t === 'welcome') {
+      welcomed = true;
+      document.body.style.setProperty('--c', o.color);
+      document.body.classList.add('me');
+      $('hello').textContent = 'Hej ' + (o.name || me.name) + '!';
+      show(game ? 'play' : 'lobby');
+      if (o.sdp && pc) pc.setRemoteDescription({type: 'answer', sdp: o.sdp}).catch(function () {});
+      setTimeout(function () { if (link !== 'rtc') { link = 'relay'; showLink(); sync(3, 1200); } }, 7000);
+      showLink();
+      return;
+    }
+    if (o.t === 'full') { show('start'); $('startErr').textContent = 'Det är redan fyra spelare. Vänta tills nästa låt.'; return; }
+    if (o.t === 'pong') {
+      var now = Date.now(), rtt = now - o.c;
+      if (rtt < bestRtt) { bestRtt = rtt; offset = o.s - (o.c + rtt / 2); }
+      return;
+    }
+    if (o.t === 'go') { begin(o); return; }
+    if (o.t === 'done') { end(); return; }
+    if (o.t === 'lobby') { game = null; show('lobby'); return; }
+    if (o.t === 'bye') { game = null; show('start'); $('startErr').textContent = 'Dansgolvet stängdes på TV:n.'; return; }
+  }
+
+  // MARK: - The motion sensor
+
+  var samples = [], gx = 0, gy = 0, gz = 9.8, motionOk = false;
+
+  function askMotion() {
+    var D = window.DeviceMotionEvent;
+    if (D && typeof D.requestPermission === 'function') {
+      D.requestPermission().then(function (r) { if (r === 'granted') startMotion(); else noMotion(); }).catch(noMotion);
+    } else if (D) startMotion();
+    else noMotion();
+  }
+  function noMotion() { $('link').textContent = 'Mobilen ger inte rörelsesensorn till sidan, så det blir inga poäng.'; }
+
+  function startMotion() {
+    window.addEventListener('devicemotion', function (e) {
+      var ag = e.accelerationIncludingGravity, a = e.acceleration;
+      if (!ag || ag.x === null) return;
+      motionOk = true;
+      gx = gx * 0.9 + ag.x * 0.1; gy = gy * 0.9 + ag.y * 0.1; gz = gz * 0.9 + ag.z * 0.1;   // gravity, slowly
+      var lx, ly, lz;
+      if (a && a.x !== null) { lx = a.x; ly = a.y; lz = a.z; } else { lx = ag.x - gx; ly = ag.y - gy; lz = ag.z - gz; }
+      var gl = Math.sqrt(gx * gx + gy * gy + gz * gz) || 1;
+      var v = (lx * gx + ly * gy + lz * gz) / gl, m = Math.sqrt(lx * lx + ly * ly + lz * lz);
+      var h = Math.sqrt(Math.max(0, m * m - v * v));
+      samples.push([Date.now(), m, Math.abs(v), h]);
+      if (samples.length > 1200) samples.splice(0, 300);
+    });
+  }
+
+  var wake = null;
+  function keepAwake() {
+    try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (w) { wake = w; }).catch(function () {}); } catch (e) {}
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && welcomed) keepAwake(); });
+
+  // MARK: - Scoring the moves
+
+  var game = null, timer = 0, pending = [];
+
+  function begin(o) {
+    game = {at: o.at, bpm: o.bpm, moves: o.m, lib: o.lib, hard: o.hard, next: 0, score: 0, counts: [0, 0, 0, 0, 0]};
+    $('song').textContent = o.song + (o.hard ? ' · Svår' : ' · Lätt');
+    $('score').textContent = '0'; $('grade').textContent = ''; $('grade').className = 'big';
+    $('move').textContent = 'Gör dig redo…';
+    show('play');
+    clearInterval(timer);
+    timer = setInterval(tick, 100);
+  }
+
+  function tvNow() { return Date.now() + offset; }
+  function beatTime(b) { return game.at + b * 60000 / game.bpm; }   // on the TV's clock
+
+  function tick() {
+    if (!game) return;
+    var now = tvNow(), mv = game.moves;
+    // the move being danced now
+    for (var k = mv.length - 1; k >= 0; k--) {
+      if (now >= beatTime(mv[k][1])) { var nm = (game.lib[mv[k][3]] || [''])[0]; if ($('move').textContent !== nm) $('move').textContent = nm; break; }
+    }
+    while (game.next < mv.length && now > beatTime(mv[game.next][1] + mv[game.next][2]) + 250) {
+      score(mv[game.next]);
+      game.next++;
+    }
+    if (pending.length && (link === 'rtc' || pending.length >= 4)) flush();
+  }
+
+  function score(m) {
+    var i = m[0], b = m[1], n = m[2], sig = game.lib[m[3]] || ['', 'm', 'a'];
+    var t0 = beatTime(b) - offset, t1 = beatTime(b + n) - offset, win = [];
+    for (var k = 0; k < samples.length; k++) if (samples[k][0] >= t0 && samples[k][0] <= t1) win.push(samples[k]);
+    if (win.length < 5) return;   // no sensor: nothing to say
+    var E = 0, V = 0, Hh = 0, max = 0;
+    for (k = 0; k < win.length; k++) { E += win[k][1]; V += win[k][2]; Hh += win[k][3]; if (win[k][1] > max) max = win[k][1]; }
+    E /= win.length; V /= win.length; Hh /= win.length;
+    var rv = V / Math.max(0.001, V + Hh);
+    var se = sig[1] === 's' ? clamp((4 - E) / 3, 0, 1)
+      : sig[1] === 'h' ? clamp((E - 2) / 5, 0, 1)
+      : (E < 1.5 ? E / 1.5 : E > 12 ? clamp(1 - (E - 12) / 12, 0.5, 1) : 1);
+    var sd = sig[1] === 's' || sig[2] === 'a' ? 1 : sig[2] === 'v' ? clamp((rv - 0.3) / 0.3, 0, 1) : clamp((0.7 - rv) / 0.3, 0, 1);
+    var sr = 1;
+    if (sig[1] !== 's') {   // moving on the beats
+      var hits = 0;
+      for (var bt = 0; bt < n; bt++) {
+        var at = beatTime(b + bt) - offset, local = 0;
+        for (k = 0; k < win.length; k++) if (Math.abs(win[k][0] - at) < 200 && win[k][1] > local) local = win[k][1];
+        if (max > 2 && local >= 0.55 * max) hits++;
+      }
+      sr = hits / n;
+    }
+    var total = 0.5 * se + 0.25 * sd + 0.25 * sr;
+    if (!game.hard) total = Math.min(1, total * 1.15 + 0.05);
+    var g = total >= 0.85 ? 4 : total >= 0.68 ? 3 : total >= 0.5 ? 2 : total >= 0.3 ? 1 : 0;
+    game.score += POINTS[g]; game.counts[g]++;
+    $('grade').textContent = GRADES[g]; $('grade').className = 'big g' + g;
+    $('score').textContent = String(game.score);
+    if (g === 4 && navigator.vibrate) navigator.vibrate(40);
+    pending.push([i, g]);
+  }
+
+  function flush() {
+    if (!pending.length) return;
+    var h = pending; pending = [];
+    if (link === 'rtc') { for (var k = 0; k < h.length; k++) send({t: 'hit', i: h[k][0], g: h[k][1]}); }
+    else send({t: 'hits', h: h});
+  }
+
+  function end() {
+    if (!game) return;
+    flush();
+    clearInterval(timer);
+    var max = game.moves.length * 200, r = max ? game.score / max : 0;
+    var s = r >= 0.85 ? 5 : r >= 0.7 ? 4 : r >= 0.5 ? 3 : r >= 0.3 ? 2 : r > 0.05 ? 1 : 0;
+    $('stars').textContent = new Array(s + 1).join('★') + new Array(6 - s).join('☆');
+    $('final').textContent = game.score + ' poäng';
+    $('counts').textContent = game.counts[4] + ' perfekta · ' + game.counts[3] + ' super · ' + game.counts[0] + ' missar';
+    game = null;
+    show('done');
+  }
+
+  $('join').onclick = join;
+  $('go').onclick = function () { send({t: 'start'}); };
+  $('again').onclick = function () { send({t: 'start'}); };
+  window.addEventListener('pagehide', function () { if (welcomed) send({t: 'leave'}); });
+
+  // for tests
+  window.__dans = {fromTv: fromTv, samples: samples, state: function () { return {game: game, link: link, offset: offset, score: game ? game.score : null}; }, flush: flush};
+})();
+</script>
+</body>
+</html>
