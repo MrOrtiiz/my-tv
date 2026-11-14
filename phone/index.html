@@ -91,7 +91,7 @@
 
   <div class="sync" id="sync">
     <h2>Samma inställningar på alla TV:ar</h2>
-    <p>Hämta inställningarna från en TV (TMDB-nyckel, IPTV-länk, Claude, Plex och hemskärmen) och skicka dem till de andra.
+    <p>Hämta inställningarna från en TV (TMDB-nyckel, IPTV-länk, Claude, Plex, Stremio och hemskärmen) och skicka dem till de andra.
       Koppla varje TV en gång: Sök → Koppla mobilen på TV:n, och skanna QR-koden.</p>
     <div id="tvlist"></div>
     <button class="wide" id="fetch">Hämta från TV:n</button>
@@ -269,6 +269,7 @@
       if (p.iptv) have.push('IPTV-länk');
       if (s.claude) have.push('Claude');
       if (s.plex) have.push('Plex');
+      if (s.stremio) have.push('Stremio');
       have.push('hemskärmen' + (p.shelf ? ' med ' + p.shelf.length + ' favoritappar' : ''));
       var when = new Date(s.at), d = document.createElement('div');
       d.textContent = 'Från ' + nameOf(snap.topic) + ', hämtad ' + when.toLocaleString('sv-SE', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'}) + ': ' + have.join(', ') + '.';
