@@ -1,7 +1,7 @@
 /*
  * The home screen for web-app TVs (LG webOS, Samsung Tizen), with the Android app's design and behavior (HomeView):
- *  - top: the "For You" title and the tabs (Explore, Movies, Shows); icon-only glass buttons at the right (Live TV,
- *    HDMI Inputs, Settings) and the crypto quotes at the end of the tab row;
+ *  - top: the "For You" title and the tabs (Explore, Movies, Shows); icon-only glass buttons at the right (Search,
+ *    Games, HDMI Inputs, Shortcuts) and the crypto quotes at the end of the tab row;
  *  - three picks for this hour in the selected tab; the background is the focused one's photo, blurred, almost white;
  *  - the glass shelf with the apps; ↓ opens the drawer (inputs, shortcuts, weather, prices); ↑ or Back closes it;
  *  - a night look from sunset to sunrise; a screensaver after a few idle minutes.
@@ -410,7 +410,7 @@
     }
     var buttons = $('buttons');
     buttons.innerHTML = '';
-    var defs = [['search', 'Sök'], ['live_tv', tr('light|Live TV')], ['hdmi', tr('Inputs')], ['apps', tr('Shortcuts')]];
+    var defs = [['search', 'Sök'], ['gamepad', 'Spel'], ['hdmi', tr('Inputs')], ['apps', tr('Shortcuts')]];   // live TV is under Inputs
     for (var b = 0; b < 4; b++) {
       var r = el('button', 'round' + (b === 3 ? ' last' : ''), buttons);
       r.style.left = (1508 + 88 * b) + 'px';
@@ -911,10 +911,14 @@
       }
       return out;
     }
+    if (kind === 'games') {   // our own games; more come here as they're made
+      if (window.Dance) out.push({label: 'Dansgolvet', symbol: 'sparkles', run: function () { Dance.open(); }});
+      out.push({label: 'Fler spel kommer', symbol: 'gamepad', off: true, value: 'Snart'});
+      return out;
+    }
     out.push({label: tr('All Apps'), symbol: 'apps', run: openApps});
     out.push({label: tr('Shelf'), symbol: 'apps', run: openShelfEdit});
     out.push({label: tr('Home Settings'), symbol: 'settings', run: openSettings});
-    if (window.Dance) out.push({label: 'Dansgolvet', symbol: 'sparkles', run: function () { Dance.open(); }});
     if (window.IPTV) out.push({label: 'IPTV-länk', symbol: 'live_tv', run: function () { openKey('iptv'); }});
     if (TV.canOpenSettings) out.push({label: tr('TV Settings'), symbol: 'tv_settings', run: tvSettings});
     out.push({label: tr('About this TV'), symbol: 'settings', run: openAbout});
@@ -926,8 +930,8 @@
     var box = $('picker').firstChild;
     box.innerHTML = '';
     var title = el('div', 'title', box);
-    sym(kind === 'inputs' ? 'hdmi' : 'apps', title);
-    title.appendChild(document.createTextNode(kind === 'inputs' ? tr('Inputs') : tr('Shortcuts')));
+    sym(kind === 'inputs' ? 'hdmi' : kind === 'games' ? 'gamepad' : 'apps', title);
+    title.appendChild(document.createTextNode(kind === 'inputs' ? tr('Inputs') : kind === 'games' ? 'Spel' : tr('Shortcuts')));
     var list = el('div', 'list', box), holder = el('div', 'rows', list);
     list.style.height = Math.min(pickItems.length, 7) * 78 + 'px';
     st.pick = 0;
@@ -1667,7 +1671,7 @@
         if (st.top < 3) return;
         if (st.top === BARCA) { if (window.BarcaBox && BarcaBox.play) BarcaBox.play(toast); return; }
         if (st.top === 3) { if (window.Search) Search.open(); }
-        else if (st.top === 4) { var live = liveTV(); if (live) launcher(live.id, tr('Live TV'))(); }
+        else if (st.top === 4) openPicker('games');
         else if (st.top === 5) openPicker('inputs');
         else openPicker('shortcuts');
         return;
