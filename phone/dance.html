@@ -51,6 +51,14 @@
   <input id="name" maxlength="14" placeholder="Ditt namn" autocomplete="off">
   <div class="label">Din gubbe</div>
   <div class="row" id="gubbar"></div>
+  <div class="label" id="driveLabel" style="display:none">Från Drive</div>
+  <div class="row" id="drive"></div>
+  <p id="driveNote" style="font-size:14px;margin:6px auto"></p>
+  <div id="driveSetup" class="hide">
+    <input id="driveUrl" placeholder="Klistra in skriptets adress (…/exec)" autocomplete="off" style="font-size:15px">
+    <button id="driveSave" class="ghost">Koppla</button>
+    <p style="font-size:13px"><a href="https://github.com/MrOrtiiz/my-tv/blob/main/phone/gubbar-script.gs" target="_blank" style="color:#FFD23D">Så gör du skriptet (en gång)</a></p>
+  </div>
   <input type="file" id="file" accept="image/*" class="hide">
   <p style="font-size:14px;margin:6px auto"><a href="mall-gubbe.png" target="_blank" style="color:#FFD23D">Mall: så ska bilden se ut för att armarna ska dansa</a></p>
   <button id="join">Var med!</button>
@@ -103,7 +111,7 @@
 (function () {
   'use strict';
   var hash = decodeURIComponent(location.hash.slice(1)).split('|');
-  var TOPIC = hash[0], RELAY = hash[1] || 'https://ntfy.sh/', KEY = hash[2] || '';
+  var TOPIC = hash[0], RELAY = hash[1] || 'https://ntfy.sh/', KEY = hash[2] || '', DRIVE_QR = hash[3] || '';
   var STORE = 'fmtv.dancephone', GRADES = ['Miss', 'Okej', 'Bra', 'Super', 'Perfekt!'], POINTS = [0, 50, 100, 150, 200];
   var me = {};
   try { me = JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { me = {}; }
@@ -191,6 +199,7 @@
     if (!o || !o.t) return;
     if (o.t === 'welcome') {
       welcomed = true;
+      if (me.drive && me.drive !== DRIVE_QR) setTimeout(tellTvDrive, 1500);
       document.body.style.setProperty('--c', o.color);
       document.body.classList.add('me');
       $('hello').textContent = 'Hej ' + (o.name || me.name) + '!';
@@ -240,9 +249,17 @@
 
   var src = null, made = null;   // the picture being made into a gubbe, and the result
 
+  var fromDrive = null;   // {id, modified} when the picture came from the Drive folder
+
   $('file').onchange = function () {
     var f = this.files && this.files[0];
     if (!f) return;
+    fromDrive = null;
+    openPicture(URL.createObjectURL(f), f.name, true);
+    this.value = '';
+  };
+
+  function openPicture(url, fileName, revoke) {
     var img = new Image();
     img.onload = function () {
       var h = Math.min(900, img.height), w = Math.round(img.width * h / img.height);
@@ -252,15 +269,97 @@
       src.mask = maskOf(src);
       src.box = boxOf(src);
       $('neck').value = String(Math.round(neckOf(src) * 100));   // a first guess at the chin, to drag from
-      $('gname').value = ($('name').value || me.name || '').trim() || f.name.replace(/\.[^.]+$/, '').slice(0, 14);
+      $('gname').value = (fromDrive ? '' : ($('name').value || me.name || '').trim()) || shortName(fileName);
       show('edit');
       remake();
-      URL.revokeObjectURL(img.src);
+      if (revoke) URL.revokeObjectURL(img.src);
     };
     img.onerror = function () { alert('Bilden gick inte att öppna.'); };
-    img.src = URL.createObjectURL(f);
-    this.value = '';
+    img.src = url;
+  }
+
+  /** A file name as a short gubbe name: the first words, at most 14 letters ("Ung man i T-pose…" → "Ung man"). */
+  function shortName(n) {
+    var words = String(n || 'Gubbe').replace(/\.[^.]+$/, '').split(/\s+/), out = '';
+    for (var i = 0; i < words.length; i++) { if ((out + ' ' + words[i]).trim().length > 14) break; out = (out + ' ' + words[i]).trim(); }
+    out = out.replace(/\s+(i|med|och|på|en|ett)$/i, '');
+    return out || String(n).slice(0, 14);
+  }
+
+  // MARK: - Gubbar from the Drive folder (through his own Apps Script, phone/gubbar-script.gs)
+
+  function driveUrl() { return DRIVE_QR || me.drive || ''; }
+
+  function loadDrive() {
+    var url = driveUrl(), box = $('drive');
+    $('driveSetup').classList.add('hide');
+    if (!url) {
+      $('driveLabel').style.display = 'none'; box.innerHTML = '';
+      $('driveNote').innerHTML = '<a href="#" id="driveLink" style="color:#9BE7FF">Visa gubbarna från Google Drive</a>';
+      $('driveLink').onclick = function (e) { e.preventDefault(); $('driveSetup').classList.remove('hide'); $('driveNote').textContent = ''; };
+      return;
+    }
+    $('driveLabel').style.display = '';
+    $('driveNote').textContent = 'Hämtar gubbarna från Drive…';
+    fetch(url).then(function (r) { return r.json(); }).then(function (o) {
+      if (!o || !o.ok) throw new Error(o && o.error || 'inget svar');
+      box.innerHTML = '';
+      $('driveNote').textContent = o.files.length ? '' : 'Mappen i Drive är tom.';
+      o.files.forEach(function (f) {
+        var have = me.gubbar.filter(function (g) { return g.drive === f.id && g.mod === f.modified; })[0];
+        var d = document.createElement('div'); d.className = 'g' + (have && have.id === me.sel ? ' on' : '');
+        var pic = document.createElement('div'); pic.className = 'pic';
+        if (f.thumb) pic.style.backgroundImage = 'url(' + f.thumb + ')';
+        d.appendChild(pic); d.appendChild(document.createTextNode(have ? have.name : shortName(f.name)));
+        d.onclick = function () {
+          if (have) { me.sel = have.id; save(); drawGubbar(); loadDrive(); sendAvatar(); return; }
+          driveFile(url, f);
+        };
+        box.appendChild(d);
+      });
+    }).catch(function (e) {
+      $('driveNote').textContent = 'Kunde inte hämta gubbarna från Drive (' + e.message + ').';
+    });
+  }
+
+  function driveFile(url, f) {
+    $('driveNote').textContent = 'Hämtar ' + shortName(f.name) + '…';
+    var parts = [], type = f.type || 'image/png';
+    (function next(n) {
+      fetch(url + (url.indexOf('?') < 0 ? '?' : '&') + 'file=' + encodeURIComponent(f.id) + '&part=' + n).then(function (r) { return r.json(); }).then(function (o) {
+        if (!o || !o.ok) throw new Error(o && o.error || 'inget svar');
+        parts.push(o.data); type = o.type || type;
+        if (n + 1 < o.parts) { next(n + 1); return; }
+        $('driveNote').textContent = '';
+        fromDrive = {id: f.id, modified: f.modified};
+        openPicture('data:' + type + ';base64,' + parts.join(''), f.name, false);
+      }).catch(function (e) { $('driveNote').textContent = 'Bilden gick inte att hämta (' + e.message + ').'; });
+    })(0);
+  }
+
+  $('driveSave').onclick = function () {
+    var u = ($('driveUrl').value || '').trim();
+    if (!/^https:\/\/script\.google(usercontent)?\.com\/.+/.test(u)) { $('driveNote').textContent = 'Det ser inte ut som en adress till ett Google Apps Script (…/exec).'; return; }
+    me.drive = u; save();
+    tellTvDrive();
+    loadDrive();
   };
+
+  /** The script's address to the TV (locked with the key when it goes through ntfy), for the QR code. */
+  function tellTvDrive() {
+    if (!me.drive || !welcomed) return;
+    if (dc && dc.readyState === 'open') { send({t: 'drive', u: me.drive}); return; }
+    if (!KEY || !window.crypto || !crypto.subtle) return;
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    crypto.subtle.digest('SHA-256', new TextEncoder().encode(KEY)).then(function (raw) {
+      return crypto.subtle.importKey('raw', raw, {name: 'AES-GCM'}, false, ['encrypt']);
+    }).then(function (key) {
+      return crypto.subtle.encrypt({name: 'AES-GCM', iv: iv}, key, new TextEncoder().encode(me.drive));
+    }).then(function (locked) {
+      function b64(a) { return btoa(String.fromCharCode.apply(null, new Uint8Array(a))); }
+      post({t: 'drivelock', p: me.p, iv: b64(iv), d: b64(locked)});
+    }).catch(function () {});
+  }
 
   /** What belongs to the figure: the picture's own transparency, or else everything but the background colour. */
   function maskOf(s) {
@@ -554,14 +653,18 @@
   $('saveG').onclick = function () {
     if (!made) return;
     var g = {id: Math.random().toString(36).slice(2, 9), name: ($('gname').value || 'Gubbe').trim().slice(0, 14), head: made.head, colors: made.colors, full: made.full};
+    if (fromDrive) {   // a newer copy of the same Drive picture takes the old one's place
+      g.drive = fromDrive.id; g.mod = fromDrive.modified;
+      me.gubbar = me.gubbar.filter(function (x) { return x.drive !== g.drive; });
+    }
     me.gubbar.push(g); me.sel = g.id;
     try { save(); } catch (e) {}
     if (localStorage.getItem(STORE) === null || JSON.parse(localStorage.getItem(STORE)).gubbar.length !== me.gubbar.length) {
       alert('Mobilen har inte plats att spara fler gubbar. Ta bort en gammal (tryck två gånger på den).');
       me.gubbar.pop(); me.sel = null; save();
     }
-    src = null; made = null;
-    drawGubbar();
+    src = null; made = null; fromDrive = null;
+    drawGubbar(); loadDrive();
     show(welcomed ? 'lobby' : 'start');
     sendAvatar();
   };
@@ -714,7 +817,9 @@
   }
 
   $('join').onclick = function () { if (welcomed) { show('lobby'); return; } join(); };
+  if (DRIVE_QR && !me.drive) { me.drive = DRIVE_QR; save(); }
   drawGubbar();
+  loadDrive();
   $('go').onclick = function () { send({t: 'start'}); };
   $('again').onclick = function () { send({t: 'start'}); };
   window.addEventListener('pagehide', function () { if (welcomed) send({t: 'leave'}); });

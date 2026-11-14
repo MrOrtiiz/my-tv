@@ -31,7 +31,7 @@ var Dance = (function () {
   function topic() { if (!cfg.topic) { cfg.topic = 'fmtv-dans-' + rid(20); save(); } return cfg.topic; }
   /** A key only the TV and the QR code know: a gubbe sent through ntfy is locked with it. */
   function secret() { if (!cfg.key) { cfg.key = rid(32); save(); } return cfg.key; }
-  var VERSION = '2026-11-14c';   // in the phone's link, so a phone never keeps an older page
+  var VERSION = '2026-11-14d';   // in the phone's link, so a phone never keeps an older page
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, parent, text) {
@@ -556,6 +556,8 @@ var Dance = (function () {
     if (o.t === 'hits') { for (var i = 0; i < (o.h || []).length; i++) hit(pl, o.h[i][0], o.h[i][1]); return; }
     if (o.t === 'leave') { leave(pl); return; }
     if (o.t === 'avp') { avatarPart(pl, o); return; }
+    if (o.t === 'drive' && direct) { setDrive(o.u); return; }
+    if (o.t === 'drivelock') { unlock(o.iv, o.d, function (txt) { setDrive(txt); }); return; }
     if (o.t === 'avatar') { setAvatar(pl, o); send(pl, {t: 'gotavatar'}, false); drawPlayers(); return; }
     if (o.t === 'start' && state === 'lobby') { start(); return; }
   }
@@ -572,6 +574,18 @@ var Dance = (function () {
     try { whole = JSON.parse(bag.d.join('')); } catch (e) { whole = null; }
     pl.parts = null;
     if (whole) { setAvatar(pl, whole); send(pl, {t: 'gotavatar'}, false); drawPlayers(); }
+  }
+
+  /** Opens something locked with the key (base64 iv and data), done(text). */
+  function unlock(iv64, data64, done) {
+    var subtle = window.crypto && window.crypto.subtle;
+    if (!subtle || !window.TextEncoder) return;
+    function bytes(b64) { return Uint8Array.from(atob(b64), function (ch) { return ch.charCodeAt(0); }); }
+    subtle.digest('SHA-256', new TextEncoder().encode(secret())).then(function (raw) {
+      return subtle.importKey('raw', raw, {name: 'AES-GCM'}, false, ['decrypt']);
+    }).then(function (key) {
+      return subtle.decrypt({name: 'AES-GCM', iv: bytes(iv64)}, key, bytes(data64));
+    }).then(function (plain) { done(new TextDecoder().decode(plain)); }).catch(function () {});
   }
 
   /** A gubbe that came through ntfy as a locked file: fetched, opened with the key, and used. */
@@ -686,7 +700,17 @@ var Dance = (function () {
 
   function isOpen() { return opened; }
 
-  function phoneUrl() { return PHONE + '?v=' + VERSION + '#' + topic() + '|' + (RELAY !== 'https://ntfy.sh/' ? RELAY : '') + '|' + secret(); }
+  function phoneUrl() {
+    return PHONE + '?v=' + VERSION + '#' + topic() + '|' + (RELAY !== 'https://ntfy.sh/' ? RELAY : '') + '|' + secret() + (cfg.drive ? '|' + cfg.drive : '');
+  }
+
+  /** The Drive gubbar's script address, from a phone: kept here and put in the QR code for every phone. */
+  function setDrive(u) {
+    if (!/^https:\/\/script\.google(usercontent)?\.com\/[^\s|#]+$/.test(String(u || '')) || cfg.drive === u) return;
+    cfg.drive = u; save();
+    if (state === 'lobby' && opened) drawLobby();
+    if (window.FreeMyTV && FreeMyTV.toast) FreeMyTV.toast('Gubbarna från Drive är kopplade.');
+  }
 
   var qrWait = null;
   function withQr(done) {
