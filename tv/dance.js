@@ -587,6 +587,11 @@ var Dance = (function () {
       av.full.body.im = load(f.body.img);
       av.full.legs[0].im = load(f.legs[0].img);
       av.full.legs[1].im = load(f.legs[1].img);
+      if (f.arms && f.arms.length === 2) {
+        waiting += 4;
+        av.full.arms = f.arms;
+        for (var k = 0; k < 2; k++) { f.arms[k].upper.im = load(f.arms[k].upper.img); f.arms[k].fore.im = load(f.arms[k].fore.img); }
+      }
     }
     av.img = load(o.head);
     pl.avatar = av;
@@ -1039,10 +1044,30 @@ var Dance = (function () {
     c.rotate(lr);
     c.drawImage(f.body.im, f.body.x * U - bodyW / 2, -bodyH, bodyW, bodyH);
     c.restore();
-    // the arms: from the shoulders, in the clothes' colour, with hands
+    if (f.arms) {   // the picture's own arms, turning at the shoulder and the elbow
+      var cosL = Math.cos(lr), sinL = Math.sin(lr), handR = null;
+      for (var q = 0; q < 2; q++) {
+        var A = f.arms[q], ang = q === 0 ? p.la : p.ra, base = q === 0 ? -90 : 90;
+        var lx = A.sx * U, ly = -bodyH + A.sy * U;
+        var sxw = hx + lx * cosL - ly * sinL, syw = hy + lx * sinL + ly * cosL;
+        var t1 = (base - ang[0]) * Math.PI / 180, t2 = (base - ang[1]) * Math.PI / 180;
+        var exw = sxw + (A.ex * Math.cos(t1) - A.ey * Math.sin(t1)) * U, eyw = syw + (A.ex * Math.sin(t1) + A.ey * Math.cos(t1)) * U;
+        c.save(); c.translate(exw, eyw); c.rotate(t2);
+        c.drawImage(A.fore.im, -A.fore.px * U, -A.fore.py * U, A.fore.w * U, A.fore.h * U); c.restore();
+        c.save(); c.translate(sxw, syw); c.rotate(t1);
+        c.drawImage(A.upper.im, -A.upper.px * U, -A.upper.py * U, A.upper.w * U, A.upper.h * U); c.restore();
+        if (q === 1) handR = [exw + (A.hx * Math.cos(t2) - A.hy * Math.sin(t2)) * U, eyw + (A.hx * Math.sin(t2) + A.hy * Math.cos(t2)) * U];
+      }
+      if (lead && handR) {
+        var rr = (24 + 8 * (beatGlow || 0)) * s;
+        c.fillStyle = 'rgba(255, 210, 61, 0.3)'; c.beginPath(); c.arc(handR[0], handR[1], rr * 1.9, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = '#FFD23D'; c.lineWidth = 7 * s; c.beginPath(); c.arc(handR[0], handR[1], rr, 0, Math.PI * 2); c.stroke();
+      }
+    }
+    // or dancing arms from the shoulders, in the clothes' colour, with hands
     var shY = 0.1 * bodyH, shX = 0.3 * bodyW, a1 = 0.16 * U, a2 = 0.15 * U, sw = Math.max(26 * s, 0.17 * bodyW);
-    var sides = [[-1, p.la], [1, p.ra]], hand = null;
-    for (var k = 0; k < 2; k++) {
+    var sides = f.arms ? [] : [[-1, p.la], [1, p.ra]], hand = null;
+    for (var k = 0; k < sides.length; k++) {
       var sd = sides[k][0], ag = sides[k][1];
       var sx = nx - ux * shY + px * sd * shX, sy = ny - uy * shY + py * sd * shX;
       var d1 = dir(ag[0]), d2 = dir(ag[1]);

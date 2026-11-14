@@ -245,6 +245,7 @@
       src = {c: c, data: x.getImageData(0, 0, w, h), w: w, h: h};
       src.mask = maskOf(src);
       src.box = boxOf(src);
+      $('neck').value = String(Math.round(neckOf(src) * 100));   // a first guess at the chin, to drag from
       $('gname').value = ($('name').value || me.name || '').trim() || f.name.replace(/\.[^.]+$/, '').slice(0, 14);
       show('edit');
       remake();
@@ -275,6 +276,30 @@
     }
     for (i = 0; i < w * h; i++) m[i] = seen[i] ? 0 : 1;
     return m;
+  }
+
+  /** Where the neck is: the narrowest row between the head and the shoulders (as a share of the figure's height). */
+  function neckOf(s) {
+    var b = s.box, best = 0.28, bestW = 1e9, widths = [];
+    for (var f = 0.1; f <= 0.42; f += 0.005) {
+      var y = Math.round(b.t + b.h * f), l = -1, r = -1;
+      for (var x = b.l; x <= b.r; x++) if (s.mask[y * s.w + x]) { if (l < 0) l = x; r = x; }
+      widths.push([f, l < 0 ? 0 : r - l]);
+    }
+    // down from the top: the head widens, narrows at the chin and neck, then the shoulders (or arms) widen again
+    var maxW = 0, dropped = false;
+    for (var i = 0; i < widths.length; i++) {
+      var wv = widths[i][1];
+      if (!dropped) {
+        if (wv > maxW) maxW = wv;
+        if (maxW > 0 && wv < maxW * 0.75) { dropped = true; bestW = wv; best = widths[i][0]; }
+      } else {
+        if (wv < bestW) { bestW = wv; best = widths[i][0]; }
+        if (wv > bestW * 1.6) break;
+      }
+    }
+    if (!dropped) best = 0.28;
+    return Math.min(0.45, Math.max(0.14, best + 0.005));
   }
 
   function boxOf(s) {
@@ -345,7 +370,9 @@
     made = {head: hc.toDataURL('image/png'), colors: colors, full: fullBody(cut, hl, hr, colors)};
     $('bodyPrev').src = made.full ? made.full.body.img : '';
     $('bodyPrev').style.display = made.full ? '' : 'none';
-    $('kind').textContent = made.full ? 'Hela kroppen används: kropp och ben från bilden, dansarmar i tröjans färg.' : 'Huvudet används, kroppen ritas i klädernas färger.';
+    $('kind').textContent = made.full && made.full.arms ? 'Hela kroppen används, med bildens egna armar.'
+      : made.full ? 'Hela kroppen används: kropp och ben från bilden, dansarmar i tröjans färg (armarna ligger inte rakt ut).'
+      : 'Huvudet används, kroppen ritas i klädernas färger.';
     $('headPrev').src = made.head;
     ['top', 'skin', 'legs', 'shoes'].forEach(function (n) { $('sw' + n.charAt(0).toUpperCase() + n.slice(1)).style.background = colors[n] || 'transparent'; });
     // the picture, with the line under the chin
@@ -423,7 +450,7 @@
    */
   function fullBody(cut, hl, hr, colors) {
     var b = src.box, w = src.w, m = src.mask, y, x, hem = -1, gapX = 0;
-    if (b.h < b.w * 1.4) return null;   // a face or a half figure: no legs to find
+    if (b.h < b.w * 0.95) return null;   // a face or a half figure: no legs to find (arms out make it wide, so not stricter)
     function runs(row) {
       var out = [], start = -1;
       for (var xx = b.l; xx <= b.r + 1; xx++) {
@@ -445,8 +472,10 @@
     var low = runs(Math.round(hem + (b.b - hem) * 0.3));
     if (low.length < 2) low = runs(hem + 2);
     gapX = Math.round((low[0][1] + low[1][0]) / 2);
-    var sc = Math.min(1, 700 / b.h);
-    var body = piece(cut - 2, hem + 2, function () { return true; }, sc, paintOutHands(colors.top));
+    var sc = Math.min(1, 700 / b.h), arms = armsOut(cut, hem);
+    var body = arms
+      ? piece(cut - 2, hem + 2, function (xx, yy) { return !arms.isArm(xx, yy); }, sc)
+      : piece(cut - 2, hem + 2, function () { return true; }, sc, paintOutHands(colors.top));
     var legL = piece(hem, b.b, function (xx) { return xx < gapX; }, sc);
     var legR = piece(hem, b.b, function (xx) { return xx >= gapX; }, sc);
     if (!body || !legL || !legR) return null;
@@ -458,10 +487,62 @@
     function norm(p, attach) {
       return {img: p.img, w: (p.r - p.l + 1) / H, h: (p.b - p.t + 1) / H, x: ((p.l + p.r) / 2 - cx) / H, ax: attach === undefined ? 0 : (attach - cx) / H};
     }
-    return {
+    var out = {
       head: {w: (hr - hl + 1) / H, h: (cut - b.t + 1) / H, x: ((hl + hr) / 2 - cx) / H},
       body: norm(body), legs: [norm(legL, topCenter(legL)), norm(legR, topCenter(legR))]
     };
+    if (arms) {   // the picture's own arms: upper arm and forearm on each side, with where they turn
+      out.arms = [];
+      for (var side = 0; side < 2; side++) {
+        var A = arms.sides[side];
+        var up = piece(arms.y0, arms.y1, A.upper, sc), fo = piece(arms.y0, arms.y1, A.fore, sc);
+        if (!up || !fo) { out.arms = null; break; }
+        out.arms.push({
+          sx: (A.sx - cx) / H, sy: (A.sy - cut) / H, ex: (A.ex - A.sx) / H, ey: (A.ey - A.sy) / H, hx: (A.hx - A.ex) / H, hy: (A.hy - A.ey) / H,
+          upper: {img: up.img, w: (up.r - up.l + 1) / H, h: (up.b - up.t + 1) / H, px: (A.sx - up.l) / H, py: (A.sy - up.t) / H},
+          fore: {img: fo.img, w: (fo.r - fo.l + 1) / H, h: (fo.b - fo.t + 1) / H, px: (A.ex - fo.l) / H, py: (A.ey - fo.t) / H}
+        });
+      }
+    }
+    return out;
+  }
+
+  /**
+   * Arms straight out to the sides (as in the template): the figure is much wider at the shoulders than at the
+   * waist. Then each arm is cut at the body's side (the shoulder) and halfway out (the elbow).
+   */
+  function armsOut(cut, hem) {
+    var b = src.box, w = src.w, m = src.mask;
+    var waistY = Math.round(cut + (hem - cut) * 0.72), mid = (b.l + b.r) / 2, wl = -1, wr = -1, x, y;
+    for (x = Math.round(mid); x >= b.l && m[waistY * w + x]; x--) wl = x;
+    for (x = Math.round(mid); x <= b.r && m[waistY * w + x]; x++) wr = x;
+    if (wl < 0 || wr < 0) return null;
+    var tw = wr - wl, tl = wl - tw * 0.03, tr = wr + tw * 0.03;
+    if (b.l > tl - tw * 0.5 || b.r < tr + tw * 0.5) return null;   // nothing far out on both sides
+    var y0 = cut, y1 = Math.round(cut + (hem - cut) * 0.55);
+    // the band of rows the arms are in
+    var top = y1, bot = y0;
+    for (y = y0; y <= y1; y++) for (x = b.l; x < tl - tw * 0.15; x++) if (m[y * w + x]) { if (y < top) top = y; if (y > bot) bot = y; break; }
+    if (bot <= top) return null;
+    y0 = Math.max(cut, top - 4); y1 = Math.min(hem, bot + 4);
+    function side(left) {
+      var edge = left ? tl : tr, far = edge, ys = 0, n = 0, yy, xx;
+      for (yy = y0; yy <= y1; yy++) for (xx = b.l; xx <= b.r; xx++) {
+        if (!m[yy * w + xx] || (left ? xx >= edge : xx <= edge)) continue;
+        if (left ? xx < far : xx > far) far = xx;
+      }
+      // the middle of the arm where it leaves the body (the shoulder) and halfway out (the elbow)
+      function centre(col) { var s0 = 0, k = 0; for (var q = y0; q <= y1; q++) if (m[q * w + Math.round(col)]) { s0 += q; k++; } return k ? s0 / k : (y0 + y1) / 2; }
+      var sx = edge, ex = (edge + far) / 2, hx = far + (left ? 1 : -1) * Math.abs(far - edge) * 0.04;
+      return {
+        sx: sx, sy: centre(sx + (left ? -3 : 3)), ex: ex, ey: centre(ex), hx: hx, hy: centre(far + (left ? 6 : -6)),
+        upper: function (xx, yy) { return yy >= y0 && yy <= y1 && (left ? xx < edge && xx >= ex : xx > edge && xx <= ex); },
+        fore: function (xx, yy) { return yy >= y0 && yy <= y1 && (left ? xx < ex : xx > ex); }
+      };
+    }
+    var L = side(true), R = side(false);
+    if (Math.abs(L.sx - L.hx) < tw * 0.5 || Math.abs(R.sx - R.hx) < tw * 0.5) return null;
+    return {y0: y0, y1: y1, sides: [L, R], isArm: function (xx, yy) { return yy >= y0 && yy <= y1 && (xx < tl || xx > tr); }};
   }
 
   $('saveG').onclick = function () {
@@ -615,7 +696,7 @@
   window.addEventListener('pagehide', function () { if (welcomed) send({t: 'leave'}); });
 
   // for tests
-  window.__dans = {fromTv: fromTv, samples: samples, state: function () { return {game: game, link: link, offset: offset, score: game ? game.score : null}; }, flush: flush};
+  window.__dans = {cut: function () { return src ? {box: src.box, neck: +$('neck').value} : null; }, fromTv: fromTv, samples: samples, state: function () { return {game: game, link: link, offset: offset, score: game ? game.score : null}; }, flush: flush};
 })();
 </script>
 </body>
