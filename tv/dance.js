@@ -52,8 +52,8 @@ var Dance = (function () {
   // lean = the torso's tilt, x / y = where the hips are (y > 0 is lower), head = the head's tilt.
   // The right arm on the screen is the lead: the player holds the phone in that hand and mirrors it.
 
-  function P(la1, la2, ra1, ra2, ll1, ll2, rl1, rl2, lean, x, y, head) {
-    return {la: [la1, la2], ra: [ra1, ra2], ll: [ll1, ll2], rl: [rl1, rl2], lean: lean || 0, x: x || 0, y: y || 0, head: head || 0};
+  function P(la1, la2, ra1, ra2, ll1, ll2, rl1, rl2, lean, x, y, head, bend) {
+    return {la: [la1, la2], ra: [ra1, ra2], ll: [ll1, ll2], rl: [rl1, rl2], lean: lean || 0, x: x || 0, y: y || 0, head: head || 0, bend: bend || 0};
   }
 
   var LEGS = [-6, -3, 6, 3];   // standing
@@ -93,6 +93,34 @@ var Dance = (function () {
       S(-55, -100, 35, -60, -6, 0, 4, 6), S(-55, -100, 55, 20, -4, 0, 0, -4)]},
     salsa: {name: 'Salsasteg', easy: true, cycle: 2, f: [
       P(-40, 80, 40, 100, -18, -6, 4, 2, 6, -18, 4, 6), P(-40, 100, 40, -80, -4, -2, 18, 6, -6, 18, 4, -6)]},
+    // the children's songs: touch what the song sings about
+    huvud: {name: 'Huvud', easy: true, kids: true, cycle: 1, f: [S(-143, 106, 143, -106), S(-136, 101, 136, -101, 0, 0, 8, 6)]},
+    axlar: {name: 'Axlar', easy: true, kids: true, cycle: 1, f: [S(-60, 120, 60, -120), S(-80, 100, 80, -100, 0, 0, 6)]},
+    kna: {name: 'Knä', easy: true, kids: true, cycle: 1, f: [
+      P(-10, -4, 10, 4, -25, 15, 25, -15, 0, 0, 21, 0, 0.6), P(-8, -2, 8, 2, -30, 25, 30, -25, 0, 0, 38, 4, 0.66)]},
+    ta: {name: 'Tå', easy: true, kids: true, cycle: 1, f: [
+      P(-6, -2, 6, 2, -30, 25, 30, -25, 0, 0, 38, 0, 0.95), P(-4, 0, 4, 0, -35, 15, 35, -15, 0, 0, 36, 6, 1)]},
+    ogon: {name: 'Ögon', easy: true, kids: true, cycle: 1, f: [S(-140, 86, 140, -86), S(-132, 86, 132, -86, 0, 0, 6, 4)]},
+    oron: {name: 'Öron', easy: true, kids: true, cycle: 1, f: [S(-114, 105, 114, -105), S(-108, 127, 108, -127, 0, 0, 4)]},
+    mun: {name: 'Mun', easy: true, kids: true, cycle: 1, f: [S(-154, 58, 154, -58), S(-147, 55, 147, -55, 0, 0, 6)]},
+    nasa: {name: 'Näsa', easy: true, kids: true, cycle: 1, f: [S(-38, 42, 152, -71), S(-38, 42, 150, -66, 0, 0, 6, 4)]},
+    groda: {name: 'Grodhopp', easy: true, kids: true, cycle: 1, f: [
+      P(-20, 17, 20, -17, -45, 10, 45, -10, 0, 0, 52), P(-10, 3, 10, -3, -12, -4, 12, 4, 0, 0, -24)]},
+    svans: {name: 'Svans', easy: true, kids: true, cycle: 1, f: [
+      P(-20, 17, 20, -17, -10, -4, 4, 2, 8, -24, 4, 6), P(-20, 17, 20, -17, -4, -2, 10, 4, -8, 24, 4, -6)]},
+    kvack: {name: 'Kvack!', easy: true, kids: true, cycle: 2, f: [
+      P(-10, -6, 10, 6, -60, 20, 60, -20, 0, 0, 94, 0, 0.5), P(-160, -165, 160, 165, -14, -6, 14, 6, 0, 0, -50)]},
+    blinka: {name: 'Blinka', easy: true, kids: true, cycle: 1, f: [S(-150, -165, 150, 165), S(-138, -148, 138, 148, 0, 0, 4)]},
+    diamant: {name: 'Diamant', easy: true, kids: true, cycle: 2, f: [S(-164, 133, 164, -133), S(-153, 126, 153, -126, 0, 0, 6)]},
+    klattra: {name: 'Klättra upp', easy: true, kids: true, cycle: 1, f: [S(-165, -172, 118, 155, 0, 0, 0, 4), S(-118, -155, 165, 172, 0, 0, 0, -4)]},
+    regn: {name: 'Regnet faller', easy: true, kids: true, cycle: 2, f: [S(-150, -165, 150, 165), S(-32, -22, 32, 22, 0, 0, 14)]},
+    sol: {name: 'Solen', easy: true, kids: true, cycle: 2, f: [S(-160, 150, 160, -150), S(-108, -118, 108, 118, 0, 0, -8)]},
+    smyga: {name: 'Smyg tyst', easy: true, kids: true, cycle: 2, f: [
+      P(-70, -50, 154, -58, -14, -2, 4, 2, 0, -12, 6), P(-70, -50, 154, -58, -4, -2, 14, 2, 0, 12, 6)]},
+    varna: {name: 'Akta dig!', easy: true, kids: true, cycle: 1, f: [S(-30, -20, 150, 168), S(-30, -20, 150, 196, 0, 0, 0, 4)]},
+    bjorn: {name: 'Björnen vaknar!', easy: true, kids: true, cycle: 1, f: [
+      P(-130, -170, 130, 170, -24, -6, 24, 6, 0, 0, 18), P(-112, -148, 112, 148, -28, -8, 28, 8, 0, 0, 30)]},
+    sova: {name: 'Sov gott', easy: true, kids: true, cycle: 4, f: [S(-154, 58, 154, -58, -6, -10, 0, -20), S(-147, 55, 147, -55, -4, -14, 4, -24)]},
     vagga: {name: 'Vagga', easy: true, cycle: 4, f: [
       P(-150, -155, -170, -165, -10, -4, 4, 2, 10, -20, 0, 8), P(165, 170, 150, 155, -4, -2, 10, 4, -10, 20, 0, -8)]}
   };
@@ -111,7 +139,8 @@ var Dance = (function () {
       ra: [lerpAngle(p.ra[0], q.ra[0], t), lerpAngle(p.ra[1], q.ra[1], t)],
       ll: [lerpAngle(p.ll[0], q.ll[0], t), lerpAngle(p.ll[1], q.ll[1], t)],
       rl: [lerpAngle(p.rl[0], q.rl[0], t), lerpAngle(p.rl[1], q.rl[1], t)],
-      lean: lerp(p.lean, q.lean, t), x: lerp(p.x, q.x, t), y: lerp(p.y, q.y, t), head: lerp(p.head, q.head, t)
+      lean: lerp(p.lean, q.lean, t), x: lerp(p.x, q.x, t), y: lerp(p.y, q.y, t), head: lerp(p.head, q.head, t),
+      bend: lerp(p.bend || 0, q.bend || 0, t)
     };
   }
 
@@ -129,7 +158,8 @@ var Dance = (function () {
   function joints(p, cx, gy, s) {
     var hx = cx + p.x * s, hy = gy - 330 * s + p.y * s;
     var lr = p.lean * Math.PI / 180, ux = Math.sin(lr), uy = -Math.cos(lr), px = -uy, py = ux;   // up the torso, across it
-    var nx = hx + ux * 228 * s, ny = hy + uy * 228 * s;
+    var tl = 228 * (1 - 0.9 * (p.bend || 0));   // bending forward (towards the TV), the torso looks shorter
+    var nx = hx + ux * tl * s, ny = hy + uy * tl * s;
     var sh = [nx + ux * -10 * s, ny + uy * -10 * s];
     var J = {hip: [hx, hy], neck: [nx, ny]};
     J.ls = [sh[0] - px * 56 * s, sh[1] - py * 56 * s];
@@ -152,7 +182,9 @@ var Dance = (function () {
   }
 
   /** The neon dancer: a pink glow, a light core, the lead hand in gold. */
-  function drawDancer(c, p, cx, gy, s, beatGlow, lead) {
+  var NEON = {glow: '255, 61, 165', body: '#8AF6FF', core: 'rgba(255, 255, 255, 0.85)', visor: '#FF3DA5'};
+  function drawDancer(c, p, cx, gy, s, beatGlow, lead, pal) {
+    pal = pal || NEON;
     var J = joints(p, cx, gy, s);
     var segs = [
       [J.lh, J.lk, J.lf], [J.rh, J.rk, J.rf],
@@ -181,16 +213,16 @@ var Dance = (function () {
     c.lineCap = 'round'; c.lineJoin = 'round';
     var g = 0.16 + 0.12 * (beatGlow || 0);
     // the glow, in passes (cheaper on a TV than shadowBlur)
-    c.strokeStyle = 'rgba(255, 61, 165, ' + g + ')'; path(62 * s); torso(76 * s);
+    c.strokeStyle = 'rgba(' + pal.glow + ', ' + g + ')'; path(62 * s); torso(76 * s);
     c.fillStyle = c.strokeStyle; head(66 * s); c.fill();
-    c.strokeStyle = 'rgba(255, 61, 165, 0.42)'; path(40 * s); torso(52 * s);
-    c.fillStyle = 'rgba(255, 61, 165, 0.42)'; head(56 * s); c.fill();
-    c.strokeStyle = '#8AF6FF'; path(24 * s); torso(34 * s);
-    c.fillStyle = '#8AF6FF'; head(46 * s); c.fill();
-    c.strokeStyle = 'rgba(255, 255, 255, 0.85)'; path(8 * s); torso(12 * s);
-    c.fillStyle = 'rgba(255, 255, 255, 0.9)'; head(30 * s); c.fill();
+    c.strokeStyle = 'rgba(' + pal.glow + ', 0.42)'; path(40 * s); torso(52 * s);
+    c.fillStyle = c.strokeStyle; head(56 * s); c.fill();
+    c.strokeStyle = pal.body; path(24 * s); torso(34 * s);
+    c.fillStyle = pal.body; head(46 * s); c.fill();
+    c.strokeStyle = pal.core; path(8 * s); torso(12 * s);
+    c.fillStyle = pal.core; head(30 * s); c.fill();
     // a visor across the face
-    c.strokeStyle = '#FF3DA5'; c.lineWidth = 10 * s;
+    c.strokeStyle = pal.visor; c.lineWidth = 10 * s;
     c.beginPath(); c.moveTo(J.head[0] - 26 * s, J.head[1] - 4 * s); c.lineTo(J.head[0] + 26 * s, J.head[1] - 4 * s); c.stroke();
     if (lead) {   // the hand the phone follows
       var r = (26 + 8 * (beatGlow || 0)) * s;
@@ -224,57 +256,125 @@ var Dance = (function () {
   // MARK: - The songs (our own, made here)
 
   var SCALE = {major: [0, 2, 4, 5, 7, 9, 11], minor: [0, 2, 3, 5, 7, 8, 10]};
+  /** A melody written as notes: 'G4 4  A4 1 …' (name and octave, or r for a rest, then beats). → [[midi or 0, beats]] */
+  function tune(txt) {
+    var out = [], parts = txt.replace(/\s+/g, ' ').replace(/^ | $/g, '').split(' '), names = {C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11};
+    for (var i = 0; i + 1 < parts.length; i += 2) {
+      var n = parts[i], m = 0;
+      if (n !== 'r') m = 12 * (parseInt(n.slice(-1), 10) + 1) + names[n.charAt(0)] + (n.charAt(1) === '#' ? 1 : n.charAt(1) === 'b' ? -1 : 0);
+      out.push([m, parseFloat(parts[i + 1])]);
+    }
+    return out;
+  }
+  function moves(txt) {   // 'huvud 4  axlar 2 …' → [[id, beats]]
+    var out = [], parts = txt.replace(/\s+/g, ' ').replace(/^ | $/g, '').split(' ');
+    for (var i = 0; i + 1 < parts.length; i += 2) out.push([parts[i], parseFloat(parts[i + 1])]);
+    return out;
+  }
+
+  // The children's songs: old songs everyone knows (traditional melodies, free to use), with the moves the song sings
+  // about. The melody goes round a few times; `plan` says with which moves, and speed 2 is the fast last round.
+  var HSKT = moves('huvud 4  axlar 2  kna 2  ta 2  kna 2  ta 4   huvud 4  axlar 2  kna 2  ta 2  kna 2  ta 4' +
+    '  ogon 4  oron 4  mun 2  nasa 6   huvud 4  axlar 2  kna 2  ta 2  kna 2  ta 4');
+  var KIDS = [
+    {id: 'huvud', name: 'Huvud, axlar, knä och tå', kids: true, tempo: 'Medel', bpm: 126, root: 48, scale: 'major', drums: 'kids', seed: 3,
+      color: '#FF5FA2', cover: {bg: ['#FF8A3D', '#FF4FA0'], art: 'confetti', move: 'huvud', pal: {glow: '120, 20, 90', body: '#FFFFFF', core: '#FFF0F6', visor: '#2EE6FF'}},
+      tune: tune('G4 4  A4 1 G4 1 F#4 1 G4 1  E4 2 G4 1 G4 1  G4 4' +
+        '  G4 4  A4 1 G4 1 F#4 1 G4 1  D4 2 G4 1 G4 1  G4 1 F4 1 E4 1 D4 1' +
+        '  C4 2 E4 2  G4 2 C5 2  D5 1 C5 1 B4 1 C5 1  A4 4' +
+        '  B4 4  B4 1 G4 1 A4 1 B4 1  C5 2 C5 1 C5 1  C5 4'),
+      harmony: [[0, 16], [0, 8], [4, 8], [0, 8], [3, 8], [4, 8], [0, 8]],
+      plan: [{m: HSKT}, {m: HSKT}, {m: HSKT, speed: 2}]},
+    {id: 'grodorna', name: 'Små grodorna', kids: true, tempo: 'Medel', bpm: 116, root: 53, scale: 'major', drums: 'kids', seed: 8,
+      color: '#5FD35A', cover: {bg: ['#0C6B5A', '#7EE36B'], art: 'pond', move: 'groda', pal: {glow: '10, 60, 30', body: '#FFFFFF', core: '#F0FFE8', visor: '#FFD23D'}},
+      pickup: [72, 0.5],
+      tune: tune('A4 0.75 A4 0.25 A4 0.5 C5 0.5  A4 0.75 A4 0.25 A4 0.5 C5 0.5  D5 0.5 C5 0.5 Bb4 0.5 A4 0.5  G4 1 r 0.5 Bb4 0.5' +
+        '  G4 0.75 G4 0.25 G4 0.5 Bb4 0.5  G4 0.75 G4 0.25 G4 0.5 Bb4 0.5  C5 0.5 Bb4 0.5 A4 0.5 G4 0.5  F4 1 r 0.5 C5 0.5'),
+      harmony: [[0, 6], [4, 8], [0, 2]],
+      plan: [{m: moves('groda 4 groda 4 groda 4 groda 4')}, {m: moves('oron 4 svans 4 oron 4 svans 4')}, {m: moves('kvack 4 kvack 4 kvack 4 kvack 4')},
+        {m: moves('groda 4 groda 4 groda 4 groda 4')}, {m: moves('svans 4 oron 4 svans 4 oron 4')}, {m: moves('nasa 4 nasa 4 nasa 4 nasa 4')},
+        {m: moves('groda 4 groda 4 groda 4 groda 4'), speed: 2}, {m: moves('oron 4 svans 4 oron 4 svans 4'), speed: 2}, {m: moves('kvack 4 kvack 4 kvack 4 kvack 4'), speed: 2}]},
+    {id: 'blinka', name: 'Blinka lilla stjärna', kids: true, tempo: 'Lugn', bpm: 100, root: 48, scale: 'major', drums: 'kids', seed: 12,
+      color: '#8FB8FF', cover: {bg: ['#0B1446', '#3E5BD8'], art: 'stars', move: 'blinka', pal: {glow: '255, 220, 120', body: '#FFF3C4', core: '#FFFFFF', visor: '#8FB8FF'}},
+      tune: tune('C4 1 C4 1 G4 1 G4 1 A4 1 A4 1 G4 2  F4 1 F4 1 E4 1 E4 1 D4 1 D4 1 C4 2' +
+        '  G4 1 G4 1 F4 1 F4 1 E4 1 E4 1 D4 2  G4 1 G4 1 F4 1 F4 1 E4 1 E4 1 D4 2' +
+        '  C4 1 C4 1 G4 1 G4 1 A4 1 A4 1 G4 2  F4 1 F4 1 E4 1 E4 1 D4 1 D4 1 C4 2'),
+      harmony: [[0, 4], [3, 2], [0, 2], [3, 2], [0, 2], [4, 2], [0, 2], [0, 2], [3, 2], [0, 2], [4, 2], [0, 2], [3, 2], [0, 2], [4, 2],
+        [0, 4], [3, 2], [0, 2], [3, 2], [0, 2], [4, 2], [0, 2]],
+      plan: [{m: moves('blinka 8 vagga 8 diamant 8 vagga 8 blinka 8 sova 8')}, {m: moves('blinka 8 vagga 8 diamant 8 vagga 8 blinka 8 sova 8')}]},
+    {id: 'imse', name: 'Imse vimse spindel', kids: true, tempo: 'Lugn', bpm: 96, root: 48, scale: 'major', drums: 'kids', seed: 17,
+      color: '#7ED0FF', cover: {bg: ['#1B3A6B', '#57B6E8'], art: 'web', move: 'klattra', pal: {glow: '20, 30, 90', body: '#FFFFFF', core: '#EAF6FF', visor: '#FF5FA2'}},
+      pickup: [67, 0.5],
+      tune: tune('C5 0.75 C5 0.25 C5 0.75 D5 0.25  E5 1.5 E5 0.5  E5 0.75 D5 0.25 C5 0.75 D5 0.25  E5 1 C5 1' +
+        '  E5 1.5 E5 0.5  F5 1 G5 1  G5 0.75 F5 0.25 E5 0.75 F5 0.25  G5 1 E5 1' +
+        '  C5 1.5 C5 0.5  D5 1 E5 1  E5 0.75 D5 0.25 C5 0.75 D5 0.25  E5 1 C5 1' +
+        '  C5 0.75 C5 0.25 C5 0.75 D5 0.25  E5 1.5 E5 0.5  E5 0.75 D5 0.25 C5 0.75 D5 0.25  C5 1.5 G4 0.5'),
+      harmony: [[0, 6], [4, 2], [0, 2], [4, 4], [0, 2], [0, 2], [4, 2], [0, 4], [0, 6], [4, 1], [0, 1]],
+      plan: [{m: moves('klattra 8 regn 8 sol 8 klattra 8')}, {m: moves('klattra 8 regn 8 sol 8 klattra 8')}, {m: moves('klattra 8 regn 8 sol 8 klattra 8'), speed: 2}]},
+    {id: 'bjornen', name: 'Björnen sover', kids: true, tempo: 'Medel', bpm: 104, root: 48, scale: 'major', drums: 'kids', seed: 23,
+      color: '#C9925A', cover: {bg: ['#10202E', '#2E5A4A'], art: 'bear', move: 'bjorn', pal: {glow: '255, 170, 80', body: '#FFE3C2', core: '#FFFFFF', visor: '#FF8A3D'}},
+      tune: tune('C4 1 C4 1 C4 1 E4 1  D4 1 D4 1 D4 1 F4 1' +
+        '  E4 1 E4 1 D4 1 D4 1  C4 2 r 2' +
+        '  E4 0.5 E4 0.5 E4 0.5 E4 0.5 G4 1 F4 1  D4 0.5 D4 0.5 D4 0.5 D4 0.5 F4 1 E4 1' +
+        '  C4 1 C4 1 C4 1 E4 1  D4 1 D4 1 D4 1 F4 1' +
+        '  E4 1 E4 1 D4 1 D4 1  C4 1 r 3'),
+      harmony: [[0, 4], [4, 4], [4, 2], [0, 6], [0, 4], [4, 3], [0, 1], [0, 4], [4, 4], [4, 2], [0, 6]],
+      plan: [{m: moves('sova 16 smyga 8 varna 8 sova 4 bjorn 4')}, {m: moves('sova 16 smyga 8 varna 8 sova 4 bjorn 4')},
+        {m: moves('sova 16 smyga 8 varna 8 sova 4 bjorn 4')}]}
+  ];
+
   var SONGS = [
     {id: 'neon', name: 'Neonnatt', tempo: 'Lugn', bpm: 108, root: 45, scale: 'minor', chords: [0, 5, 2, 6], drums: 'four', seed: 7,
-      color: '#B34DFF',
+      color: '#B34DFF', cover: {bg: ['#21094F', '#B34DFF'], art: 'grid', move: 'robot', pal: {glow: '255, 61, 165', body: '#8AF6FF', core: 'rgba(255, 255, 255, 0.9)', visor: '#FF3DA5'}},
       dance: {
         A: {easy: [['sida', 'klapp'], ['pump', 'klapp']], hard: [['sida', 'robot', 'pump', 'klapp'], ['puff', 'puff', 'disco', 'frys']]},
         B: {easy: [['pump', 'vinka'], ['stjarna', 'frys']], hard: [['pump', 'disco', 'snurr', 'frys'], ['stjarna', 'hopp', 'robot', 'frys']]},
         C: {easy: [['gunga', 'vinka'], ['klapp', 'sida']], hard: [['simma', 'simma', 'snurr', 'snurr'], ['gunga', 'vinka', 'klapp', 'frys']]}
       }},
     {id: 'sol', name: 'Solsken', tempo: 'Medel', bpm: 120, root: 50, scale: 'major', chords: [0, 4, 5, 3], drums: 'pop', seed: 21,
-      color: '#FFB21F',
+      color: '#FFB21F', cover: {bg: ['#FFE45C', '#FF7A1F'], art: 'sun', move: 'stjarna', pal: {glow: '230, 70, 20', body: '#FFFFFF', core: '#FFF4C8', visor: '#FF5A1F'}},
       dance: {
         A: {easy: [['klapp', 'sida'], ['vinka', 'klapp']], hard: [['klapp', 'sida', 'vinka', 'pump'], ['robot', 'robot', 'puff', 'frys']]},
         B: {easy: [['hopp', 'pump'], ['stjarna', 'vinka']], hard: [['hopp', 'stjarna', 'pump', 'disco'], ['snurr', 'puff', 'hopp', 'frys']]},
         C: {easy: [['sida', 'gunga'], ['pump', 'frys']], hard: [['gunga', 'disco', 'simma', 'frys'], ['sida', 'sida', 'robot', 'frys']]}
       }},
     {id: 'katt', name: 'Discokatten', tempo: 'Snabb', bpm: 128, root: 40, scale: 'minor', chords: [0, 3, 4, 3], drums: 'disco', seed: 42,
-      color: '#29E3C9',
+      color: '#29E3C9', cover: {bg: ['#063F52', '#29E3C9'], art: 'ball', move: 'disco', pal: {glow: '255, 61, 165', body: '#FFFFFF', core: '#FFE0F2', visor: '#FF3DA5'}},
       dance: {
         A: {easy: [['disco', 'klapp'], ['sida', 'pump']], hard: [['disco', 'disco', 'klapp', 'robot'], ['puff', 'snurr', 'pump', 'frys']]},
         B: {easy: [['stjarna', 'pump'], ['hopp', 'frys']], hard: [['stjarna', 'pump', 'hopp', 'disco'], ['simma', 'snurr', 'stjarna', 'frys']]},
         C: {easy: [['vinka', 'gunga'], ['klapp', 'frys']], hard: [['robot', 'robot', 'vinka', 'vinka'], ['gunga', 'puff', 'disco', 'frys']]}
       }},
     {id: 'latino', name: 'Ritmo Latino', tempo: 'Medel', bpm: 96, root: 43, scale: 'minor', chords: [0, 5, 2, 6], drums: 'dembow', seed: 77,
-      color: '#FF6B3D',
+      color: '#FF6B3D', cover: {bg: ['#E8124F', '#FFB23D'], art: 'dots', move: 'salsa', pal: {glow: '120, 0, 60', body: '#FFF3C4', core: '#FFFFFF', visor: '#2EE6FF'}},
       dance: {
         A: {easy: [['salsa', 'klapp'], ['gunga', 'salsa']], hard: [['salsa', 'salsa', 'gunga', 'klapp'], ['disco', 'salsa', 'snurr', 'frys']]},
         B: {easy: [['salsa', 'pump'], ['jubel', 'frys']], hard: [['salsa', 'pump', 'disco', 'jubel'], ['snurr', 'salsa', 'hopp', 'frys']]},
         C: {easy: [['gunga', 'vinka'], ['salsa', 'frys']], hard: [['gunga', 'gunga', 'vinka', 'vinka'], ['salsa', 'robot', 'disco', 'frys']]}
       }},
     {id: 'fotboll', name: 'Fotbollsfest', tempo: 'Snabb', bpm: 126, root: 48, scale: 'major', chords: [0, 3, 0, 4], drums: 'stomp', seed: 10,
-      color: '#3D7BFF',
+      color: '#3D7BFF', cover: {bg: ['#086B2C', '#3DDB72'], art: 'pitch', move: 'jubel', pal: {glow: '10, 30, 120', body: '#FFFFFF', core: '#E6F0FF', visor: '#3D7BFF'}},
       dance: {
         A: {easy: [['klapp', 'jubel'], ['pump', 'klapp']], hard: [['klapp', 'jubel', 'pump', 'klapp'], ['puff', 'puff', 'jubel', 'frys']]},
         B: {easy: [['jubel', 'hopp'], ['stjarna', 'jubel']], hard: [['jubel', 'hopp', 'jubel', 'stjarna'], ['pump', 'snurr', 'jubel', 'frys']]},
         C: {easy: [['vinka', 'sida'], ['klapp', 'frys']], hard: [['sida', 'vinka', 'robot', 'klapp'], ['vinka', 'simma', 'jubel', 'frys']]}
       }},
     {id: 'godnatt', name: 'Godnattdisco', tempo: 'Lugn', bpm: 92, root: 53, scale: 'major', chords: [0, 5, 3, 4], drums: 'soft', seed: 5,
-      color: '#9D8CFF',
+      color: '#9D8CFF', cover: {bg: ['#0D1240', '#7B6CF0'], art: 'stars', move: 'vagga', pal: {glow: '157, 140, 255', body: '#FFE9A8', core: '#FFFFFF', visor: '#7B6CF0'}},
       dance: {
         A: {easy: [['vagga', 'gunga'], ['vinka', 'vagga']], hard: [['vagga', 'gunga', 'vinka', 'klapp'], ['sida', 'vagga', 'snurr', 'frys']]},
         B: {easy: [['sida', 'vinka'], ['vagga', 'frys']], hard: [['sida', 'vinka', 'disco', 'vagga'], ['simma', 'vagga', 'klapp', 'frys']]},
         C: {easy: [['gunga', 'vagga'], ['klapp', 'frys']], hard: [['vagga', 'vagga', 'gunga', 'gunga'], ['vinka', 'sida', 'vagga', 'frys']]}
       }},
     {id: 'robot', name: 'Robotrock', tempo: 'Snabb', bpm: 134, root: 40, scale: 'minor', chords: [0, 6, 5, 6], drums: 'rock', seed: 99,
-      color: '#E8FF3D',
+      color: '#E8FF3D', cover: {bg: ['#161616', '#5A5A12'], art: 'bolt', move: 'gitarr', pal: {glow: '232, 255, 61', body: '#8AF6FF', core: '#FFFFFF', visor: '#E8FF3D'}},
       dance: {
         A: {easy: [['gitarr', 'pump'], ['gitarr', 'klapp']], hard: [['gitarr', 'gitarr', 'robot', 'pump'], ['robot', 'puff', 'gitarr', 'frys']]},
         B: {easy: [['hopp', 'gitarr'], ['stjarna', 'frys']], hard: [['hopp', 'gitarr', 'robot', 'jubel'], ['snurr', 'puff', 'hopp', 'frys']]},
         C: {easy: [['robot', 'gitarr'], ['pump', 'frys']], hard: [['robot', 'robot', 'gitarr', 'gitarr'], ['simma', 'disco', 'robot', 'frys']]}
       }}
   ];
+  SONGS = SONGS.concat(KIDS);
 
   /**
    * The drum styles: where the kick and the snare (or clap) fall in the bar's 16 steps, how the hats go, and the
@@ -294,6 +394,7 @@ var Dance = (function () {
 
   /** The whole dance for a song: [{b: start beat, n: beats, id, scored}], and the length in beats. */
   function choreo(song, hard) {
+    if (song.tune) return kidsPlan(song).dance;
     var out = [], b = 0;
     for (var s = 0; s < FORM.length; s++) {
       var name = FORM[s][0], beats = FORM[s][1] * 4;
@@ -307,6 +408,67 @@ var Dance = (function () {
     }
     for (var i = 0; i < out.length; i++) out[i].i = i;
     return {moves: out, beats: b};
+  }
+
+
+  /**
+   * A children's song, laid out in beats: the melody, chords, bass and drums as events, and the moves. A count-in,
+   * the rounds (a fast one plays the same melody and moves in half the beats), and a bow.
+   */
+  function kidsPlan(song) {
+    if (song._plan) return song._plan;
+    var ev = [], mv = [], b = 4, i, k, len = 0;
+    for (i = 0; i < song.tune.length; i++) len += song.tune[i][1];
+    for (k = 0; k < 4; k++) { ev.push({b: k, t: 'kick'}); if (k % 2) ev.push({b: k, t: 'clap', v: 0.5}); }
+    ev.push({b: 0, t: 'pad', n: chordNotes(song, 0, song.root + 12), len: 4});
+    mv.push({b: 0, n: 4, id: 'gunga', scored: false});
+    if (song.pickup) ev.push({b: 4 - song.pickup[1], t: 'note', m: song.pickup[0], len: song.pickup[1]});
+    for (var r = 0; r < song.plan.length; r++) {
+      var seg = song.plan[r], sp = seg.speed || 1, at = 0, beats = len / sp;
+      for (i = 0; i < song.tune.length; i++) {
+        var nt = song.tune[i];
+        if (nt[0] && !(i === song.tune.length - 1 && song.pickup && r === song.plan.length - 1)) ev.push({b: b + at / sp, t: 'note', m: nt[0], len: nt[1] / sp});
+        at += nt[1];
+      }
+      at = 0;
+      for (i = 0; i < song.harmony.length; i++) {
+        var h = song.harmony[i], hb = b + at / sp, hl = h[1] / sp;
+        ev.push({b: hb, t: 'pad', n: chordNotes(song, h[0], song.root + 12), len: hl});
+        var root = song.root + SCALE[song.scale][h[0] % 7] - (SCALE[song.scale][h[0] % 7] > 6 ? 12 : 0);
+        for (var q = 0; q < hl; q++) ev.push({b: hb + q, t: 'bass', m: root + (q % 2 ? 7 : 0)});
+        at += h[1];
+      }
+      for (k = 0; k < beats; k++) {
+        ev.push({b: b + k, t: 'kick', v: k % 2 ? 0.7 : 1});
+        if (k % 2) ev.push({b: b + k, t: 'clap', v: 0.8});
+        ev.push({b: b + k + 0.5, t: 'hat', v: sp > 1 ? 0.8 : 0.5});
+      }
+      at = 0;
+      for (i = 0; i < seg.m.length; i++) { mv.push({b: b + at / sp, n: seg.m[i][1] / sp, id: seg.m[i][0], scored: true}); at += seg.m[i][1]; }
+      b += beats;
+    }
+    ev.push({b: b, t: 'pad', n: chordNotes(song, 0, song.root + 12), len: 3});
+    ev.push({b: b, t: 'note', m: song.root + 24, len: 2});
+    ev.push({b: b, t: 'kick'});
+    mv.push({b: b, n: 4, id: 'frys', scored: false});
+    ev.sort(function (x, y) { return x.b - y.b; });
+    for (i = 0; i < mv.length; i++) mv[i].i = i;
+    song._plan = {events: ev, dance: {moves: mv, beats: b + 4}};
+    return song._plan;
+  }
+
+  /** Plays a children's song's events a little ahead, on the audio clock. */
+  function kidsTick(m) {
+    var spb = 60 / m.song.bpm, ev = m.events;
+    while (m.ei < ev.length && m.t0 + ev[m.ei].b * spb < actx.currentTime + 0.25) {
+      var e = ev[m.ei++], t = Math.max(actx.currentTime, m.t0 + e.b * spb);
+      if (e.t === 'note') lead(t, e.m, e.len * spb * 0.92, 1.15);
+      else if (e.t === 'pad') pad(t, e.n, e.len * spb, 0.7);
+      else if (e.t === 'bass') bass(t, e.m, spb * 0.8, 0.7);
+      else if (e.t === 'kick') kick(t, (e.v || 1) * 0.75);
+      else if (e.t === 'clap') snare(t, (e.v || 1) * 0.6, true);
+      else if (e.t === 'hat') hat(t, (e.v || 1) * 0.6, false);
+    }
   }
 
   // MARK: - The music: drums, bass, chords and a hook, scheduled ahead on the audio clock
@@ -474,13 +636,15 @@ var Dance = (function () {
     var a = audio();
     if (!a) return null;
     try { if (a.resume) a.resume(); } catch (e) {}
-    var m = {song: song, t0: a.currentTime + (lead || 0.6), step: 0, hook: hookFor(song), total: 48 * 16};
+    var m = {song: song, t0: a.currentTime + (lead || 0.6), step: 0, hook: song.tune ? null : hookFor(song), total: 48 * 16};
+    if (song.tune) { m.events = kidsPlan(song).events; m.ei = 0; }
     master.gain.cancelScheduledValues(a.currentTime);
     master.gain.setValueAtTime(0.0001, a.currentTime);
     master.gain.exponentialRampToValueAtTime(0.7, a.currentTime + 0.3);
     var s16 = 60 / song.bpm / 4;
     m.timer = setInterval(function () {
       if (music !== m) return;
+      if (m.events) { kidsTick(m); return; }
       while (m.step < m.total && m.t0 + m.step * s16 < actx.currentTime + 0.25) {
         scheduleStep(m, m.step, m.t0 + m.step * s16);
         m.step++;
@@ -708,7 +872,8 @@ var Dance = (function () {
 
   // MARK: - The screens: lobby → countdown and dance → results
 
-  var opened = false, state = 'lobby', sel = 0, song = 0, hard = false, current = null, raf = 0, listTop = 0;
+  var opened = false, state = 'lobby', sel = 0, song = 0, hard = false, current = null, raf = 0;
+  var zone = 'rows', side = 1, view = 'songs', preview = 0;
   var canvas = null, ctx = null, root = null, idleStart = 0;
 
   function build() {
@@ -727,17 +892,18 @@ var Dance = (function () {
     if (!root) build();
     opened = true;
     topic(); secret();   // made (and kept) now, not only when the QR code draws
-    state = 'lobby'; sel = 0;
+    state = 'lobby'; sel = 0; zone = 'rows'; view = 'songs'; queue = [];
     root.className = 'layer on';
     listen();
     drawLobby();
+    previewSoon();
     idleStart = Date.now();
     loop();
   }
 
   function close() {
     if (!opened) return;
-    stopMusic();
+    stopMusic(); clearTimeout(preview);
     current = null;
     opened = false;
     root.className = 'layer';
@@ -758,7 +924,7 @@ var Dance = (function () {
   function setDrive(u) {
     if (!/^https:\/\/script\.google(usercontent)?\.com\/[^\s|#]+$/.test(String(u || '')) || cfg.drive === u) return;
     cfg.drive = u; save();
-    if (state === 'lobby' && opened) drawLobby();
+    if (state === 'lobby' && opened && view === 'phones') drawLobby();
     if (window.FreeMyTV && FreeMyTV.toast) FreeMyTV.toast('Gubbarna från Drive är kopplade.');
   }
 
@@ -776,55 +942,452 @@ var Dance = (function () {
   function panel() { return root.querySelector('.d-panel'); }
   function hud() { return root.querySelector('.d-hud'); }
 
+  // MARK: - The lobby: round buttons on the left, rows of song cards and playlists, the players on the right
+
+  var CW = 360, CH = 203, STEP = 388, SHOW = 4, LW = 520, LSTEP = 556, LSHOW = 3;
+  var PLAYLISTS = [
+    {name: 'Barnkalas', songs: ['huvud', 'grodorna', 'imse', 'bjornen', 'fotboll', 'blinka'], color: '#FF8FB8', ink: '#5A0F32', art: 'party'},
+    {name: 'Lugnt för de minsta', songs: ['blinka', 'godnatt', 'neon'], color: '#F4C534', ink: '#4A3A06', art: 'moon'},
+    {name: 'Full fart', songs: ['robot', 'katt', 'fotboll', 'sol'], color: '#7180F0', ink: '#FFFFFF', art: 'bolt'},
+    {name: 'Dansmaraton', songs: null, color: '#BBA8F2', ink: '#2C1868', art: 'ball'}
+  ];
+  var ICON = {
+    home: 'M12 3 2 12h3v8h5v-5h4v5h5v-8h3z',
+    note: 'M12 3v10.55A4 4 0 1 0 14 17V7h4V3z',
+    bolt: 'M7 2v11h3v9l7-12h-4l4-8z',
+    phone: 'M7 1h10a2 2 0 0 1 2 2v18a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2zm0 4v14h10V5z',
+    clock: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm-1 3v6l5 3 1-1.6-4-2.4V7z'
+  };
+  function icon(name, parent, size) {
+    var ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg'), path = document.createElementNS(ns, 'path');
+    size = size || 44;
+    svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('width', String(size)); svg.setAttribute('height', String(size));
+    path.setAttribute('d', ICON[name]); path.setAttribute('fill', 'currentColor'); path.setAttribute('fill-rule', 'evenodd');
+    svg.appendChild(path); parent.appendChild(svg);
+    return svg;
+  }
+
+  function songIndex(id) { for (var i = 0; i < SONGS.length; i++) if (SONGS[i].id === id) return i; return -1; }
+  function listSongs(pl) {
+    var out = [], i;
+    if (!pl.songs) { for (i = 0; i < SONGS.length; i++) out.push(i); return out; }
+    for (i = 0; i < pl.songs.length; i++) { var k = songIndex(pl.songs[i]); if (k >= 0) out.push(k); }
+    return out;
+  }
+  function songMinutes(sg) { return choreo(sg, false).beats / sg.bpm; }
+  function best(sg) { return (cfg.best && cfg.best[sg.id]) || 0; }
+
+  /** The lobby's rows: every song, the playlists, and (once something's been danced) the latest. */
+  function rows() {
+    var all = [], kids = [], recent = [], i;
+    for (i = 0; i < SONGS.length; i++) (SONGS[i].kids ? kids : all).push(i);
+    var r = cfg.recent || [];
+    for (i = 0; i < r.length; i++) { var k = songIndex(r[i]); if (k >= 0) recent.push(k); }
+    var out = [{key: 'all', title: 'Danslåtar', kind: 'song', items: all}, {key: 'kids', title: 'Barnsånger', kind: 'song', items: kids},
+      {key: 'lists', title: 'Spellistor för hela familjen', kind: 'list', items: PLAYLISTS}];
+    if (recent.length) out.push({key: 'recent', title: 'Senast dansade', kind: 'song', items: recent});
+    return out;
+  }
+
+  var rowAt = 0, colAt = [0, 0, 0, 0], offAt = [0, 0, 0, 0], rowTop = 0, liveCover = null, coverCache = {}, queue = [];
+
+  function starsEl(parent, n, cls) {
+    var st = el('span', 'd-stars-row' + (cls ? ' ' + cls : ''), parent);
+    for (var i = 0; i < 5; i++) el('span', i < n ? 'd-star on' : 'd-star', st, '★');
+    return st;
+  }
+
   function drawLobby() {
     var p = panel(), h = hud();
     h.innerHTML = '';
     p.className = 'd-panel lobby';
     p.innerHTML = '';
-    var left = el('div', 'd-left', p);
-    el('div', 'd-title', left, 'Dansgolvet');
-    el('div', 'd-sub', left, 'Härma dansaren. Den lysande handen visar vad mobilen ska göra.');
-    var items = [], SHOW = 4;
-    // four songs at a time, scrolled so the one in focus (or the chosen one) is in view
-    var at = sel < SONGS.length ? sel : song;
-    if (at < listTop) listTop = at;
-    if (at > listTop + SHOW - 1) listTop = at - SHOW + 1;
-    listTop = clamp(listTop, 0, Math.max(0, SONGS.length - SHOW));
-    el('div', 'd-more' + (listTop > 0 ? ' on' : ''), left, '▲  fler låtar');
-    for (var i = 0; i < SONGS.length; i++) {
-      if (i < listTop || i >= listTop + SHOW) { items.push(null); continue; }
-      var s = SONGS[i], row = el('div', 'd-song' + (i === song ? ' chosen' : ''), left);
-      row.style.borderColor = i === song ? s.color : '';
-      var dot = el('span', 'd-dot', row); dot.style.background = s.color;
-      el('span', 'd-name', row, s.name);
-      el('span', 'd-tempo', row, s.tempo + ' · ' + s.bpm + ' bpm');
-      items.push(row);
+    // the round buttons
+    var rail = el('div', 'd-rail', p), items = [['home', 'Stäng Dansgolvet'], ['note', 'Låtar'], ['bolt', 'Nivå: ' + (hard ? 'Svår' : 'Lätt')], ['phone', 'Mobiler']];
+    for (var i = 0; i < items.length; i++) {
+      var on = (i === 1 && view === 'songs') || (i === 3 && view === 'phones');
+      var b = el('div', 'd-rbtn' + (on ? ' on' : '') + (zone === 'side' && side === i ? ' focus' : '') + (i === 2 && hard ? ' hard' : ''), rail);
+      icon(items[i][0], b, 40);
+      if (zone === 'side' && side === i) el('div', 'd-rtip', b, items[i][1]);
     }
-    el('div', 'd-more' + (listTop + SHOW < SONGS.length ? ' on' : ''), left, '▼  ' + (SONGS.length - listTop - SHOW) + ' till');
-    var lvl = el('div', 'd-level', left);
-    el('span', 'd-label', lvl, 'Nivå');
-    el('span', 'd-opt' + (!hard ? ' on' : ''), lvl, 'Lätt');
-    el('span', 'd-opt' + (hard ? ' on' : ''), lvl, 'Svår');
-    items.push(lvl);
-    var go = el('div', 'd-go', left, 'Dansa!');
-    items.push(go);
-    for (var k = 0; k < items.length; k++) if (k === sel && items[k]) items[k].className += ' focus';
-    el('div', 'd-hint', left, '▲ ▼ välj   OK  ' + (sel < SONGS.length ? 'välj låt' : sel === SONGS.length ? 'byt nivå' : 'starta') + '   Tillbaka stänger');
+    drawPill(p);
+    if (view === 'songs' && !players.length) {   // the QR code is behind the phone button now: say so
+      var nudge = el('div', 'd-nudge', p);
+      nudge.appendChild(document.createTextNode('Vill du ha poäng? Välj '));
+      icon('phone', nudge, 26);
+      nudge.appendChild(document.createTextNode(' Mobiler till vänster och skanna koden.'));
+    }
+    var main = el('div', 'd-main', p), next = null;
+    if (view === 'songs') next = drawRows(main); else drawPhones(main);
+    if (liveCover && liveCover !== next) { drawCover(liveCover, liveCover.song, -1); }
+    liveCover = next;
+  }
 
-    var right = el('div', 'd-right', p);
-    el('div', 'd-qr-title', right, 'Vill du ha poäng?');
-    el('div', 'd-qr-sub', right, 'Skanna med mobilen och håll den i höger hand.');
-    var q = el('div', 'd-qr', right);
+  function drawRows(main) {
+    var list = rows(), live = null;
+    if (rowAt >= list.length) rowAt = list.length - 1;
+    if (rowAt < rowTop) rowTop = rowAt;
+    if (rowAt > rowTop + 2) rowTop = rowAt - 2;
+    var y = 34 - rowTop * 330;
+    for (var r = 0; r < list.length; r++) {
+      var row = list[r], isList = row.kind === 'list', show = isList ? LSHOW : SHOW, step = isList ? LSTEP : STEP;
+      var col = Math.min(colAt[r] || 0, row.items.length - 1);
+      colAt[r] = col;
+      if (col < offAt[r]) offAt[r] = col;
+      if (col > offAt[r] + show - 1) offAt[r] = col - show + 1;
+      offAt[r] = clamp(offAt[r], 0, Math.max(0, row.items.length - show));
+      var box = el('div', 'd-row' + (r < rowTop ? ' gone' : ''), main);
+      box.style.top = y + 'px';
+      el('div', 'd-rtitle', box, row.title);
+      var strip = el('div', 'd-strip', box);
+      strip.style.left = (-offAt[r] * step) + 'px';
+      for (var i = 0; i < row.items.length; i++) {
+        var focus = zone === 'rows' && rowAt === r && col === i;
+        var card = el('div', 'd-card2' + (isList ? ' list' : '') + (focus ? ' focus' : ''), strip);
+        card.style.left = i * step + 'px';
+        if (isList) { listCard(card, row.items[i]); continue; }
+        var si = row.items[i], sg = SONGS[si], key = row.key + si, cv = coverCache[key];
+        if (!cv) { cv = document.createElement('canvas'); cv.width = CW; cv.height = CH; cv.song = sg; drawCover(cv, sg, -1); coverCache[key] = cv; }
+        var art = el('div', 'd-art', card);
+        art.appendChild(cv);
+        el('div', 'd-cname', art, sg.name);
+        var meta = el('div', 'd-meta', card);
+        var tempo = el('span', 'd-tempo-pill', meta), lvl = sg.bpm < 100 ? 1 : sg.bpm < 125 ? 2 : 3;
+        for (var t = 0; t < 3; t++) el('span', t < lvl ? 'd-bar on' : 'd-bar', tempo);
+        el('span', 'd-tempo-text', meta, sg.tempo);
+        starsEl(meta, best(sg));
+        if (focus) live = cv;
+      }
+      if (offAt[r] + show < row.items.length) el('div', 'd-peek', box);
+      y += isList ? 330 : 330;
+    }
+    return live;
+  }
+
+  function listCard(card, pl) {
+    var idx = listSongs(pl), mins = 0, stars = 0;
+    for (var i = 0; i < idx.length; i++) { mins += songMinutes(SONGS[idx[i]]); stars += best(SONGS[idx[i]]); }
+    var face = el('div', 'd-lface', card);
+    face.style.background = pl.color; face.style.color = pl.ink;
+    el('div', 'd-lstack', card).style.background = pl.color;
+    el('div', 'd-lname', face, pl.name);
+    var cv = el('canvas', 'd-lart', face);
+    cv.width = 210; cv.height = 170;
+    listArt(cv, pl);
+    var meta = el('div', 'd-meta', card);
+    var n = el('span', 'd-lcount', meta); icon('note', n, 26); n.appendChild(document.createTextNode(' ' + idx.length));
+    var m = el('span', 'd-lcount', meta); icon('clock', m, 26); m.appendChild(document.createTextNode(' ' + Math.round(mins) + ' min'));
+    starsEl(meta, Math.round(stars / Math.max(1, idx.length)));
+  }
+
+  /** A playlist's picture: a moon for the calm one, a bolt for the fast one, a disco ball for all of them. */
+  function listArt(cv, pl) {
+    var c = cv.getContext('2d'), w = cv.width, h = cv.height, i;
+    if (pl.art === 'moon') {
+      c.fillStyle = '#FFF4C8'; c.beginPath(); c.arc(w * 0.55, h * 0.5, 58, 0, Math.PI * 2); c.fill();
+      c.fillStyle = pl.color; c.beginPath(); c.arc(w * 0.66, h * 0.4, 50, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#FFFFFF';
+      var st = [[0.2, 0.25, 7], [0.85, 0.75, 5], [0.3, 0.8, 4], [0.9, 0.2, 6]];
+      for (i = 0; i < st.length; i++) { star(c, st[i][0] * w, st[i][1] * h, st[i][2]); }
+      c.fillStyle = '#FF8FB8'; c.beginPath(); c.arc(w * 0.42, h * 0.62, 6, 0, Math.PI * 2); c.fill();
+    } else if (pl.art === 'bolt') {
+      c.fillStyle = 'rgba(255, 255, 255, 0.25)';
+      for (i = 0; i < 4; i++) c.fillRect(w * 0.08, h * (0.25 + i * 0.16), w * (0.22 - i * 0.04), 7);
+      c.fillStyle = '#FFE14D';
+      c.beginPath(); c.moveTo(w * 0.7, h * 0.05); c.lineTo(w * 0.42, h * 0.55); c.lineTo(w * 0.58, h * 0.55); c.lineTo(w * 0.46, h * 0.95);
+      c.lineTo(w * 0.82, h * 0.4); c.lineTo(w * 0.65, h * 0.4); c.lineTo(w * 0.8, h * 0.05); c.closePath(); c.fill();
+    } else if (pl.art === 'party') {
+      var cols = ['#FFD23D', '#2EE6FF', '#7CFF5B', '#B34DFF', '#FFFFFF'], R = rng(5);
+      for (i = 0; i < 26; i++) { c.fillStyle = cols[i % cols.length]; c.save(); c.translate(R() * w, R() * h); c.rotate(R() * 3); c.fillRect(-6, -3, 12, 6); c.restore(); }
+      var bl = [[0.42, 0.4, '#FF3D7F'], [0.62, 0.32, '#3D7BFF'], [0.78, 0.46, '#FFD23D']];
+      for (i = 0; i < bl.length; i++) {
+        var bx = w * bl[i][0], by = h * bl[i][1];
+        c.strokeStyle = 'rgba(90, 15, 50, 0.6)'; c.lineWidth = 2; c.beginPath(); c.moveTo(bx, by + 34); c.quadraticCurveTo(bx - 10, by + 70, bx + 4, h); c.stroke();
+        c.fillStyle = bl[i][2]; c.beginPath(); if (c.ellipse) c.ellipse(bx, by, 26, 34, 0, 0, Math.PI * 2); else c.arc(bx, by, 30, 0, Math.PI * 2); c.fill();
+        c.fillStyle = 'rgba(255, 255, 255, 0.45)'; c.beginPath(); c.arc(bx - 9, by - 12, 6, 0, Math.PI * 2); c.fill();
+      }
+    } else {
+      var x = w * 0.55, y = h * 0.52, r = 62;
+      c.strokeStyle = 'rgba(255, 255, 255, 0.8)'; c.lineWidth = 3; c.beginPath(); c.moveTo(x, 0); c.lineTo(x, y - r); c.stroke();
+      var g = c.createRadialGradient(x - 20, y - 20, 6, x, y, r);
+      g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, '#7FA8D8');
+      c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+      c.save(); c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.clip();
+      c.strokeStyle = 'rgba(40, 60, 110, 0.35)'; c.lineWidth = 2;
+      for (i = -4; i <= 4; i++) { c.beginPath(); c.moveTo(x - r, y + i * 15); c.lineTo(x + r, y + i * 15); c.stroke(); c.beginPath(); c.moveTo(x + i * 15, y - r); c.lineTo(x + i * 15, y + r); c.stroke(); }
+      c.restore();
+      c.fillStyle = '#FFFFFF'; star(c, w * 0.2, h * 0.3, 9); star(c, w * 0.9, h * 0.75, 7); star(c, w * 0.25, h * 0.8, 5);
+    }
+  }
+  function star(c, x, y, r) {
+    c.beginPath(); c.moveTo(x, y - r * 2); c.lineTo(x + r * 0.5, y); c.lineTo(x, y + r * 2); c.lineTo(x - r * 0.5, y); c.closePath(); c.fill();
+    c.beginPath(); c.moveTo(x - r * 2, y); c.lineTo(x, y + r * 0.5); c.lineTo(x + r * 2, y); c.lineTo(x, y - r * 0.5); c.closePath(); c.fill();
+  }
+
+  /** The players, on the right: a phone button, then a ring for each of the four places. */
+  function drawPill(p) {
+    var pill = el('div', 'd-pill', p);
+    var ph = el('div', 'd-pill-phone' + (view === 'phones' ? ' on' : ''), pill); icon('phone', ph, 34);
+    for (var s2 = 0; s2 < 4; s2++) {
+      var pl = null;
+      for (var i = 0; i < players.length; i++) if (players[i].slot === s2) pl = players[i];
+      var ring = el('div', 'd-ring' + (pl ? ' in' : ''), pill, pl ? pl.name.charAt(0).toUpperCase() : '+');
+      ring.style.borderColor = COLORS[s2];
+      if (pl) { ring.style.background = COLORS[s2]; ring.title = pl.name; }
+    }
+  }
+
+  function drawPhones(main) {
+    var box = el('div', 'd-phones', main);
+    var q = el('div', 'd-qr', box);
     withQr(function (ok) {
       if (!ok) { q.textContent = 'QR-koden gick inte att ladda.'; return; }
       try { var qr = window.qrcode(0, 'M'); qr.addData(phoneUrl()); qr.make(); q.innerHTML = qr.createSvgTag({cellSize: 6, margin: 3}); } catch (e) { q.textContent = ''; }
     });
-    el('div', 'd-players', right);
+    var how = el('div', 'd-how', box);
+    el('div', 'd-how-title', how, 'Vill du ha poäng?');
+    el('div', 'd-how-step', how, '1.  Skanna koden med mobilens kamera.');
+    el('div', 'd-how-step', how, '2.  Skriv ditt namn och välj din gubbe.');
+    el('div', 'd-how-step', how, '3.  Håll mobilen i höger hand och härma.');
+    el('div', 'd-players', how);
+    el('div', 'd-how-back', how, 'Tillbaka  →  låtarna');
     drawPlayers();
+  }
+
+  /** Who's in: the rings on the right. */
+  function drawChips() {
+    if (!root || state !== 'lobby') return;
+    var old = root.querySelector('.d-pill');
+    if (!old) return;
+    var p = old.parentNode;
+    p.removeChild(old);
+    drawPill(p);
+  }
+
+  /**
+   * A song's cover: its colours, a pattern for its kind of music and the dancer in its signature move. beat < 0 is
+   * the still picture; else the dancer dances (the card in focus).
+   */
+  function drawCover(cv, sg, beat) {
+    var c = cv.getContext('2d'), w = cv.width, h = cv.height, cov = sg.cover, R = rng(sg.seed * 31 + 7), i, x, y, r;
+    c.save();
+    var g = c.createLinearGradient(0, 0, w, h);
+    g.addColorStop(0, cov.bg[0]); g.addColorStop(1, cov.bg[1]);
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+    var tick = beat < 0 ? 0 : beat, pulse = beat < 0 ? 1 : Math.max(0, 1 - (beat - Math.floor(beat)) * 2);
+    if (cov.art === 'grid') {   // a neon floor running to the horizon, and a striped sun going down
+      var mg = c.createLinearGradient(0, h * 0.1, 0, h * 0.62);
+      mg.addColorStop(0, '#FFD23D'); mg.addColorStop(1, '#FF3DA5');
+      c.fillStyle = mg; c.beginPath(); c.arc(w * 0.5, h * 0.62, h * 0.46, Math.PI, 0); c.fill();
+      c.fillStyle = cov.bg[0];
+      for (i = 0; i < 5; i++) c.fillRect(0, h * (0.36 + i * 0.05), w, 2 + i * 1.5);
+      c.fillStyle = 'rgba(20, 6, 50, 0.7)'; c.fillRect(0, h * 0.62, w, h);
+      c.strokeStyle = 'rgba(46, 230, 255, ' + (0.4 + 0.3 * pulse).toFixed(2) + ')'; c.lineWidth = 2;
+      for (i = 0; i < 6; i++) { y = h * 0.62 + Math.pow(((i + tick % 1) / 6), 1.8) * h * 0.4; c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke(); }
+      for (i = -8; i <= 8; i++) { c.beginPath(); c.moveTo(w / 2 + i * 10, h * 0.62); c.lineTo(w / 2 + i * 70, h); c.stroke(); }
+    } else if (cov.art === 'sun') {   // sun rays turning slowly
+      c.translate(w * 0.5, h * 0.4);
+      c.rotate(tick * 0.06);
+      c.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      for (i = 0; i < 14; i++) {
+        c.rotate(Math.PI / 7);
+        c.beginPath(); c.moveTo(0, 0); c.lineTo(-w * 0.07, -w); c.lineTo(w * 0.07, -w); c.closePath(); c.fill();
+      }
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      c.fillStyle = '#FFF6B8'; c.beginPath(); c.arc(w * 0.5, h * 0.4, h * 0.22, 0, Math.PI * 2); c.fill();
+    } else if (cov.art === 'ball') {   // disco balls and their sparkles
+      for (i = 0; i < 34; i++) {
+        x = R() * w; y = R() * h; r = 2 + R() * 4;
+        var tw = beat < 0 ? 0.8 : 0.3 + 0.7 * Math.abs(Math.sin(beat * 1.5 + i));
+        c.fillStyle = 'rgba(255, 255, 255, ' + tw.toFixed(2) + ')';
+        star(c, x, y, r * 0.6);
+      }
+      var balls = [[0.16, 0.3, 0.13], [0.84, 0.24, 0.16]];
+      for (var k = 0; k < balls.length; k++) {
+        x = w * balls[k][0]; y = h * balls[k][1]; r = h * balls[k][2];
+        c.strokeStyle = 'rgba(255, 255, 255, 0.6)'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, 0); c.lineTo(x, y - r); c.stroke();
+        c.fillStyle = '#D8E2EA'; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = 'rgba(40, 60, 80, 0.45)';
+        for (i = -2; i <= 2; i++) {
+          c.beginPath(); c.moveTo(x - r, y + i * r * 0.35); c.lineTo(x + r, y + i * r * 0.35); c.stroke();
+          c.beginPath(); c.moveTo(x + i * r * 0.35, y - r); c.lineTo(x + i * r * 0.35, y + r); c.stroke();
+        }
+      }
+    } else if (cov.art === 'dots') {   // polka dots and swirls of stripes
+      for (i = 0; i < 22; i++) {
+        c.fillStyle = i % 3 ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 230, 80, 0.5)';
+        c.beginPath(); c.arc(R() * w, R() * h, 6 + R() * 16, 0, Math.PI * 2); c.fill();
+      }
+      c.lineWidth = 10;
+      c.strokeStyle = 'rgba(46, 230, 255, 0.7)'; c.beginPath(); c.arc(0, h * 1.1, h * 0.7, -Math.PI / 2, 0); c.stroke();
+      c.strokeStyle = 'rgba(255, 255, 255, 0.55)'; c.lineWidth = 6; c.beginPath(); c.arc(w, h * 1.1, h * 0.7, Math.PI, Math.PI * 1.5); c.stroke();
+    } else if (cov.art === 'pitch') {   // a football pitch's lines, and a ball that bounces
+      c.fillStyle = 'rgba(255, 255, 255, 0.08)';
+      for (i = 0; i < 8; i += 2) c.fillRect(i * w / 8, 0, w / 8, h);
+      c.strokeStyle = 'rgba(255, 255, 255, 0.6)'; c.lineWidth = 4;
+      c.beginPath(); c.moveTo(w * 0.5, 0); c.lineTo(w * 0.5, h); c.stroke();
+      c.beginPath(); c.arc(w * 0.5, h * 0.55, h * 0.3, 0, Math.PI * 2); c.stroke();
+      c.strokeRect(-4, h * 0.25, w * 0.12, h * 0.5); c.strokeRect(w * 0.88, h * 0.25, w * 0.13, h * 0.5);
+      x = w * 0.2; y = h * 0.3 - (beat < 0 ? 0 : Math.abs(Math.sin(beat * Math.PI)) * 18); r = h * 0.11;
+      c.fillStyle = '#fff'; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#1A1A1A'; c.beginPath(); c.arc(x, y, r * 0.38, 0, Math.PI * 2); c.fill();
+      for (i = 0; i < 5; i++) { var a2 = i * Math.PI * 2 / 5 - Math.PI / 2; c.beginPath(); c.arc(x + Math.cos(a2) * r * 0.8, y + Math.sin(a2) * r * 0.8, r * 0.2, 0, Math.PI * 2); c.fill(); }
+    } else if (cov.art === 'stars') {   // a moon and twinkling stars
+      for (i = 0; i < 40; i++) {
+        var tw2 = beat < 0 ? 0.7 : 0.3 + 0.7 * Math.abs(Math.sin(beat * 0.7 + i * 1.7));
+        c.fillStyle = 'rgba(255, 246, 214, ' + tw2.toFixed(2) + ')';
+        c.beginPath(); c.arc(R() * w, R() * h * 0.85, 1 + R() * 2.4, 0, Math.PI * 2); c.fill();
+      }
+      c.fillStyle = '#FFF0B8'; c.beginPath(); c.arc(w * 0.82, h * 0.3, h * 0.17, 0, Math.PI * 2); c.fill();
+      c.fillStyle = cov.bg[1]; c.beginPath(); c.arc(w * 0.87, h * 0.24, h * 0.145, 0, Math.PI * 2); c.fill();
+    } else if (cov.art === 'confetti') {   // confetti falling, and big friendly dots
+      var cc = ['#FFD23D', '#2EE6FF', '#7CFF5B', '#FFFFFF', '#B34DFF'];
+      for (i = 0; i < 9; i++) { c.fillStyle = 'rgba(255, 255, 255, 0.16)'; c.beginPath(); c.arc(R() * w, R() * h, 20 + R() * 34, 0, Math.PI * 2); c.fill(); }
+      for (i = 0; i < 46; i++) {
+        x = R() * w; y = (R() * h + tick * 18 * (0.6 + (i % 4) * 0.2)) % (h + 20) - 10;
+        c.fillStyle = cc[i % cc.length]; c.save(); c.translate(x, y); c.rotate(R() * 6 + tick); c.fillRect(-6, -3, 12, 6); c.restore();
+      }
+    } else if (cov.art === 'web') {   // a spider's web in the corner, the spider going up and down its thread
+      c.strokeStyle = 'rgba(255, 255, 255, 0.45)'; c.lineWidth = 1.5;
+      var cx0 = w * 0.08, cy0 = h * 0.05;
+      for (i = 0; i < 7; i++) { var ang = i / 6 * Math.PI / 2; c.beginPath(); c.moveTo(cx0, cy0); c.lineTo(cx0 + Math.cos(ang) * h * 0.8, cy0 + Math.sin(ang) * h * 0.8); c.stroke(); }
+      for (var ring = 1; ring < 6; ring++) {
+        c.beginPath();
+        for (i = 0; i < 7; i++) { var a3 = i / 6 * Math.PI / 2, rr = ring * h * 0.13; c[i ? 'lineTo' : 'moveTo'](cx0 + Math.cos(a3) * rr, cy0 + Math.sin(a3) * rr); }
+        c.stroke();
+      }
+      x = w * 0.84; y = h * (0.3 + (beat < 0 ? 0.15 : 0.18 * (1 + Math.sin(beat * Math.PI / 2))));
+      c.strokeStyle = 'rgba(255, 255, 255, 0.7)'; c.beginPath(); c.moveTo(x, 0); c.lineTo(x, y); c.stroke();
+      c.strokeStyle = '#1A1030'; c.lineWidth = 3;
+      for (i = 0; i < 4; i++) { c.beginPath(); c.moveTo(x - 6, y); c.lineTo(x - 22, y - 10 + i * 8); c.moveTo(x + 6, y); c.lineTo(x + 22, y - 10 + i * 8); c.stroke(); }
+      c.fillStyle = '#1A1030'; c.beginPath(); c.arc(x, y, 13, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(x - 5, y - 3, 4, 0, Math.PI * 2); c.arc(x + 5, y - 3, 4, 0, Math.PI * 2); c.fill();
+      c.fillStyle = 'rgba(180, 230, 255, 0.6)';
+      for (i = 0; i < 16; i++) { var dx = R() * w, dy = (R() * h + (beat < 0 ? 0 : beat * 40)) % h; c.fillRect(dx, dy, 2, 9); }
+    } else if (cov.art === 'bear') {   // a night forest, a moon, and a sleeping bear's cave with its Zzz
+      c.fillStyle = '#FFF0B8'; c.beginPath(); c.arc(w * 0.8, h * 0.22, h * 0.12, 0, Math.PI * 2); c.fill();
+      c.fillStyle = 'rgba(8, 24, 20, 0.9)';
+      var trees = [0.06, 0.2, 0.62, 0.96];
+      for (i = 0; i < trees.length; i++) { x = w * trees[i]; c.beginPath(); c.moveTo(x, h * 0.18); c.lineTo(x - 34, h * 0.8); c.lineTo(x + 34, h * 0.8); c.closePath(); c.fill(); }
+      c.fillStyle = '#3B2A1E'; c.beginPath(); c.arc(w * 0.18, h, h * 0.42, Math.PI, 0); c.fill();
+      c.fillStyle = '#120A06'; c.beginPath(); c.arc(w * 0.18, h, h * 0.24, Math.PI, 0); c.fill();
+      c.fillStyle = 'rgba(255, 255, 255, 0.85)'; c.font = '700 22px Arial';
+      var zz = beat < 0 ? 0 : (beat * 0.5) % 1;
+      c.fillText('z', w * 0.24, h * (0.62 - zz * 0.1)); c.font = '700 30px Arial'; c.fillText('Z', w * 0.29, h * (0.5 - zz * 0.1));
+    } else if (cov.art === 'pond') {   // a pond with lily pads, and a little frog hopping on one
+      c.fillStyle = 'rgba(20, 90, 120, 0.45)'; c.fillRect(0, h * 0.62, w, h);
+      c.strokeStyle = 'rgba(255, 255, 255, 0.35)'; c.lineWidth = 2;
+      for (i = 0; i < 5; i++) { c.beginPath(); if (c.ellipse) c.ellipse(R() * w, h * (0.7 + R() * 0.25), 30 + R() * 30, 6, 0, 0, Math.PI * 2); c.stroke(); }
+      var pads = [[0.14, 0.74, 34], [0.86, 0.8, 40], [0.7, 0.66, 24]];
+      for (i = 0; i < pads.length; i++) {
+        c.fillStyle = '#3FA34D'; c.beginPath(); c.moveTo(w * pads[i][0], h * pads[i][1]);
+        c.arc(w * pads[i][0], h * pads[i][1], pads[i][2], 0.3, Math.PI * 2 - 0.1); c.closePath(); c.fill();
+      }
+      x = w * 0.14; y = h * 0.62 - (beat < 0 ? 0 : Math.abs(Math.sin(beat * Math.PI)) * 22);
+      c.fillStyle = '#7CFF5B'; c.beginPath(); if (c.ellipse) c.ellipse(x, y, 20, 14, 0, 0, Math.PI * 2); else c.arc(x, y, 16, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(x - 8, y - 12, 6, 0, Math.PI * 2); c.arc(x + 8, y - 12, 6, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#10301A'; c.beginPath(); c.arc(x - 8, y - 12, 2.6, 0, Math.PI * 2); c.arc(x + 8, y - 12, 2.6, 0, Math.PI * 2); c.fill();
+      c.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      for (i = 0; i < 6; i++) { c.beginPath(); c.arc(R() * w, R() * h * 0.5, 2 + R() * 2, 0, Math.PI * 2); c.fill(); }
+    } else if (cov.art === 'bolt') {   // speaker stripes and lightning bolts that flash on the beat
+      c.strokeStyle = 'rgba(232, 255, 61, 0.3)'; c.lineWidth = 7;
+      for (i = 0; i < 14; i++) { c.beginPath(); c.moveTo(-60 + i * 34, h); c.lineTo(40 + i * 34, 0); c.stroke(); }
+      c.fillStyle = 'rgba(232, 255, 61, ' + (0.55 + 0.45 * pulse).toFixed(2) + ')';
+      var bolts = [[0.14, 1], [0.86, -1]];
+      for (k = 0; k < bolts.length; k++) {
+        x = w * bolts[k][0]; var d = bolts[k][1] * h * 0.1;
+        c.beginPath(); c.moveTo(x + d, h * 0.05); c.lineTo(x - d * 0.6, h * 0.5); c.lineTo(x + d * 0.3, h * 0.5); c.lineTo(x - d, h * 0.95);
+        c.lineTo(x + d * 1.2, h * 0.4); c.lineTo(x + d * 0.2, h * 0.4); c.lineTo(x + d * 1.6, h * 0.05); c.closePath(); c.fill();
+      }
+    }
+    c.restore();
+    // the dancer, big, the feet out of the picture like on a poster
+    var f = MOVES[cov.move].f, pose = beat < 0 ? f[f.length > 1 ? 1 : 0] : poseAt(cov.move, beat);
+    if (beat >= 0) pose = mixBounce(pose, 5 * Math.sin(Math.PI * (beat - Math.floor(beat))));
+    drawDancer(c, pose, w / 2, h * 1.18, h / 720, beat < 0 ? 0.5 : pulse, false, cov.pal);
+    // a soft dark edge at the bottom, for the name
+    var sh = c.createLinearGradient(0, h * 0.6, 0, h);
+    sh.addColorStop(0, 'rgba(0, 0, 0, 0)'); sh.addColorStop(1, 'rgba(0, 0, 0, 0.55)');
+    c.fillStyle = sh; c.fillRect(0, h * 0.6, w, h * 0.4);
+  }
+
+  /** The card in focus dances to its song (the preview while it plays). */
+  function lobbyFrame() {
+    if (!liveCover) return;
+    var sg = liveCover.song, beat;
+    if (music && music.song === sg && actx) beat = (actx.currentTime - music.t0) * sg.bpm / 60;
+    else beat = (Date.now() - idleStart) / 1000 * sg.bpm / 60;
+    drawCover(liveCover, sg, Math.max(0, beat));
+  }
+
+  /** A bit of the song in focus (its chorus) once the focus rests on it. */
+  function previewSoon() {
+    clearTimeout(preview);
+    preview = setTimeout(function () {
+      if (!opened || state !== 'lobby' || !liveCover) return;
+      var sg = liveCover.song;
+      if (music && music.song === sg) return;
+      stopMusic();
+      var m = startMusic(sg, 0.15);
+      if (!m) return;
+      var s16 = 60 / sg.bpm / 4, from = 12 * 16;   // bar 12: the first chorus (a children's song: from the start)
+      if (!sg.tune) { m.step = from; m.t0 -= from * s16; }
+      try { master.gain.cancelScheduledValues(actx.currentTime); master.gain.setValueAtTime(0.0001, actx.currentTime); master.gain.exponentialRampToValueAtTime(0.45, actx.currentTime + 0.6); } catch (e) {}
+    }, 650);
+  }
+
+  /** Remember how it went: the best stars for the song, and that it was danced (the "latest" row). */
+  function remember(sg) {
+    var top = 0;
+    for (var i = 0; i < players.length; i++) top = Math.max(top, stars(players[i]));
+    if (!cfg.best) cfg.best = {};
+    if (top > (cfg.best[sg.id] || 0)) cfg.best[sg.id] = top;
+    var r = cfg.recent || [], out = [sg.id];
+    for (i = 0; i < r.length && out.length < 8; i++) if (r[i] !== sg.id) out.push(r[i]);
+    cfg.recent = out;
+    save();
+  }
+
+  function lobbyKey(k, back) {
+    if (zone === 'rows' && view === 'songs') {
+      var list = rows(), row = list[rowAt], was = liveCover;
+      if (back) { close(); return; }
+      if (k === K.left) { if (colAt[rowAt] === 0) { zone = 'side'; side = 1; } else colAt[rowAt]--; }
+      else if (k === K.right) { if (colAt[rowAt] < row.items.length - 1) colAt[rowAt]++; }
+      else if (k === K.up || k === K.down) {
+        var to = rowAt + (k === K.up ? -1 : 1);
+        if (to < 0 || to >= list.length) return;
+        var seen = colAt[rowAt] - offAt[rowAt], isList = list[to].kind === 'list', fromList = row.kind === 'list';
+        if (isList !== fromList) seen = Math.round(seen * (fromList ? LSTEP / STEP : STEP / LSTEP));
+        colAt[to] = clamp(offAt[to] + seen, 0, list[to].items.length - 1);
+        rowAt = to;
+      } else if (k === K.ok) {
+        if (row.kind === 'list') { queue = listSongs(row.items[colAt[rowAt]]); song = queue.shift(); start(); }
+        else { queue = []; song = row.items[colAt[rowAt]]; start(); }
+        return;
+      } else return;
+      drawLobby();
+      if (liveCover) { song = SONGS.indexOf(liveCover.song); if (liveCover !== was) previewSoon(); }
+      return;
+    }
+    // the round buttons
+    if (back) { if (view === 'phones') { view = 'songs'; side = 1; zone = 'rows'; drawLobby(); } else close(); return; }
+    if (k === K.up && side > 0) side--;
+    else if (k === K.down && side < 3) side++;
+    else if (k === K.right) { zone = 'rows'; view = 'songs'; }
+    else if (k === K.ok) {
+      if (side === 0) { close(); return; }
+      if (side === 1) { view = 'songs'; zone = 'rows'; }
+      if (side === 2) hard = !hard;
+      if (side === 3) view = 'phones';
+    } else return;
+    drawLobby();
+    if (view === 'songs' && zone === 'rows') previewSoon();
   }
 
   function drawPlayers() {
     if (!root) return;
+    drawChips();
     var box = root.querySelector('.d-players');
     if (!box) { drawScores(); return; }
     box.innerHTML = '';
@@ -877,8 +1440,11 @@ var Dance = (function () {
   function start() {
     var s = SONGS[song];
     for (var i = 0; i < players.length; i++) { players[i].score = 0; players[i].hits = []; players[i].grade = -1; }
+    clearTimeout(preview); stopMusic();
     var m = startMusic(s, 0.8);
     current = {song: s, dance: choreo(s, hard), music: m, beat: -1};
+    current.firstScored = 16;
+    for (var f = 0; f < current.dance.moves.length; f++) if (current.dance.moves[f].scored) { current.firstScored = current.dance.moves[f].b; break; }
     // When beat 0 happens, by this TV's clock (the phones line up their own to it)
     current.at = m ? Date.now() + Math.round((m.t0 - actx.currentTime + (actx.outputLatency || actx.baseLatency || 0)) * 1000) : Date.now() + 800;
     current.startedAt = Date.now();
@@ -911,6 +1477,7 @@ var Dance = (function () {
   function finish() {
     stopMusic();
     sendAll({t: 'done'});
+    if (current) remember(current.song);
     state = 'results'; sel = 0;
     drawResults();
   }
@@ -943,13 +1510,19 @@ var Dance = (function () {
       for (var k in pl.hits) if (pl.hits.hasOwnProperty(k)) counts[pl.hits[k]]++;
       el('span', 'd-perfects', row, counts[4] + ' perfekta');
     }
-    var btns = el('div', 'd-buttons', p);
-    var again = el('div', 'd-btn', btns, 'Dansa igen');
-    var other = el('div', 'd-btn', btns, 'Välj en annan låt');
-    (sel === 0 ? again : other).className += ' focus';
+    var btns = el('div', 'd-buttons', p), labels = resultButtons();
+    for (var b = 0; b < labels.length; b++) el('div', 'd-btn' + (b === sel ? ' focus' : '') + (b === 0 && queue.length ? ' next' : ''), btns, labels[b][1]);
   }
 
-  function backToLobby() { stopMusic(); current = null; state = 'lobby'; sel = SONGS.length + 1; sendAll({t: 'lobby'}); drawLobby(); }
+  /** The buttons after a song: with a playlist going, the next song first. */
+  function resultButtons() {
+    var out = [];
+    if (queue.length) out.push(['next', 'Nästa: ' + SONGS[queue[0]].name]);
+    out.push(['again', 'Dansa igen'], ['lobby', 'Välj en annan låt']);
+    return out;
+  }
+
+  function backToLobby() { stopMusic(); current = null; state = 'lobby'; zone = 'rows'; view = 'songs'; queue = []; sendAll({t: 'lobby'}); drawLobby(); previewSoon(); }
 
   // MARK: - Drawing the stage, every frame
 
@@ -975,6 +1548,7 @@ var Dance = (function () {
 
   var lastSecond = -1;
   function frame() {
+    if (state === 'lobby') { lobbyFrame(); return; }
     var c = ctx, beat = beatNow(), phase = beat - Math.floor(beat), pulse = Math.max(0, 1 - phase * 2.2);
     var accent = current ? current.song.color : '#B34DFF';
     drawBackdrop(c, beat, pulse, accent);
@@ -985,6 +1559,8 @@ var Dance = (function () {
       else {
         mv = moveAt(beat);
         pose = mv ? poseAt(mv.id, beat - mv.b) : poseAt('frys', 0);
+        var was = mv && mv.i > 0 ? current.dance.moves[mv.i - 1] : null, into = mv ? beat - mv.b : 1;
+        if (was && into < 0.22) pose = mix(poseAt(was.id, mv.b - was.b), pose, ease(into / 0.22));
       }
     } else {
       pose = poseAt(state === 'results' ? 'vinka' : 'gunga', beat);
@@ -1018,11 +1594,6 @@ var Dance = (function () {
   /** Where the dancers stand: one big in the middle, or a row. */
   function layout(n) {
     var out = [], i;
-    if (state === 'lobby') {   // between the songs and the QR code
-      var ls = n === 1 ? 0.9 : n === 2 ? 0.62 : 0.48, gap = n === 1 ? 0 : n === 2 ? 200 : 118;
-      for (i = 0; i < n; i++) out.push({x: 1095 + (i - (n - 1) / 2) * gap, gy: 1010, s: ls});
-      return out;
-    }
     if (state === 'results') return [{x: 1520, gy: 1010, s: 0.9}];
     var size = [1.12, 0.95, 0.8, 0.7][n - 1] || 0.7, span = [0, 620, 900, 1110][n - 1] || 1110, mid = n > 2 ? 880 : W / 2;
     for (i = 0; i < n; i++) out.push({x: n === 1 ? W / 2 : mid - span / 2 + span * i / (n - 1), gy: 1000, s: size});
@@ -1205,7 +1776,7 @@ var Dance = (function () {
   }
 
   function mixBounce(p, b) {
-    return {la: p.la, ra: p.ra, ll: p.ll, rl: p.rl, lean: p.lean, x: p.x, y: p.y + b, head: p.head};
+    return {la: p.la, ra: p.ra, ll: p.ll, rl: p.rl, lean: p.lean, x: p.x, y: p.y + b, head: p.head, bend: p.bend || 0};
   }
 
   function drawShadow(c, x, gy, s) {
@@ -1262,11 +1833,12 @@ var Dance = (function () {
     var fill = h.querySelector('.d-fill');
     if (fill) fill.style.width = clamp(beat / total * 100, 0, 100).toFixed(1) + '%';
     // the countdown before the first scored move, and the start
-    var count = h.querySelector('.d-count'), firstScored = 16;
+    var count = h.querySelector('.d-count'), firstScored = current.firstScored;
+    for (var fs = 0; fs < current.dance.moves.length; fs++) if (current.dance.moves[fs].scored) { firstScored = current.dance.moves[fs].b; break; }
     var left = firstScored - beat, text = '';
     if (beat < 0) text = 'Gör dig redo';
     else if (left > 0 && left <= 4) text = String(Math.ceil(left));
-    else if (left > 4 && beat < 8) text = 'Värm upp!';
+    else if (left > 4 && beat < firstScored - 4) text = 'Värm upp!';
     else if (left <= 0 && left > -2) text = 'Kör!';
     if (count.textContent !== text) { count.textContent = text; count.className = 'd-count' + (text ? ' on' : ''); }
     // now and next
@@ -1310,20 +1882,18 @@ var Dance = (function () {
     if (state === 'dance') { if (back) backToLobby(); return; }
     if (state === 'results') {
       if (back) { backToLobby(); return; }
-      if (k === K.left || k === K.right || k === K.up || k === K.down) { sel = sel ? 0 : 1; drawResults(); return; }
-      if (k === K.ok) { if (sel === 0) start(); else backToLobby(); }
+      var bl = resultButtons();
+      if (k === K.left || k === K.up) { sel = (sel + bl.length - 1) % bl.length; drawResults(); return; }
+      if (k === K.right || k === K.down) { sel = (sel + 1) % bl.length; drawResults(); return; }
+      if (k === K.ok) {
+        var what = bl[clamp(sel, 0, bl.length - 1)][0];
+        if (what === 'next') { song = queue.shift(); start(); }
+        else if (what === 'again') start();
+        else backToLobby();
+      }
       return;
     }
-    // the lobby
-    if (back) { close(); return; }
-    var n = SONGS.length + 2;
-    if (k === K.up) { sel = (sel + n - 1) % n; drawLobby(); return; }
-    if (k === K.down) { sel = (sel + 1) % n; drawLobby(); return; }
-    if (sel === SONGS.length && (k === K.left || k === K.right || k === K.ok)) { hard = !hard; drawLobby(); return; }
-    if (k === K.ok) {
-      if (sel < SONGS.length) { song = sel; sel = SONGS.length + 1; drawLobby(); return; }
-      start();
-    }
+    lobbyKey(k, back);
   }, true);
 
   document.addEventListener('visibilitychange', function () { if (document.hidden && opened) close(); });

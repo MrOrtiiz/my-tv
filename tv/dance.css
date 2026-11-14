@@ -6,39 +6,84 @@
 #dance .d-dot { display: inline-block; width: 22px; height: 22px; border-radius: 11px; vertical-align: middle; margin-right: 16px;
   box-shadow: 0 0 14px currentColor; }
 
-/* The lobby */
-#dance .lobby .d-left { position: absolute; left: 110px; top: 96px; width: 760px; }
-#dance .d-title { font-size: 104px; font-weight: 800; letter-spacing: -2px; line-height: 1.05; color: #FFF;
-  text-shadow: 0 0 18px #FF3DA5, 0 0 46px rgba(255, 61, 165, 0.7), 0 0 90px rgba(46, 230, 255, 0.45); }
-#dance .d-sub { margin: 14px 0 22px; font-size: 27px; line-height: 38px; color: rgba(255, 255, 255, 0.72); }
-#dance .d-song, #dance .d-level, #dance .d-go {
-  position: relative; height: 78px; line-height: 78px; margin-bottom: 12px; padding: 0 32px; border-radius: 24px;
-  background: rgba(255, 255, 255, 0.07); border: 2px solid rgba(255, 255, 255, 0.08); font-size: 34px; font-weight: 600;
-  -webkit-transition: -webkit-transform 0.15s, background 0.15s; transition: transform 0.15s, background 0.15s;
-}
-#dance .d-song.chosen { background: rgba(255, 255, 255, 0.13); }
-#dance .d-more { height: 30px; line-height: 30px; margin: -6px 0 6px 34px; font-size: 20px; color: rgba(255, 255, 255, 0.45); visibility: hidden; }
-#dance .d-more.on { visibility: visible; }
-#dance .d-song .d-tempo { position: absolute; right: 32px; top: 0; font-size: 23px; font-weight: 500; color: rgba(255, 255, 255, 0.55); }
-#dance .d-level .d-label { color: rgba(255, 255, 255, 0.6); margin-right: 30px; }
-#dance .d-level .d-opt { display: inline-block; height: 56px; line-height: 56px; padding: 0 30px; margin-right: 12px; border-radius: 28px;
-  font-size: 28px; color: rgba(255, 255, 255, 0.55); }
-#dance .d-level .d-opt.on { background: #fff; color: #120A24; }
-#dance .d-go { text-align: center; font-size: 42px; font-weight: 800; margin-top: 22px; height: 92px; line-height: 92px;
-  background: linear-gradient(90deg, #FF3DA5, #B34DFF 55%, #2EE6FF); border: 0; }
-#dance .focus { -webkit-transform: scale(1.04); transform: scale(1.04); box-shadow: 0 0 0 4px #fff, 0 0 40px rgba(255, 255, 255, 0.35); }
-#dance .d-hint { margin-top: 26px; font-size: 21px; color: rgba(255, 255, 255, 0.45); }
+/* The lobby: a purple-blue room, round buttons on the left, rows of cards, the players in a pill on the right */
+#dance .lobby { background: radial-gradient(circle at 18% 12%, rgba(255, 90, 200, 0.35), rgba(255, 90, 200, 0) 38%),
+  radial-gradient(circle at 92% 88%, rgba(255, 70, 160, 0.45), rgba(255, 70, 160, 0) 40%),
+  linear-gradient(135deg, #3A1A8E 0%, #2B3CC6 48%, #5A2DBA 78%, #B23A9F 100%); overflow: hidden; }
+#dance .d-rail { position: absolute; z-index: 5; left: 34px; top: 50%; width: 96px; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+#dance .d-rbtn { position: relative; width: 84px; height: 84px; margin: 20px 6px; border-radius: 42px; box-sizing: border-box; color: #fff;
+  background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.28); text-align: center;
+  -webkit-transition: -webkit-transform 0.15s, background 0.15s; transition: transform 0.15s, background 0.15s; }
+#dance .d-rbtn svg { margin-top: 20px; }
+#dance .d-rbtn.on { background: rgba(255, 255, 255, 0.26); border-color: #fff; }
+#dance .d-rbtn.hard { color: #FF8FD0; }
+#dance .d-rbtn.focus { -webkit-transform: scale(1.14); transform: scale(1.14); box-shadow: 0 0 0 5px #fff, 0 0 34px rgba(255, 255, 255, 0.55); }
+#dance .d-rtip { position: absolute; left: 104px; top: 21px; height: 42px; line-height: 42px; padding: 0 20px; border-radius: 21px; white-space: nowrap;
+  background: #fff; color: #2A1F7A; font-size: 23px; font-weight: 800; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); }
 
-#dance .lobby .d-right { position: absolute; right: 110px; top: 110px; width: 420px; padding: 34px; border-radius: 34px;
-  background: rgba(16, 10, 34, 0.78); box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.14); text-align: center; }
-#dance .d-qr-title { font-size: 34px; font-weight: 700; }
-#dance .d-qr-sub { margin: 8px 0 22px; font-size: 21px; line-height: 29px; color: rgba(255, 255, 255, 0.65); }
-#dance .d-qr { width: 300px; height: 300px; margin: 0 auto; background: #fff; border-radius: 22px; overflow: hidden; color: #222; font-size: 20px; }
-#dance .d-qr svg { width: 300px; height: 300px; }
-#dance .d-players { margin-top: 26px; text-align: left; }
-#dance .d-slot { height: 58px; line-height: 58px; font-size: 25px; color: rgba(255, 255, 255, 0.35); }
+#dance .d-main { position: absolute; left: 168px; top: 0; width: 1600px; height: 1080px; overflow: hidden; }
+#dance .d-row { position: absolute; left: 20px; width: 1580px; height: 320px; -webkit-transition: top 0.25s; transition: top 0.25s; }
+#dance .d-row.gone { opacity: 0; }
+#dance .d-rtitle { height: 50px; line-height: 50px; font-size: 29px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
+#dance .d-strip { position: absolute; top: 58px; height: 262px; -webkit-transition: left 0.2s; transition: left 0.2s; }
+#dance .d-card2 { position: absolute; top: 0; width: 360px; }
+#dance .d-card2.focus { -webkit-transform: none; transform: none; box-shadow: none; }
+#dance .d-art, #dance .d-lface { position: relative; width: 360px; height: 203px; border-radius: 14px; overflow: hidden;
+  box-shadow: 0 10px 26px rgba(10, 0, 40, 0.45); -webkit-transition: -webkit-transform 0.15s; transition: transform 0.15s; }
+#dance .d-art canvas { display: block; width: 360px; height: 203px; }
+#dance .d-cname { position: absolute; left: 16px; right: 12px; bottom: 10px; font-size: 25px; font-weight: 800; white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7); }
+#dance .d-card2.focus .d-art, #dance .d-card2.focus .d-lface { -webkit-transform: scale(1.06); transform: scale(1.06);
+  box-shadow: 0 0 0 6px #fff, 0 0 44px rgba(255, 255, 255, 0.55); }
+#dance .d-meta { position: relative; height: 40px; line-height: 40px; margin-top: 12px; font-size: 20px; white-space: nowrap; }
+#dance .d-tempo-pill { display: inline-block; height: 26px; line-height: 26px; padding: 0 7px; border-radius: 6px; vertical-align: middle;
+  background: rgba(255, 255, 255, 0.18); }
+#dance .d-bar { display: inline-block; width: 6px; height: 14px; margin: 0 2px; border-radius: 2px; vertical-align: middle; background: rgba(255, 255, 255, 0.3); }
+#dance .d-bar.on { background: #fff; }
+#dance .d-tempo-text { margin-left: 10px; color: rgba(255, 255, 255, 0.78); vertical-align: middle; }
+#dance .d-stars-row { position: absolute; right: 2px; top: 0; font-size: 27px; letter-spacing: 2px; }
+#dance .d-star { color: rgba(255, 255, 255, 0.28); }
+#dance .d-star.on { color: #FFD23D; text-shadow: 0 0 10px rgba(255, 210, 61, 0.6); }
+#dance .d-card2.list { width: 520px; }
+#dance .d-card2.list .d-meta { width: 470px; }
+#dance .d-lface { width: 470px; z-index: 2; }
+#dance .d-lstack { position: absolute; left: 446px; top: 12px; width: 52px; height: 179px; border-radius: 0 14px 14px 0; z-index: 1; opacity: 0.55;
+  box-shadow: inset 12px 0 18px rgba(0, 0, 0, 0.35); }
+#dance .d-lname { position: absolute; left: 24px; top: 20px; width: 230px; font-size: 30px; line-height: 36px; font-weight: 800; }
+#dance .d-lart { position: absolute; right: 12px; bottom: 14px; width: 210px; height: 170px; }
+#dance .d-lcount { display: inline-block; margin-right: 26px; color: rgba(255, 255, 255, 0.88); font-size: 22px; font-weight: 600; }
+#dance .d-lcount svg { vertical-align: -6px; }
+#dance .d-peek { position: absolute; right: 0; top: 58px; width: 110px; height: 203px; pointer-events: none;
+  background: linear-gradient(90deg, rgba(58, 40, 170, 0), rgba(58, 40, 170, 0.75)); }
+
+#dance .d-pill { position: absolute; right: 30px; top: 50%; width: 96px; padding: 18px 0 20px; border-radius: 48px; text-align: center;
+  -webkit-transform: translateY(-50%); transform: translateY(-50%); background: rgba(20, 8, 70, 0.45); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.22); }
+#dance .d-pill-phone { width: 64px; height: 64px; margin: 0 auto 14px; border-radius: 32px; color: #fff; background: rgba(255, 255, 255, 0.16); }
+#dance .d-pill-phone svg { margin-top: 15px; }
+#dance .d-pill-phone.on { background: #fff; color: #2B3CC6; }
+#dance .d-ring { width: 64px; height: 64px; margin: 12px auto 0; border-radius: 32px; box-sizing: border-box; border: 4px dashed;
+  line-height: 56px; font-size: 28px; font-weight: 800; color: rgba(255, 255, 255, 0.55); background: rgba(255, 255, 255, 0.05); }
+#dance .d-ring.in { border-style: solid; color: #fff; box-shadow: 0 0 18px rgba(255, 255, 255, 0.35); }
+
+#dance .d-phones { position: absolute; left: 90px; top: 150px; width: 1360px; height: 660px; padding: 60px; box-sizing: border-box;
+  border-radius: 40px; background: rgba(20, 8, 70, 0.5); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.2); }
+#dance .d-phones .d-qr { float: left; width: 420px; height: 420px; }
+#dance .d-phones .d-qr svg { width: 420px; height: 420px; }
+#dance .d-how { margin-left: 500px; }
+#dance .d-how-title { font-size: 54px; font-weight: 800; margin-bottom: 20px; }
+#dance .d-how-step { font-size: 29px; line-height: 50px; color: rgba(255, 255, 255, 0.86); }
+#dance .d-how .d-players { margin-top: 26px; }
+#dance .d-nudge { position: absolute; right: 150px; top: 26px; height: 52px; line-height: 52px; padding: 0 26px; border-radius: 26px;
+  background: rgba(20, 8, 70, 0.55); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.22); font-size: 22px; color: rgba(255, 255, 255, 0.9); }
+#dance .d-nudge svg { vertical-align: -6px; margin: 0 4px; }
+#dance .d-how-back { margin-top: 18px; font-size: 21px; color: rgba(255, 255, 255, 0.5); }
+#dance .d-qr { background: #fff; border-radius: 22px; overflow: hidden; color: #222; font-size: 20px; }
+#dance .d-slot { height: 54px; line-height: 54px; font-size: 26px; color: rgba(255, 255, 255, 0.4); }
 #dance .d-slot.in { color: #fff; font-weight: 600; }
-#dance .d-slot .d-link { float: right; font-size: 18px; font-weight: 500; color: rgba(255, 255, 255, 0.45); }
+#dance .d-slot .d-link { margin-left: 20px; font-size: 19px; font-weight: 500; color: rgba(255, 255, 255, 0.55); }
+#dance .focus { -webkit-transform: scale(1.04); transform: scale(1.04); box-shadow: 0 0 0 4px #fff, 0 0 40px rgba(255, 255, 255, 0.35); }
+#dance .d-btn.next { background: linear-gradient(90deg, #FF3DA5, #B34DFF 55%, #2EE6FF); }
 
 /* Dancing */
 #dance .d-top { position: absolute; left: 70px; top: 52px; width: 560px; }
@@ -75,6 +120,9 @@
 #dance .d-count.on { opacity: 1; }
 
 /* Results */
+#dance .d-title { font-size: 104px; font-weight: 800; letter-spacing: -2px; line-height: 1.05; color: #FFF;
+  text-shadow: 0 0 18px #FF3DA5, 0 0 46px rgba(255, 61, 165, 0.7), 0 0 90px rgba(46, 230, 255, 0.45); }
+#dance .d-sub { margin: 14px 0 22px; font-size: 27px; line-height: 38px; color: rgba(255, 255, 255, 0.72); }
 #dance .results .d-title { position: absolute; left: 110px; top: 110px; }
 #dance .d-ranks { position: absolute; left: 110px; top: 280px; width: 1060px; }
 #dance .d-ranks .d-sub { width: 820px; }
