@@ -86,7 +86,15 @@ var Dance = (function () {
     disco: {name: 'Disco-peka', easy: false, cycle: 2, f: [
       S(-38, 42, 146, 150, 6, 16, 0, 10), S(-38, 42, -28, -40, -4, -6, 8, -6)]},
     simma: {name: 'Simma', easy: false, cycle: 2, f: [
-      S(-20, -24, 170, 172, 4, 0, 0), S(-170, -172, 20, 24, -4, 0, 0)]}
+      S(-20, -24, 170, 172, 4, 0, 0), S(-170, -172, 20, 24, -4, 0, 0)]},
+    jubel: {name: 'Jubla!', easy: true, cycle: 1, f: [
+      P(-30, 150, 30, -150, -14, 6, 14, -6, 0, 0, 12), P(-150, -160, 150, 160, -8, -4, 8, 4, 0, 0, -30, 0)]},
+    gitarr: {name: 'Luftgitarr', easy: true, cycle: 1, f: [
+      S(-55, -100, 35, -60, -6, 0, 4, 6), S(-55, -100, 55, 20, -4, 0, 0, -4)]},
+    salsa: {name: 'Salsasteg', easy: true, cycle: 2, f: [
+      P(-40, 80, 40, 100, -18, -6, 4, 2, 6, -18, 4, 6), P(-40, 100, 40, -80, -4, -2, 18, 6, -6, 18, 4, -6)]},
+    vagga: {name: 'Vagga', easy: true, cycle: 4, f: [
+      P(-150, -155, -170, -165, -10, -4, 4, 2, 10, -20, 0, 8), P(165, 170, 150, 155, -4, -2, 10, 4, -10, 20, 0, -8)]}
   };
   var MOVE_IDS = [];
   for (var mid in MOVES) if (MOVES.hasOwnProperty(mid)) MOVE_IDS.push(mid);
@@ -237,8 +245,50 @@ var Dance = (function () {
         A: {easy: [['disco', 'klapp'], ['sida', 'pump']], hard: [['disco', 'disco', 'klapp', 'robot'], ['puff', 'snurr', 'pump', 'frys']]},
         B: {easy: [['stjarna', 'pump'], ['hopp', 'frys']], hard: [['stjarna', 'pump', 'hopp', 'disco'], ['simma', 'snurr', 'stjarna', 'frys']]},
         C: {easy: [['vinka', 'gunga'], ['klapp', 'frys']], hard: [['robot', 'robot', 'vinka', 'vinka'], ['gunga', 'puff', 'disco', 'frys']]}
+      }},
+    {id: 'latino', name: 'Ritmo Latino', tempo: 'Medel', bpm: 96, root: 43, scale: 'minor', chords: [0, 5, 2, 6], drums: 'dembow', seed: 77,
+      color: '#FF6B3D',
+      dance: {
+        A: {easy: [['salsa', 'klapp'], ['gunga', 'salsa']], hard: [['salsa', 'salsa', 'gunga', 'klapp'], ['disco', 'salsa', 'snurr', 'frys']]},
+        B: {easy: [['salsa', 'pump'], ['jubel', 'frys']], hard: [['salsa', 'pump', 'disco', 'jubel'], ['snurr', 'salsa', 'hopp', 'frys']]},
+        C: {easy: [['gunga', 'vinka'], ['salsa', 'frys']], hard: [['gunga', 'gunga', 'vinka', 'vinka'], ['salsa', 'robot', 'disco', 'frys']]}
+      }},
+    {id: 'fotboll', name: 'Fotbollsfest', tempo: 'Snabb', bpm: 126, root: 48, scale: 'major', chords: [0, 3, 0, 4], drums: 'stomp', seed: 10,
+      color: '#3D7BFF',
+      dance: {
+        A: {easy: [['klapp', 'jubel'], ['pump', 'klapp']], hard: [['klapp', 'jubel', 'pump', 'klapp'], ['puff', 'puff', 'jubel', 'frys']]},
+        B: {easy: [['jubel', 'hopp'], ['stjarna', 'jubel']], hard: [['jubel', 'hopp', 'jubel', 'stjarna'], ['pump', 'snurr', 'jubel', 'frys']]},
+        C: {easy: [['vinka', 'sida'], ['klapp', 'frys']], hard: [['sida', 'vinka', 'robot', 'klapp'], ['vinka', 'simma', 'jubel', 'frys']]}
+      }},
+    {id: 'godnatt', name: 'Godnattdisco', tempo: 'Lugn', bpm: 92, root: 53, scale: 'major', chords: [0, 5, 3, 4], drums: 'soft', seed: 5,
+      color: '#9D8CFF',
+      dance: {
+        A: {easy: [['vagga', 'gunga'], ['vinka', 'vagga']], hard: [['vagga', 'gunga', 'vinka', 'klapp'], ['sida', 'vagga', 'snurr', 'frys']]},
+        B: {easy: [['sida', 'vinka'], ['vagga', 'frys']], hard: [['sida', 'vinka', 'disco', 'vagga'], ['simma', 'vagga', 'klapp', 'frys']]},
+        C: {easy: [['gunga', 'vagga'], ['klapp', 'frys']], hard: [['vagga', 'vagga', 'gunga', 'gunga'], ['vinka', 'sida', 'vagga', 'frys']]}
+      }},
+    {id: 'robot', name: 'Robotrock', tempo: 'Snabb', bpm: 134, root: 40, scale: 'minor', chords: [0, 6, 5, 6], drums: 'rock', seed: 99,
+      color: '#E8FF3D',
+      dance: {
+        A: {easy: [['gitarr', 'pump'], ['gitarr', 'klapp']], hard: [['gitarr', 'gitarr', 'robot', 'pump'], ['robot', 'puff', 'gitarr', 'frys']]},
+        B: {easy: [['hopp', 'gitarr'], ['stjarna', 'frys']], hard: [['hopp', 'gitarr', 'robot', 'jubel'], ['snurr', 'puff', 'hopp', 'frys']]},
+        C: {easy: [['robot', 'gitarr'], ['pump', 'frys']], hard: [['robot', 'robot', 'gitarr', 'gitarr'], ['simma', 'disco', 'robot', 'frys']]}
       }}
   ];
+
+  /**
+   * The drum styles: where the kick and the snare (or clap) fall in the bar's 16 steps, how the hats go, and the
+   * bass line's steps (oct: steps an octave up).
+   */
+  var STYLES = {
+    four: {kick: [0, 4, 8, 12], snare: [4, 12], clap: true, hat: 'eighths', bass: [0, 2, 4, 6, 8, 10, 12, 14]},
+    pop: {kick: [0, 6, 8, 10], snare: [4, 12], clap: false, hat: 'eighths', bass: [0, 6, 8, 12, 14]},
+    disco: {kick: [0, 4, 8, 12], snare: [4, 12], clap: true, hat: 'open', bass: [0, 3, 6, 8, 10, 14], oct: [6, 14]},
+    dembow: {kick: [0, 4, 8, 12], snare: [3, 6, 11, 14], clap: false, hat: 'eighths', bass: [0, 3, 8, 11], oct: [11]},
+    stomp: {kick: [0, 2, 8, 10], snare: [4, 12, 13], clap: true, hat: 'quarters', bass: [0, 4, 8, 12]},
+    soft: {kick: [0, 10], snare: [8], clap: true, hat: 'soft', bass: [0, 8], gentle: true},
+    rock: {kick: [0, 7, 8], snare: [4, 12], clap: false, hat: 'eighths', bass: [0, 2, 4, 6, 8, 10, 12, 14], oct: [2, 6, 10, 14]}
+  };
   // bars: a warm-up, then the sections, then a bow. 48 bars: about 1.5–1.8 minutes.
   var FORM = [['intro', 4], ['A', 8], ['B', 8], ['A', 8], ['C', 8], ['B', 8], ['outro', 4]];
 
@@ -390,25 +440,23 @@ var Dance = (function () {
     var fill = sec.bar === sec.len - 1 && pos >= 12;   // a drum fill into the next section
     var drums = name !== 'C' || sec.bar >= sec.len - 2;
     var full = name === 'A' || name === 'B' || name === 'C';
-    // drums
-    if (pos % 4 === 0 && (name !== 'C' || sec.bar >= sec.len - 2)) {
-      var four = song.drums === 'four' || song.drums === 'disco' || name === 'intro' || name === 'outro';
-      if (four || pos === 0 || pos === 8) kick(t, name === 'intro' ? 0.8 : 1);
-    }
-    if (song.drums === 'pop' && (pos === 6 || pos === 10) && full && name !== 'C') kick(t, 0.75);
-    if (full && drums && (pos === 4 || pos === 12)) snare(t, 1, song.drums !== 'pop');
-    if (fill && full && pos % 2 === 1) snare(t, 0.6, false);
+    var st = STYLES[song.drums] || STYLES.four, soft = st.gentle ? 0.6 : 1;
+    function has(list) { for (var q = 0; q < list.length; q++) if (list[q] === pos) return true; return false; }
+    // drums: in the intro and the outro just the kick on the beat; the break (C) without until its last two bars
+    if (name === 'intro' || name === 'outro') { if (pos % 4 === 0 && (!st.gentle || pos % 8 === 0)) kick(t, 0.8 * soft); }
+    else if (drums && has(st.kick)) kick(t, (pos % 4 === 0 ? 1 : 0.75) * soft);
+    if (full && drums && has(st.snare)) snare(t, (song.drums === 'dembow' && pos !== 6 && pos !== 14 ? 0.7 : 1) * soft, st.clap);
+    if (fill && full && pos % 2 === 1 && !st.gentle) snare(t, 0.6, false);
     if (name !== 'outro' || sec.bar < 2) {
-      if (song.drums === 'disco' && pos % 4 === 2) hat(t, 1, true);
+      if (st.hat === 'open' && pos % 4 === 2) hat(t, 1, true);
+      else if (st.hat === 'quarters') { if (pos % 4 === 0 || (name === 'B' && pos % 2 === 0)) hat(t, 0.7, false); }
+      else if (st.hat === 'soft') { if (pos % 4 === 2) hat(t, 0.35, false); }
       else if (pos % 2 === 0 || name === 'B') hat(t, pos % 4 === 2 ? 1 : 0.55, false);
     }
     // bass
-    if (full || name === 'outro') {
-      var pat = song.drums === 'disco' ? [0, 3, 6, 8, 10, 14] : song.drums === 'pop' ? [0, 6, 8, 12, 14] : [0, 2, 4, 6, 8, 10, 12, 14];
-      for (var i = 0; i < pat.length; i++) if (pat[i] === pos) {
-        var up = song.drums === 'disco' && (pos === 6 || pos === 14) ? 12 : 0;
-        bass(t, bassNote + up, s16 * 1.7, name === 'C' ? 0.7 : 1);
-      }
+    if ((full || name === 'outro') && has(st.bass)) {
+      var up = st.oct && has(st.oct) ? 12 : 0;
+      bass(t, bassNote + up, s16 * (st.gentle ? 3.5 : 1.7), (name === 'C' ? 0.7 : 1) * soft);
     }
     // chords: once a bar
     if (pos === 0) pad(t, chordNotes(song, deg, root + 12), spb * 4, name === 'C' ? 1.4 : 1);
@@ -660,7 +708,7 @@ var Dance = (function () {
 
   // MARK: - The screens: lobby → countdown and dance → results
 
-  var opened = false, state = 'lobby', sel = 0, song = 0, hard = false, current = null, raf = 0;
+  var opened = false, state = 'lobby', sel = 0, song = 0, hard = false, current = null, raf = 0, listTop = 0;
   var canvas = null, ctx = null, root = null, idleStart = 0;
 
   function build() {
@@ -736,8 +784,15 @@ var Dance = (function () {
     var left = el('div', 'd-left', p);
     el('div', 'd-title', left, 'Dansgolvet');
     el('div', 'd-sub', left, 'Härma dansaren. Den lysande handen visar vad mobilen ska göra.');
-    var items = [];
+    var items = [], SHOW = 4;
+    // four songs at a time, scrolled so the one in focus (or the chosen one) is in view
+    var at = sel < SONGS.length ? sel : song;
+    if (at < listTop) listTop = at;
+    if (at > listTop + SHOW - 1) listTop = at - SHOW + 1;
+    listTop = clamp(listTop, 0, Math.max(0, SONGS.length - SHOW));
+    el('div', 'd-more' + (listTop > 0 ? ' on' : ''), left, '▲  fler låtar');
     for (var i = 0; i < SONGS.length; i++) {
+      if (i < listTop || i >= listTop + SHOW) { items.push(null); continue; }
       var s = SONGS[i], row = el('div', 'd-song' + (i === song ? ' chosen' : ''), left);
       row.style.borderColor = i === song ? s.color : '';
       var dot = el('span', 'd-dot', row); dot.style.background = s.color;
@@ -745,6 +800,7 @@ var Dance = (function () {
       el('span', 'd-tempo', row, s.tempo + ' · ' + s.bpm + ' bpm');
       items.push(row);
     }
+    el('div', 'd-more' + (listTop + SHOW < SONGS.length ? ' on' : ''), left, '▼  ' + (SONGS.length - listTop - SHOW) + ' till');
     var lvl = el('div', 'd-level', left);
     el('span', 'd-label', lvl, 'Nivå');
     el('span', 'd-opt' + (!hard ? ' on' : ''), lvl, 'Lätt');
@@ -752,7 +808,7 @@ var Dance = (function () {
     items.push(lvl);
     var go = el('div', 'd-go', left, 'Dansa!');
     items.push(go);
-    for (var k = 0; k < items.length; k++) if (k === sel) items[k].className += ' focus';
+    for (var k = 0; k < items.length; k++) if (k === sel && items[k]) items[k].className += ' focus';
     el('div', 'd-hint', left, '▲ ▼ välj   OK  ' + (sel < SONGS.length ? 'välj låt' : sel === SONGS.length ? 'byt nivå' : 'starta') + '   Tillbaka stänger');
 
     var right = el('div', 'd-right', p);
@@ -1219,7 +1275,7 @@ var Dance = (function () {
     if (nowName.textContent !== name) nowName.textContent = name;
     if (mv) {
       var into = Math.floor(beat - mv.b), d = '';
-      for (var i = 0; i < mv.n; i++) d += i <= into ? '●' : '○';
+      if (mv.scored) for (var i = 0; i < mv.n; i++) d += i <= into ? '●' : '○';   // none in the warm-up and the bow
       if (dots.textContent !== d) dots.textContent = d;
     }
     var thumbs = h.querySelectorAll('.d-thumb'), list = current.dance.moves, from = mv ? mv.i + 1 : 0;

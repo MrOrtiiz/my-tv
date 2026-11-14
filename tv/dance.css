@@ -10,19 +10,21 @@
 #dance .lobby .d-left { position: absolute; left: 110px; top: 96px; width: 760px; }
 #dance .d-title { font-size: 104px; font-weight: 800; letter-spacing: -2px; line-height: 1.05; color: #FFF;
   text-shadow: 0 0 18px #FF3DA5, 0 0 46px rgba(255, 61, 165, 0.7), 0 0 90px rgba(46, 230, 255, 0.45); }
-#dance .d-sub { margin: 14px 0 38px; font-size: 27px; line-height: 38px; color: rgba(255, 255, 255, 0.72); }
+#dance .d-sub { margin: 14px 0 22px; font-size: 27px; line-height: 38px; color: rgba(255, 255, 255, 0.72); }
 #dance .d-song, #dance .d-level, #dance .d-go {
-  position: relative; height: 92px; line-height: 92px; margin-bottom: 18px; padding: 0 32px; border-radius: 26px;
+  position: relative; height: 78px; line-height: 78px; margin-bottom: 12px; padding: 0 32px; border-radius: 24px;
   background: rgba(255, 255, 255, 0.07); border: 2px solid rgba(255, 255, 255, 0.08); font-size: 34px; font-weight: 600;
   -webkit-transition: -webkit-transform 0.15s, background 0.15s; transition: transform 0.15s, background 0.15s;
 }
 #dance .d-song.chosen { background: rgba(255, 255, 255, 0.13); }
+#dance .d-more { height: 30px; line-height: 30px; margin: -6px 0 6px 34px; font-size: 20px; color: rgba(255, 255, 255, 0.45); visibility: hidden; }
+#dance .d-more.on { visibility: visible; }
 #dance .d-song .d-tempo { position: absolute; right: 32px; top: 0; font-size: 23px; font-weight: 500; color: rgba(255, 255, 255, 0.55); }
 #dance .d-level .d-label { color: rgba(255, 255, 255, 0.6); margin-right: 30px; }
 #dance .d-level .d-opt { display: inline-block; height: 56px; line-height: 56px; padding: 0 30px; margin-right: 12px; border-radius: 28px;
   font-size: 28px; color: rgba(255, 255, 255, 0.55); }
 #dance .d-level .d-opt.on { background: #fff; color: #120A24; }
-#dance .d-go { text-align: center; font-size: 44px; font-weight: 800; margin-top: 30px; height: 104px; line-height: 104px;
+#dance .d-go { text-align: center; font-size: 42px; font-weight: 800; margin-top: 22px; height: 92px; line-height: 92px;
   background: linear-gradient(90deg, #FF3DA5, #B34DFF 55%, #2EE6FF); border: 0; }
 #dance .focus { -webkit-transform: scale(1.04); transform: scale(1.04); box-shadow: 0 0 0 4px #fff, 0 0 40px rgba(255, 255, 255, 0.35); }
 #dance .d-hint { margin-top: 26px; font-size: 21px; color: rgba(255, 255, 255, 0.45); }
