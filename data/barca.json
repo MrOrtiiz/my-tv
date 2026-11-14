@@ -1,5 +1,5 @@
 {
- "updated": 1794640790774,
+ "updated": 1794650319262,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -40,26 +40,24 @@
  ],
  "guide": {
   "channels": 5632,
-  "programmes": 297419,
-  "barca_listings": 58,
-  "until": "2026-11-15T09:30:00+01:00"
+  "programmes": 295036,
+  "barca_listings": 69,
+  "until": "2026-11-15T11:00:00+01:00"
  },
  "barca_titles_seen": [
-  "11-14 07:55 | Košarka - Euroleague: Panathinaikos - Barcelona  | 95 min",
   "11-14 09:00 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - Racing Santander  | 135 min",
   "11-14 13:55 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - Real Madryt CF  | 135 min",
   "11-14 16:10 | Piłka nożna: Liga hiszpańska - mecz: Atletico Madryt - FC Barcelona  | 130 min",
   "11-15 07:15 | Piłka nożna: Liga hiszpańska - mecz: Real Betis Balompie - FC Barcelona  | 135 min",
   "11-15 00:00 | Motorsport: FIA-Langstrecken-WM - 6 Stunden von Barcelona  | 90 min",
   "11-15 01:30 | Motorsport: FIA-Langstrecken-WM - 6 Stunden von Barcelona  | 150 min",
+  "11-15 08:30 | Motorsport: FIA-Langstrecken-WM - 6 Stunden von Barcelona  | 150 min",
   "11-14 12:30 | Futboll: Liga e Kampioneve Barcelona - Aston Villa  | 135 min",
-  "11-14 07:55 | Košarka - Euroleague: Panathinaikos - Barcelona  | 95 min",
   "11-14 08:35 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Casademont Saragossa  | 170 min",
   "11-14 17:10 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 165 min",
   "11-15 08:15 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 150 min",
   "11-15 02:30 | 6 Hours of Barcelona, Fecha 7  | 60 min",
   "11-14 12:00 | Barcelona (Esp) vs. Aston Villa (Ing)  | 120 min",
-  "11-14 07:55 | Košarka - Euroleague: Panathinaikos - Barcelona  | 95 min",
   "11-14 17:00 | Endurance: 6 Hours of Barcelona  | 60 min",
   "11-15 00:00 | Endurance: 6 Hours of Barcelona  | 60 min",
   "11-14 21:30 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 110 min",
@@ -69,7 +67,9 @@
   "11-14 19:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-14 19:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-15 00:00 | WEC - 6 Horas de Barcelona - Corrida  | 90 min",
-  "11-15 07:00 | WEC - 6 Horas de Barcelona - Corrida  | 90 min"
+  "11-15 07:00 | WEC - 6 Horas de Barcelona - Corrida  | 90 min",
+  "11-15 01:30 | WEC - 6 Horas de Barcelona - Corrida  | 150 min",
+  "11-15 08:30 | WEC - 6 Horas de Barcelona - Corrida  | 150 min"
  ],
  "table": {
   "league": "LaLiga",
