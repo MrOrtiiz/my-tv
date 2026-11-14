@@ -137,3 +137,88 @@
 #dance .d-btn { display: inline-block; height: 96px; line-height: 96px; padding: 0 54px; margin-right: 26px; border-radius: 48px;
   background: rgba(255, 255, 255, 0.1); font-size: 34px; font-weight: 700;
   -webkit-transition: -webkit-transform 0.15s; transition: transform 0.15s; }
+
+/*
+ * The iOS look (body.ios, as in ios.css): the same lobby and stage, with Apple's finish. Glass for the round buttons, the
+ * players' pill and the panels (a bright rim, a soft sheen, large rounded corners), rounder cards that lift when in
+ * focus, white for what's in focus, iOS yellow stars and iOS blue for "next". Blur only in the lobby (still behind it);
+ * over the moving stage the glass is drawn without blur, so the TV keeps up.
+ */
+.ios #dance .d-rbtn, .ios #dance .d-pill, .ios #dance .d-nudge, .ios #dance .d-phones, .ios #dance .d-tempo-pill {
+  border: 0;
+  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.07));
+  background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.07));
+  box-shadow: 0 18px 40px rgba(10, 0, 40, 0.28),
+    inset 0 2px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.22),
+    inset 0 0 30px rgba(255, 255, 255, 0.06);
+}
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .ios #dance .d-rbtn, .ios #dance .d-pill, .ios #dance .d-nudge, .ios #dance .d-phones {
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    backdrop-filter: blur(24px) saturate(1.6);
+  }
+}
+.ios #dance .d-tempo-pill { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.18); border-radius: 8px; }
+
+/* Round buttons: glass circles, white with a dark symbol in focus (as on the home screen) */
+.ios #dance .d-rbtn.on { background: rgba(255, 255, 255, 0.3); }
+.ios #dance .d-rbtn.focus { background: #FFF; color: #1D1D1F; -webkit-transform: scale(1.12); transform: scale(1.12);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3); }
+.ios #dance .d-rbtn.hard { color: #FF6482; }
+.ios #dance .d-rbtn.hard.focus { color: #FF375F; }
+.ios #dance .d-rtip { color: #1D1D1F; font-weight: 600; letter-spacing: 0.01em; border-radius: 21px; box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28); }
+
+/* Row titles: large and bold, not shouted (as iOS headers) */
+.ios #dance .d-rtitle { text-transform: none; letter-spacing: 0.005em; font-size: 33px; font-weight: 700; text-shadow: none; }
+
+/* Cards: rounder, a soft sheen on top, lifted and ringed in focus */
+.ios #dance .d-art, .ios #dance .d-lface { border-radius: 30px; box-shadow: 0 14px 30px rgba(10, 0, 40, 0.35); }
+.ios #dance .d-art::after, .ios #dance .d-lface::after {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 45%; border-radius: 30px 30px 0 0; pointer-events: none;
+  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0));
+  background: linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0));
+}
+.ios #dance .d-card2.focus .d-art, .ios #dance .d-card2.focus .d-lface {
+  -webkit-transform: scale(1.07) translateY(-6px); transform: scale(1.07) translateY(-6px);
+  box-shadow: 0 24px 46px rgba(10, 0, 40, 0.5), 0 0 0 3px rgba(255, 255, 255, 0.85);
+}
+.ios #dance .d-lstack { border-radius: 0 30px 30px 0; }
+.ios #dance .d-cname { font-weight: 700; letter-spacing: 0.005em; }
+.ios #dance .d-star.on { color: #FFD60A; text-shadow: none; }
+.ios #dance .d-star { color: rgba(255, 255, 255, 0.24); }
+.ios #dance .d-peek { border-radius: 30px 0 0 30px; }
+
+/* The players' pill, the hint, the phones' panel */
+.ios #dance .d-pill { border-radius: 48px; }
+.ios #dance .d-pill-phone { background: rgba(255, 255, 255, 0.16); box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.4); }
+.ios #dance .d-pill-phone.on { background: #FFF; color: #1D1D1F; }
+.ios #dance .d-ring { border-width: 3px; }
+.ios #dance .d-ring.in { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), inset 0 1.5px 0 rgba(255, 255, 255, 0.45); }
+.ios #dance .d-nudge { font-weight: 500; }
+.ios #dance .d-phones { border-radius: 52px; }
+.ios #dance .d-phones .d-qr { border-radius: 34px; box-shadow: 0 16px 34px rgba(0, 0, 0, 0.3); }
+.ios #dance .d-how-title { font-weight: 700; letter-spacing: -0.01em; }
+
+/* Dancing: glass cards and panels over the stage (no blur over the moving picture), an iOS progress bar */
+.ios #dance .d-card, .ios #dance .d-next, .ios #dance .d-rank {
+  background: -webkit-linear-gradient(top, rgba(40, 30, 80, 0.62), rgba(16, 10, 34, 0.7));
+  background: linear-gradient(rgba(40, 30, 80, 0.62), rgba(16, 10, 34, 0.7));
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.3), inset 0 0 0 1.5px rgba(255, 255, 255, 0.14);
+}
+.ios #dance .d-card { border-radius: 32px; }
+.ios #dance .d-next { border-radius: 36px; }
+.ios #dance .d-next-title { text-transform: none; letter-spacing: 0.01em; font-size: 22px; }
+.ios #dance .d-progress { height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.18); }
+.ios #dance .d-fill { height: 8px; border-radius: 4px; background: #FFF; box-shadow: 0 0 12px rgba(255, 255, 255, 0.6); }
+.ios #dance .d-songname { text-shadow: none; font-weight: 700; }
+
+/* Results: glass rows, capsule buttons (white in focus, iOS blue for the next song) */
+.ios #dance .d-rank { border-radius: 36px; }
+.ios #dance .d-stars { color: #FFD60A; text-shadow: none; }
+.ios #dance .d-btn { border-radius: 48px; background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35), inset 0 0 0 1.5px rgba(255, 255, 255, 0.16); }
+.ios #dance .d-btn.focus { background: #FFF; color: #1D1D1F; box-shadow: 0 16px 34px rgba(0, 0, 0, 0.35); }
+.ios #dance .d-btn.next { background: #0A84FF; color: #FFF; }
+.ios #dance .d-btn.next.focus { background: #0A84FF; color: #FFF; box-shadow: 0 16px 34px rgba(10, 132, 255, 0.45), 0 0 0 4px #FFF; }
