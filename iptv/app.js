@@ -2,12 +2,13 @@
  * IPTV, Yuri's own player for his IPTV service, in the look of his Free My TV home screen (dark Liquid Glass).
  * Live (groups → channels → what's on), Guide (now and next on every channel, the rest of the day on the focused one),
  * Filmer, Serier, Favoriter (with Senast sedda) and Inställningar. Spanish, English and Swedish groups come first.
+ * Every tab but Inställningar has "🔍 Sök" first in its left column (search.js).
  * Free My TV opens it with the IPTV link (and, from the Barça box, the match's channels to play at once).
  * Like Free My TV, every start loads this code from GitHub (MrOrtiiz/my-tv, folder iptv/). ES5 only.
  */
 var App = (function () {
   'use strict';
-  var VERSION = '1.8';
+  var VERSION = '1.9';
   var K = {left: 37, up: 38, right: 39, down: 40, ok: 13, back: 10009, chUp: 427, chDown: 428,
     play: 415, pause: 19, playPause: 10252, ff: 417, rew: 412, stop: 413};
   var TABS = [['favs', 'Favoriter'], ['sport', 'Sport'], ['live', 'Live'], ['guide', 'TV-guide'], ['films', 'Filmer'], ['series', 'Serier'], ['settings', 'Inställningar']];
@@ -168,6 +169,7 @@ var App = (function () {
 
   function channelsOf(g) {
     if (!g || g.id === '*edit') return [];
+    if (g.id === '*search') return g.q ? findChannels(g.q) : [];
     if (g.id === '*all') return channels.filter(open_);
     if (g.id === '*fav' || g.id === '*recent') {
       var src = g.id === '*fav' ? Store.favs() : Store.recent(), out = [];
@@ -177,6 +179,20 @@ var App = (function () {
     if (Lock.locked(g)) return [];
     return ordered(g.id, byCat[g.id] || []);
   }
+
+  // MARK: - Search (Live and TV-guide: the channels' names)
+
+  /** The open channels (not in hidden or locked groups) with every word of q in the name. */
+  function findChannels(q) { return Search.filter(channels.filter(open_), q, function (c) { return c.name; }); }
+  /** The search field for channels; after(q) with the new search (null when cancelled). */
+  function askChannels(tabName, after) {
+    Search.ask({tab: tabName, title: tabName === 'guide' ? 'Sök kanal i TV-guiden' : 'Sök kanal', placeholder: 'Kanalens namn, t.ex. DAZN, BBC One, TV4 Sport',
+      find: function (q, cb) { cb(findChannels(q)); }, name: function (c) { return c.name; },
+      sub: function (c) { var g = groupById(c.cat); return g ? g.name : ''; }}, after);
+  }
+  /** Live's groups: the search first. */
+  function liveGroups() { return [Search.item('live')].concat(groupItems()); }
+  function searchHint(q, what) { return q ? 'Inga ' + what + ' med "' + q + '". OK på 🔍 för att söka på något annat.' : 'Tryck OK och skriv vad du letar efter.'; }
 
   function loadChannels(fresh, done) {
     if (!Store.link()) { loadErr = new Error('ingen IPTV-länk'); if (done) done(); return; }
@@ -282,9 +298,9 @@ var App = (function () {
     V.chans.emptyText = 'Inga kanaler här.';
     V.side = side;
     V.guideMode = guideMode;
-    var start = 2;
+    var start = 3;   // Alla kanaler (after Sök, Favoriter, Senast sedda)
     var last = Store.lastChannel();
-    V.groups.set(groupItems(), V.groupAt !== undefined ? V.groupAt : start);
+    V.groups.set(liveGroups(), V.groupAt !== undefined ? V.groupAt : start);
     showGroup(last);
     if (zone !== 'tabs') zone = 'chans';
     focusZone();
@@ -295,7 +311,9 @@ var App = (function () {
     V.groupAt = V.groups.at;
     V.grab = false;
     V.chans.emptyText = g && g.id === '*edit' ? 'OK öppnar: flytta grupper, dölj dem du inte vill se och lås grupper med föräldralåset.'
+      : g && g.id === '*search' ? searchHint(g.q, 'kanaler')
       : g && Lock.locked(g) ? '🔒  Låst med föräldralåset. Tryck OK och skriv PIN-koden.' : 'Inga kanaler här.';
+    if (g && g.id === '*search' && g.n !== (g.q ? list.length : 0)) { g.n = g.q ? list.length : 0; V.groups.draw(); }
     if (selectCh) for (var i = 0; i < list.length; i++) if (list[i].id === selectCh.id) { at = i; break; }
     V.chans.set(list, at);
     sideFor();
@@ -317,7 +335,7 @@ var App = (function () {
         var on = Store.toggleFav(ch); toast(on ? 'Tillagd i favoriter' : 'Borttagen från favoriter'); V.chans.draw(); sideFor();
       }]];
       var g = V.groups.current();
-      if (g && g.id !== '*all' && g.id !== '*recent' && V.chans.items.length > 1) V.buttons.push(['↕  Flytta i listan', function () {
+      if (g && g.id !== '*all' && g.id !== '*recent' && g.id !== '*search' && V.chans.items.length > 1) V.buttons.push(['↕  Flytta i listan', function () {
         V.grab = true; zone = 'chans'; toast('▲ ▼ flyttar kanalen · OK släpper', 5000); focusZone();
       }]);
       for (var b = 0; b < V.buttons.length; b++) el('div', 'button' + (zone === 'side' && !V.sideRow && V.btnAt === b ? ' focus' : ''), btns, V.buttons[b][0]);
@@ -465,6 +483,7 @@ var App = (function () {
     var cHost = el('div', 'col cats glass', main), gHost = el('div', 'col posters', main);
     V.cats = new List(cHost, 76, function (c, r) {
       el('div', 'name', r, c.name);
+      if (c.id === '*search') { if (c.n) el('span', 'n', r, String(c.n)); return; }
       var tag = Lang.tag(c.name);
       if (tag) el('span', 'lang lang-' + tag.toLowerCase(), r, tag);
       if (Lock.locked({id: kind + ':' + c.id, name: c.name})) el('span', 'n', r, '🔒');
@@ -482,9 +501,12 @@ var App = (function () {
       if (tab !== kind) return;
       if (err) { V.cats.emptyText = 'Kunde inte hämta: ' + err.message + '.'; V.cats.draw(); return; }
       var h = Store.vodHidden();
+      V.catNames = {};
+      for (var i = 0; i < cats.length; i++) V.catNames[cats[i].id] = cats[i].name;
       cats = vodOrdered(kind, cats).filter(function (c) { return !h[kind + ':' + c.id]; });
       cats.push({id: '*edit', name: '✎  Ordna, dölj och lås'});
-      V.cats.set(cats, V['catAt_' + kind] || 0);
+      cats.unshift(Search.item(kind));
+      V.cats.set(cats, V['catAt_' + kind] !== undefined ? V['catAt_' + kind] : 1);
       showCat();
     });
   }
@@ -497,11 +519,46 @@ var App = (function () {
     return known.concat(cats.filter(function (c) { return !at.hasOwnProperty(c.id); }));
   }
 
+  /** Every film or series of the service with every word of q in the name; not from hidden or locked categories. */
+  function findVod(kind, q, done) {
+    (kind === 'films' ? Api.films : Api.series)('*', function (err, items) {
+      if (err) { done(err); return; }
+      var h = Store.vodHidden(), names = V.catNames || {}, okCat = {};
+      var open = (items || []).filter(function (it) {
+        var id = kind + ':' + it.cat;
+        if (!okCat.hasOwnProperty(id)) okCat[id] = !h[id] && !Lock.locked({id: id, name: names[it.cat] || ''});
+        return okCat[id];
+      });
+      done(null, Search.filter(open, q, function (it) { return it.name; }));
+    });
+  }
+  function askVod(kind, after) {
+    var what = kind === 'films' ? 'film' : 'serie';
+    Search.ask({tab: kind, title: kind === 'films' ? 'Sök film' : 'Sök serie', placeholder: 'Namnet på en ' + what + ', t.ex. ' + (kind === 'films' ? 'Gladiator' : 'Narcos'),
+      loading: 'Hämtar alla ' + (kind === 'films' ? 'filmer' : 'serier') + ' (första gången kan det ta en stund)…',
+      find: function (q, cb) { cb(null); findVod(kind, q, function (err, list) { cb(err ? [] : list); }); },
+      name: function (it) { return it.name; }, sub: function (it) { return [it.year, V.catNames && V.catNames[it.cat]].filter(function (x) { return x; }).join('  ·  '); }}, after);
+  }
+
   var catSeq = 0;
-  function showCat() {
+  function showCat(then) {
     var c = V.cats.current(), mine = ++catSeq;
     if (!c) return;
     V['catAt_' + V.kind] = V.cats.at;
+    if (c.id === '*search') {
+      var kind = V.kind, many = kind === 'films' ? 'filmer' : 'serier';
+      V.grid.emptyText = c.q ? 'Söker bland alla ' + many + '…' : 'Tryck OK och skriv namnet på en ' + (kind === 'films' ? 'film' : 'serie') + '.';
+      V.grid.set([]);
+      if (!c.q) return;
+      findVod(kind, c.q, function (err, items) {
+        if (mine !== catSeq || V.kind !== kind) return;
+        V.grid.emptyText = err ? 'Kunde inte hämta: ' + err.message + '.' : searchHint(c.q, many);
+        V.grid.set(items || []);
+        c.n = (items || []).length; V.cats.draw();
+        if (then) then();
+      });
+      return;
+    }
     if (c.id === '*edit') { V.grid.emptyText = 'OK öppnar: flytta kategorier, dölj dem du inte vill se och lås dem med föräldralåset.'; V.grid.set([]); return; }
     if (Lock.locked({id: V.kind + ':' + c.id, name: c.name})) { V.grid.emptyText = '🔒  Låst med föräldralåset. Tryck OK och skriv PIN-koden.'; V.grid.set([]); return; }
     V.grid.emptyText = 'Hämtar…';
@@ -696,11 +753,12 @@ var App = (function () {
   // MARK: - Favourites and history
 
   var FAV_SECTIONS = [['Kanaler', 'live'], ['Filmer', 'film'], ['Serier', 'series'], ['Senast sedda', 'recent'], ['Påminnelser', 'rem']];
+  function favSections() { var s = Search.item('favs'); return [[s.name, 'search', s]].concat(FAV_SECTIONS); }
   function buildFavs() {
     var main = $('main');
     main.innerHTML = '';
     main.className = 'favs';
-    V.sections = new List(el('div', 'col groups glass', main), 76, function (s, r) { el('div', 'name', r, s[0]); });
+    V.sections = new List(el('div', 'col groups glass', main), 76, function (s, r) { el('div', 'name', r, s[0]); if (s[2] && s[2].n) el('span', 'n', r, String(s[2].n)); });
     V.itemsHost = el('div', 'col items glass', main);
     V.items = new List(V.itemsHost, 92, function (it, r) {
       img(el('div', 'logo', r), '', it.logo || it.poster);
@@ -710,7 +768,7 @@ var App = (function () {
       if (it.pos && it.len) sub += '  ·  ' + Math.floor(it.pos / 60) + ' av ' + Math.floor(it.len / 60) + ' min';
       el('div', 'now', t, sub);
     });
-    V.sections.set(FAV_SECTIONS, V.secAt || 0);
+    V.sections.set(favSections(), V.secAt !== undefined ? V.secAt : 1);
     showSection();
     if (zone !== 'tabs') zone = V.mod ? 'mod' : 'items';
     focusZone();
@@ -735,16 +793,46 @@ var App = (function () {
       V.items.set([]);
       return;
     }
+    if (s[1] === 'search') {
+      var hits = s[2].q ? findFavs(s[2].q) : [];
+      s[2].n = hits.length;
+      V.items.emptyText = searchHint(s[2].q, 'favoriter, sedda eller påminnelser');
+      V.items.set(hits);
+      V.sections.draw();
+      return;
+    }
     if (s[1] === 'rem') {
-      var rem = Epg.reminders();
       V.items.emptyText = 'Inga påminnelser. Välj ett kommande program i TV-guiden och tryck OK.';
-      V.items.set(rem.map(function (r) { return {kind: 'rem', rem: r, name: r.title, logo: r.ch.logo, title: hm(r.start) + '  ·  ' + r.ch.name + '  ·  OK tar bort'}; }));
+      V.items.set(remItems());
       return;
     }
     for (var i = 0; i < src.length; i++) if ((s[1] === 'recent' || src[i].kind === s[1]) && (src[i].kind !== 'live' || open_(src[i]))) out.push(src[i]);
     V.items.emptyText = s[1] === 'recent' ? 'Inget sett än.' : 'Inga favoriter här än. Lägg till med ☆ på en kanal, film eller serie.';
     V.items.set(out);
   }
+  /** Remindable rows of the reminders, as in Favoriter → Påminnelser. */
+  function remItems() {
+    return Epg.reminders().map(function (r) { return {kind: 'rem', rem: r, name: r.title, logo: r.ch.logo, title: hm(r.start) + '  ·  ' + r.ch.name + '  ·  OK tar bort'}; });
+  }
+  /** The favourites, then what was watched, then the reminders, with every word of q (once each). */
+  function findFavs(q) {
+    var seen = {}, all = [];
+    Store.favs().concat(Store.recent()).forEach(function (it) {
+      var k = it.kind + ':' + it.id;
+      if (seen[k] || (it.kind === 'live' && !open_(it))) return;
+      seen[k] = 1; all.push(it);
+    });
+    all = all.concat(remItems());
+    return Search.filter(all, q, function (it) { return [it.name, it.seriesName, it.kind === 'rem' ? it.rem.ch.name : '', it.kind === 'episode' ? it.title : ''].join(' '); },
+      function (it) { return it.kind === 'episode' ? it.seriesName : it.name; });
+  }
+  function askFavs(after) {
+    Search.ask({tab: 'favs', title: 'Sök i Favoriter', placeholder: 'En kanal, film, serie eller ett program',
+      find: function (q, cb) { cb(findFavs(q)); },
+      name: function (it) { return it.kind === 'episode' ? it.seriesName + '  ·  S' + it.season + ' A' + it.n : it.name; },
+      sub: function (it) { return it.kind === 'live' ? 'Kanal' : it.kind === 'film' ? 'Film' : it.kind === 'series' ? 'Serie' : it.kind === 'rem' ? 'Påminnelse' : 'Avsnitt'; }}, after);
+  }
+
   function openFavItem(it) {
     if (it.kind === 'rem') { Epg.toggle(it.rem.ch, it.rem); showSection(); return; }
     if (it.kind === 'live') {
@@ -927,6 +1015,14 @@ var App = (function () {
         if (k === K.up) { if (!V.groups.move(-1)) { zone = 'tabs'; } else showGroup(); }
         else if (k === K.down) { if (V.groups.move(1)) showGroup(); }
         else if (k === K.ok && gnow && gnow.id === '*edit') { Lock.editor(); return; }
+        else if (k === K.ok && gnow && gnow.id === '*search') {
+          askChannels('live', function (q) {
+            if (tab !== 'live' || !V.groups) return;
+            if (q !== null) { V.groups.items[0] = Search.item('live'); showGroup(); if (V.chans.items.length) zone = 'chans'; }
+            focusZone();
+          });
+          return;
+        }
         else if (k === K.ok && gnow && Lock.locked(gnow)) { Lock.ask(function (ok) { if (ok) { V.groups.set(groupItems(), V.groups.at); showGroup(); zone = 'chans'; focusZone(); } }); return; }
         else if ((k === K.right || k === K.ok) && V.chans.items.length) zone = 'chans';
         break;
@@ -952,6 +1048,15 @@ var App = (function () {
         if (k === K.up) { if (!V.cats.move(-1)) zone = 'tabs'; else showCat(); }
         else if (k === K.down) { if (V.cats.move(1)) showCat(); }
         else if (k === K.ok && cnow && cnow.id === '*edit') { Lock.editor(V.kind); return; }
+        else if (k === K.ok && cnow && cnow.id === '*search') {
+          var vk = V.kind;
+          askVod(vk, function (q) {
+            if (tab !== vk || !V.cats) return;
+            if (q !== null) { V.cats.items[0] = Search.item(vk); V.cats.draw(); showCat(function () { if (V.grid.items.length) { zone = 'grid'; focusZone(); } }); }
+            focusZone();
+          });
+          return;
+        }
         else if (k === K.ok && cnow && Lock.locked({id: V.kind + ':' + cnow.id, name: cnow.name})) { Lock.ask(function (ok) { if (ok) { V.cats.draw(); showCat(); } }); return; }
         else if ((k === K.right || k === K.ok) && V.grid.items.length) zone = 'grid';
         break;
@@ -963,8 +1068,17 @@ var App = (function () {
         else if (k === K.ok && V.grid.current()) { openDetail(V.grid.current()); return; }
         break;
       case 'sections':
+        var snow = V.sections.current();
         if (k === K.up) { if (!V.sections.move(-1)) zone = 'tabs'; else showSection(); }
         else if (k === K.down) { if (V.sections.move(1)) showSection(); }
+        else if (k === K.ok && snow && snow[1] === 'search') {
+          askFavs(function (q) {
+            if (tab !== 'favs' || !V.sections) return;
+            if (q !== null) { V.sections.items[0] = favSections()[0]; showSection(); if (V.items.items.length) zone = 'items'; }
+            focusZone();
+          });
+          return;
+        }
         else if (k === K.right || k === K.ok) zone = V.mod ? 'mod' : 'items';
         break;
       case 'items':
@@ -1072,6 +1186,7 @@ var App = (function () {
     el: el, img: img, hm: hm, two: two, List: List, toast: toast, guideOf: guideOf, find: find,
     channels: function () { return channels; }, groups: function () { return groups; }, ordered: orderedGroups, shown: shownGroups,
     channelsOf: channelsOf, groupItems: groupItems, open: open_, groupById: groupById, vodOrdered: vodOrdered,
+    askChannels: askChannels, searchHint: searchHint,
     overlay: function (o) { if (arguments.length) { overlay = o; if (!o) closeOverlay(); } return overlay; },
     redraw: function () { V = {}; drawScreen(); }, focusTabs: function () { zone = 'tabs'; focusZone(); }
   };

@@ -204,15 +204,17 @@ var Api = (function () {
     });
   }
 
+  /** A category's films; cat '*' = every film of the service (for the search, kept 30 minutes like the rest). */
   function films(cat, done) {
     if (!vodNeeded(done)) return;
-    api('get_vod_streams', '&category_id=' + encodeURIComponent(cat), function (err, v) {
+    api('get_vod_streams', cat === '*' ? '' : '&category_id=' + encodeURIComponent(cat), function (err, v) {
       if (err) { done(err); return; }
       var out = [], r = root('movie');
       for (var i = 0; v && i < v.length; i++) {
         var f = v[i];
+        if (!f || f.stream_id === undefined) continue;
         out.push({kind: 'film', id: String(f.stream_id), name: String(f.name || ''), poster: f.stream_icon || '', rating: f.rating || '',
-          url: r + f.stream_id + '.' + (f.container_extension || 'mp4'), year: f.year || ''});
+          url: r + f.stream_id + '.' + (f.container_extension || 'mp4'), year: f.year || '', cat: String(f.category_id || '')});
       }
       done(null, out);
     });
@@ -226,15 +228,17 @@ var Api = (function () {
     });
   }
 
+  /** A category's series; cat '*' = every series of the service (for the search). */
   function series(cat, done) {
     if (!vodNeeded(done)) return;
-    api('get_series', '&category_id=' + encodeURIComponent(cat), function (err, v) {
+    api('get_series', cat === '*' ? '' : '&category_id=' + encodeURIComponent(cat), function (err, v) {
       if (err) { done(err); return; }
       var out = [];
       for (var i = 0; v && i < v.length; i++) {
         var s = v[i];
+        if (!s || s.series_id === undefined) continue;
         out.push({kind: 'series', id: String(s.series_id), name: String(s.name || ''), poster: s.cover || '', rating: s.rating || '',
-          plot: s.plot || '', year: s.releaseDate || s.year || ''});
+          plot: s.plot || '', year: s.releaseDate || s.year || '', cat: String(s.category_id || '')});
       }
       done(null, out);
     });

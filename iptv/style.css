@@ -308,3 +308,14 @@ html.avplay body > *:not(#player) { visibility: hidden; }
 .side .dtracks.chtr .trlabel { display: block; width: auto; margin-bottom: 8px; }
 .side .dtracks.chtr .trpills { display: block; max-width: none; white-space: normal; }
 .side .dtracks.chtr .tp { margin-bottom: 10px; }
+
+/* Search (search.js): the field high up, so the TV's keyboard leaves the first hits in view. */
+.sheet.search { left: 380px; right: 380px; top: 60px; bottom: auto; padding: 46px 50px 36px; }
+.sheet.search .dtitle { font-size: 40px; line-height: 50px; }
+.scount { margin-top: 22px; font-size: 24px; font-weight: 600; color: rgba(245, 245, 247, 0.6); }
+.scount.some { color: #EDBB00; }
+.shits { margin-top: 10px; }
+.shit { height: 52px; line-height: 52px; font-size: 25px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-top: 1px solid rgba(255, 255, 255, 0.07); }
+.shit .ss { margin-left: 18px; font-size: 20px; font-weight: 400; color: rgba(245, 245, 247, 0.5); }
+.shit.more { font-size: 21px; font-weight: 400; color: rgba(245, 245, 247, 0.5); }
+.sheet.search .hint { padding: 20px 0 0; font-size: 20px; line-height: 28px; }

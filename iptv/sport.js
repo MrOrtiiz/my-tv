@@ -15,6 +15,8 @@
  * OK on a match lists every channel it's on (language order, with what each shows now): OK on one plays it, and ▲ ▼
  * (or the channel keys) then switch between the match's channels, as from the Barça box. A match more than 10 minutes
  * away has "Påminn mig" first in that list. A match on a single channel plays at once.
+ * Search: "🔍 Sök" first among the groups: a team, a league, a sport or a channel, among everything of the next 24 hours
+ * (and Barça's coming matches).
  * Uses App.u (app.js). ES5 only.
  */
 var Sport = (function () {
@@ -50,6 +52,15 @@ var Sport = (function () {
   var FOOTBALL_AT = 11;
   /** The Barça group: first, before Fotboll, with all of barca.json's coming matches (not only the next 24 hours). */
   var BARCA_CAT = ['barca', 'Barça', null];
+  /** The search group, first: [id, name, null, hits]. */
+  function searchCat(n) { var s = Search.item('sport'); return ['search', s.name, null, s.q ? n : 0]; }
+  function sportName(id) { for (var i = 0; i < SPORTS.length; i++) if (SPORTS[i][0] === id) return SPORTS[i][1]; return ''; }
+  /** What a search looks in: the title, the description, the sport and the channels' names. */
+  function findEvents(q) {
+    var all = ((V && V.all) || []).concat((V && V.barcaMore) || []);
+    return Search.filter(all, q, function (e) { return [e.title, e.desc, sportName(e.sport), e.channels.map(function (c) { return c.name; }).join(' ')].join(' '); },
+      function (e) { return e.title; });
+  }
 
   var V = null, focused = false, barca = null, barcaAt = 0, feed = null, feedAt = 0, feedTried = 0;
 
@@ -122,7 +133,7 @@ var Sport = (function () {
     V.filters = new u.List(u.el('div', 'flist', fHost), 76, function (f, r) { if (f[0] === 'barca') r.className += ' barca'; u.el('div', 'name', r, f[1]); if (f[3]) u.el('span', 'n', r, String(f[3])); });
     V.list = new u.List(eHost, 112, row);
     V.list.emptyText = 'Hämtar sporten…';
-    V.filters.set([BARCA_CAT.concat([0]), SPORTS[FOOTBALL_AT].concat([0])], 1);
+    V.filters.set([searchCat(0), BARCA_CAT.concat([0]), SPORTS[FOOTBALL_AT].concat([0])], 2);
     V.list.set([]);
     focus(focused);
     status();
@@ -275,10 +286,11 @@ var Sport = (function () {
     // The groups: Barça and Fotboll always, the others when they have something.
     var n = {}, cats = [];
     list.forEach(function (e) { n[e.sport] = (n[e.sport] || 0) + 1; if (e.barca) n.barca = (n.barca || 0) + 1; });
+    cats.push(searchCat(Search.query('sport') ? findEvents(Search.query('sport')).length : 0));
     cats.push(BARCA_CAT.concat([(n.barca || 0) + V.barcaMore.length]));
     cats.push(SPORTS[FOOTBALL_AT].concat([n.football || 0]));
     SPORTS.forEach(function (sp) { if (sp[0] !== 'football' && n[sp[0]]) cats.push(sp.concat([n[sp[0]]])); });
-    var cur = V.filters.current(), at = 1;   // Fotboll unless another group was picked
+    var cur = V.filters.current(), at = 2;   // Fotboll unless another group was picked
     for (var c = 0; c < cats.length; c++) if (cur && cats[c][0] === cur[0]) at = c;
     V.filters.set(cats, at);
     show();
@@ -306,12 +318,14 @@ var Sport = (function () {
   }
 
   function show() {
-    var f = (V.filters.current() || ['football'])[0], cur = V.list.current();
-    V.events = f === 'barca'
+    var f = (V.filters.current() || ['football'])[0], cur = V.list.current(), q = Search.query('sport');
+    V.events = f === 'search' ? (q ? findEvents(q) : [])
+      : f === 'barca'
       ? (V.all || []).filter(function (e) { return e.barca; }).concat(V.barcaMore || []).sort(function (a, b) { return a.start - b.start; })
       : (V.all || []).filter(function (e) { return e.sport === f; });
     var at = cur ? V.events.indexOf(cur) : 0;
-    V.list.emptyText = V.loading ? 'Hämtar sporten…' : !V.fromFeed && V.read < V.chans.length ? 'Läser tablån för sportkanalerna…' : 'Inget i tablån de närmaste timmarna.';
+    V.list.emptyText = V.loading ? 'Hämtar sporten…' : !V.fromFeed && V.read < V.chans.length ? 'Läser tablån för sportkanalerna…'
+      : f === 'search' ? U().searchHint(q, 'sändningar') : 'Inget i tablån de närmaste timmarna.';
     V.list.set(V.events, at < 0 ? 0 : at);
     later();
     status();
@@ -405,6 +419,7 @@ var Sport = (function () {
     if (V.zone === 'filters') {
       if (k === K.up) { if (!V.filters.move(-1)) return 'tabs'; show(); }
       else if (k === K.down) { if (V.filters.move(1)) show(); }
+      else if (k === K.ok && V.filters.current() && V.filters.current()[0] === 'search') { ask(); return; }
       else if (k === K.right || k === K.ok) V.zone = 'events';
       else if (k === K.back) return 'tabs';
       focus(true);
@@ -416,6 +431,25 @@ var Sport = (function () {
     else if (k === K.ok && V.list.current()) { play(V.list.current()); return; }
     else if (k === K.back) return 'tabs';
     focus(true);
+  }
+
+  /** OK on Sök: the field, with the hits of the next 24 hours as you type. */
+  function ask() {
+    var u = U();
+    Player.preview(null);
+    Search.ask({tab: 'sport', title: 'Sök i Sport', placeholder: 'Ett lag, en liga, en sport eller en kanal, t.ex. Sirius, NBA, DAZN',
+      find: function (q, cb) { cb(findEvents(q)); }, name: function (e) { return (e.live ? 'NU  ' : u.hm(e.start) + '  ') + e.title; },
+      sub: function (e) { return sportName(e.sport); }}, function (q) {
+      if (!V) return;
+      if (q !== null) {
+        V.filters.items[0] = searchCat(q ? findEvents(q).length : 0);
+        V.filters.draw();
+        show();
+        if (V.events.length) V.zone = 'events';
+      }
+      focus(true);
+      later();
+    });
   }
 
   function focus(on) {

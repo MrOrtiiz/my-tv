@@ -3,6 +3,7 @@
  * as far ahead as the guide reaches. ◀ ▶ go from programme to programme (the timeline follows), ▲ ▼ between channels.
  * OK on what's on now plays the channel; OK on something later sets a reminder (🔔), OK again takes it away.
  * Preview: the channel you're on plays small in the corner, after a moment on it (Player.preview).
+ * Search: "🔍 Sök" first among the groups: OK, write a channel's name, and the grid shows the channels found.
  * Reminders: a minute before the start a card comes up, wherever you are in the app (a film or a match too): OK
  * switches to the channel. They're kept on the TV; the app has to be open for them to show.
  * Uses App.u (app.js). ES5 only.
@@ -101,6 +102,7 @@ var Epg = (function () {
       u.el('div', 'name', r, g.name);
       if (g.lang) u.el('span', 'lang lang-' + g.lang.toLowerCase(), r, g.lang);
       if (Lock.locked(g)) u.el('span', 'n', r, '🔒');
+      else if (g.id === '*search' && g.n) u.el('span', 'n', r, String(g.n));
     });
     V.head = u.el('div', 'ghead', area);
     V.body = u.el('div', 'gbody', area);
@@ -108,7 +110,7 @@ var Epg = (function () {
     // The preview: the channel you're on, playing small (the player puts its video over this box).
     V.pv = u.el('div', 'gpv', area);
     u.el('div', 'pvh', V.pv, 'Förhandsvisning');
-    var items = u.groupItems().filter(function (g) { return g.id !== '*edit' && g.id !== '*recent'; });
+    var items = [Search.item('guide')].concat(u.groupItems().filter(function (g) { return g.id !== '*edit' && g.id !== '*recent'; }));
     var start = 0;
     for (var i = 0; i < items.length; i++) if (items[i].id === '*fav' && u.channelsOf(items[i]).length) { start = i; break; } else if (items[i].id === '*all') start = i;
     V.groups.set(items, V.groupAt !== undefined ? V.groupAt : start);
@@ -121,6 +123,8 @@ var Epg = (function () {
     V.rows = U().channelsOf(g);
     V.row = 0; V.first = 0;
     V.lockedGroup = g && Lock.locked(g);
+    V.empty = g && g.id === '*search' ? U().searchHint(g.q, 'kanaler') : undefined;
+    if (g && g.id === '*search') { g.n = V.rows.length; V.groups.draw(); }
     draw();
   }
 
@@ -267,6 +271,14 @@ var Epg = (function () {
     if (V.zone === 'groups') {
       if (k === K.up) { if (!V.groups.move(-1)) return 'tabs'; V.groupAt = V.groups.at; pickGroup(); }
       else if (k === K.down) { if (V.groups.move(1)) { V.groupAt = V.groups.at; pickGroup(); } }
+      else if (k === K.ok && V.groups.current() && V.groups.current().id === '*search') {
+        u.askChannels('guide', function (q) {
+          if (!V || !V.groups) return;
+          if (q !== null) { V.groups.items[0] = Search.item('guide'); pickGroup(); if (V.rows.length) { V.zone = 'grid'; V.tc = Date.now(); } }
+          focus(true);
+        });
+        return;
+      }
       else if (k === K.ok && V.lockedGroup) { Lock.ask(function (ok) { if (ok) { V.groups.draw(); pickGroup(); V.zone = 'grid'; focus(true); } }); return; }
       else if ((k === K.right || k === K.ok) && V.rows.length) { V.zone = 'grid'; V.tc = Date.now(); }
       else if (k === K.back) return 'tabs';
