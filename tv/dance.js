@@ -120,6 +120,24 @@ var Dance = (function () {
     varna: {name: 'Akta dig!', easy: true, kids: true, cycle: 1, f: [S(-30, -20, 150, 168), S(-30, -20, 150, 196, 0, 0, 0, 4)]},
     bjorn: {name: 'Björnen vaknar!', easy: true, kids: true, cycle: 1, f: [
       P(-130, -170, 130, 170, -24, -6, 24, 6, 0, 0, 18), P(-112, -148, 112, 148, -28, -8, 28, 8, 0, 0, 30)]},
+    ringa: {name: 'Ring i klockan', easy: true, kids: true, cycle: 2, f: [S(-168, -176, 168, 176), S(-24, 150, 24, -150, 0, 0, 16)]},
+    ropa: {name: 'Ropa', easy: true, kids: true, cycle: 2, f: [S(-154, 58, 154, -58, -6, 0, 0, -8), S(-154, 58, 154, -58, 6, 0, 0, 8)]},
+    lyssna: {name: 'Lyssna', easy: true, kids: true, cycle: 2, f: [S(-38, 42, 116, -104, 0, 0, 0, 12), S(-38, 42, 116, -104, -4, 0, 4, 18)]},
+    ro: {name: 'Ro båten', easy: true, kids: true, cycle: 3, f: [
+      P(-16, -10, 16, 10, -6, -3, 6, 3, 0, 0, 14, 0, 0.3), P(-80, 100, 80, -100, -6, -3, 6, 3, 0, 0, 0, -4)]},
+    ko: {name: 'Kossan: mu!', easy: true, kids: true, cycle: 2, f: [S(-140, 175, 140, -175), S(-140, 175, 140, -175, 8, 0, 8, 12)]},
+    flaxa: {name: 'Ankan flaxar', easy: true, kids: true, cycle: 1, f: [S(-100, 66, 100, -66, 0, 0, 0, 4), S(-58, 30, 58, -30, 0, 0, 8, -4)]},
+    gris: {name: 'Grisen: nöff!', easy: true, kids: true, cycle: 1, f: [S(-38, 42, 151, -71, 0, -8, 0, 4), S(-38, 42, 151, -71, 0, 8, 0, -4)]},
+    galopp: {name: 'Rid i galopp', easy: true, kids: true, cycle: 1, f: [
+      P(-30, 110, 30, -110, -10, -4, 10, 4, 0, 0, -14), P(-30, 110, 30, -110, -16, 10, 16, -10, 0, 0, 16)]},
+    bjallra: {name: 'Skaka bjällrorna', easy: true, kids: true, cycle: 1, f: [S(-155, -148, 155, 148, 0, 0, 0, 4), S(-144, -172, 144, 172, 0, 0, 0, -4)]},
+    pio: {name: 'Pip pip', easy: true, kids: true, cycle: 1, f: [S(-154, 58, 154, -58, 0, 0, 0, 6), S(-128, 40, 128, -40, 0, 0, 6, -6)]},
+    mage: {name: 'Hungrig', easy: true, kids: true, cycle: 2, f: [S(-32, 62, 32, -62), S(-40, 72, 24, -50, 0, 0, 4)]},
+    frysa: {name: 'Fryser', easy: true, kids: true, cycle: 1, f: [S(-6, 130, 6, -130, -3, -4, 4, 4), S(-6, 130, 6, -130, 3, 4, 4, -4)]},
+    picka: {name: 'Picka', easy: true, kids: true, cycle: 1, f: [
+      P(-30, -20, 30, 20, -6, -3, 6, 3, 0, 0, 12, 0, 0.55), P(-60, -40, 60, 40, -6, -3, 6, 3, 0, 0, 0, 0, 0)]},
+    ge: {name: 'Mat', easy: true, kids: true, cycle: 2, f: [S(-28, -48, 28, 48), S(-62, -92, 62, 92, 0, 0, 4)]},
+    krama: {name: 'Under vingarna', easy: true, kids: true, cycle: 4, f: [S(-6, 130, 6, -130, -6, -10, 6, 8), S(-6, 130, 6, -130, 6, 10, 6, -8)]},
     sova: {name: 'Sov gott', easy: true, kids: true, cycle: 4, f: [S(-154, 58, 154, -58, -6, -10, 0, -20), S(-147, 55, 147, -55, -4, -14, 4, -24)]},
     vagga: {name: 'Vagga', easy: true, cycle: 4, f: [
       P(-150, -155, -170, -165, -10, -4, 4, 2, 10, -20, 0, 8), P(165, 170, 150, 155, -4, -2, 10, 4, -10, 20, 0, -8)]}
@@ -320,7 +338,51 @@ var Dance = (function () {
         '  E4 1 E4 1 D4 1 D4 1  C4 1 r 3'),
       harmony: [[0, 4], [4, 4], [4, 2], [0, 6], [0, 4], [4, 3], [0, 1], [0, 4], [4, 4], [4, 2], [0, 6]],
       plan: [{m: moves('sova 16 smyga 8 varna 8 sova 4 bjorn 4')}, {m: moves('sova 16 smyga 8 varna 8 sova 4 bjorn 4')},
-        {m: moves('sova 16 smyga 8 varna 8 sova 4 bjorn 4')}]}
+        {m: moves('sova 16 smyga 8 varna 8 sova 4 bjorn 4')}]},
+    {id: 'jakob', name: 'Broder Jakob', kids: true, tempo: 'Lugn', bpm: 100, root: 48, scale: 'major', drums: 'kids', seed: 31,
+      color: '#FFB84D', cover: {bg: ['#3A2A6B', '#F29A4A'], art: 'bell', move: 'ringa', pal: {glow: '90, 30, 10', body: '#FFFFFF', core: '#FFF4E0', visor: '#FF5FA2'}},
+      tune: tune('C5 1 D5 1 E5 1 C5 1  C5 1 D5 1 E5 1 C5 1' +
+        '  E5 1 F5 1 G5 2  E5 1 F5 1 G5 2' +
+        '  G5 0.5 A5 0.5 G5 0.5 F5 0.5 E5 1 C5 1  G5 0.5 A5 0.5 G5 0.5 F5 0.5 E5 1 C5 1' +
+        '  C5 1 G4 1 C5 2  C5 1 G4 1 C5 2'),
+      harmony: [[0, 8], [0, 6], [4, 2], [0, 4], [0, 4], [0, 1], [4, 1], [0, 2], [0, 1], [4, 1], [0, 2]],
+      plan: [{m: moves('sova 8 ropa 8 lyssna 8 ringa 8')}, {m: moves('sova 8 ropa 8 lyssna 8 ringa 8')}, {m: moves('sova 8 ropa 8 lyssna 8 ringa 8'), speed: 2}]},
+    {id: 'ro', name: 'Ro, ro, ro din båt', kids: true, tempo: 'Lugn', bpm: 132, root: 48, scale: 'major', drums: 'kids', seed: 37,
+      color: '#4FC3F7', cover: {bg: ['#0A4F7A', '#6FD3F5'], art: 'boat', move: 'ro', pal: {glow: '10, 40, 90', body: '#FFFFFF', core: '#E8FAFF', visor: '#FFB23D'}},
+      tune: tune('C5 1.5 C5 1.5  C5 1 D5 0.5 E5 1.5' +
+        '  E5 1 D5 0.5 E5 1 F5 0.5  G5 3' +
+        '  C6 0.5 C6 0.5 C6 0.5 G5 0.5 G5 0.5 G5 0.5  E5 0.5 E5 0.5 E5 0.5 C5 0.5 C5 0.5 C5 0.5' +
+        '  G5 1 F5 0.5 E5 1 D5 0.5  C5 3'),
+      harmony: [[0, 6], [0, 3], [4, 3], [0, 6], [4, 3], [0, 3]],
+      plan: [{m: moves('ro 6 ro 6 jubel 6 sova 6')}, {m: moves('ro 6 ro 6 jubel 6 sova 6')}, {m: moves('ro 6 ro 6 jubel 6 sova 6')}, {m: moves('ro 6 ro 6 jubel 6 sova 6'), speed: 2}]},
+    {id: 'olsson', name: 'Per Olsson hade en bondgård', kids: true, tempo: 'Medel', bpm: 120, root: 43, scale: 'major', drums: 'kids', seed: 41,
+      color: '#F2C94C', cover: {bg: ['#5FB8E8', '#B7E36B'], art: 'farm', move: 'ko', pal: {glow: '90, 50, 10', body: '#FFFFFF', core: '#FFFBEA', visor: '#E2483D'}},
+      tune: tune('G4 1 G4 1 G4 1 D4 1  E4 1 E4 1 D4 2' +
+        '  B4 1 B4 1 A4 1 A4 1  G4 3 D4 1' +
+        '  G4 1 G4 1 G4 1 D4 1  E4 1 E4 1 D4 2' +
+        '  B4 1 B4 1 A4 1 A4 1  G4 3 D4 0.5 D4 0.5' +
+        '  G4 1 G4 1 G4 1 D4 0.5 D4 0.5  G4 1 G4 1 G4 2' +
+        '  G4 0.5 G4 0.5 G4 1 G4 0.5 G4 0.5 G4 1  G4 0.5 G4 0.5 G4 0.5 G4 0.5 G4 1 G4 1' +
+        '  G4 1 G4 1 G4 1 D4 1  E4 1 E4 1 D4 2' +
+        '  B4 1 B4 1 A4 1 A4 1  G4 4'),
+      harmony: [[0, 4], [3, 2], [0, 2], [0, 2], [4, 2], [0, 4], [0, 4], [3, 2], [0, 2], [0, 2], [4, 2], [0, 4], [0, 16],
+        [0, 4], [3, 2], [0, 2], [0, 2], [4, 2], [0, 4]],
+      plan: [{m: moves('klapp 8 jubel 8 klapp 8 jubel 8 ko 16 klapp 8 jubel 8')}, {m: moves('klapp 8 jubel 8 klapp 8 jubel 8 flaxa 16 klapp 8 jubel 8')},
+        {m: moves('klapp 8 jubel 8 klapp 8 jubel 8 gris 16 klapp 8 jubel 8'), speed: 2}]},
+    {id: 'bjallerklang', name: 'Bjällerklang', kids: true, tempo: 'Medel', bpm: 120, root: 48, scale: 'major', drums: 'kids', seed: 43,
+      color: '#E8484D', cover: {bg: ['#0E3B2E', '#C7353F'], art: 'snow', move: 'bjallra', pal: {glow: '255, 210, 120', body: '#FFFFFF', core: '#FFFFFF', visor: '#FFD23D'}},
+      tune: tune('E5 1 E5 1 E5 2  E5 1 E5 1 E5 2' +
+        '  E5 1 G5 1 C5 1.5 D5 0.5  E5 4' +
+        '  F5 1 F5 1 F5 1.5 F5 0.5  F5 1 E5 1 E5 1 E5 0.5 E5 0.5' +
+        '  E5 1 D5 1 D5 1 E5 1  D5 2 G5 2' +
+        '  E5 1 E5 1 E5 2  E5 1 E5 1 E5 2' +
+        '  E5 1 G5 1 C5 1.5 D5 0.5  E5 4' +
+        '  F5 1 F5 1 F5 1.5 F5 0.5  F5 1 E5 1 E5 1 E5 0.5 E5 0.5' +
+        '  G5 1 G5 1 F5 1 D5 1  C5 4'),
+      harmony: [[0, 8], [0, 8], [3, 4], [0, 4], [1, 4], [4, 4], [0, 8], [0, 8], [3, 4], [0, 4], [4, 4], [0, 4]],
+      plan: [{m: moves('bjallra 8 galopp 8 galopp 8 bjallra 8 bjallra 8 galopp 8 klapp 8 jubel 8')},
+        {m: moves('bjallra 8 galopp 8 galopp 8 bjallra 8 bjallra 8 galopp 8 klapp 8 jubel 8')},
+        {m: moves('bjallra 8 galopp 8 galopp 8 bjallra 8 bjallra 8 galopp 8 klapp 8 jubel 8'), speed: 2}]}
   ];
 
   var SONGS = [
@@ -374,6 +436,45 @@ var Dance = (function () {
         C: {easy: [['robot', 'gitarr'], ['pump', 'frys']], hard: [['robot', 'robot', 'gitarr', 'gitarr'], ['simma', 'disco', 'robot', 'frys']]}
       }}
   ];
+  // The same old melodies are children's songs in Spanish too; Los pollitos dicen (Ismael Parraguez, 1907) is
+  // Spanish only. The moves are named in Spanish for these.
+  var ES = {huvud: 'Cabeza', axlar: 'Hombros', kna: 'Rodillas', ta: 'Pies', ogon: 'Ojos', oron: 'Orejas', mun: 'Boca', nasa: 'Nariz',
+    blinka: 'Brilla', diamant: 'Un diamante', vagga: 'Mécete', sova: 'A dormir', klattra: 'Sube, sube', regn: 'Cae la lluvia',
+    sol: 'Sale el sol', ringa: 'Toca la campana', ropa: 'Llama', lyssna: 'Escucha', ro: 'Rema', jubel: '¡Bravo!', ko: 'La vaca: ¡muu!',
+    flaxa: 'El pato', gris: 'El cerdito', klapp: 'Aplaude', galopp: 'Al galope', bjallra: 'Cascabeles', pio: 'Pío, pío',
+    mage: 'Tienen hambre', frysa: 'Tienen frío', picka: 'Busca el maíz', ge: 'La comida', krama: 'Bajo sus alas',
+    gunga: 'Muévete', frys: '¡Quietos!', vinka: 'Saluda'};
+  function spanish(id, name, from) {
+    var o = {}, src = null;
+    for (var i = 0; i < KIDS.length; i++) if (KIDS[i].id === from) src = KIDS[i];
+    for (var key in src) if (src.hasOwnProperty(key) && key !== '_plan') o[key] = src[key];
+    o.id = id; o.name = name; o.lang = 'es';
+    return o;
+  }
+  KIDS = KIDS.concat([
+    {id: 'pollitos', name: 'Los pollitos dicen', kids: true, lang: 'es', tempo: 'Lugn', bpm: 100, root: 48, scale: 'major', drums: 'kids', seed: 47,
+      color: '#FFD84D', names: {flaxa: 'Los pollitos'},
+      cover: {bg: ['#F7B733', '#FFE86B'], art: 'chicks', move: 'flaxa', pal: {glow: '160, 70, 0', body: '#FFFFFF', core: '#FFFBEA', visor: '#FF7A1F'}},
+      tune: tune('C5 0.5 D5 0.5 E5 0.5 F5 0.5  G5 1 G5 1  A5 0.5 C6 0.5 A5 0.5 C6 0.5  G5 1 G5 1' +
+        '  F5 0.5 F5 0.5 F5 0.5 F5 0.5  E5 1 E5 1  D5 0.5 D5 0.5 D5 0.5 D5 0.5  C5 1 C5 1'),
+      harmony: [[0, 4], [3, 2], [0, 2], [4, 2], [0, 2], [4, 2], [0, 2]],
+      plan: [{m: moves('flaxa 4 pio 4 mage 4 frysa 4')}, {m: moves('picka 4 picka 4 ge 4 krama 4')}, {m: moves('krama 4 krama 4 sova 4 sova 4')},
+        {m: moves('flaxa 4 pio 4 mage 4 frysa 4')}, {m: moves('flaxa 4 pio 4 mage 4 frysa 4'), speed: 2}]},
+    spanish('cabeza', 'Cabeza, hombros, rodillas y pies', 'huvud'),
+    spanish('estrellita', 'Estrellita, ¿dónde estás?', 'blinka'),
+    spanish('martinillo', 'Martinillo', 'jakob'),
+    spanish('arana', 'La araña pequeñita', 'imse'),
+    spanish('rema', 'Rema, rema, rema tu bote', 'ro'),
+    spanish('granja', 'En la granja', 'olsson'),
+    spanish('navidad', 'Navidad, Navidad', 'bjallerklang')
+  ]);
+  /** A move's name: in Spanish for the Spanish songs. */
+  function moveName(id, sg) {
+    if (sg && sg.names && sg.names[id]) return sg.names[id];
+    if (sg && sg.lang === 'es' && ES[id]) return ES[id];
+    return MOVES[id].name;
+  }
+
   SONGS = SONGS.concat(KIDS);
 
   /**
@@ -946,9 +1047,10 @@ var Dance = (function () {
 
   var CW = 360, CH = 203, STEP = 388, SHOW = 4, LW = 520, LSTEP = 556, LSHOW = 3;
   var PLAYLISTS = [
-    {name: 'Barnkalas', songs: ['huvud', 'grodorna', 'imse', 'bjornen', 'fotboll', 'blinka'], color: '#FF8FB8', ink: '#5A0F32', art: 'party'},
-    {name: 'Lugnt för de minsta', songs: ['blinka', 'godnatt', 'neon'], color: '#F4C534', ink: '#4A3A06', art: 'moon'},
+    {name: 'Barnkalas', songs: ['huvud', 'grodorna', 'olsson', 'imse', 'jakob', 'bjornen', 'fotboll'], color: '#FF8FB8', ink: '#5A0F32', art: 'party'},
+    {name: 'Lugnt för de minsta', songs: ['blinka', 'ro', 'godnatt', 'neon'], color: '#F4C534', ink: '#4A3A06', art: 'moon'},
     {name: 'Full fart', songs: ['robot', 'katt', 'fotboll', 'sol'], color: '#7180F0', ink: '#FFFFFF', art: 'bolt'},
+    {name: 'Fiesta en español', songs: ['pollitos', 'cabeza', 'granja', 'arana', 'martinillo', 'estrellita'], color: '#FF6B4A', ink: '#FFFFFF', art: 'party'},
     {name: 'Dansmaraton', songs: null, color: '#BBA8F2', ink: '#2C1868', art: 'ball'}
   ];
   var ICON = {
@@ -979,17 +1081,18 @@ var Dance = (function () {
 
   /** The lobby's rows: every song, the playlists, and (once something's been danced) the latest. */
   function rows() {
-    var all = [], kids = [], recent = [], i;
-    for (i = 0; i < SONGS.length; i++) (SONGS[i].kids ? kids : all).push(i);
+    var all = [], kids = [], es = [], recent = [], i;
+    for (i = 0; i < SONGS.length; i++) (SONGS[i].lang === 'es' ? es : SONGS[i].kids ? kids : all).push(i);
     var r = cfg.recent || [];
     for (i = 0; i < r.length; i++) { var k = songIndex(r[i]); if (k >= 0) recent.push(k); }
     var out = [{key: 'all', title: 'Danslåtar', kind: 'song', items: all}, {key: 'kids', title: 'Barnsånger', kind: 'song', items: kids},
+      {key: 'es', title: 'Canciones infantiles · på spanska', kind: 'song', items: es},
       {key: 'lists', title: 'Spellistor för hela familjen', kind: 'list', items: PLAYLISTS}];
     if (recent.length) out.push({key: 'recent', title: 'Senast dansade', kind: 'song', items: recent});
     return out;
   }
 
-  var rowAt = 0, colAt = [0, 0, 0, 0], offAt = [0, 0, 0, 0], rowTop = 0, liveCover = null, coverCache = {}, queue = [];
+  var rowAt = 0, colAt = [0, 0, 0, 0, 0, 0], offAt = [0, 0, 0, 0, 0, 0], rowTop = 0, liveCover = null, coverCache = {}, queue = [];
 
   function starsEl(parent, n, cls) {
     var st = el('span', 'd-stars-row' + (cls ? ' ' + cls : ''), parent);
@@ -1169,7 +1272,7 @@ var Dance = (function () {
    * the still picture; else the dancer dances (the card in focus).
    */
   function drawCover(cv, sg, beat) {
-    var c = cv.getContext('2d'), w = cv.width, h = cv.height, cov = sg.cover, R = rng(sg.seed * 31 + 7), i, x, y, r;
+    var c = cv.getContext('2d'), w = cv.width, h = cv.height, cov = sg.cover, R = rng(sg.seed * 31 + 7), i, k, x, y, r;
     c.save();
     var g = c.createLinearGradient(0, 0, w, h);
     g.addColorStop(0, cov.bg[0]); g.addColorStop(1, cov.bg[1]);
@@ -1274,6 +1377,60 @@ var Dance = (function () {
       c.fillStyle = 'rgba(255, 255, 255, 0.85)'; c.font = '700 22px Arial';
       var zz = beat < 0 ? 0 : (beat * 0.5) % 1;
       c.fillText('z', w * 0.24, h * (0.62 - zz * 0.1)); c.font = '700 30px Arial'; c.fillText('Z', w * 0.29, h * (0.5 - zz * 0.1));
+    } else if (cov.art === 'bell') {   // a church tower's bell swinging, ding dang dong
+      var sw = beat < 0 ? 0.25 : Math.sin(beat * Math.PI / 2) * 0.45;
+      c.fillStyle = 'rgba(30, 16, 60, 0.55)'; c.fillRect(w * 0.7, h * 0.08, w * 0.24, h);
+      c.beginPath(); c.moveTo(w * 0.66, h * 0.1); c.lineTo(w * 0.82, -h * 0.1); c.lineTo(w * 0.98, h * 0.1); c.closePath(); c.fill();
+      c.save(); c.translate(w * 0.82, h * 0.2); c.rotate(sw);
+      c.fillStyle = '#FFD23D'; c.beginPath(); c.moveTo(-16, 0); c.quadraticCurveTo(-18, 34, -34, 50); c.lineTo(34, 50); c.quadraticCurveTo(18, 34, 16, 0); c.closePath(); c.fill();
+      c.beginPath(); c.arc(0, 54, 8, 0, Math.PI * 2); c.fill();
+      c.restore();
+      c.fillStyle = 'rgba(255, 255, 255, 0.85)'; c.font = '800 22px Arial';
+      c.fillText('ding', w * 0.06, h * 0.25); c.fillText('dang', w * 0.12, h * 0.42); c.fillText('dong', w * 0.05, h * 0.6);
+    } else if (cov.art === 'boat') {   // waves rocking a little boat
+      var rock = beat < 0 ? 0 : Math.sin(beat * Math.PI / 3);
+      c.fillStyle = '#FFE680'; c.beginPath(); c.arc(w * 0.84, h * 0.2, h * 0.11, 0, Math.PI * 2); c.fill();
+      for (k = 0; k < 3; k++) {
+        c.fillStyle = 'rgba(255, 255, 255, ' + (0.18 + k * 0.12) + ')'; c.beginPath(); c.moveTo(0, h);
+        for (x = 0; x <= w; x += 10) c.lineTo(x, h * (0.66 + k * 0.1) + Math.sin(x / 30 + k + (beat < 0 ? 0 : beat)) * 6);
+        c.lineTo(w, h); c.closePath(); c.fill();
+      }
+      c.save(); c.translate(w * 0.16, h * 0.7 + rock * 4); c.rotate(rock * 0.12);
+      c.fillStyle = '#C0503A'; c.beginPath(); c.moveTo(-38, -8); c.lineTo(38, -8); c.lineTo(26, 12); c.lineTo(-26, 12); c.closePath(); c.fill();
+      c.strokeStyle = '#6B3A1E'; c.lineWidth = 3; c.beginPath(); c.moveTo(-30, -16); c.lineTo(-48, 14); c.moveTo(30, -16); c.lineTo(48, 14); c.stroke();
+      c.restore();
+    } else if (cov.art === 'farm') {   // a red barn on a green hill, a fence and a sun
+      c.fillStyle = '#FFE680'; c.beginPath(); c.arc(w * 0.12, h * 0.2, h * 0.1, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#5CA83A'; c.beginPath(); c.arc(w * 0.5, h * 1.6, h * 1.02, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#C8352C'; c.fillRect(w * 0.72, h * 0.36, w * 0.2, h * 0.3);
+      c.beginPath(); c.moveTo(w * 0.7, h * 0.37); c.lineTo(w * 0.82, h * 0.2); c.lineTo(w * 0.94, h * 0.37); c.closePath(); c.fill();
+      c.fillStyle = '#FFFFFF'; c.fillRect(w * 0.79, h * 0.48, w * 0.06, h * 0.18);
+      c.strokeStyle = 'rgba(255, 255, 255, 0.85)'; c.lineWidth = 4;
+      for (x = w * 0.04; x < w * 0.36; x += 22) { c.beginPath(); c.moveTo(x, h * 0.62); c.lineTo(x, h * 0.78); c.stroke(); }
+      c.beginPath(); c.moveTo(w * 0.03, h * 0.66); c.lineTo(w * 0.37, h * 0.66); c.moveTo(w * 0.03, h * 0.73); c.lineTo(w * 0.37, h * 0.73); c.stroke();
+    } else if (cov.art === 'snow') {   // falling snow and a string of bells
+      for (i = 0; i < 40; i++) {
+        var sx = R() * w, sy = (R() * h + (beat < 0 ? 0 : beat * 18)) % h, sr = 1.5 + R() * 3;
+        c.fillStyle = 'rgba(255, 255, 255, 0.85)'; c.beginPath(); c.arc(sx, sy, sr, 0, Math.PI * 2); c.fill();
+      }
+      c.strokeStyle = '#7A4A2A'; c.lineWidth = 4; c.beginPath(); c.moveTo(w * 0.62, h * 0.08); c.quadraticCurveTo(w * 0.8, h * 0.26, w * 0.98, h * 0.08); c.stroke();
+      for (i = 0; i < 4; i++) {
+        var bx = w * (0.66 + i * 0.09), by = h * (0.12 + (i === 1 || i === 2 ? 0.08 : 0.03)) + (beat < 0 ? 0 : Math.sin(beat * Math.PI * 2 + i) * 3);
+        c.fillStyle = '#FFD23D'; c.beginPath(); c.arc(bx, by + 12, 11, 0, Math.PI * 2); c.fill();
+        c.fillStyle = '#8A5A00'; c.fillRect(bx - 6, by + 14, 12, 2);
+      }
+    } else if (cov.art === 'chicks') {   // a mother hen's nest of corn, and chicks going pío
+      c.fillStyle = '#C98A2E'; c.beginPath(); if (c.ellipse) c.ellipse(w * 0.5, h * 0.96, w * 0.52, h * 0.16, 0, 0, Math.PI * 2); c.fill();
+      for (i = 0; i < 26; i++) { c.fillStyle = 'rgba(255, 240, 150, 0.9)'; c.beginPath(); c.arc(R() * w, h * (0.86 + R() * 0.12), 3, 0, Math.PI * 2); c.fill(); }
+      var chicks = [[0.12, 0.74], [0.26, 0.8], [0.8, 0.76], [0.92, 0.82]];
+      for (i = 0; i < chicks.length; i++) {
+        x = w * chicks[i][0]; y = h * chicks[i][1] - (beat < 0 ? 0 : Math.max(0, Math.sin(beat * Math.PI + i)) * 8);
+        c.fillStyle = '#FFE14D'; c.beginPath(); c.arc(x, y, 16, 0, Math.PI * 2); c.fill(); c.beginPath(); c.arc(x + 4, y - 18, 11, 0, Math.PI * 2); c.fill();
+        c.fillStyle = '#FF8A1F'; c.beginPath(); c.moveTo(x + 14, y - 20); c.lineTo(x + 22, y - 17); c.lineTo(x + 14, y - 14); c.closePath(); c.fill();
+        c.fillStyle = '#2A1A00'; c.beginPath(); c.arc(x + 7, y - 21, 2, 0, Math.PI * 2); c.fill();
+      }
+      c.fillStyle = 'rgba(255, 255, 255, 0.9)'; c.font = '800 20px Arial';
+      if (beat < 0 || Math.floor(beat) % 2 === 0) { c.fillText('pío', w * 0.06, h * 0.5); c.fillText('pío', w * 0.82, h * 0.52); }
     } else if (cov.art === 'pond') {   // a pond with lily pads, and a little frog hopping on one
       c.fillStyle = 'rgba(20, 90, 120, 0.45)'; c.fillRect(0, h * 0.62, w, h);
       c.strokeStyle = 'rgba(255, 255, 255, 0.35)'; c.lineWidth = 2;
@@ -1432,7 +1589,7 @@ var Dance = (function () {
     for (var i = 0; i < mv.length; i++) {
       if (!mv[i].scored) continue;
       list.push([mv[i].i, mv[i].b, mv[i].n, mv[i].id]);
-      if (!lib[mv[i].id]) lib[mv[i].id] = [MOVES[mv[i].id].name, SIG[mv[i].id].e, SIG[mv[i].id].d];
+      if (!lib[mv[i].id]) lib[mv[i].id] = [moveName(mv[i].id, current.song), SIG[mv[i].id].e, SIG[mv[i].id].d];
     }
     return {t: 'go', song: current.song.name, bpm: current.song.bpm, at: current.at, hard: hard, m: list, lib: lib, beats: current.dance.beats};
   }
@@ -1843,7 +2000,7 @@ var Dance = (function () {
     if (count.textContent !== text) { count.textContent = text; count.className = 'd-count' + (text ? ' on' : ''); }
     // now and next
     var nowName = h.querySelector('.d-move'), dots = h.querySelector('.d-beats');
-    var name = mv ? MOVES[mv.id].name : '';
+    var name = mv ? moveName(mv.id, current.song) : '';
     if (nowName.textContent !== name) nowName.textContent = name;
     if (mv) {
       var into = Math.floor(beat - mv.b), d = '';
@@ -1860,7 +2017,7 @@ var Dance = (function () {
         tc.clearRect(0, 0, cv.width, cv.height);
         var f = MOVES[m.id].f, pose = f[f.length > 1 ? 1 : 0];
         drawDancer(tc, pose, 75, 184, 0.235, 0, true);
-        label.textContent = MOVES[m.id].name;
+        label.textContent = moveName(m.id, current.song);
       }
     }
     // the scores' "Perfekt!" fade away
@@ -1901,6 +2058,6 @@ var Dance = (function () {
   return {
     open: open, close: close, isOpen: isOpen,
     // for tests and the phone page's own copy of the scoring
-    _moves: MOVES, _sig: SIG, _songs: SONGS, _choreo: choreo, _players: function () { return players; }, _state: function () { return state; }
+    _moves: MOVES, _sig: SIG, _pose: poseAt, _draw: drawDancer, _songs: SONGS, _choreo: choreo, _players: function () { return players; }, _state: function () { return state; }
   };
 })();
