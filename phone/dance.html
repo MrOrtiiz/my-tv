@@ -39,6 +39,7 @@
   #edit canvas { width: 100%; max-width: 300px; max-height: 46vh; background: repeating-conic-gradient(#2a2440 0 25%, #1c1830 0 50%) 0 0 / 22px 22px; border-radius: 16px; }
   #edit .heads { display: flex; gap: 14px; align-items: center; justify-content: center; margin: 10px 0; }
   #edit .heads img { height: 90px; }
+  #edit .heads #bodyPrev { height: 120px; }
   #edit .sw { display: inline-block; width: 26px; height: 26px; border-radius: 13px; border: 2px solid rgba(255, 255, 255, 0.4); }
   input[type=range] { width: 100%; max-width: 300px; height: 40px; margin: 4px 0; padding: 0; background: transparent; }
 </style>
@@ -59,7 +60,8 @@
   <p>Dra reglaget tills den gula linjen går under hakan.</p>
   <canvas id="cv"></canvas>
   <input type="range" id="neck" min="14" max="45" value="28">
-  <div class="heads"><img id="headPrev" alt=""><span><span class="sw" id="swTop"></span> <span class="sw" id="swSkin"></span> <span class="sw" id="swLegs"></span> <span class="sw" id="swShoes"></span></span></div>
+  <div class="heads"><img id="headPrev" alt=""><img id="bodyPrev" alt=""><span><span class="sw" id="swTop"></span> <span class="sw" id="swSkin"></span> <span class="sw" id="swLegs"></span> <span class="sw" id="swShoes"></span></span></div>
+  <p id="kind" style="font-size:14px;line-height:20px;margin:4px auto"></p>
   <input id="gname" maxlength="14" placeholder="Gubbens namn" autocomplete="off">
   <button id="saveG">Spara gubben</button>
   <button id="cancelG" class="ghost">Avbryt</button>
@@ -340,7 +342,10 @@
       legs: legsSkin ? skin : median(src, 0.86, 0.93, 0.2, 0.8) || skin,
       shoes: median(src, 0.955, 1, 0, 1) || '#F2F2F2'
     };
-    made = {head: hc.toDataURL('image/png'), colors: colors};
+    made = {head: hc.toDataURL('image/png'), colors: colors, full: fullBody(cut, hl, hr, colors)};
+    $('bodyPrev').src = made.full ? made.full.body.img : '';
+    $('bodyPrev').style.display = made.full ? '' : 'none';
+    $('kind').textContent = made.full ? 'Hela kroppen används: kropp och ben från bilden, dansarmar i tröjans färg.' : 'Huvudet används, kroppen ritas i klädernas färger.';
     $('headPrev').src = made.head;
     ['top', 'skin', 'legs', 'shoes'].forEach(function (n) { $('sw' + n.charAt(0).toUpperCase() + n.slice(1)).style.background = colors[n] || 'transparent'; });
     // the picture, with the line under the chin
@@ -352,9 +357,116 @@
   }
   $('neck').oninput = remake;
 
+  /** A piece of the figure as a picture: rows y0–y1, the pixels where keep(x, y) says, scaled by sc. */
+  function piece(y0, y1, keep, sc, fix) {
+    var w = src.w, d = src.data.data, l = w, r = 0, x, y;
+    for (y = y0; y <= y1; y++) for (x = 0; x < w; x++) if (src.mask[y * w + x] && keep(x, y)) { if (x < l) l = x; if (x > r) r = x; }
+    if (r < l) return null;
+    var pw = r - l + 1, ph = y1 - y0 + 1, tmp = document.createElement('canvas'); tmp.width = pw; tmp.height = ph;
+    var tx = tmp.getContext('2d'), img = tx.createImageData(pw, ph);
+    for (y = 0; y < ph; y++) for (x = 0; x < pw; x++) {
+      var k = (y0 + y) * w + l + x, o = (y * pw + x) * 4, on = src.mask[k] && keep(l + x, y0 + y);
+      img.data[o] = d[k * 4]; img.data[o + 1] = d[k * 4 + 1]; img.data[o + 2] = d[k * 4 + 2]; img.data[o + 3] = on ? d[k * 4 + 3] : 0;
+    }
+    if (fix) fix(img, pw, ph);
+    tx.putImageData(img, 0, 0);
+    var out = document.createElement('canvas'); out.width = Math.max(1, Math.round(pw * sc)); out.height = Math.max(1, Math.round(ph * sc));
+    out.getContext('2d').drawImage(tmp, 0, 0, out.width, out.height);
+    return {img: out.toDataURL('image/png'), l: l, r: r, t: y0, b: y1};
+  }
+
+  /** The hands and whatever they hold, painted over with the clothes around them (the arms dance on their own). */
+  function paintOutHands(top) {
+    var tr = parseInt(top.slice(1, 3), 16), tg = parseInt(top.slice(3, 5), 16), tb = parseInt(top.slice(5, 7), 16);
+    return function (img, w, h) {
+      var d = img.data, bad = new Uint8Array(w * h), x, y, k;
+      for (y = Math.round(h * 0.1); y < Math.round(h * 0.85); y++) for (x = Math.round(w * 0.1); x < Math.round(w * 0.9); x++) {
+        k = y * w + x;
+        if (d[k * 4 + 3] < 128) continue;
+        var dr = d[k * 4] - tr, dg = d[k * 4 + 1] - tg, db = d[k * 4 + 2] - tb;
+        if (dr * dr + dg * dg + db * db > 95 * 95 || isSkin(d[k * 4], d[k * 4 + 1], d[k * 4 + 2])) bad[k] = 1;
+      }
+      // grow the marks a little, then fill them in from the edges, pass by pass
+      for (var pass = 0; pass < 2; pass++) {
+        var grow = bad.slice(0);
+        for (y = 1; y < h - 1; y++) for (x = 1; x < w - 1; x++) { k = y * w + x; if (bad[k - 1] || bad[k + 1] || bad[k - w] || bad[k + w]) if (d[k * 4 + 3] > 128) grow[k] = 1; }
+        bad = grow;
+      }
+      // each row: the middle colour of the clothes still showing in it (keeps the shading top to bottom, no smears)
+      var lastR = tr, lastG = tg, lastB = tb;
+      for (y = 0; y < h; y++) {
+        var R = [], G = [], B = [];
+        for (x = 0; x < w; x++) { k = y * w + x; if (!bad[k] && d[k * 4 + 3] > 200) { R.push(d[k * 4]); G.push(d[k * 4 + 1]); B.push(d[k * 4 + 2]); } }
+        if (R.length > 4) {
+          var mid = function (a) { a.sort(function (p, q) { return p - q; }); return a[a.length >> 1]; };
+          lastR = mid(R); lastG = mid(G); lastB = mid(B);
+        }
+        for (x = 0; x < w; x++) { k = y * w + x; if (bad[k]) { var n2 = ((x * 7 + y * 13) % 9) - 4; d[k * 4] = lastR + n2; d[k * 4 + 1] = lastG + n2; d[k * 4 + 2] = lastB + n2; } }
+      }
+      // soften the edges of what was painted
+      var copy = d.slice(0);
+      for (y = 1; y < h - 1; y++) for (x = 1; x < w - 1; x++) {
+        k = y * w + x;
+        if (!bad[k]) continue;
+        for (var ch = 0; ch < 3; ch++) {
+          var sum = 0;
+          for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++) sum += copy[((y + dy) * w + x + dx) * 4 + ch];
+          d[k * 4 + ch] = sum / 9;
+        }
+      }
+    };
+  }
+
+  /**
+   * A whole figure (head to feet, legs apart below the clothes): the body and the two legs from the picture.
+   * Everything is measured in the figure's height, so the TV can draw it any size.
+   */
+  function fullBody(cut, hl, hr, colors) {
+    var b = src.box, w = src.w, m = src.mask, y, x, hem = -1, gapX = 0;
+    if (b.h < b.w * 1.4) return null;   // a face or a half figure: no legs to find
+    function runs(row) {
+      var out = [], start = -1;
+      for (var xx = b.l; xx <= b.r + 1; xx++) {
+        var on = xx <= b.r && m[row * w + xx];
+        if (on && start < 0) start = xx;
+        if (!on && start >= 0) { out.push([start, xx - 1]); start = -1; }
+      }
+      return out.filter(function (r) { return r[1] - r[0] > b.w * 0.05; });
+    }
+    for (y = Math.round(b.t + b.h * 0.55); y < b.b - b.h * 0.04; y++) {
+      var r0 = runs(y);
+      if (r0.length >= 2 && r0[1][0] - r0[0][1] > b.w * 0.015) {
+        var ok = true;
+        for (var k = 1; k <= 4; k++) if (runs(y + k).length < 2) ok = false;
+        if (ok) { hem = y; break; }
+      }
+    }
+    if (hem < 0) return null;
+    var low = runs(Math.round(hem + (b.b - hem) * 0.3));
+    if (low.length < 2) low = runs(hem + 2);
+    gapX = Math.round((low[0][1] + low[1][0]) / 2);
+    var sc = Math.min(1, 700 / b.h);
+    var body = piece(cut - 2, hem + 2, function () { return true; }, sc, paintOutHands(colors.top));
+    var legL = piece(hem, b.b, function (xx) { return xx < gapX; }, sc);
+    var legR = piece(hem, b.b, function (xx) { return xx >= gapX; }, sc);
+    if (!body || !legL || !legR) return null;
+    var cx = (body.l + body.r) / 2, H = b.h;
+    function topCenter(p) {   // where a leg starts, under the clothes
+      var rr = runs(Math.min(b.b, hem + 2)).filter(function (r) { return p === legL ? r[1] < gapX : r[0] >= gapX; });
+      return rr.length ? (rr[0][0] + rr[rr.length - 1][1]) / 2 : (p.l + p.r) / 2;
+    }
+    function norm(p, attach) {
+      return {img: p.img, w: (p.r - p.l + 1) / H, h: (p.b - p.t + 1) / H, x: ((p.l + p.r) / 2 - cx) / H, ax: attach === undefined ? 0 : (attach - cx) / H};
+    }
+    return {
+      head: {w: (hr - hl + 1) / H, h: (cut - b.t + 1) / H, x: ((hl + hr) / 2 - cx) / H},
+      body: norm(body), legs: [norm(legL, topCenter(legL)), norm(legR, topCenter(legR))]
+    };
+  }
+
   $('saveG').onclick = function () {
     if (!made) return;
-    var g = {id: Math.random().toString(36).slice(2, 9), name: ($('gname').value || 'Gubbe').trim().slice(0, 14), head: made.head, colors: made.colors};
+    var g = {id: Math.random().toString(36).slice(2, 9), name: ($('gname').value || 'Gubbe').trim().slice(0, 14), head: made.head, colors: made.colors, full: made.full};
     me.gubbar.push(g); me.sel = g.id;
     try { save(); } catch (e) {}
     if (localStorage.getItem(STORE) === null || JSON.parse(localStorage.getItem(STORE)).gubbar.length !== me.gubbar.length) {
@@ -372,7 +484,7 @@
   /** The chosen gubbe to the TV, in parts (only over WebRTC: too big for ntfy). */
   function sendAvatar() {
     if (!dc || dc.readyState !== 'open') return;
-    var g = chosen(), body = JSON.stringify(g ? {t: 'avatar', head: g.head, colors: g.colors, gname: g.name} : {t: 'avatar', head: null});
+    var g = chosen(), body = JSON.stringify(g ? {t: 'avatar', head: g.head, colors: g.colors, full: g.full || null, gname: g.name} : {t: 'avatar', head: null});
     var id = Math.random().toString(36).slice(2, 8), size = 15000, n = Math.ceil(body.length / size);
     for (var i = 0; i < n; i++) send({t: 'avp', id: id, i: i, n: n, d: body.slice(i * size, (i + 1) * size)});
   }

@@ -572,9 +572,23 @@ var Dance = (function () {
 
   function setAvatar(pl, o) {
     if (!o.head) { pl.avatar = null; return; }
-    var img = new Image(), av = {img: img, ready: false, colors: o.colors || {}, name: o.gname || ''};
-    img.onload = function () { av.ready = true; };
-    img.src = o.head;
+    var av = {ready: false, colors: o.colors || {}, name: o.gname || '', full: null}, waiting = 1;
+    function load(src) {
+      var im = new Image();
+      im.onload = function () { if (--waiting === 0) av.ready = true; };
+      im.onerror = function () { av.full = null; if (--waiting === 0) av.ready = true; };
+      im.src = src;
+      return im;
+    }
+    var f = o.full;
+    if (f && f.body && f.legs && f.legs.length === 2) {   // a whole figure: the body and legs from the picture too
+      waiting += 3;
+      av.full = {head: f.head, body: f.body, legs: f.legs};
+      av.full.body.im = load(f.body.img);
+      av.full.legs[0].im = load(f.legs[0].img);
+      av.full.legs[1].im = load(f.legs[1].img);
+    }
+    av.img = load(o.head);
     pl.avatar = av;
   }
 
@@ -924,6 +938,7 @@ var Dance = (function () {
    * skeleton (and the same moves) as the neon dancer, with a glow in the player's colour.
    */
   function drawAvatar(c, p, cx, gy, s, av, color, beatGlow, lead) {
+    if (av.full) return drawFull(c, p, cx, gy, s, av, color, beatGlow, lead);
     var J = joints(p, cx, gy, s), col = av.colors, top = col.top || '#9AA0B4', skin = col.skin || '#E0AC8A';
     var legs = col.legs || skin, shoes = col.shoes || '#F2F2F2';
     c.save();
@@ -987,6 +1002,70 @@ var Dance = (function () {
     c.drawImage(img, -hw / 2, -hh + 22 * s, hw, hh);
     c.restore();
     return J;
+  }
+
+  /**
+   * A whole figure from a picture: its own legs (swinging at the hips), its own body (leaning with the dance) and
+   * head, and dancing arms in the clothes' colour from the shoulders. Sizes are in the figure's height (U).
+   */
+  function drawFull(c, p, cx, gy, s, av, color, beatGlow, lead) {
+    var f = av.full, U = 700 * s, col = av.colors, top = col.top || '#9AA0B4', skin = col.skin || '#E0AC8A';
+    var legLen = Math.max(f.legs[0].h, f.legs[1].h) * U, bodyH = f.body.h * U, bodyW = f.body.w * U;
+    var lr = p.lean * Math.PI / 180, ux = Math.sin(lr), uy = -Math.cos(lr), px = -uy, py = ux;
+    // the hem (where the legs start) and the neck
+    var hx = cx + p.x * s, hy = gy - legLen + p.y * s;
+    var nx = hx + ux * bodyH, ny = hy + uy * bodyH;
+    c.save();
+    c.lineCap = 'round'; c.lineJoin = 'round';
+    // a glow in the player's colour behind
+    c.fillStyle = hexA(color, 0.18 + 0.16 * (beatGlow || 0));
+    c.beginPath();
+    if (c.ellipse) c.ellipse((hx + nx) / 2, (hy + ny) / 2 - 40 * s, bodyW * 0.75, (bodyH + legLen) * 0.62, lr, 0, Math.PI * 2);
+    c.fill();
+    // the legs: each swings at its top with the thigh's angle (a little less, they're short and stiff)
+    var legs = [[f.legs[0], p.ll], [f.legs[1], p.rl]];
+    for (var i = 0; i < 2; i++) {
+      var L = legs[i][0], ang = (legs[i][1][0] * 0.7 + legs[i][1][1] * 0.3) * 0.8;
+      var ax = hx + px * L.ax * U, ay = hy + py * L.ax * U;
+      c.save();
+      c.translate(ax, ay);
+      c.rotate(-ang * Math.PI / 180);
+      c.drawImage(L.im, (L.x - L.ax) * U - L.w * U / 2, -6 * s, L.w * U, L.h * U);
+      c.restore();
+    }
+    // the body, from the neck down to the hem, leaning with the dance
+    c.save();
+    c.translate(hx, hy);
+    c.rotate(lr);
+    c.drawImage(f.body.im, f.body.x * U - bodyW / 2, -bodyH, bodyW, bodyH);
+    c.restore();
+    // the arms: from the shoulders, in the clothes' colour, with hands
+    var shY = 0.1 * bodyH, shX = 0.3 * bodyW, a1 = 0.16 * U, a2 = 0.15 * U, sw = Math.max(26 * s, 0.17 * bodyW);
+    var sides = [[-1, p.la], [1, p.ra]], hand = null;
+    for (var k = 0; k < 2; k++) {
+      var sd = sides[k][0], ag = sides[k][1];
+      var sx = nx - ux * shY + px * sd * shX, sy = ny - uy * shY + py * sd * shX;
+      var d1 = dir(ag[0]), d2 = dir(ag[1]);
+      var ex = sx + d1[0] * a1, ey = sy + d1[1] * a1, wx = ex + d2[0] * a2, wy = ey + d2[1] * a2;
+      c.strokeStyle = shade(top, -0.3); c.lineWidth = sw + 7 * s;
+      c.beginPath(); c.moveTo(sx, sy); c.lineTo(ex, ey); c.lineTo(wx, wy); c.stroke();
+      c.strokeStyle = top; c.lineWidth = sw;
+      c.beginPath(); c.moveTo(sx, sy); c.lineTo(ex, ey); c.lineTo(wx, wy); c.stroke();
+      c.fillStyle = shade(top, -0.12); c.beginPath(); c.arc(wx, wy, sw * 0.55, 0, Math.PI * 2); c.fill();   // the cuff
+      c.fillStyle = skin; c.beginPath(); c.arc(wx + d2[0] * sw * 0.45, wy + d2[1] * sw * 0.45, sw * 0.42, 0, Math.PI * 2); c.fill();
+      if (sd > 0) hand = [wx + d2[0] * sw * 0.45, wy + d2[1] * sw * 0.45];
+    }
+    if (lead && hand) {
+      var r = (24 + 8 * (beatGlow || 0)) * s;
+      c.fillStyle = 'rgba(255, 210, 61, 0.3)'; c.beginPath(); c.arc(hand[0], hand[1], r * 1.9, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = '#FFD23D'; c.lineWidth = 7 * s; c.beginPath(); c.arc(hand[0], hand[1], r, 0, Math.PI * 2); c.stroke();
+    }
+    // the head, on the neck, tilting
+    var img = av.img, headH = f.head.h * U, headW = headH * (img.width / Math.max(1, img.height));
+    c.translate(nx, ny);
+    c.rotate((p.lean + p.head) * Math.PI / 180);
+    c.drawImage(img, (f.head.x - f.body.x) * U - headW / 2, -headH + 0.012 * U, headW, headH);
+    c.restore();
   }
 
   function mixBounce(p, b) {
