@@ -913,6 +913,7 @@
     }
     if (kind === 'games') {   // our own games; more come here as they're made
       if (window.Dance) out.push({label: 'Dansgolvet', symbol: 'sparkles', run: function () { Dance.open(); }});
+      if (window.Rush) out.push({label: 'Ö-ruset', symbol: 'bolt', run: function () { Rush.open(); }});
       out.push({label: 'Fler spel kommer', symbol: 'gamepad', off: true, value: 'Snart'});
       return out;
     }
@@ -2136,7 +2137,7 @@
   I18N.set(Prefs.language());
   checkNight();   // now, from the last forecast: not after the TV lists its apps, with the day look until then
   // LG's screensaver waits only when ours will show: not under a sheet (ours waits there), and not without photos.
-  TV.holdScreenSaver(function () { return (window.Dance && Dance.isOpen()) || (!sheetOpen() && (saverMode() === 'clock' || saverPhotos().length > 0)); });
+  TV.holdScreenSaver(function () { return (window.Dance && Dance.isOpen()) || (window.Rush && Rush.isOpen()) || (!sheetOpen() && (saverMode() === 'clock' || saverPhotos().length > 0)); });
   fit();
   renderTop();
   applyDim();
@@ -2151,7 +2152,7 @@
     checkNight();
     Data.refresh();
     applyDim();   // automatic: medium from 22:00, off again at 07:00
-    if ((window.IPTV && IPTV.playing()) || (window.Search && Search.isOpen()) || (window.Dance && Dance.isOpen())) idleAt = Date.now();   // no screensaver over a match, a search or a dance
+    if ((window.IPTV && IPTV.playing()) || (window.Search && Search.isOpen()) || (window.Dance && Dance.isOpen()) || (window.Rush && Rush.isOpen())) idleAt = Date.now();   // no screensaver over a match, a search or a game
     if (!document.hidden && !saverOn && !ambientOn && !sheetOpen() && Date.now() - idleAt > SAVER_AFTER) {
       if (saverMode() === 'clock') showAmbient(); else showSaver();
     }
