@@ -28,6 +28,19 @@
   .hand { font-size: 90px; margin: 10px 0; }
   .stars { font-size: 44px; color: #FFD23D; letter-spacing: 4px; text-shadow: 0 0 14px rgba(255, 210, 61, 0.6); }
   .err { color: #FF8FA3; }
+  .label { margin: 18px 0 8px; font-size: 15px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255, 255, 255, 0.55); }
+  .row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; max-width: 360px; margin: 0 auto; }
+  .g { width: 78px; padding: 6px 4px 8px; border-radius: 18px; background: rgba(255, 255, 255, 0.08); border: 2px solid transparent; font-size: 12px;
+    color: rgba(255, 255, 255, 0.75); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .g.on { border-color: #FFD23D; background: rgba(255, 210, 61, 0.14); color: #fff; }
+  .g .pic { width: 64px; height: 64px; margin: 0 auto 4px; background: center / contain no-repeat; }
+  .g .neon { border-radius: 32px; background: radial-gradient(circle, #8AF6FF 0 28%, rgba(255, 61, 165, 0.6) 30% 46%, transparent 48%); }
+  .g .plus { font-size: 40px; line-height: 64px; color: rgba(255, 255, 255, 0.7); }
+  #edit canvas { width: 100%; max-width: 300px; max-height: 46vh; background: repeating-conic-gradient(#2a2440 0 25%, #1c1830 0 50%) 0 0 / 22px 22px; border-radius: 16px; }
+  #edit .heads { display: flex; gap: 14px; align-items: center; justify-content: center; margin: 10px 0; }
+  #edit .heads img { height: 90px; }
+  #edit .sw { display: inline-block; width: 26px; height: 26px; border-radius: 13px; border: 2px solid rgba(255, 255, 255, 0.4); }
+  input[type=range] { width: 100%; max-width: 300px; height: 40px; margin: 4px 0; padding: 0; background: transparent; }
 </style>
 </head>
 <body>
@@ -35,8 +48,21 @@
   <h1>Dansgolvet</h1>
   <p>Var med och få poäng när ni dansar på TV:n. Dansgolvet måste vara öppet på TV:n.</p>
   <input id="name" maxlength="14" placeholder="Ditt namn" autocomplete="off">
+  <div class="label">Din gubbe</div>
+  <div class="row" id="gubbar"></div>
+  <input type="file" id="file" accept="image/*" class="hide">
   <button id="join">Var med!</button>
   <p id="startErr" class="err"></p>
+</div>
+<div id="edit" class="hide">
+  <h1 style="font-size:34px">Ny gubbe</h1>
+  <p>Dra reglaget tills den gula linjen går under hakan.</p>
+  <canvas id="cv"></canvas>
+  <input type="range" id="neck" min="14" max="45" value="28">
+  <div class="heads"><img id="headPrev" alt=""><span><span class="sw" id="swTop"></span> <span class="sw" id="swSkin"></span> <span class="sw" id="swLegs"></span> <span class="sw" id="swShoes"></span></span></div>
+  <input id="gname" maxlength="14" placeholder="Gubbens namn" autocomplete="off">
+  <button id="saveG">Spara gubben</button>
+  <button id="cancelG" class="ghost">Avbryt</button>
 </div>
 <div id="wait" class="hide">
   <h1>Ansluter…</h1>
@@ -47,6 +73,7 @@
   <h1 id="hello">Du är med!</h1>
   <p>Håll mobilen i <b>höger hand</b> med skärmen mot dig. Gör som den <b>lysande handen</b> på TV:n, som i en spegel.</p>
   <button id="go">Starta dansen</button>
+  <button id="change" class="ghost">Byt gubbe</button>
   <p class="badge" id="link"></p>
 </div>
 <div id="play" class="hide">
@@ -82,7 +109,7 @@
   save();
 
   function $(id) { return document.getElementById(id); }
-  function show(id) { ['start', 'wait', 'lobby', 'play', 'done'].forEach(function (s) { $(s).classList.toggle('hide', s !== id); }); }
+  function show(id) { ['start', 'edit', 'wait', 'lobby', 'play', 'done'].forEach(function (s) { $(s).classList.toggle('hide', s !== id); }); }
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
 
   if (!/^fmtv-dans-/.test(TOPIC)) { $('startErr').textContent = 'Skanna QR-koden på TV:n (Genvägar → Dansgolvet) för att öppna sidan.'; $('join').disabled = true; }
@@ -121,7 +148,7 @@
     if (!window.RTCPeerConnection) { done(null); return; }
     try { pc = new RTCPeerConnection({iceServers: [{urls: 'stun:stun.l.google.com:19302'}]}); } catch (e) { done(null); return; }
     dc = pc.createDataChannel('dans', {ordered: true});
-    dc.onopen = function () { link = 'rtc'; showLink(); sync(5, 150); };
+    dc.onopen = function () { link = 'rtc'; showLink(); sync(5, 150); sendAvatar(); };
     dc.onmessage = function (m) { var o = null; try { o = JSON.parse(m.data); } catch (x) {} if (o) fromTv(o); };
     dc.onclose = function () { if (link === 'rtc') { link = 'relay'; showLink(); } };
     var sent = false;
@@ -145,7 +172,7 @@
     });
   }
 
-  function showLink() { $('link').textContent = link === 'rtc' ? 'Direkt ansluten till TV:n' : 'Ansluten via nätet (lite fördröjning)'; }
+  function showLink() { $('link').textContent = link === 'rtc' ? 'Direkt ansluten till TV:n' : 'Ansluten via nätet (lite fördröjning)' + (chosen() ? '. Din gubbe syns bara när mobilen är direkt ansluten.' : ''); }
 
   /** This phone's clock against the TV's: a few pings, the quickest one counts. */
   function sync(n, gap) {
@@ -176,6 +203,178 @@
     if (o.t === 'done') { end(); return; }
     if (o.t === 'lobby') { game = null; show('lobby'); return; }
     if (o.t === 'bye') { game = null; show('start'); $('startErr').textContent = 'Dansgolvet stängdes på TV:n.'; return; }
+  }
+
+  // MARK: - The gubbe: a head cut out of a picture, and the colours of the clothes, sent to the TV
+
+  if (!me.gubbar) me.gubbar = [];
+  function chosen() { for (var i = 0; i < me.gubbar.length; i++) if (me.gubbar[i].id === me.sel) return me.gubbar[i]; return null; }
+
+  function drawGubbar() {
+    var box = $('gubbar'); box.innerHTML = '';
+    function tile(label, cls, on, click, img) {
+      var d = document.createElement('div'); d.className = 'g' + (on ? ' on' : '');
+      var pic = document.createElement('div'); pic.className = 'pic ' + (cls || '');
+      if (img) pic.style.backgroundImage = 'url(' + img + ')';
+      if (cls === 'plus') pic.textContent = '+';
+      d.appendChild(pic); d.appendChild(document.createTextNode(label)); d.onclick = click; box.appendChild(d);
+    }
+    tile('Neon', 'neon', !chosen(), function () { me.sel = null; save(); drawGubbar(); sendAvatar(); });
+    me.gubbar.forEach(function (g) {
+      tile(g.name, '', g.id === me.sel, function () {
+        if (me.sel === g.id && confirm('Ta bort ' + g.name + '?')) { me.gubbar = me.gubbar.filter(function (x) { return x !== g; }); me.sel = null; }
+        else me.sel = g.id;
+        save(); drawGubbar(); sendAvatar();
+      }, g.head);
+    });
+    if (me.gubbar.length < 6) tile('Ny gubbe', 'plus', false, function () { $('file').click(); });
+  }
+
+  var src = null, made = null;   // the picture being made into a gubbe, and the result
+
+  $('file').onchange = function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    var img = new Image();
+    img.onload = function () {
+      var h = Math.min(900, img.height), w = Math.round(img.width * h / img.height);
+      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      var x = c.getContext('2d'); x.drawImage(img, 0, 0, w, h);
+      src = {c: c, data: x.getImageData(0, 0, w, h), w: w, h: h};
+      src.mask = maskOf(src);
+      src.box = boxOf(src);
+      $('gname').value = ($('name').value || me.name || '').trim() || f.name.replace(/\.[^.]+$/, '').slice(0, 14);
+      show('edit');
+      remake();
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror = function () { alert('Bilden gick inte att öppna.'); };
+    img.src = URL.createObjectURL(f);
+    this.value = '';
+  };
+
+  /** What belongs to the figure: the picture's own transparency, or else everything but the background colour. */
+  function maskOf(s) {
+    var d = s.data.data, w = s.w, h = s.h, m = new Uint8Array(w * h), i;
+    var see = d[3] < 20 || d[(w - 1) * 4 + 3] < 20 || d[((h - 1) * w) * 4 + 3] < 20;
+    if (see) { for (i = 0; i < w * h; i++) m[i] = d[i * 4 + 3] > 128 ? 1 : 0; return m; }
+    // no transparency: flood the background in from the edges
+    var bg = [d[0], d[1], d[2]], seen = new Uint8Array(w * h), stack = [];
+    function near(k) { var dr = d[k * 4] - bg[0], dg = d[k * 4 + 1] - bg[1], db = d[k * 4 + 2] - bg[2]; return dr * dr + dg * dg + db * db < 2400; }
+    for (i = 0; i < w; i++) { stack.push(i); stack.push((h - 1) * w + i); }
+    for (i = 0; i < h; i++) { stack.push(i * w); stack.push(i * w + w - 1); }
+    while (stack.length) {
+      var k = stack.pop();
+      if (seen[k] || !near(k)) continue;
+      seen[k] = 1;
+      var x = k % w, y = (k - x) / w;
+      if (x > 0) stack.push(k - 1); if (x < w - 1) stack.push(k + 1);
+      if (y > 0) stack.push(k - w); if (y < h - 1) stack.push(k + w);
+    }
+    for (i = 0; i < w * h; i++) m[i] = seen[i] ? 0 : 1;
+    return m;
+  }
+
+  function boxOf(s) {
+    var w = s.w, h = s.h, m = s.mask, top = h, bot = 0, l = w, r = 0;
+    for (var y = 0; y < h; y++) {
+      var n = 0;
+      for (var x = 0; x < w; x++) if (m[y * w + x]) { n++; if (x < l) l = x; if (x > r) r = x; }
+      if (n > 2) { if (y < top) top = y; bot = y; }
+    }
+    return {t: top, b: bot, l: l, r: r, h: Math.max(1, bot - top), w: Math.max(1, r - l)};
+  }
+
+  function isSkin(r, g, b) { return r > 95 && g > 40 && b > 20 && r > g && g > b && g > r * 0.45 && r - b > 25; }
+
+  /** How much of a band of the figure is skin. */
+  function skinShare(s, y0, y1) {
+    var b = s.box, d = s.data.data, n = 0, k2 = 0;
+    for (var y = Math.round(b.t + b.h * y0); y <= Math.round(b.t + b.h * y1); y += 2) for (var x = b.l; x <= b.r; x += 2) {
+      var k = y * s.w + x;
+      if (!s.mask[k]) continue;
+      n++; if (isSkin(d[k * 4], d[k * 4 + 1], d[k * 4 + 2])) k2++;
+    }
+    return n ? k2 / n : 0;
+  }
+
+  /** The middle colour of the figure in part of the picture (fractions of the figure's box); onlySkin: skin only. */
+  function median(s, y0, y1, x0, x1, onlySkin) {
+    var b = s.box, d = s.data.data, R = [], G = [], B = [];
+    var ya = Math.round(b.t + b.h * y0), yb = Math.round(b.t + b.h * y1), xa = Math.round(b.l + b.w * x0), xb = Math.round(b.l + b.w * x1);
+    for (var y = ya; y <= yb; y += 2) for (var x = xa; x <= xb; x += 2) {
+      var k = y * s.w + x;
+      if (!s.mask[k] || (onlySkin && !isSkin(d[k * 4], d[k * 4 + 1], d[k * 4 + 2]))) continue;
+      R.push(d[k * 4]); G.push(d[k * 4 + 1]); B.push(d[k * 4 + 2]);
+    }
+    if (!R.length) return null;
+    function mid(a) { a.sort(function (p, q) { return p - q; }); return a[a.length >> 1]; }
+    function hx(v) { return ('0' + v.toString(16)).slice(-2); }
+    return '#' + hx(mid(R)) + hx(mid(G)) + hx(mid(B));
+  }
+
+  function remake() {
+    if (!src) return;
+    var b = src.box, frac = +$('neck').value / 100, cut = Math.round(b.t + b.h * frac);
+    // the head: the figure above the line, cut out, at most 300 px high
+    var hl = src.w, hr = 0;
+    for (var y = b.t; y <= cut; y++) for (var x = 0; x < src.w; x++) if (src.mask[y * src.w + x]) { if (x < hl) hl = x; if (x > hr) hr = x; }
+    var hw = Math.max(1, hr - hl + 1), hh = Math.max(1, cut - b.t + 1), sc = Math.min(1, 300 / hh);
+    var hc = document.createElement('canvas'); hc.width = Math.round(hw * sc); hc.height = Math.round(hh * sc);
+    var tmp = document.createElement('canvas'); tmp.width = hw; tmp.height = hh;
+    var tx = tmp.getContext('2d'), part = tx.createImageData(hw, hh), d = src.data.data;
+    for (y = 0; y < hh; y++) for (x = 0; x < hw; x++) {
+      var k = (b.t + y) * src.w + hl + x, o = (y * hw + x) * 4;
+      part.data[o] = d[k * 4]; part.data[o + 1] = d[k * 4 + 1]; part.data[o + 2] = d[k * 4 + 2];
+      var fade = Math.min(1, (hh - y) / Math.max(4, hh * 0.06));   // soft at the chin, so it sits on the neck
+      part.data[o + 3] = src.mask[k] ? Math.round(d[k * 4 + 3] * fade) : 0;
+    }
+    tx.putImageData(part, 0, 0);
+    hc.getContext('2d').drawImage(tmp, 0, 0, hc.width, hc.height);
+    // the clothes low on the body (away from hands in front), the skin from the face, the legs, the shoes
+    var skin = median(src, frac * 0.35, frac, 0.2, 0.8, true) || '#E0AC8A';
+    var legsSkin = skinShare(src, 0.86, 0.94) > 0.3;
+    var colors = {
+      top: median(src, frac + (1 - frac) * 0.45, frac + (1 - frac) * 0.75, 0.3, 0.7) || '#9AA0B4',
+      skin: skin,
+      legs: legsSkin ? skin : median(src, 0.86, 0.93, 0.2, 0.8) || skin,
+      shoes: median(src, 0.955, 1, 0, 1) || '#F2F2F2'
+    };
+    made = {head: hc.toDataURL('image/png'), colors: colors};
+    $('headPrev').src = made.head;
+    ['top', 'skin', 'legs', 'shoes'].forEach(function (n) { $('sw' + n.charAt(0).toUpperCase() + n.slice(1)).style.background = colors[n] || 'transparent'; });
+    // the picture, with the line under the chin
+    var cv = $('cv'), cx = cv.getContext('2d');
+    cv.width = src.w; cv.height = src.h;
+    cx.drawImage(src.c, 0, 0);
+    cx.strokeStyle = '#FFD23D'; cx.lineWidth = Math.max(3, src.h / 150); cx.setLineDash([12, 8]);
+    cx.beginPath(); cx.moveTo(0, cut); cx.lineTo(src.w, cut); cx.stroke();
+  }
+  $('neck').oninput = remake;
+
+  $('saveG').onclick = function () {
+    if (!made) return;
+    var g = {id: Math.random().toString(36).slice(2, 9), name: ($('gname').value || 'Gubbe').trim().slice(0, 14), head: made.head, colors: made.colors};
+    me.gubbar.push(g); me.sel = g.id;
+    try { save(); } catch (e) {}
+    if (localStorage.getItem(STORE) === null || JSON.parse(localStorage.getItem(STORE)).gubbar.length !== me.gubbar.length) {
+      alert('Mobilen har inte plats att spara fler gubbar. Ta bort en gammal (tryck två gånger på den).');
+      me.gubbar.pop(); me.sel = null; save();
+    }
+    src = null; made = null;
+    drawGubbar();
+    show(welcomed ? 'lobby' : 'start');
+    sendAvatar();
+  };
+  $('cancelG').onclick = function () { src = null; made = null; show(welcomed ? 'lobby' : 'start'); };
+  $('change').onclick = function () { show('start'); $('join').textContent = 'Klar'; };
+
+  /** The chosen gubbe to the TV, in parts (only over WebRTC: too big for ntfy). */
+  function sendAvatar() {
+    if (!dc || dc.readyState !== 'open') return;
+    var g = chosen(), body = JSON.stringify(g ? {t: 'avatar', head: g.head, colors: g.colors, gname: g.name} : {t: 'avatar', head: null});
+    var id = Math.random().toString(36).slice(2, 8), size = 15000, n = Math.ceil(body.length / size);
+    for (var i = 0; i < n; i++) send({t: 'avp', id: id, i: i, n: n, d: body.slice(i * size, (i + 1) * size)});
   }
 
   // MARK: - The motion sensor
@@ -297,7 +496,8 @@
     show('done');
   }
 
-  $('join').onclick = join;
+  $('join').onclick = function () { if (welcomed) { show('lobby'); return; } join(); };
+  drawGubbar();
   $('go').onclick = function () { send({t: 'start'}); };
   $('again').onclick = function () { send({t: 'start'}); };
   window.addEventListener('pagehide', function () { if (welcomed) send({t: 'leave'}); });

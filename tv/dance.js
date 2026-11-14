@@ -551,7 +551,31 @@ var Dance = (function () {
     if (o.t === 'hit') { hit(pl, o.i, o.g); return; }
     if (o.t === 'hits') { for (var i = 0; i < (o.h || []).length; i++) hit(pl, o.h[i][0], o.h[i][1]); return; }
     if (o.t === 'leave') { leave(pl); return; }
+    if (o.t === 'avp') { avatarPart(pl, o); return; }
+    if (o.t === 'avatar') { setAvatar(pl, o); return; }
     if (o.t === 'start' && state === 'lobby') { start(); return; }
+  }
+
+  // MARK: - Their own dancers ("gubbar"): a head cut out of a picture on the phone, and the colours of the clothes
+
+  /** The picture comes in parts over WebRTC (16 kB each), put together here. */
+  function avatarPart(pl, o) {
+    if (!o.id || !(o.n > 0) || o.n > 80) return;
+    var bag = pl.parts && pl.parts.id === o.id ? pl.parts : (pl.parts = {id: o.id, d: []});
+    bag.d[o.i] = String(o.d || '');
+    for (var i = 0; i < o.n; i++) if (bag.d[i] === undefined) return;
+    var whole = null;
+    try { whole = JSON.parse(bag.d.join('')); } catch (e) { whole = null; }
+    pl.parts = null;
+    if (whole) setAvatar(pl, whole);
+  }
+
+  function setAvatar(pl, o) {
+    if (!o.head) { pl.avatar = null; return; }
+    var img = new Image(), av = {img: img, ready: false, colors: o.colors || {}, name: o.gname || ''};
+    img.onload = function () { av.ready = true; };
+    img.src = o.head;
+    pl.avatar = av;
   }
 
   function leave(pl) {
@@ -684,10 +708,18 @@ var Dance = (function () {
     }
   }
 
+  var scoresKey = '';
   function drawScores() {
     if (!root || state !== 'dance') return;
     var box = root.querySelector('.d-scores');
     if (!box) return;
+    var key = '';   // only redrawn when something shown changes (else the grades' pop starts over)
+    for (var j = 0; j < players.length; j++) {
+      var q = players[j];
+      key += q.name + ':' + q.score + ':' + (q.grade >= 0 && Date.now() - q.gradeAt < 1400 ? q.grade + '@' + q.gradeAt : '-') + '|';
+    }
+    if (key === scoresKey && box.childNodes.length) return;
+    scoresKey = key;
     box.innerHTML = '';
     for (var i = 0; i < players.length; i++) {
       var pl = players[i], card = el('div', 'd-card', box);
@@ -830,11 +862,131 @@ var Dance = (function () {
     // a little bounce on every beat
     var bounce = state === 'dance' && beat >= 0 && (!mv || mv.id !== 'frys') ? 10 * Math.sin(Math.PI * phase) : 4 * Math.sin(Math.PI * phase);
     pose = mixBounce(pose, bounce);
-    var cx = state === 'lobby' ? 1095 : state === 'results' ? 1520 : W / 2, gy = state === 'dance' ? 1000 : 1010, s = state === 'dance' ? 1.12 : 0.9;
-    drawShadow(c, cx + pose.x * s, gy, s);
-    drawDancer(c, pose, cx, gy, s, pulse, state === 'dance');
+    var dancers = dancersNow(), spots = layout(dancers.length);
+    for (var d = 0; d < dancers.length; d++) {
+      var sp = spots[d], who = dancers[d];
+      drawShadow(c, sp.x + pose.x * sp.s, sp.gy, sp.s);
+      if (who && who.avatar && who.avatar.ready) drawAvatar(c, pose, sp.x, sp.gy, sp.s, who.avatar, who.color, pulse, state === 'dance');
+      else drawDancer(c, pose, sp.x, sp.gy, sp.s, pulse, state === 'dance');
+      if (who && dancers.length > 1) nameTag(c, who, sp.x, sp.gy, sp.s);
+    }
 
     if (state === 'dance' && current) danceHud(beat, mv);
+  }
+
+  /** Who dances: everyone who has a gubbe of their own (in the results, the winner); else the neon dancer. */
+  function dancersNow() {
+    var own = [];
+    for (var i = 0; i < players.length; i++) if (players[i].avatar) own.push(players[i]);
+    if (state === 'results' && own.length) {
+      own.sort(function (a, b) { return b.score - a.score; });
+      return [own[0]];
+    }
+    return own.length ? players.slice(0, 4) : [null];   // with any gubbe: everyone dances (neon for those without one)
+  }
+
+  /** Where the dancers stand: one big in the middle, or a row. */
+  function layout(n) {
+    var out = [], i;
+    if (state === 'lobby') {   // between the songs and the QR code
+      var ls = n === 1 ? 0.9 : n === 2 ? 0.62 : 0.48, gap = n === 1 ? 0 : n === 2 ? 200 : 118;
+      for (i = 0; i < n; i++) out.push({x: 1095 + (i - (n - 1) / 2) * gap, gy: 1010, s: ls});
+      return out;
+    }
+    if (state === 'results') return [{x: 1520, gy: 1010, s: 0.9}];
+    var size = [1.12, 0.95, 0.8, 0.7][n - 1] || 0.7, span = [0, 620, 900, 1110][n - 1] || 1110, mid = n > 2 ? 880 : W / 2;
+    for (i = 0; i < n; i++) out.push({x: n === 1 ? W / 2 : mid - span / 2 + span * i / (n - 1), gy: 1000, s: size});
+    return out;
+  }
+
+  function nameTag(c, pl, x, gy, s) {
+    c.save();
+    c.font = '700 ' + Math.round(30 * s + 6) + 'px Inter, Helvetica Neue, Arial, sans-serif';
+    c.textAlign = 'center';
+    c.fillStyle = 'rgba(10, 7, 22, 0.75)';
+    var w = c.measureText(pl.name).width + 36;
+    c.beginPath();
+    if (c.roundRect) c.roundRect(x - w / 2, gy + 18, w, 44, 22); else c.rect(x - w / 2, gy + 18, w, 44);
+    c.fill();
+    c.fillStyle = pl.color;
+    c.fillText(pl.name, x, gy + 51);
+    c.restore();
+  }
+
+  function shade(hex, f) {
+    var n = parseInt(String(hex || '#888888').slice(1), 16), r = n >> 16 & 255, g = n >> 8 & 255, b = n & 255;
+    function k(v) { return Math.round(clamp(f < 0 ? v * (1 + f) : v + (255 - v) * f, 0, 255)); }
+    return 'rgb(' + k(r) + ', ' + k(g) + ', ' + k(b) + ')';
+  }
+
+  /**
+   * A player's own dancer: the head from their picture on a body in the colours of their clothes, on the same
+   * skeleton (and the same moves) as the neon dancer, with a glow in the player's colour.
+   */
+  function drawAvatar(c, p, cx, gy, s, av, color, beatGlow, lead) {
+    var J = joints(p, cx, gy, s), col = av.colors, top = col.top || '#9AA0B4', skin = col.skin || '#E0AC8A';
+    var legs = col.legs || skin, shoes = col.shoes || '#F2F2F2';
+    c.save();
+    c.lineCap = 'round'; c.lineJoin = 'round';
+    function line(a, b, w, st) { c.strokeStyle = st; c.lineWidth = w; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); }
+    function limb(a, b, d, w, st) { c.strokeStyle = st; c.lineWidth = w; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.lineTo(d[0], d[1]); c.stroke(); }
+    // the player's colour as a glow behind
+    var glow = hexA(color, 0.22 + 0.18 * (beatGlow || 0));
+    limb(J.lh, J.lk, J.lf, 70 * s, glow); limb(J.rh, J.rk, J.rf, 70 * s, glow);
+    limb(J.ls, J.le, J.lw, 70 * s, glow); limb(J.rs, J.re, J.rw, 70 * s, glow);
+    line(J.hip, J.neck, 150 * s, glow);
+    // legs and shoes
+    limb(J.lh, J.lk, J.lf, 38 * s, shade(legs, -0.35)); limb(J.rh, J.rk, J.rf, 38 * s, shade(legs, -0.35));
+    limb(J.lh, J.lk, J.lf, 30 * s, legs); limb(J.rh, J.rk, J.rf, 30 * s, legs);
+    var feet = [[J.lf, -1], [J.rf, 1]];
+    for (var f = 0; f < 2; f++) {
+      c.fillStyle = shade(shoes, -0.3);
+      c.beginPath();
+      if (c.ellipse) c.ellipse(feet[f][0][0] + feet[f][1] * 8 * s, feet[f][0][1] + 4 * s, 34 * s, 18 * s, 0, 0, Math.PI * 2); else c.arc(feet[f][0][0], feet[f][0][1], 22 * s, 0, Math.PI * 2);
+      c.fill();
+      c.fillStyle = shoes;
+      c.beginPath();
+      if (c.ellipse) c.ellipse(feet[f][0][0] + feet[f][1] * 8 * s, feet[f][0][1] + 1 * s, 30 * s, 14 * s, 0, 0, Math.PI * 2); else c.arc(feet[f][0][0], feet[f][0][1], 18 * s, 0, Math.PI * 2);
+      c.fill();
+    }
+    // the top: from the shoulders, a little wider at the bottom, down past the hips
+    var lr = p.lean * Math.PI / 180, ux = Math.sin(lr), uy = -Math.cos(lr), px = -uy, py = ux;
+    var hemX = J.hip[0] - ux * 70 * s, hemY = J.hip[1] - uy * 70 * s;
+    var pts = [
+      [J.ls[0] - px * 18 * s, J.ls[1] - py * 18 * s], [J.rs[0] + px * 18 * s, J.rs[1] + py * 18 * s],
+      [hemX + px * 92 * s, hemY + py * 92 * s], [hemX - px * 92 * s, hemY - py * 92 * s]
+    ];
+    function poly(fill, grow) {
+      c.fillStyle = fill; c.strokeStyle = fill; c.lineWidth = grow;
+      c.beginPath(); c.moveTo(pts[0][0], pts[0][1]);
+      for (var k = 1; k < pts.length; k++) c.lineTo(pts[k][0], pts[k][1]);
+      c.closePath(); c.fill(); if (grow) c.stroke();
+    }
+    poly(shade(top, -0.3), 14 * s);
+    poly(top, 0);
+    c.strokeStyle = shade(top, -0.15); c.lineWidth = 6 * s;   // a hem
+    c.beginPath(); c.moveTo(pts[3][0], pts[3][1]); c.lineTo(pts[2][0], pts[2][1]); c.stroke();
+    // arms: sleeves in the top's colour, hands in skin
+    function arm(sh, el, wr) {
+      limb(sh, el, wr, 46 * s, shade(top, -0.3));
+      limb(sh, el, wr, 38 * s, top);
+      c.fillStyle = skin; c.beginPath(); c.arc(wr[0], wr[1], 17 * s, 0, Math.PI * 2); c.fill();
+    }
+    arm(J.ls, J.le, J.lw); arm(J.rs, J.re, J.rw);
+    if (lead) {
+      var r = (24 + 8 * (beatGlow || 0)) * s;
+      c.fillStyle = 'rgba(255, 210, 61, 0.3)'; c.beginPath(); c.arc(J.rw[0], J.rw[1], r * 1.9, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = '#FFD23D'; c.lineWidth = 7 * s; c.beginPath(); c.arc(J.rw[0], J.rw[1], r, 0, Math.PI * 2); c.stroke();
+    }
+    // a neck, then the head from the picture, tilting with the body
+    line(J.neck, [J.neck[0] + ux * 26 * s, J.neck[1] + uy * 26 * s], 30 * s, skin);
+    var img = av.img, hh = 250 * s, hw = hh * (img.width / Math.max(1, img.height));
+    if (hw > 300 * s) { hh *= 300 * s / hw; hw = 300 * s; }
+    c.translate(J.neck[0], J.neck[1]);
+    c.rotate((p.lean + p.head) * Math.PI / 180);
+    c.drawImage(img, -hw / 2, -hh + 22 * s, hw, hh);
+    c.restore();
+    return J;
   }
 
   function mixBounce(p, b) {
