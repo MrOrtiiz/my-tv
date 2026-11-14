@@ -1,5 +1,5 @@
 {
- "updated": 1794682746290,
+ "updated": 1794693048042,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -40,9 +40,9 @@
  ],
  "guide": {
   "channels": 5644,
-  "programmes": 284775,
+  "programmes": 280308,
   "barca_listings": 81,
-  "until": "2026-11-15T19:00:00+01:00"
+  "until": "2026-11-16T01:10:00+01:00"
  },
  "barca_titles_seen": [
   "11-15 11:00 | Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
@@ -52,6 +52,7 @@
   "11-15 00:00 | Motorsport: FIA-Langstrecken-WM - 6 Stunden von Barcelona  | 90 min",
   "11-15 01:30 | Motorsport: FIA-Langstrecken-WM - 6 Stunden von Barcelona  | 150 min",
   "11-15 08:30 | Motorsport: FIA-Langstrecken-WM - 6 Stunden von Barcelona  | 150 min",
+  "11-15 20:00 | Motorsport: FIA-Langstrecken-WM - 6 Stunden von Barcelona  | 120 min",
   "11-15 08:15 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 150 min",
   "11-15 02:30 | 6 Hours of Barcelona, Fecha 7  | 60 min",
   "11-15 17:00 | LIVE: Košarka - Španjolska liga: Barcelona - Monbus  | 120 min",
@@ -63,13 +64,12 @@
   "11-15 11:00 | La Liga EA Sports 2026-27 - Barcelona x Alavés  | 120 min",
   "11-14 21:30 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 110 min",
   "11-15 11:00 | La Liga EA Sports 2026-27 - Barcelona x Alavés  | 120 min",
-  "11-14 19:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-15 15:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 115 min",
   "11-15 16:55 | Liga Acb 26/27 - Barcelona x Obradoiro (Direto)  | 120 min",
-  "11-14 19:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-15 15:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 115 min",
   "11-15 16:55 | Liga Acb 26/27 - Barcelona x Obradoiro (Direto)  | 120 min",
-  "11-14 19:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min"
+  "11-15 15:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 115 min",
+  "11-15 16:55 | Liga Acb 26/27 - Barcelona x Obradoiro (Direto)  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
