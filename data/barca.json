@@ -1,5 +1,5 @@
 {
- "updated": 1794736740765,
+ "updated": 1794748201742,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -40,36 +40,36 @@
  ],
  "guide": {
   "channels": 5644,
-  "programmes": 292599,
-  "barca_listings": 57,
-  "until": "2026-11-16T12:30:00+01:00"
+  "programmes": 290131,
+  "barca_listings": 45,
+  "until": "2026-11-16T15:00:00+01:00"
  },
  "barca_titles_seen": [
-  "11-15 11:00 | Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
-  "11-15 11:00 | Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
   "11-16 09:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
   "11-16 09:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
   "11-15 17:00 | LIVE: Košarka - Španjolska liga: Barcelona - Monbus  | 120 min",
   "11-16 03:30 | Košarka - Španjolska liga: Barcelona - Monbus  | 90 min",
-  "11-15 08:30 | Motorsport: FIA-Langstrecken-WM - 6 Stunden von Barcelona  | 150 min",
   "11-15 20:00 | Motorsport: FIA-Langstrecken-WM - 6 Stunden von Barcelona  | 120 min",
-  "11-15 09:00 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 150 min",
   "11-16 01:00 | Koszykówka mężczyzn: Superpuchar Hiszpanii - mecz półfinałowy: Valencia Basket - Barca  | 170 min",
   "11-15 17:00 | LIVE: Košarka - Španjolska liga: Barcelona - Monbus  | 120 min",
   "11-16 03:30 | Košarka - Španjolska liga: Barcelona - Monbus  | 90 min",
   "11-16 00:45 | Barcelona Campeón LaLiga 2025-2026  | 15 min",
-  "11-15 10:35 | Endurance: 6 Hours of Barcelona  | 65 min",
-  "11-15 11:00 | Endurance: 6 Hours of Barcelona  | 60 min",
-  "11-15 11:00 | La Liga EA Sports 2026-27 - Barcelona x Alavés  | 120 min",
-  "11-15 11:00 | La Liga EA Sports 2026-27 - Barcelona x Alavés  | 120 min",
-  "11-15 11:00 | La Liga EA Sports 2026-27 - Barcelona x Alavés  | 120 min",
   "11-15 15:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 115 min",
   "11-15 16:55 | Liga Acb 26/27 - Barcelona x Obradoiro (Direto)  | 120 min",
   "11-16 01:00 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 120 min",
+  "11-16 13:00 | UEFA Champions League 26/27 - Galatasaray x Barcelona  | 105 min",
   "11-15 15:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 115 min",
   "11-15 16:55 | Liga Acb 26/27 - Barcelona x Obradoiro (Direto)  | 120 min",
   "11-16 01:00 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 120 min",
-  "11-15 15:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 115 min"
+  "11-16 13:00 | UEFA Champions League 26/27 - Galatasaray x Barcelona  | 105 min",
+  "11-15 15:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 115 min",
+  "11-15 16:55 | Liga Acb 26/27 - Barcelona x Obradoiro (Direto)  | 120 min",
+  "11-16 01:00 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 120 min",
+  "11-16 13:00 | UEFA Champions League 26/27 - Galatasaray x Barcelona  | 105 min",
+  "11-16 00:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
+  "11-16 00:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
+  "11-16 00:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
+  "11-15 21:50 | Fussball: FC Barcelona - Aston Villa FC  | 200 min"
  ],
  "table": {
   "league": "LaLiga",
