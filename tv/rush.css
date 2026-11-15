@@ -24,14 +24,18 @@
 #rush .r-title { font-size: 112px; font-weight: 800; letter-spacing: -2px; line-height: 1; text-shadow: 0 6px 24px rgba(0, 30, 80, 0.4); }
 #rush .r-title.small { font-size: 64px; letter-spacing: -1px; }
 #rush .r-sub { margin: 18px 0 30px; font-size: 27px; line-height: 38px; color: rgba(255, 255, 255, 0.82); }
+#rush .r-cast { margin: 0 0 18px; height: 100px; text-align: center; white-space: nowrap; }
+#rush .r-face { display: inline-block; width: 84px; height: 84px; margin: 8px 6px; border-radius: 42px; overflow: hidden; vertical-align: top;
+  background: rgba(10, 20, 60, 0.45) center top / cover no-repeat; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.25);
+  -webkit-transition: -webkit-transform 0.15s; transition: transform 0.15s; }
+#rush .r-face canvas { display: block; width: 84px; height: 84px; }
+#rush .r-face.on { -webkit-transform: scale(1.14); transform: scale(1.14); box-shadow: 0 0 0 4px #fff, 0 10px 24px rgba(0, 20, 60, 0.4); }
+#rush .r-note { margin: 12px 0 0; text-align: center; font-size: 21px; color: rgba(255, 255, 255, 0.75); }
 #rush .r-pick { height: 84px; line-height: 84px; border-radius: 42px; text-align: center; background: rgba(255, 255, 255, 0.14);
   box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.4); font-size: 36px; font-weight: 700; }
 #rush .r-arrow { display: inline-block; width: 70px; color: rgba(255, 255, 255, 0.7); font-size: 28px; }
 #rush .r-char { display: inline-block; min-width: 330px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35); }
-#rush .r-dots { margin: 16px 0 26px; text-align: center; }
-#rush .r-dotc { display: inline-block; width: 12px; height: 12px; margin: 0 6px; border-radius: 6px; background: rgba(255, 255, 255, 0.35); }
-#rush .r-dotc.on { background: #fff; }
-#rush .r-go { height: 96px; line-height: 96px; border-radius: 48px; text-align: center; font-size: 42px; font-weight: 800; background: #FFF; color: #0A3A7A;
+#rush .r-go { margin-top: 26px; height: 96px; line-height: 96px; border-radius: 48px; text-align: center; font-size: 42px; font-weight: 800; background: #FFF; color: #0A3A7A;
   box-shadow: 0 16px 34px rgba(0, 30, 80, 0.35); }
 #rush .r-best { margin-top: 20px; text-align: center; font-size: 25px; color: #FFE680; font-weight: 600; }
 #rush .r-help { margin-top: 26px; text-align: center; font-size: 21px; color: rgba(255, 255, 255, 0.78); }

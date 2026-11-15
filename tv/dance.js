@@ -2058,6 +2058,6 @@ var Dance = (function () {
   return {
     open: open, close: close, isOpen: isOpen,
     // for tests and the phone page's own copy of the scoring
-    _moves: MOVES, _sig: SIG, _pose: poseAt, _draw: drawDancer, _songs: SONGS, _choreo: choreo, _players: function () { return players; }, _state: function () { return state; }
+    _moves: MOVES, _sig: SIG, _pose: poseAt, _draw: drawDancer, _drive: function () { return cfg.drive || DRIVE; }, _songs: SONGS, _choreo: choreo, _players: function () { return players; }, _state: function () { return state; }
   };
 })();

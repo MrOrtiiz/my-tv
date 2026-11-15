@@ -37,40 +37,139 @@ var Rush = (function () {
     return 'rgb(' + k(r) + ',' + k(g) + ',' + k(b) + ')';
   }
 
-  // MARK: - The characters (our own): cubes, seen from behind
+  // MARK: - The characters: the same as in Dansgolvet (its neon dancer, and the family's gubbar from Google Drive)
 
-  var CHARS = [
-    {id: 'rav', name: 'Räven Rasmus', color: '#F08A24', parts: function (b) {
-      b(-0.17, 0, 0, 0.18, 0.32, 0.22, '#3A2414'); b(0.17, 0, 0, 0.18, 0.32, 0.22, '#3A2414');
-      b(0, 0.3, 0, 0.64, 0.56, 0.5, '#F08A24');
-      b(0, 0.42, -0.42, 0.24, 0.24, 0.42, '#F08A24'); b(0, 0.44, -0.7, 0.2, 0.2, 0.16, '#FFFFFF');
-      b(0, 0.86, 0, 0.6, 0.5, 0.52, '#F59A3A');
-      b(-0.2, 1.36, 0, 0.16, 0.22, 0.14, '#F08A24'); b(0.2, 1.36, 0, 0.16, 0.22, 0.14, '#F08A24');
-      b(-0.2, 1.52, 0, 0.12, 0.08, 0.1, '#2A1A10'); b(0.2, 1.52, 0, 0.12, 0.08, 0.1, '#2A1A10');
-    }},
-    {id: 'pingvin', name: 'Pingvinen Pi', color: '#2A3242', parts: function (b) {
-      b(-0.15, 0, 0.05, 0.2, 0.12, 0.3, '#FF9A1F'); b(0.15, 0, 0.05, 0.2, 0.12, 0.3, '#FF9A1F');
-      b(0, 0.12, 0, 0.7, 0.78, 0.56, '#2A3242');
-      b(-0.4, 0.4, 0, 0.12, 0.42, 0.3, '#232A38'); b(0.4, 0.4, 0, 0.12, 0.42, 0.3, '#232A38');
-      b(0, 0.9, 0, 0.56, 0.46, 0.5, '#2E3648');
-      b(0, 0.18, -0.3, 0.4, 0.36, 0.04, '#F2F4F8');
-    }},
-    {id: 'robot', name: 'Roboten Bult', color: '#9FB3C8', parts: function (b) {
-      b(-0.17, 0, 0, 0.18, 0.34, 0.24, '#5E6B78'); b(0.17, 0, 0, 0.18, 0.34, 0.24, '#5E6B78');
-      b(0, 0.32, 0, 0.66, 0.54, 0.5, '#9FB3C8');
-      b(0, 0.42, -0.27, 0.34, 0.26, 0.04, '#2EE6FF');
-      b(-0.42, 0.42, 0, 0.14, 0.4, 0.2, '#7C8C9C'); b(0.42, 0.42, 0, 0.14, 0.4, 0.2, '#7C8C9C');
-      b(0, 0.88, 0, 0.56, 0.44, 0.5, '#B4C4D4');
-      b(0, 1.32, 0, 0.05, 0.22, 0.05, '#5E6B78'); b(0, 1.54, 0, 0.14, 0.14, 0.14, '#FF3D5A');
-    }},
-    {id: 'groda', name: 'Grodan Gro', color: '#4FC24A', parts: function (b) {
-      b(-0.24, 0, 0.05, 0.26, 0.16, 0.36, '#3A9A36'); b(0.24, 0, 0.05, 0.26, 0.16, 0.36, '#3A9A36');
-      b(0, 0.16, 0, 0.74, 0.5, 0.56, '#4FC24A');
-      b(0, 0.66, 0, 0.7, 0.36, 0.5, '#5AD155');
-      b(-0.22, 1.0, 0.04, 0.22, 0.2, 0.2, '#5AD155'); b(0.22, 1.0, 0.04, 0.22, 0.2, 0.2, '#5AD155');
-      b(-0.22, 1.08, 0.16, 0.14, 0.12, 0.08, '#FFFFFF'); b(0.22, 1.08, 0.16, 0.14, 0.12, 0.08, '#FFFFFF');
-    }}
-  ];
+  var NEON_CH = {id: 'neon', name: 'Neon', kind: 'neon'};
+  var cast = [NEON_CH], castNote = '';
+  var CACHE = 'fmtv.rush.g.';   // + the picture's Drive id: the cut-out gubbe, as a small PNG, and when it changed
+
+  function driveUrl() {
+    return (window.Dance && Dance._drive && Dance._drive()) || (window.CONFIG && CONFIG.danceDrive) || '';
+  }
+  function shortName(n) {
+    var words = String(n || 'Gubbe').replace(/\.[^.]+$/, '').split(/\s+/), out = '';
+    for (var i = 0; i < words.length; i++) { if ((out + ' ' + words[i]).replace(/^\s+/, '').length > 14) break; out = (out + ' ' + words[i]).replace(/^\s+/, ''); }
+    out = out.replace(/\s+(i|med|och|på|en|ett)$/i, '');
+    return out || String(n).slice(0, 14);
+  }
+  function getJSON(url, ok, fail) {
+    var x = new XMLHttpRequest();
+    x.open('GET', url);
+    x.timeout = 30000;
+    x.onload = function () { var o = null; try { o = JSON.parse(x.responseText); } catch (e) {} if (o && o.ok) ok(o); else fail((o && o.error) || 'inget svar'); };
+    x.onerror = x.ontimeout = function () { fail('nätet svarar inte'); };
+    x.send();
+  }
+
+  /** The gubbar in the Drive folder (as in Dansgolvet), after Neon. */
+  function loadCast() {
+    var url = driveUrl();
+    if (!url) return;
+    castNote = 'Hämtar gubbarna från Drive…';
+    getJSON(url, function (o) {
+      var list = [NEON_CH];
+      for (var i = 0; i < o.files.length; i++) {
+        var f = o.files[i], old = null;
+        for (var k = 0; k < cast.length; k++) if (cast[k].id === f.id) old = cast[k];
+        if (old && old.mod === f.modified) { list.push(old); continue; }
+        list.push({id: f.id, name: shortName(f.name), kind: 'img', thumb: f.thumb, mod: f.modified, type: f.type});
+      }
+      cast = list;
+      castNote = o.files.length ? '' : 'Drive-mappen Gubbar är tom.';
+      sel = 0;
+      for (var j = 0; j < cast.length; j++) if (cast[j].id === cfg.char) sel = j;
+      if (state === 'menu' && opened) { drawMenu(); prefetch(); }
+    }, function (why) {
+      castNote = 'Kunde inte hämta gubbarna från Drive (' + why + ').';
+      if (state === 'menu' && opened) drawMenu();
+    });
+  }
+
+  /** A gubbe's picture, cut out from its background (as Dansgolvet's phones do): from the TV's memory or from Drive. */
+  function fetchSprite(ch, done) {
+    if (ch.kind !== 'img' || ch.img) { done(true); return; }
+    if (ch.waiting) { ch.waiting.push(done); return; }
+    ch.waiting = [done];
+    function finish(ok) { var w = ch.waiting; ch.waiting = null; for (var i = 0; i < w.length; i++) w[i](ok); }
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(CACHE + ch.id) || 'null'); } catch (e) {}
+    if (saved && saved.mod === ch.mod && saved.url) {
+      var im = new Image();
+      im.onload = function () { ch.img = im; finish(true); };
+      im.onerror = function () { saved = null; download(); };
+      im.src = saved.url;
+      return;
+    }
+    download();
+    function download() {
+      var url = driveUrl(), parts = [], type = ch.type || 'image/png';
+      (function next(n) {
+        getJSON(url + (url.indexOf('?') < 0 ? '?' : '&') + 'file=' + encodeURIComponent(ch.id) + '&part=' + n, function (o) {
+          parts.push(o.data); type = o.type || type;
+          if (n + 1 < o.parts) { next(n + 1); return; }
+          cutOut('data:' + type + ';base64,' + parts.join(''), function (cv) {
+            if (!cv) { finish(false); return; }
+            ch.img = cv;
+            try { localStorage.setItem(CACHE + ch.id, JSON.stringify({mod: ch.mod, url: cv.toDataURL('image/png')})); } catch (e) {}
+            finish(true);
+          });
+        }, function () { finish(false); });
+      })(0);
+    }
+  }
+
+  /** The figure without its background: the picture's own transparency, or the background flooded in from the edges. */
+  function cutOut(url, cb) {
+    var im = new Image();
+    im.onload = function () {
+      var h = Math.min(520, im.height), w = Math.max(1, Math.round(im.width * h / im.height));
+      var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      var x2 = cv.getContext('2d');
+      x2.drawImage(im, 0, 0, w, h);
+      var data;
+      try { data = x2.getImageData(0, 0, w, h); } catch (e) { cb(null); return; }
+      var d = data.data, m = new Uint8Array(w * h), i;
+      var see = d[3] < 20 || d[(w - 1) * 4 + 3] < 20 || d[((h - 1) * w) * 4 + 3] < 20;
+      if (see) for (i = 0; i < w * h; i++) m[i] = d[i * 4 + 3] > 128 ? 1 : 0;
+      else {
+        var bg = [d[0], d[1], d[2]], seen = new Uint8Array(w * h), stack = [];
+        var near = function (k) { var dr = d[k * 4] - bg[0], dg = d[k * 4 + 1] - bg[1], db = d[k * 4 + 2] - bg[2]; return dr * dr + dg * dg + db * db < 2400; };
+        for (i = 0; i < w; i++) { stack.push(i); stack.push((h - 1) * w + i); }
+        for (i = 0; i < h; i++) { stack.push(i * w); stack.push(i * w + w - 1); }
+        while (stack.length) {
+          var k = stack.pop();
+          if (seen[k] || !near(k)) continue;
+          seen[k] = 1;
+          var x = k % w, y = (k - x) / w;
+          if (x > 0) stack.push(k - 1); if (x < w - 1) stack.push(k + 1);
+          if (y > 0) stack.push(k - w); if (y < h - 1) stack.push(k + w);
+        }
+        for (i = 0; i < w * h; i++) m[i] = seen[i] ? 0 : 1;
+      }
+      var top = h, bot = 0, l = w, r = 0;
+      for (var yy = 0; yy < h; yy++) {
+        var n = 0;
+        for (var xx = 0; xx < w; xx++) if (m[yy * w + xx]) { n++; if (xx < l) l = xx; if (xx > r) r = xx; }
+        if (n > 2) { if (yy < top) top = yy; bot = yy; }
+      }
+      if (bot <= top || r <= l) { cb(null); return; }
+      for (i = 0; i < w * h; i++) if (!m[i]) d[i * 4 + 3] = 0;
+      x2.putImageData(data, 0, 0);
+      var out = document.createElement('canvas'); out.width = r - l + 1; out.height = bot - top + 1;
+      out.getContext('2d').drawImage(cv, l, top, out.width, out.height, 0, 0, out.width, out.height);
+      cb(out);
+    };
+    im.onerror = function () { cb(null); };
+    im.src = url;
+  }
+
+  var prefetchT = 0;
+  function prefetch() {   // the gubbe in focus, a moment after it's chosen: ready to ride (and seen in the menu)
+    clearTimeout(prefetchT);
+    var ch = cast[sel];
+    if (!ch || ch.kind !== 'img' || ch.img) return;
+    prefetchT = setTimeout(function () { fetchSprite(ch, function () { if (state === 'menu' && opened) drawMenu(); }); }, 500);
+  }
 
   // MARK: - Drawing: perspective, cubes, the island
 
@@ -308,7 +407,7 @@ var Rush = (function () {
 
   function newRun() {
     run = {dist: 0, speed: 9, objs: [], next: 26, score: 0, coins: 0, combo: 0, comboT: 0, bestCombo: 0, hearts: 3, time: 0, over: false};
-    P = {lane: 1, x: 0, y: 0, vy: 0, duck: 0, grind: false, grindT: 0, trick: 0, tricks: 0, inv: 0, char: CHARS[sel]};
+    P = {lane: 1, x: 0, y: 0, vy: 0, duck: 0, grind: false, grindT: 0, trick: 0, tricks: 0, inv: 0, char: cast[sel] && (cast[sel].kind === 'neon' || cast[sel].img) ? cast[sel] : NEON_CH};
     pops = [];
     tips = {};
     for (var i = 0; i < 6; i++) run.objs.push({type: 'coin', lane: 1, x: 0, at: 10 + i * 2.4, y: 0});
@@ -455,14 +554,24 @@ var Rush = (function () {
   /** In the menu, the chosen character rides by itself, weaving and hopping now and then. */
   function menuRider() {
     var hop = now % 3.2, y = hop < 0.73 ? JUMP * hop - GRAV / 2 * hop * hop : 0;
-    return {x: Math.sin(now * 0.6) * 1.2, y: Math.max(0, y), duck: 0, inv: 0, trick: hop > 0.25 && hop < 0.59 ? 0.59 - hop : 0, grind: false, char: CHARS[sel]};
+    return {x: Math.sin(now * 0.6) * 1.2, y: Math.max(0, y), duck: 0, inv: 0, trick: hop > 0.25 && hop < 0.59 ? 0.59 - hop : 0, grind: false, char: cast[sel] && (cast[sel].kind === 'neon' || cast[sel].img) ? cast[sel] : NEON_CH};
+  }
+
+  /** The neon dancer's pose on the board: arms out for balance, up in the air, down when ducking, wide on a rail. */
+  function neonPose(P, lean) {
+    var air = P.y > 0.25 && !P.grind;
+    if (P.duck > 0) return {la: [-40, -20], ra: [40, 20], ll: [-34, 26], rl: [34, -26], lean: lean, x: 0, y: 90, head: 0, bend: 0.45};
+    if (air) return {la: [-150, -165], ra: [150, 165], ll: [-22, 34], rl: [22, -34], lean: lean, x: 0, y: -10, head: 0, bend: 0};
+    if (P.grind) return {la: [-92, -88], ra: [92, 88], ll: [-16, 8], rl: [16, -8], lean: lean, x: 0, y: 14, head: 0, bend: 0};
+    var sway = Math.sin(now * 5) * 4;
+    return {la: [-100 + sway, -108], ra: [100 + sway, 108], ll: [-14, 8], rl: [14, -8], lean: lean, x: 0, y: 18, head: 0, bend: 0};
   }
 
   function drawPlayer() {
     var P = window.Rush && run ? Rush._player() : menuRider();
     var ch = P.char, flash = P.inv > 0 && Math.floor(P.inv * 10) % 2 === 0;
     if (flash) return;
-    var squash = P.duck > 0 ? 0.6 : 1, x = P.x, y = P.y, z = PZ;
+    var x = P.x, y = P.y, z = PZ;
     // its shadow on the boards
     var sp = proj(x, P.grind ? RAIL_Y : 0, z), ss = sp[2];
     c.fillStyle = 'rgba(0, 0, 0, 0.22)';
@@ -474,14 +583,21 @@ var Rush = (function () {
     // the board, its wheels
     cube(x - 0.18, y, z - 0.38, 0.1, 0.1, 0.12, '#1D1D1F'); cube(x + 0.18, y, z - 0.38, 0.1, 0.1, 0.12, '#1D1D1F');
     cube(x - 0.18, y, z + 0.38, 0.1, 0.1, 0.12, '#1D1D1F'); cube(x + 0.18, y, z + 0.38, 0.1, 0.1, 0.12, '#1D1D1F');
-    cube(x, y + 0.1, z, 0.52, 0.08, 1.06, ch.id === 'robot' ? '#FF3DA5' : '#2EE6FF');
-    // the rider, far parts first (the order they're listed works from behind)
-    var parts = [];
-    ch.parts(function (bx, by, bz, w, h, d, col) { parts.push([bx, by, bz, w, h, d, col]); });
-    parts.sort(function (a, b) { return b[2] - a[2]; });
-    for (var i = 0; i < parts.length; i++) {
-      var q = parts[i];
-      cube(x + q[0], y + 0.18 + q[1] * squash, z + q[2], q[3], q[4] * squash, q[5], q[6]);
+    cube(x, y + 0.1, z, 0.52, 0.08, 1.06, ch.kind === 'neon' ? '#FF3DA5' : '#2EE6FF');
+    // the rider, leaning into a lane change
+    var target = run && P.lane !== undefined ? LANES[P.lane] : x + Math.cos(now * 0.6) * 0.15;
+    var lean = clamp((target - x) * 0.35, -0.16, 0.16), feet = proj(x, y + 0.18, z);
+    if (ch.kind === 'img' && ch.img) {
+      var hgt = 1.8 * ss * (P.duck > 0 ? 0.62 : 1), wid = hgt * ch.img.width / ch.img.height * (P.duck > 0 ? 1 / 0.62 * 0.9 : 1);
+      c.save();
+      c.translate(feet[0], feet[1]); c.rotate(lean);
+      if (P.grind) c.rotate(Math.sin(now * 18) * 0.03);
+      c.drawImage(ch.img, -wid / 2, -hgt, wid, hgt);
+      c.restore();
+    } else if (window.Dance && Dance._draw) {
+      Dance._draw(c, neonPose(P, lean * 40), feet[0], feet[1] - 0.3 * ss, ss * 0.0024, 0.5 + 0.4 * Math.abs(Math.sin(now * 4)), false);
+    } else {
+      cube(x, y + 0.18, z, 0.5, 1.4, 0.4, '#8AF6FF');
     }
     c.restore();
     if (P.grind) {   // sparks off the rail
@@ -542,18 +658,34 @@ var Rush = (function () {
     var box = el('div', 'r-box', panel);
     el('div', 'r-title', box, 'Ö-ruset');
     el('div', 'r-sub', box, 'Åk brädan över ön. Hoppa, ducka, glid på räckena och gör trick i luften!');
+    // the figures, as in Dansgolvet: Neon, then the gubbar from Drive (◀ ▶)
+    var row = el('div', 'r-cast', box), from = clamp(sel - 2, 0, Math.max(0, cast.length - 6));
+    for (var i = from; i < Math.min(cast.length, from + 6); i++) {
+      var ch = cast[i], face = el('div', 'r-face' + (i === sel ? ' on' : ''), row);
+      if (ch.kind === 'neon') {
+        var cv = el('canvas', '', face); cv.width = 84; cv.height = 84;
+        if (window.Dance && Dance._draw) Dance._draw(cv.getContext('2d'), {la: [-100, -108], ra: [100, 108], ll: [-14, 8], rl: [14, -8], lean: 0, x: 0, y: 0, head: 0, bend: 0}, 42, 82, 0.1, 0.5, false);
+      } else if (ch.img) face.appendChild(thumbOf(ch.img));
+      else if (ch.thumb) face.style.backgroundImage = 'url(' + ch.thumb + ')';
+    }
+    var cur = cast[sel] || NEON_CH;
     var pick = el('div', 'r-pick', box);
     el('span', 'r-arrow', pick, '◀');
-    var name = el('span', 'r-char', pick, CHARS[sel].name);
-    name.style.color = CHARS[sel].color === '#2A3242' ? '#FFFFFF' : CHARS[sel].color;
+    el('span', 'r-char', pick, cur.kind === 'img' && cur.waiting ? 'Hämtar ' + cur.name + '…' : cur.name);
     el('span', 'r-arrow', pick, '▶');
-    var dots = el('div', 'r-dots', box);
-    for (var i = 0; i < CHARS.length; i++) el('span', 'r-dotc' + (i === sel ? ' on' : ''), dots);
+    if (castNote) el('div', 'r-note', box, castNote);
     el('div', 'r-go focus', box, 'Spela');
     if (cfg.best) el('div', 'r-best', box, 'Rekord: ' + Math.round(cfg.best) + ' poäng');
     var help = el('div', 'r-help', box);
     var rows = [['◀ ▶', 'byt fil'], ['▲', 'hoppa'], ['▼', 'ducka'], ['OK i luften', 'trick']];
     for (var k = 0; k < rows.length; k++) { var r = el('span', 'r-key', help); el('b', '', r, rows[k][0]); r.appendChild(document.createTextNode(' ' + rows[k][1])); }
+  }
+
+  function thumbOf(img) {   // a cut-out gubbe's head and shoulders, for the menu
+    var t = document.createElement('canvas'), sh = img.height * 0.42, sw = Math.min(img.width, sh);
+    t.width = 84; t.height = 84;
+    t.getContext('2d').drawImage(img, (img.width - sw) / 2, 0, sw, sh, 0, 0, 84, 84);
+    return t;
   }
 
   function drawHud() {
@@ -612,7 +744,7 @@ var Rush = (function () {
     state = 'over'; btn = 0;
     var record = !cfg.best || run.score > cfg.best;
     if (record) cfg.best = Math.round(run.score);
-    cfg.char = sel; save();
+    save();
     stopMusic(); sfx('over');
     run.record = record;
     drawOver();
@@ -653,9 +785,11 @@ var Rush = (function () {
     if (opened) return;
     if (!root) build();
     opened = true;
-    sel = clamp(cfg.char || 0, 0, CHARS.length - 1);
+    sel = 0;
+    for (var j = 0; j < cast.length; j++) if (cast[j].id === cfg.char) sel = j;
     root.className = 'layer on';
     toMenu();
+    loadCast();
     last = 0;
     loop();
   }
@@ -741,9 +875,22 @@ var Rush = (function () {
     e.preventDefault(); e.stopPropagation();
     if (state === 'menu') {
       if (back) { close(); return; }
-      if (k === K.left) { sel = (sel + CHARS.length - 1) % CHARS.length; drawMenu(); }
-      else if (k === K.right) { sel = (sel + 1) % CHARS.length; drawMenu(); }
-      else if (k === K.ok) { cfg.char = sel; save(); start(); }
+      if (k === K.left) { sel = (sel + cast.length - 1) % cast.length; drawMenu(); prefetch(); }
+      else if (k === K.right) { sel = (sel + 1) % cast.length; drawMenu(); prefetch(); }
+      else if (k === K.ok) {
+        var ch = cast[sel] || NEON_CH;
+        cfg.char = ch.id; save();
+        if (ch.kind === 'img' && !ch.img) {
+          fetchSprite(ch, function (ok) {
+            if (!opened || state !== 'menu') return;
+            if (!ok) { castNote = ch.name + ' gick inte att hämta. Välj en annan, eller Neon.'; drawMenu(); return; }
+            start();
+          });
+          drawMenu();
+          return;
+        }
+        start();
+      }
       return;
     }
     if (state === 'play') {
