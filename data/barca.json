@@ -1,5 +1,5 @@
 {
- "updated": 1794727330348,
+ "updated": 1794736740765,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -40,19 +40,19 @@
  ],
  "guide": {
   "channels": 5644,
-  "programmes": 295759,
-  "barca_listings": 64,
-  "until": "2026-11-16T07:00:00+01:00"
+  "programmes": 292599,
+  "barca_listings": 57,
+  "until": "2026-11-16T12:30:00+01:00"
  },
  "barca_titles_seen": [
   "11-15 11:00 | Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
   "11-15 11:00 | Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
+  "11-16 09:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
+  "11-16 09:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
   "11-15 17:00 | LIVE: Košarka - Španjolska liga: Barcelona - Monbus  | 120 min",
   "11-16 03:30 | Košarka - Španjolska liga: Barcelona - Monbus  | 90 min",
-  "11-15 07:15 | Piłka nożna: Liga hiszpańska - mecz: Real Betis Balompie - FC Barcelona  | 135 min",
   "11-15 08:30 | Motorsport: FIA-Langstrecken-WM - 6 Stunden von Barcelona  | 150 min",
   "11-15 20:00 | Motorsport: FIA-Langstrecken-WM - 6 Stunden von Barcelona  | 120 min",
-  "11-15 08:15 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 150 min",
   "11-15 09:00 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 150 min",
   "11-16 01:00 | Koszykówka mężczyzn: Superpuchar Hiszpanii - mecz półfinałowy: Valencia Basket - Barca  | 170 min",
   "11-15 17:00 | LIVE: Košarka - Španjolska liga: Barcelona - Monbus  | 120 min",
