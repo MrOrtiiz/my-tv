@@ -550,20 +550,21 @@ var Search = (function () {
    *  got(list, left) is called after each add-on answers; left is how many are still asked. */
   function stremioStreams(type, id, got) {
     stremioAddons(function (err, addons) {
-      var ask = (addons || []).filter(function (a) { return gives(a, type, id); }), out = [], left = ask.length;
-      if (err && !ask.length) { got(out, 0, err); return; }
-      if (!left) { got(out, 0, new Error('inget av dina tillägg ger strömmar för det här')); return; }
+      var ask = (addons || []).filter(function (a) { return gives(a, type, id); }), out = [], left = ask.length, torrents = 0;
+      if (err && !ask.length) { got(out, 0, err, 0); return; }
+      if (!left) { got(out, 0, new Error('inget av dina tillägg ger strömmar för det här'), 0); return; }
       ask.forEach(function (a) {
         var base = a.transportUrl.replace(/\/manifest\.json(\?.*)?$/, '');
         http('GET', base + '/stream/' + type + '/' + encodeURIComponent(id) + '.json', {}, undefined, 20000, function (e, r) {
           var ss = (!e && r && r.streams) || [];
           for (var i = 0; i < ss.length && out.length < 200; i++) {
             var x = ss[i];
+            if (x && x.infoHash) torrents++;
             if (!x || !/^https?:\/\//i.test(x.url || '')) continue;   // torrents (infoHash), YouTube and outside links: not here
             var lines = String((x.name || '') + '\n' + (x.title || x.description || '')).split(/\n+/).filter(function (l) { return l.replace(/\s/g, ''); });
             out.push({addon: a.manifest.name || 'Tillägg', head: lines[0] || a.manifest.name, rest: lines.slice(1).join('  ·  '), url: x.url});
           }
-          got(out, --left);
+          got(out, --left, null, torrents);
         });
       });
     });
@@ -607,13 +608,20 @@ var Search = (function () {
   }
 
   function loadStreams(type, id, label) {
-    panel.stage = 'streams'; panel.items = []; panel.at = 0; panel.label = label; panel.msg = 'Frågar dina Stremio-tillägg…';
-    var me = panel;
+    panel.stage = 'streams'; panel.items = []; panel.at = 0; panel.label = label; panel.video = id; panel.msg = 'Frågar dina Stremio-tillägg…';
+    var me = panel, app = appLike(/stremio/i);
     draw();
-    stremioStreams(type, id, function (list, left, err) {
+    stremioStreams(type, id, function (list, left, err, torrents) {
       if (panel !== me) return;
       panel.items = list.slice();
-      panel.msg = err ? 'Stremio: ' + err.message + '.' : left ? 'Frågar dina tillägg… (' + left + ' kvar)' : list.length ? '' : 'Inga strömmar som går att spela här (torrents kräver Stremio-appen).';
+      // Torrents need Stremio's own streaming server, which only the Stremio app has: they're played there.
+      if (app && (torrents || (!left && !list.length))) panel.items.push({head: '▶ Öppna i Stremio-appen', rest: torrents ? torrents + ' torrent-strömmar spelas där' : 'Spelas där', app: app});
+      if (err) panel.msg = 'Stremio: ' + err.message + '.';
+      else if (left) panel.msg = 'Frågar dina tillägg… (' + left + ' kvar)';
+      else if (list.length) panel.msg = '';
+      else if (torrents) panel.msg = 'Dina tillägg gav bara torrents (' + torrents + ' st). De går inte att spela i Free My TV, bara i Stremio-appen' + (app ? '.' : ', som inte finns på den här TV:n.');
+      else panel.msg = 'Inga strömmar hittades för det här.';
+      if (!list.length && app && !left) panel.at = 0;
       draw();
     });
   }
@@ -645,6 +653,7 @@ var Search = (function () {
       loadStreams('series', panel.t.imdb + ':' + panel.season + ':' + it.ep, label);
       return;
     }
+    if (it.app) { var tt = panel.t, video = panel.video; panel = null; draw(); openStremio({app: it.app}, tt, video); return; }
     playStream(it, panel.t, panel.label);
   }
 
@@ -675,14 +684,24 @@ var Search = (function () {
   }
 
   /** Stremio at the title when it takes the link, else just Stremio. */
-  function openStremio(src, t) {
-    var link = 'stremio:///detail/' + (t.kind === 'tv' ? 'series' : 'movie') + '/' + t.imdb;
-    toast('Öppnar Stremio på ' + t.title + '.');
+  function openStremio(src, t, video) {
+    // Stremio's deep link: stremio:///detail/{type}/{id}/{videoId} (a film's videoId is its own id, an episode's tt…:S:E).
+    var type = t.kind === 'tv' ? 'series' : 'movie', vid = video || (t.kind === 'tv' ? '' : t.imdb);
+    var path = '/detail/' + type + '/' + t.imdb + (vid ? '/' + encodeURIComponent(vid) : ''), link = 'stremio://' + path;
+    var ep = video && /:(\d+):(\d+)$/.exec(video), what = t.title + (ep ? ' S' + ep[1] + 'E' + ep[2] : '');
+    toast('Öppnar Stremio på ' + what + '. Visar appen bara startsidan: sök på "' + t.title + '" där.');
+    function plain() { TV.launch(src.app.id, null, function () {}); }
     try {
-      var data = [new tizen.ApplicationControlData('PAYLOAD', [link]), new tizen.ApplicationControlData('url', [link])];
+      var data = [new tizen.ApplicationControlData('PAYLOAD', [link]), new tizen.ApplicationControlData('url', [link]),
+        new tizen.ApplicationControlData('deeplink', [link]), new tizen.ApplicationControlData('hash', ['#' + path])];
       var c = new tizen.ApplicationControl('http://tizen.org/appcontrol/operation/view', link, null, null, data);
-      tizen.application.launchAppControl(c, src.app.id, function () { if (TV.watch) TV.watch(src.app.id); }, function () { TV.launch(src.app.id, null, function () {}); });
-    } catch (e) { TV.launch(src.app.id, null, function () {}); }
+      tizen.application.launchAppControl(c, src.app.id, function () { if (TV.watch) TV.watch(src.app.id); }, function () {
+        try {
+          var d = new tizen.ApplicationControl('http://tizen.org/appcontrol/operation/default', null, null, null, data);
+          tizen.application.launchAppControl(d, src.app.id, function () { if (TV.watch) TV.watch(src.app.id); }, plain);
+        } catch (e2) { plain(); }
+      });
+    } catch (e) { plain(); }
   }
 
   function openApp(src, t) {
@@ -1030,11 +1049,11 @@ var Search = (function () {
       for (var ii = from; ii < panel.items.length && ii < from + 7; ii++) {
         var it = panel.items[ii], row = el('div', 'pitem' + (ii === panel.at ? ' focus' : ''), ul);
         el('div', 'h', row, it.head);
-        if (it.rest || it.addon) el('div', 'r', row, (panel.stage === 'streams' ? it.addon + (it.rest ? '  ·  ' : '') : '') + (it.rest || ''));
+        if (it.rest || it.addon) el('div', 'r', row, (panel.stage === 'streams' && it.addon ? it.addon + (it.rest ? '  ·  ' : '') : '') + (it.rest || ''));
       }
       if (panel.items.length > 7) el('div', 'ptext small', b, (panel.at + 1) + ' av ' + panel.items.length);
       if (panel.msg) el('div', 'ptext', b, panel.msg);
-      el('div', 'ptext small', b, panel.stage === 'streams' ? 'OK spelar.  Tillbaka ' + (st.kind === 'tv' ? 'till avsnitten.' : 'stänger.') : 'OK väljer.  Tillbaka ' + (panel.stage === 'episode' ? 'till säsongerna.' : 'stänger.'));
+      el('div', 'ptext small', b, panel.stage === 'streams' ? 'OK spelar (Stremio-appen: öppnar den).  Tillbaka ' + (st.kind === 'tv' ? 'till avsnitten.' : 'stänger.') : 'OK väljer.  Tillbaka ' + (panel.stage === 'episode' ? 'till säsongerna.' : 'stänger.'));
       return;
     } else if (panel.kind === 'plex') {
       el('div', 'ptitle', b, 'Plex');
