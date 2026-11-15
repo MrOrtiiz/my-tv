@@ -1,5 +1,5 @@
 {
- "updated": 1794715622578,
+ "updated": 1794727330348,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -40,9 +40,9 @@
  ],
  "guide": {
   "channels": 5644,
-  "programmes": 301499,
+  "programmes": 295759,
   "barca_listings": 64,
-  "until": "2026-11-16T05:00:00+01:00"
+  "until": "2026-11-16T07:00:00+01:00"
  },
  "barca_titles_seen": [
   "11-15 11:00 | Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
