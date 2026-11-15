@@ -691,12 +691,61 @@ var Search = (function () {
   }
 
   function run(src, t) {
+    if (src.kind === 'later') { toggleLater(t); return; }
     if (src.kind === 'app') openApp(src, t);
     else if (src.kind === 'iptv') openIptv(src, t);
     else if (src.kind === 'plex') openPlex(src, t);
     else if (src.kind === 'stremio') openStremio(src, t);
     else if (src.kind === 'strm') openStrm(src, t);
     else if (src.kind === 'trailer') { if (window.FreeMyTV && FreeMyTV.trailer) FreeMyTV.trailer({kind: t.kind, id: t.id, title: t.title}); }
+  }
+
+  // MARK: - Titta senare: titles saved from a search, kept on this TV (fmtv.search → later), newest first
+
+  function laterList() { if (!cfg.later) cfg.later = []; return cfg.later; }
+  function laterAt(t) {
+    var l = laterList();
+    for (var i = 0; i < l.length; i++) if (l[i].kind === t.kind && +l[i].id === +t.id) return i;
+    return -1;
+  }
+  function laterLabel(t) { return laterAt(t) >= 0 ? '★ Sparad' : '☆ Titta senare'; }
+  function laterSrc(t) { return {kind: 'later', label: laterLabel(t), note: ''}; }
+
+  /** Adds places to a title, before its Titta senare button (that one stays last). */
+  function addSources(t, list) {
+    var n = t.sources.length, last = n && t.sources[n - 1].kind === 'later' ? t.sources.pop() : null;
+    t.sources = t.sources.concat(list);
+    if (last) t.sources.push(last);
+  }
+
+  function toggleLater(t) {
+    var l = laterList(), i = laterAt(t);
+    if (i >= 0) { l.splice(i, 1); toast('Borttagen från Titta senare.'); }
+    else {
+      l.unshift({kind: t.kind, id: t.id, title: t.title, year: t.year, poster: t.poster, at: Date.now()});
+      if (l.length > 60) l.length = 60;
+      toast('Sparad i Titta senare.');
+    }
+    save();
+    for (var j = 0; j < t.sources.length; j++) if (t.sources[j].kind === 'later') t.sources[j].label = laterLabel(t);
+    draw();
+    sendResults();
+  }
+
+  /** The saved titles as results, looked up again (where they are now). quiet: the field keeps the focus. */
+  function showLater(quiet) {
+    var l = laterList();
+    if (!l.length) { status = 'Inget sparat än. Välj ☆ Titta senare på en titel i sökningen.'; results = []; say = ''; draw(); sendResults(); return; }
+    var mine = ++searchSeq;
+    asked = ''; say = ''; results = []; status = 'Titta senare: hämtar ' + l.length + (l.length === 1 ? ' titel' : ' titlar') + '…';
+    setField('');
+    if (!quiet) zone = 'tools';
+    draw();
+    tellPhone({t: 'busy', q: '', say: status});
+    loadApps(function () {
+      if (mine !== searchSeq) return;
+      fill(l.map(function (x) { return {kind: x.kind, id: x.id}; }), mine, 'Titta senare · ' + l.length + ' sparade', quiet);
+    });
   }
 
   // MARK: - A search: what was said → titles → where each one is
@@ -732,22 +781,28 @@ var Search = (function () {
       for (var i = 0; i < refs.length; i++) { var k = refs[i].kind + ':' + refs[i].id; if (!seen[k]) { seen[k] = true; uniq.push(refs[i]); } }
       if (!uniq.length) { status = say ? '' : 'Hittade inget på "' + bare(text) + '".'; draw(); sendResults(); return; }
       status = 'Letar var de finns…';
-      var left = uniq.length, list = [];
-      uniq.forEach(function (ref, i) {
-        details(ref, function (t) {
-          if (mine !== searchSeq) return;
-          list[i] = t;
-          if (--left) return;
-          results = list.filter(function (x) { return x; });
-          status = '';
-          for (var j = 0; j < results.length; j++) results[j].sources = streaming(results[j]);
-          sel = 0; srcAt = 0; zone = results.length ? 'results' : 'field';
-          draw();
-          sendResults();
-          more(mine);
-        });
-      });
+      fill(uniq, mine, '');
     }
+  }
+
+  /** Each title's details and the places it's on; then the slower ones. done: the line shown after. */
+  function fill(refs, mine, done, quiet) {
+    var left = refs.length, list = [];
+    refs.forEach(function (ref, i) {
+      details(ref, function (t) {
+        if (mine !== searchSeq) return;
+        list[i] = t;
+        if (--left) return;
+        results = list.filter(function (x) { return x; });
+        status = done || '';
+        for (var j = 0; j < results.length; j++) results[j].sources = streaming(results[j]).concat([laterSrc(results[j])]);
+        sel = 0; srcAt = 0;
+        if (!quiet || zone !== 'field') zone = results.length ? 'results' : 'field';
+        draw();
+        sendResults();
+        more(mine);
+      });
+    });
   }
 
   /** The slower places (IPTV, Plex), added to each title as they answer; Stremio and the trailer last. */
@@ -757,7 +812,7 @@ var Search = (function () {
       if (mine !== searchSeq || --left) return;
       for (var i = 0; i < results.length; i++) {
         var t = results[i];
-        t.sources = t.sources.concat(stremio(t), [{kind: 'trailer', label: 'Trailer', note: ''}]);
+        addSources(t, stremio(t).concat([{kind: 'trailer', label: 'Trailer', note: ''}]));
       }
       draw();
       sendResults();
@@ -767,7 +822,7 @@ var Search = (function () {
       loadVod(function () {
         if (mine !== searchSeq) return;
         if (status.indexOf('IPTV') >= 0) status = '';
-        for (var i = 0; i < results.length; i++) results[i].sources = results[i].sources.concat(iptvMatches(results[i]));
+        for (var i = 0; i < results.length; i++) addSources(results[i], iptvMatches(results[i]));
         draw(); step();
       });
     } else step();
@@ -777,7 +832,7 @@ var Search = (function () {
       results.forEach(function (t) {
         plexSearch(t, function (found) {
           if (mine !== searchSeq) return;
-          t.sources = t.sources.concat(found);
+          addSources(t, found);
           draw();
           if (--n === 0) step();
         });
@@ -793,6 +848,7 @@ var Search = (function () {
 
   function tools() {
     return [
+      {label: 'Titta senare' + (laterList().length ? ' (' + laterList().length + ')' : ''), on: false, run: function () { showLater(false); }},
       {label: cfg.topic ? 'Mobilen' : 'Koppla mobilen', on: !!cfg.topic, run: showPhone},
       {label: claudeOn() ? 'Claude: på' : 'Claude: av', on: claudeOn(), run: showClaude},
       {label: plexOn() ? 'Plex: kopplad' : 'Koppla Plex', on: plexOn(), run: showPlex},
@@ -813,6 +869,7 @@ var Search = (function () {
     document.body.className += ' search-on';
     if (!results.length && !status) zone = 'field';
     draw();
+    if (!results.length && !status && !asked && laterList().length) showLater(true);   // nothing searched yet: what was saved
     loadApps(function () {});
     if (window.IPTV && iptvLink()) loadVod(function () {});   // ready by the first search
   }
@@ -856,6 +913,7 @@ var Search = (function () {
       var im = el('div', 'poster', c);
       if (t.poster) im.style.backgroundImage = 'url("' + poster(t.poster) + '")';
       else el('div', 'ph', im, t.title);
+      if (laterAt(t) >= 0) el('div', 'star', im, '★');
       el('div', 'name', c, t.title);
       el('div', 'meta', c, (t.year || '') + (t.kind === 'tv' ? ' · Serie' : ' · Film'));
       (function (i) { c.onclick = function () { sel = i; zone = 'sources'; srcAt = 0; draw(); }; })(i);
@@ -1224,6 +1282,7 @@ var Search = (function () {
     if (o.t === 'getprefs') { tellPhone({t: 'prefs', tv: tvName(), s: snapshot()}); return; }
     if (o.t === 'setprefs') { applyPrefs(o.s); return; }
     if (o.t === 'ask') { ask(o.q, 'phone'); return; }
+    if (o.t === 'later') { if (!opened) open(); if (!(status.indexOf('Titta senare') === 0 && !asked)) showLater(false); else sendResults(); return; }
     if (o.t === 'open') {
       var t = results[o.r], s = t && t.sources[o.s];
       if (s) { if (!opened) open(); sel = o.r; srcAt = o.s; zone = 'sources'; draw(); run(s, t); }

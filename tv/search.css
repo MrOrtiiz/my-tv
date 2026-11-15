@@ -44,6 +44,7 @@
 #search .src-iptv { background: rgba(165, 0, 68, 0.45); }
 #search .src-plex { background: rgba(229, 160, 13, 0.4); }
 #search .src-stremio { background: rgba(123, 91, 245, 0.45); }
+#search .src-later { background: rgba(255, 214, 10, 0.18); color: #FFD60A; }
 #search .src.focus { background: #fff; color: #1D1D1F; box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35); }
 #search .src.focus .n { color: rgba(29, 29, 31, 0.6); }
 
@@ -80,3 +81,4 @@
 #search .pitem .r { font-size: 19px; opacity: 0.7; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #search .pitem.focus { background: #fff; color: #1D1D1F; }
 #search .pitem.focus .r { opacity: 0.75; }
+#search .poster .star { position: absolute; top: 10px; right: 14px; font-size: 30px; color: #FFD60A; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); }

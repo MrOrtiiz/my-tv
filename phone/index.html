@@ -45,6 +45,8 @@
   .chips { display: flex; flex-wrap: wrap; gap: 7px; }
   .chips button { border: 0; border-radius: 15px; padding: 7px 12px; font-size: 14px; font-weight: 600; background: #2C2C2E; color: #fff; }
   .chips button:active { background: #fff; color: #0B0B0D; }
+  .chips button.save { background: rgba(255, 214, 10, 0.18); color: #FFD60A; }
+  .wide.later { color: #FFD60A; }
   .empty { text-align: center; color: var(--dim); margin-top: 40px; }
   details { margin-top: 34px; border-top: 1px solid var(--line); padding-top: 14px; color: var(--dim); font-size: 15px; }
   summary { font-weight: 600; color: #fff; font-size: 16px; }
@@ -86,6 +88,7 @@
     <button data-l="sv-SE">Svenska</button><button data-l="es-ES">Español</button><button data-l="en-US">English</button>
   </div>
   <form id="ask"><input id="q" placeholder="…eller skriv här" autocomplete="off" enterkeyhint="search"><button>Sök</button></form>
+  <button class="wide later" id="later">☆ Titta senare</button>
   <div class="say plain" id="say"></div>
   <div id="list"></div>
 
@@ -335,7 +338,8 @@
       var chips = document.createElement('div'); chips.className = 'chips';
       (r.s || []).forEach(function (label, j) {
         var c = document.createElement('button'); c.textContent = label;
-        c.onclick = function () { send({t: 'open', r: i, s: j}); say('Öppnar ' + label.split(' · ')[0] + ' på TV:n…', false); };
+        if (/^[☆★]/.test(label)) c.className = 'save';
+        c.onclick = function () { send({t: 'open', r: i, s: j}); say(/^☆/.test(label) ? 'Sparar i Titta senare…' : /^★/.test(label) ? 'Tar bort från Titta senare…' : 'Öppnar ' + label.split(' · ')[0] + ' på TV:n…', false); };
         chips.appendChild(c);
       });
       if (!(r.s || []).length) { var w = document.createElement('div'); w.className = 'm'; w.textContent = 'Letar var den finns…'; chips.appendChild(w); }
@@ -353,6 +357,7 @@
     send({t: 'ask', q: text});
   }
   $('ask').onsubmit = function (e) { e.preventDefault(); var q = $('q'); ask(q.value); q.blur(); };
+  $('later').onclick = function () { send({t: 'later'}); say('Hämtar Titta senare på TV:n…', false); };
   $('keyform').onsubmit = function (e) {
     e.preventDefault();
     var k = $('key').value.replace(/\s+/g, '');
