@@ -1,5 +1,5 @@
 {
- "updated": 1794748201742,
+ "updated": 1794758020855,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -26,6 +26,18 @@
    "channel_ids": [],
    "channel_langs": [],
    "more": 0
+  },
+  {
+   "title": "Deportivo – Barcelona",
+   "competition": "LaLiga",
+   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/90.png",
+   "start": 1795965300000,
+   "stop": 1795972500000,
+   "live": false,
+   "channels": [],
+   "channel_ids": [],
+   "channel_langs": [],
+   "more": 0
   }
  ],
  "source": [
@@ -40,15 +52,16 @@
  ],
  "guide": {
   "channels": 5644,
-  "programmes": 290131,
-  "barca_listings": 45,
-  "until": "2026-11-16T15:00:00+01:00"
+  "programmes": 285421,
+  "barca_listings": 35,
+  "until": "2026-11-16T18:00:00+01:00"
  },
  "barca_titles_seen": [
   "11-16 09:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
   "11-16 09:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
   "11-15 17:00 | LIVE: Košarka - Španjolska liga: Barcelona - Monbus  | 120 min",
   "11-16 03:30 | Košarka - Španjolska liga: Barcelona - Monbus  | 90 min",
+  "11-16 15:45 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - Getafe CF  | 135 min",
   "11-15 20:00 | Motorsport: FIA-Langstrecken-WM - 6 Stunden von Barcelona  | 120 min",
   "11-16 01:00 | Koszykówka mężczyzn: Superpuchar Hiszpanii - mecz półfinałowy: Valencia Basket - Barca  | 170 min",
   "11-15 17:00 | LIVE: Košarka - Španjolska liga: Barcelona - Monbus  | 120 min",
@@ -68,8 +81,7 @@
   "11-16 13:00 | UEFA Champions League 26/27 - Galatasaray x Barcelona  | 105 min",
   "11-16 00:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
   "11-16 00:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
-  "11-16 00:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
-  "11-15 21:50 | Fussball: FC Barcelona - Aston Villa FC  | 200 min"
+  "11-16 00:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
