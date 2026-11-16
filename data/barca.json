@@ -1,5 +1,5 @@
 {
- "updated": 1794819605714,
+ "updated": 1794826036835,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -52,8 +52,8 @@
  ],
  "guide": {
   "channels": 5644,
-  "programmes": 300521,
-  "barca_listings": 30,
+  "programmes": 298336,
+  "barca_listings": 27,
   "until": "2026-11-17T11:20:00+01:00"
  },
  "barca_titles_seen": [
@@ -61,8 +61,6 @@
   "11-17 07:00 | Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
   "11-16 14:00 | Košarka - Španska liga: Barcelona - Obradoiro  | 120 min",
   "11-17 07:00 | Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
-  "11-16 09:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
-  "11-16 09:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
   "11-17 02:10 | Košarka - Španjolska liga: Barcelona - Monbus  | 90 min",
   "11-16 20:00 | FC Barcelona: Nje epoke e re  | 45 min",
   "11-16 15:45 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - Getafe CF  | 135 min",
@@ -81,7 +79,9 @@
   "11-16 17:00 | La Liga EA Sports 2026-27 - Barcelona x Getafe  | 120 min",
   "11-16 12:50 | UEFA Champions League 26/27 - Galatasaray x Barcelona  | 115 min",
   "11-16 13:00 | UEFA Champions League 26/27 - Galatasaray x Barcelona  | 105 min",
-  "11-16 17:00 | La Liga EA Sports 2026-27 - Barcelona x Getafe  | 120 min"
+  "11-16 17:00 | La Liga EA Sports 2026-27 - Barcelona x Getafe  | 120 min",
+  "11-17 09:00 | Extreme Barcelona  | 65 min",
+  "11-16 20:00 | FC Barcelona: Nje epoke e re  | 45 min"
  ],
  "table": {
   "league": "LaLiga",
