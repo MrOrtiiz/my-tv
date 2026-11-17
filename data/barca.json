@@ -1,5 +1,5 @@
 {
- "updated": 1794878917973,
+ "updated": 1794888546668,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -52,26 +52,24 @@
  ],
  "guide": {
   "channels": 5643,
-  "programmes": 306660,
-  "barca_listings": 29,
-  "until": "2026-11-18T03:00:00+01:00"
+  "programmes": 303948,
+  "barca_listings": 25,
+  "until": "2026-11-18T07:00:00+01:00"
  },
  "barca_titles_seen": [
   "11-17 07:00 | Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
   "11-17 07:00 | Košarka - Euroleague: Panathinaikos - Barcelona  | 120 min",
   "11-17 12:15 | Košarka - Španjolska liga: Barcelona - Monbus  | 90 min",
-  "11-17 02:10 | Košarka - Španjolska liga: Barcelona - Monbus  | 90 min",
   "11-17 09:00 | Piłka nożna: Liga hiszpańska - mecz: Real Betis Balompie - FC Barcelona  | 140 min",
   "11-17 23:00 | Koszykówka mężczyzn: Euroliga - mecz: Barca - Paris Basketball  | 120 min",
-  "11-17 02:10 | Košarka - Španjolska liga: Barcelona - Monbus  | 90 min",
   "11-17 07:55 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 160 min",
   "11-17 23:05 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 155 min",
   "11-18 01:40 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 165 min",
   "11-17 13:55 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
   "11-17 22:00 | 6 Hours of Barcelona, Fecha 7  | 60 min",
   "11-17 12:15 | Košarka - Španjolska liga: Barcelona - Monbus  | 90 min",
-  "11-17 02:10 | Košarka - Španjolska liga: Barcelona - Monbus  | 90 min",
   "11-17 11:00 | PSG - BARCELONA  | 120 min",
+  "11-18 05:00 | BARCELONA - ASTON VILLA  | 120 min",
   "11-17 13:55 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
   "11-17 13:00 | UEFA Champions League 26/27 - Barcelona x Aston Villa  | 120 min",
   "11-17 17:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
@@ -81,7 +79,9 @@
   "11-17 17:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
   "11-17 14:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
   "11-17 14:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
-  "11-17 14:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min"
+  "11-17 14:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
+  "11-17 19:05 | International Gt Open 2026 - Barcelona Race 1  | 110 min",
+  "11-17 20:55 | International Gt Open 2026 - Barcelona Race 2  | 95 min"
  ],
  "table": {
   "league": "LaLiga",
