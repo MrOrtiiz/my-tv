@@ -1,5 +1,5 @@
 {
- "updated": 1794888546668,
+ "updated": 1794900985508,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -52,7 +52,7 @@
  ],
  "guide": {
   "channels": 5643,
-  "programmes": 303948,
+  "programmes": 300959,
   "barca_listings": 25,
   "until": "2026-11-18T07:00:00+01:00"
  },
