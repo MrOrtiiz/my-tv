@@ -1,5 +1,5 @@
 {
- "updated": 1794910869678,
+ "updated": 1794922060894,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -52,20 +52,17 @@
  ],
  "guide": {
   "channels": 5643,
-  "programmes": 296782,
-  "barca_listings": 21,
-  "until": "2026-11-18T11:20:00+01:00"
+  "programmes": 292760,
+  "barca_listings": 18,
+  "until": "2026-11-18T14:30:00+01:00"
  },
  "barca_titles_seen": [
-  "11-17 12:15 | Košarka - Španjolska liga: Barcelona - Monbus  | 90 min",
   "11-18 09:00 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - Real Madryt CF  | 140 min",
   "11-17 23:00 | Koszykówka mężczyzn: Euroliga - mecz: Barca - Paris Basketball  | 120 min",
   "11-17 23:05 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 155 min",
   "11-18 01:40 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 165 min",
   "11-17 13:55 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
   "11-17 22:00 | 6 Hours of Barcelona, Fecha 7  | 60 min",
-  "11-17 12:15 | Košarka - Španjolska liga: Barcelona - Monbus  | 90 min",
-  "11-17 11:00 | PSG - BARCELONA  | 120 min",
   "11-18 05:00 | BARCELONA - ASTON VILLA  | 120 min",
   "11-17 13:55 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
   "11-17 13:00 | UEFA Champions League 26/27 - Barcelona x Aston Villa  | 120 min",
@@ -81,7 +78,10 @@
   "11-17 20:55 | International Gt Open 2026 - Barcelona Race 2  | 95 min",
   "11-17 13:30 | Europakonzert 2023 : The Berliner Philharmoniker In Barcelona  | 80 min",
   "11-18 05:00 | BARCELONA - ASTON VILLA  | 120 min",
-  "11-17 11:00 | PSG - BARCELONA  | 120 min"
+  "11-18 04:30 | Extreme Barcelona  | 45 min",
+  "11-17 14:40 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
+  "11-17 14:45 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
+  "11-18 04:30 | Extreme Barcelona  | 45 min"
  ],
  "table": {
   "league": "LaLiga",
