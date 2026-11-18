@@ -1,5 +1,5 @@
 {
- "updated": 1794987210556,
+ "updated": 1794997252842,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -52,14 +52,11 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 304846,
-  "barca_listings": 14,
+  "programmes": 302172,
+  "barca_listings": 12,
   "until": "2026-11-19T08:30:00+01:00"
  },
  "barca_titles_seen": [
-  "11-18 07:00 | Košarka - Euroleague: Barcelona - Paris  | 120 min",
-  "11-18 07:00 | Košarka - Euroleague: Barcelona - Paris  | 120 min",
-  "11-18 09:00 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - Real Madryt CF  | 140 min",
   "11-18 15:00 | Koszykówka mężczyzn: Euroliga - mecz: Barca - Paris Basketball  | 120 min",
   "11-18 16:20 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 145 min",
   "11-19 05:00 | Barcelona (Esp) vs. Aston Villa (Ing)  | 120 min",
@@ -78,10 +75,13 @@
   "11-18 11:35 | Casa Loud: Sughiţuri şi coborâşuri / Barca Dispreţului  | 20 min",
   "11-18 19:00 | Fotbal Spania: Betis - Barcelona  | 120 min",
   "11-18 19:00 | Fotbal Spania: Betis - Barcelona  | 120 min",
-  "11-18 07:00 | LaLiga 21/22: Barcelona v A Madrid  | 120 min",
-  "11-18 09:00 | LaLiga Santander - Matchday 18: Barcelona vs Atlético Madrid  | 120 min",
-  "11-18 09:00 | LaLiga 14/15: Barcelona v Atlético Mad  | 120 min",
-  "11-18 11:00 | LaLiga Santander - Matchday 15: Atletico Madrid vs Barcelona  | 120 min"
+  "11-18 11:00 | LaLiga Santander - Matchday 15: Atletico Madrid vs Barcelona  | 120 min",
+  "11-18 11:00 | LaLiga 19/20: A Madrid v Barcelona  | 120 min",
+  "11-18 13:00 | LaLiga HL 26/27 Barcelona v Alaves  | 5 min",
+  "11-18 13:00 | LaLiga EA Sports Blitz Highlights - Matchday 11: Barcelona vs Alaves  | 5 min",
+  "11-18 13:45 | LaLiga EA Sports Blitz Highlights - Matchday 12: Atletico Madrid vs Barcelona  | 5 min",
+  "11-18 13:45 | LaLiga HL 26/27 A Madrid v Barcelona  | 5 min",
+  "11-18 13:50 | LaLiga 11/12: R Madrid v Barcelona  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
