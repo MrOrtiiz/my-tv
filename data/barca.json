@@ -1,5 +1,5 @@
 {
- "updated": 1795008588696,
+ "updated": 1795018580355,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -52,22 +52,24 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 298844,
-  "barca_listings": 13,
-  "until": "2026-11-19T16:00:00+01:00"
+  "programmes": 295713,
+  "barca_listings": 19,
+  "until": "2026-11-19T19:10:00+01:00"
  },
  "barca_titles_seen": [
-  "11-18 15:00 | Koszykówka mężczyzn: Euroliga - mecz: Barca - Paris Basketball  | 120 min",
+  "11-19 15:40 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - CD Alaves  | 135 min",
   "11-18 16:20 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 145 min",
   "11-19 13:35 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 120 min",
   "11-19 05:00 | Barcelona (Esp) vs. Aston Villa (Ing)  | 120 min",
+  "11-19 16:45 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 145 min",
+  "11-19 17:00 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 120 min",
+  "11-19 17:00 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 120 min",
+  "11-19 17:00 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 120 min",
   "11-19 12:00 | Barcelona vs. Aston Villa  | 120 min",
   "11-19 05:00 | Barcelona (Esp) vs. Aston Villa (Ing)  | 120 min",
-  "11-18 12:30 | Unicaja vs. Barcelona  | 120 min",
+  "11-19 16:45 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 145 min",
   "11-19 14:00 | Atlético Madrid - FC Barcelona  | 120 min",
-  "11-18 15:00 | FC Barcelona - Real Madrid (100)  | 120 min",
   "11-18 23:00 | FC Barcelona - Deportivo Alavés (106)  | 120 min",
-  "11-18 14:30 | Unicaja vs. Barcelona  | 120 min",
   "11-19 06:30 | Unicaja vs. Barcelona  | 120 min",
   "11-19 05:00 | Tennis: ATP Barcelona Open 2026  | 60 min",
   "11-19 05:00 | Tennis: ATP Barcelona Open 2026  | 60 min",
@@ -79,9 +81,7 @@
   "11-18 19:00 | Fotbal Spania: Betis - Barcelona  | 120 min",
   "11-19 12:50 | Coppa Shell  Race 1 - Barcelona Round - Ferrari Challenge - 2026  | 60 min",
   "11-19 12:50 | Trofeo Pirelli Race 1 - Barcelona Round - Ferrari Challenge - 2026  | 60 min",
-  "11-19 12:50 | Coppa Shell  Race 1 - Barcelona Round - Ferrari Challenge - 2026  | 60 min",
-  "11-19 12:50 | Trofeo Pirelli Race 1 - Barcelona Round - Ferrari Challenge - 2026  | 60 min",
-  "11-18 13:50 | LaLiga 11/12: R Madrid v Barcelona  | 120 min"
+  "11-19 15:20 | Trofeo Pirelli Race 1 - Barcelona Round - Ferrari Challenge - 2026  | 60 min"
  ],
  "table": {
   "league": "LaLiga",
