@@ -1,5 +1,5 @@
 {
- "updated": 1795083695434,
+ "updated": 1795095216517,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -64,16 +64,15 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 308332,
-  "barca_listings": 73,
-  "until": "2026-11-20T12:10:00+01:00"
+  "programmes": 303823,
+  "barca_listings": 77,
+  "until": "2026-11-20T15:00:00+01:00"
  },
  "barca_titles_seen": [
   "11-20 01:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
   "11-20 01:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
   "11-19 15:40 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - CD Alaves  | 135 min",
   "11-20 09:00 | Piłka nożna: Liga hiszpańska - mecz: Atletico Madryt - FC Barcelona  | 140 min",
-  "11-19 12:20 | Futboll: Liga e Kampioneve Galatasaray - Barcelona  | 130 min",
   "11-19 21:00 | Futboll: Liga e Kampioneve Barcelona - Aston Villa  | 135 min",
   "11-19 13:35 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 120 min",
   "11-19 20:25 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 140 min",
@@ -86,14 +85,15 @@
   "11-19 16:45 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 145 min",
   "11-20 06:50 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 65 min",
   "11-19 17:00 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 120 min",
+  "11-20 13:00 | La Liga EA Sports 2026-27 - Barcelona x Getafe  | 120 min",
   "11-19 17:00 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 120 min",
+  "11-20 13:00 | La Liga EA Sports 2026-27 - Barcelona x Getafe  | 120 min",
   "11-19 17:00 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 120 min",
+  "11-20 13:00 | La Liga EA Sports 2026-27 - Barcelona x Getafe  | 120 min",
   "11-19 22:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
   "11-19 22:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
   "11-19 22:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
-  "11-20 02:46 | Europakonzert 2023 : The Berliner Philharmoniker In Barcelona  | 80 min",
-  "11-19 12:00 | Barcelona vs. Aston Villa  | 120 min",
-  "11-19 18:45 | KIELCE - BARCELONA  | 135 min"
+  "11-20 02:46 | Europakonzert 2023 : The Berliner Philharmoniker In Barcelona  | 80 min"
  ],
  "table": {
   "league": "LaLiga",
