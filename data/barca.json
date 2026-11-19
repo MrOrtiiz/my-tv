@@ -1,5 +1,5 @@
 {
- "updated": 1795061645022,
+ "updated": 1795073794171,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -64,9 +64,9 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 315734,
-  "barca_listings": 62,
-  "until": "2026-11-20T05:30:00+01:00"
+  "programmes": 311925,
+  "barca_listings": 68,
+  "until": "2026-11-20T08:30:00+01:00"
  },
  "barca_titles_seen": [
   "11-20 01:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
@@ -77,10 +77,12 @@
   "11-19 13:35 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 120 min",
   "11-19 20:25 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 140 min",
   "11-19 22:45 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 150 min",
+  "11-20 06:50 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 65 min",
   "11-19 23:00 | Fussball: FC Basel 1893 - FC Barcelona  | 150 min",
-  "11-19 05:00 | Barcelona (Esp) vs. Aston Villa (Ing)  | 120 min",
+  "11-20 06:00 | 6 Hours of Barcelona, Fecha 7  | 60 min",
   "11-19 18:45 | KIELCE - BARCELONA  | 135 min",
   "11-19 16:45 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 145 min",
+  "11-20 06:50 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 65 min",
   "11-19 17:00 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 120 min",
   "11-19 17:00 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 120 min",
   "11-19 17:00 | La Liga EA Sports 2026-27 - Barcelona x Real Madrid  | 120 min",
@@ -89,11 +91,9 @@
   "11-19 22:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
   "11-20 02:46 | Europakonzert 2023 : The Berliner Philharmoniker In Barcelona  | 80 min",
   "11-19 12:00 | Barcelona vs. Aston Villa  | 120 min",
-  "11-19 05:00 | Barcelona (Esp) vs. Aston Villa (Ing)  | 120 min",
   "11-19 18:45 | KIELCE - BARCELONA  | 135 min",
   "11-19 18:45 | Házená: Kielce - Barcelona  | 105 min",
-  "11-19 16:45 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 145 min",
-  "11-19 23:00 | BARCELONA - ASTON VILLA  | 120 min"
+  "11-19 16:45 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 145 min"
  ],
  "table": {
   "league": "LaLiga",
