@@ -1,5 +1,5 @@
 {
- "updated": 1795051772978,
+ "updated": 1795061645022,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -64,9 +64,9 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 317920,
-  "barca_listings": 49,
-  "until": "2026-11-20T03:00:00+01:00"
+  "programmes": 315734,
+  "barca_listings": 62,
+  "until": "2026-11-20T05:30:00+01:00"
  },
  "barca_titles_seen": [
   "11-20 01:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
@@ -87,13 +87,13 @@
   "11-19 22:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
   "11-19 22:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
   "11-19 22:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
+  "11-20 02:46 | Europakonzert 2023 : The Berliner Philharmoniker In Barcelona  | 80 min",
   "11-19 12:00 | Barcelona vs. Aston Villa  | 120 min",
   "11-19 05:00 | Barcelona (Esp) vs. Aston Villa (Ing)  | 120 min",
   "11-19 18:45 | KIELCE - BARCELONA  | 135 min",
   "11-19 18:45 | Házená: Kielce - Barcelona  | 105 min",
   "11-19 16:45 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 145 min",
-  "11-19 23:00 | BARCELONA - ASTON VILLA  | 120 min",
-  "11-19 22:00 | Rukomet - EHF Liga šampiona: Kielce - Barca  | 90 min"
+  "11-19 23:00 | BARCELONA - ASTON VILLA  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
