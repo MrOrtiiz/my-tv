@@ -1,8 +1,100 @@
 {
- "updated": 1795147769759,
- "status": "error",
- "error": "The guide answered HTTP 502.",
- "matches": [],
+ "updated": 1795160059435,
+ "status": "ok",
+ "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
+ "matches": [
+  {
+   "title": "Barcelona – Villarreal",
+   "competition": "LaLiga",
+   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
+   "start": 1795352400000,
+   "stop": 1795359600000,
+   "live": false,
+   "channels": [],
+   "channel_ids": [],
+   "channel_langs": [],
+   "more": 0
+  },
+  {
+   "title": "Sabah FK – Barcelona",
+   "competition": "Champions League",
+   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/21922.png",
+   "start": 1795628700000,
+   "stop": 1795635900000,
+   "live": false,
+   "channels": [],
+   "channel_ids": [],
+   "channel_langs": [],
+   "more": 0
+  },
+  {
+   "title": "Deportivo – Barcelona",
+   "competition": "LaLiga",
+   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/90.png",
+   "start": 1795965300000,
+   "stop": 1795972500000,
+   "live": false,
+   "channels": [],
+   "channel_ids": [],
+   "channel_langs": [],
+   "more": 0
+  },
+  {
+   "title": "Barcelona – Atlético Madrid",
+   "competition": "LaLiga",
+   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
+   "start": 1796243400000,
+   "stop": 1796250600000,
+   "live": false,
+   "channels": [],
+   "channel_ids": [],
+   "channel_langs": [],
+   "more": 0
+  }
+ ],
+ "source": [
+  "espn esp.1",
+  "espn uefa.champions",
+  "espn esp.copa_del_rey",
+  "espn esp.super_cup",
+  "espn club.friendly"
+ ],
+ "source_errors": [
+  "thesportsdb: HTTPError"
+ ],
+ "guide": {
+  "channels": 5637,
+  "programmes": 305875,
+  "barca_listings": 39,
+  "until": "2026-11-21T08:30:00+01:00"
+ },
+ "barca_titles_seen": [
+  "11-21 01:35 | Košarka - Euroleague: Barcelona - Crvena zvzeda  | 95 min",
+  "11-21 08:25 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 95 min",
+  "11-20 09:00 | Piłka nożna: Liga hiszpańska - mecz: Atletico Madryt - FC Barcelona  | 140 min",
+  "11-20 23:15 | Futboll: Liga e Kampioneve PSG - Barcelona  | 130 min",
+  "11-20 08:40 | Fussball: FC Basel 1893 - FC Barcelona  | 155 min",
+  "11-21 01:35 | Košarka - Euroleague: Barcelona - Crvena zvzeda  | 95 min",
+  "11-21 08:25 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 95 min",
+  "11-20 13:00 | La Liga EA Sports 2026-27 - Barcelona x Getafe  | 120 min",
+  "11-20 17:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
+  "11-20 13:00 | La Liga EA Sports 2026-27 - Barcelona x Getafe  | 120 min",
+  "11-20 17:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
+  "11-20 13:00 | La Liga EA Sports 2026-27 - Barcelona x Getafe  | 120 min",
+  "11-20 17:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
+  "11-20 20:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
+  "11-20 20:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
+  "11-20 20:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
+  "11-20 18:30 | Especial: Extreme Barcelona  | 30 min",
+  "11-20 08:50 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
+  "11-20 23:00 | BARCELONA - ASTON VILLA  | 120 min",
+  "11-20 16:00 | Rukomet - EHF Liga šampiona: Kielce - Barca  | 90 min",
+  "11-20 19:30 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
+  "11-21 07:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
+  "11-20 12:30 | Rukomet - EHF Liga šampiona: Kielce - Barca  | 105 min",
+  "11-21 00:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
+  "11-20 20:30 | Barcelona - Kızılyıldız  | 120 min"
+ ],
  "table": {
   "league": "LaLiga",
   "rows": [
