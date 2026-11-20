@@ -1,5 +1,5 @@
 {
- "updated": 1795125821803,
+ "updated": 1795137900046,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -64,21 +64,20 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 316018,
-  "barca_listings": 62,
-  "until": "2026-11-20T22:30:00+01:00"
+  "programmes": 313862,
+  "barca_listings": 63,
+  "until": "2026-11-21T01:25:00+01:00"
  },
  "barca_titles_seen": [
   "11-20 01:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
   "11-20 01:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
+  "11-21 01:35 | Košarka - Euroleague: Barcelona - Crvena zvzeda  | 95 min",
   "11-20 09:00 | Piłka nożna: Liga hiszpańska - mecz: Atletico Madryt - FC Barcelona  | 140 min",
-  "11-19 21:00 | Futboll: Liga e Kampioneve Barcelona - Aston Villa  | 135 min",
-  "11-19 22:45 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 150 min",
-  "11-19 22:50 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 145 min",
+  "11-20 23:15 | Futboll: Liga e Kampioneve PSG - Barcelona  | 130 min",
   "11-20 06:50 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 65 min",
-  "11-19 23:00 | Fussball: FC Basel 1893 - FC Barcelona  | 150 min",
   "11-20 08:40 | Fussball: FC Basel 1893 - FC Barcelona  | 155 min",
   "11-20 06:00 | 6 Hours of Barcelona, Fecha 7  | 60 min",
+  "11-21 01:35 | Košarka - Euroleague: Barcelona - Crvena zvzeda  | 95 min",
   "11-20 06:50 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 65 min",
   "11-20 13:00 | La Liga EA Sports 2026-27 - Barcelona x Getafe  | 120 min",
   "11-20 17:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
@@ -86,14 +85,15 @@
   "11-20 17:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-20 13:00 | La Liga EA Sports 2026-27 - Barcelona x Getafe  | 120 min",
   "11-20 17:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
-  "11-19 22:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
   "11-20 20:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
-  "11-19 22:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
   "11-20 20:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
-  "11-19 22:00 | Liga Acb 26/27 - Barcelona x Obradoiro  | 120 min",
   "11-20 20:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
   "11-20 18:30 | Especial: Extreme Barcelona  | 30 min",
-  "11-20 02:46 | Europakonzert 2023 : The Berliner Philharmoniker In Barcelona  | 80 min"
+  "11-20 02:46 | Europakonzert 2023 : The Berliner Philharmoniker In Barcelona  | 80 min",
+  "11-20 08:50 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
+  "11-20 06:50 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 65 min",
+  "11-20 23:00 | BARCELONA - ASTON VILLA  | 120 min",
+  "11-20 16:00 | Rukomet - EHF Liga šampiona: Kielce - Barca  | 90 min"
  ],
  "table": {
   "league": "LaLiga",
