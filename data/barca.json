@@ -1,5 +1,5 @@
 {
- "updated": 1795170090404,
+ "updated": 1795181341203,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -64,8 +64,8 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 302796,
-  "barca_listings": 39,
+  "programmes": 299432,
+  "barca_listings": 31,
   "until": "2026-11-21T13:00:00+01:00"
  },
  "barca_titles_seen": [
@@ -81,19 +81,19 @@
   "11-20 13:00 | La Liga EA Sports 2026-27 - Barcelona x Getafe  | 120 min",
   "11-20 17:00 | La Liga EA Sports 2026-27 - At. Madrid x Barcelona  | 120 min",
   "11-20 20:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
+  "11-21 11:45 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
   "11-20 20:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
+  "11-21 11:45 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
   "11-20 20:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
+  "11-21 11:45 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
   "11-20 18:30 | Especial: Extreme Barcelona  | 30 min",
-  "11-20 08:50 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
   "11-20 23:00 | BARCELONA - ASTON VILLA  | 120 min",
   "11-20 16:00 | Rukomet - EHF Liga šampiona: Kielce - Barca  | 90 min",
   "11-20 19:30 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
   "11-21 07:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
-  "11-20 12:30 | Rukomet - EHF Liga šampiona: Kielce - Barca  | 105 min",
   "11-21 00:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
   "11-20 20:30 | Barcelona - Kızılyıldız  | 120 min",
-  "11-20 20:30 | Barcelona - Kızılyıldız  | 120 min",
-  "11-20 09:30 | Unicaja vs. Barcelona  | 120 min"
+  "11-20 20:30 | Barcelona - Kızılyıldız  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
