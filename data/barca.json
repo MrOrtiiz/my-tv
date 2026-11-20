@@ -1,5 +1,5 @@
 {
- "updated": 1795202267445,
+ "updated": 1795212131112,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -64,8 +64,8 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 289157,
-  "barca_listings": 24,
+  "programmes": 284168,
+  "barca_listings": 19,
   "until": "2026-11-21T16:44:59+01:00"
  },
  "barca_titles_seen": [
@@ -74,26 +74,26 @@
   "11-20 23:15 | Futboll: Liga e Kampioneve PSG - Barcelona  | 130 min",
   "11-21 01:35 | Košarka - Euroleague: Barcelona - Crvena zvzeda  | 95 min",
   "11-21 08:25 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 95 min",
-  "11-20 20:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
   "11-21 11:45 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
-  "11-20 20:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
   "11-21 11:45 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
-  "11-20 20:00 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
   "11-21 11:45 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
   "11-21 15:00 | Elche vs Barcelona  | 104 min",
   "11-20 23:00 | BARCELONA - ASTON VILLA  | 120 min",
-  "11-20 19:30 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
   "11-21 07:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
   "11-21 00:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
-  "11-20 20:30 | Barcelona - Kızılyıldız  | 120 min",
-  "11-20 20:30 | Barcelona - Kızılyıldız  | 120 min",
   "11-21 01:30 | Barcelona vs. Basket Zaragoza  | 120 min",
-  "11-20 19:30 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
   "11-21 07:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
   "11-21 00:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
-  "11-20 20:30 | Uživo: Barcelona - Crvena zvezda  | 120 min",
-  "11-20 19:30 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
-  "11-21 07:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min"
+  "11-21 07:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
+  "11-21 00:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
+  "11-21 06:00 | Tennis: ATP Barcelona Open 2026  | 60 min",
+  "11-21 02:15 | Barcelona Heat  | 30 min",
+  "11-21 02:15 | Barcelona Heat  | 30 min",
+  "11-20 23:00 | Barcelona vs Servette - UEFA Women’s Champions League 2026/2027 - MD5  | 120 min",
+  "11-21 06:30 | Barcelona vs Servette - UEFA Women’s Champions League 2026/2027 - MD5  | 120 min",
+  "11-20 23:00 | Barcelona vs Servette - UEFA Women’s Champions League 2026/2027 - MD5  | 120 min",
+  "11-21 06:30 | Barcelona vs Servette - UEFA Women’s Champions League 2026/2027 - MD5  | 120 min",
+  "11-20 23:00 | Barcelona vs Servette - UEFA Women’s Champions League 2026/2027 - MD5  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
@@ -164,8 +164,8 @@
     "short": "Athletic",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/93.png",
     "points": 16,
-    "played": 11,
-    "gd": 4,
+    "played": 12,
+    "gd": 3,
     "barca": false
    },
    {
@@ -190,6 +190,16 @@
    },
    {
     "rank": 10,
+    "team": "Espanyol",
+    "short": "Espanyol",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/88.png",
+    "points": 15,
+    "played": 13,
+    "gd": 0,
+    "barca": false
+   },
+   {
+    "rank": 11,
     "team": "Racing Santander",
     "short": "Racing",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/87.png",
@@ -199,7 +209,7 @@
     "barca": false
    },
    {
-    "rank": 11,
+    "rank": 12,
     "team": "Celta Vigo",
     "short": "Celta Vigo",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
@@ -209,23 +219,13 @@
     "barca": false
    },
    {
-    "rank": 12,
+    "rank": 13,
     "team": "Alavés",
     "short": "Alavés",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/96.png",
     "points": 13,
     "played": 12,
     "gd": -2,
-    "barca": false
-   },
-   {
-    "rank": 13,
-    "team": "Espanyol",
-    "short": "Espanyol",
-    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/88.png",
-    "points": 12,
-    "played": 12,
-    "gd": -1,
     "barca": false
    },
    {
