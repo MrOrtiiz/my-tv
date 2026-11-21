@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0B0B0D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fjärrkontroll">
+<title>Free My TV · Fjärrkontroll</title>
+<!--
+  Mobilens fjärrkontroll till Free My TV på kompisens projektor (tv/koppla.js). Öppnas från QR-koden på TV:n, som lägger
+  TV:ns hemliga ämne efter #. Knapparna, texten och TMDB-nyckeln går till TV:n genom ntfy.sh (ämne-tv); TV:n svarar på
+  ämne-ph. Fungerar i Safari (iPhone) och Chrome (Android), ingen app. Ämnet sparas i mobilen, så sidan kan läggas på
+  hemskärmen och öppnas igen utan att skanna.
+-->
+<style>
+  :root { color-scheme: dark; --bg: #0B0B0D; --card: #1C1C1E; --dim: rgba(235,235,245,0.6); }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
+  body { margin: 0; background: var(--bg); color: #fff; font: 17px/1.4 -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+    padding: max(18px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom)); max-width: 520px; margin: 0 auto; }
+  h1 { font-size: 28px; margin: 6px 0 2px; letter-spacing: -0.02em; }
+  .state { font-size: 15px; color: var(--dim); min-height: 22px; }
+  .state b { color: #30D158; }
+  .state.off b { color: #FF9F0A; }
+  .pad { position: relative; width: 280px; height: 280px; margin: 30px auto 18px; border-radius: 50%; background: var(--card); }
+  .pad button { position: absolute; border: 0; background: transparent; color: #fff; font-size: 34px; width: 92px; height: 92px; border-radius: 46px; }
+  .pad button:active { background: rgba(255,255,255,0.14); }
+  .pad .up { left: 94px; top: 4px; } .pad .down { left: 94px; bottom: 4px; }
+  .pad .left { left: 4px; top: 94px; } .pad .right { right: 4px; top: 94px; }
+  .pad .ok { left: 80px; top: 80px; width: 120px; height: 120px; border-radius: 60px; background: #fff; color: #0B0B0D; font-size: 26px; font-weight: 700; }
+  .pad .ok:active { background: #D1D1D6; }
+  .row { display: flex; justify-content: center; gap: 14px; }
+  .row button { border: 0; border-radius: 22px; padding: 12px 26px; font-size: 17px; font-weight: 600; background: var(--card); color: #fff; }
+  .row button:active { background: #3A3A3C; }
+  h2 { font-size: 19px; margin: 34px 0 6px; }
+  p { margin: 4px 0 10px; color: var(--dim); font-size: 15px; }
+  form { display: flex; gap: 8px; }
+  input { flex: 1; min-width: 0; border: 0; border-radius: 14px; padding: 14px 16px; font-size: 17px; background: var(--card); color: #fff; outline: 0;
+    -webkit-user-select: text; user-select: text; }
+  form button { border: 0; border-radius: 14px; padding: 0 18px; font-size: 16px; font-weight: 600; background: #fff; color: #0B0B0D; }
+  .note { margin-top: 8px; min-height: 22px; font-size: 15px; color: #30D158; }
+  .note.bad { color: #FF453A; }
+  .none { text-align: center; color: var(--dim); margin-top: 60px; }
+</style>
+</head>
+<body>
+<h1>Fjärrkontroll</h1>
+<div class="state off" id="state"><b>●</b> Ansluter…</div>
+
+<div id="remote">
+  <div class="pad">
+    <button class="up" data-k="up" aria-label="Upp">▲</button>
+    <button class="left" data-k="left" aria-label="Vänster">◀</button>
+    <button class="ok" data-k="ok">OK</button>
+    <button class="right" data-k="right" aria-label="Höger">▶</button>
+    <button class="down" data-k="down" aria-label="Ner">▼</button>
+  </div>
+  <div class="row"><button data-k="back">↩ Tillbaka</button></div>
+
+  <h2>Skriv på TV:n</h2>
+  <p>Öppna textfältet på TV:n med OK, skriv här och tryck Skicka. Tryck sedan OK för att spara.</p>
+  <form id="textForm"><input id="text" autocomplete="off" autocapitalize="off" placeholder="Text till TV:n"><button>Skicka</button></form>
+  <div class="note" id="textNote"></div>
+
+  <h2>TMDB-nyckel</h2>
+  <p>Klistra in nyckeln (API Key) så sparas den direkt på TV:n. Den ger filmtipsen och Marvel-affischerna.</p>
+  <form id="tmdbForm"><input id="tmdb" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="t.ex. 8f9a…"><button>Spara</button></form>
+  <div class="note" id="tmdbNote"></div>
+</div>
+<div class="none" id="none" hidden>Skanna QR-koden på TV:n (knappen Mobilen uppe till höger) för att koppla mobilen.</div>
+
+<script>
+(function () {
+  'use strict';
+  var RELAY = 'https://ntfy.sh/', STORE = 'fmtv.remote.topic';
+  var topic = (location.hash || '').slice(1);
+  if (topic) { try { localStorage.setItem(STORE, topic); } catch (e) {} }
+  else { try { topic = localStorage.getItem(STORE) || ''; } catch (e) {} }
+  if (!/^fmtv-r-[A-Za-z0-9]{24}$/.test(topic)) {
+    document.getElementById('remote').hidden = true;
+    document.getElementById('none').hidden = false;
+    document.getElementById('state').textContent = '';
+    return;
+  }
+
+  function send(o) {
+    return fetch(RELAY + topic + '-tv', {method: 'POST', body: JSON.stringify(o)}).catch(function () { setState(false, 'Ingen kontakt med nätet.'); });
+  }
+
+  var stateEl = document.getElementById('state'), answered = false;
+  function setState(ok, text) {
+    stateEl.className = 'state' + (ok ? '' : ' off');
+    stateEl.innerHTML = '<b>●</b> ';
+    stateEl.appendChild(document.createTextNode(text));
+  }
+
+  // TV:ns svar
+  var es = new EventSource(RELAY + topic + '-ph/sse');
+  es.onmessage = function (e) {
+    var m, o;
+    try { m = JSON.parse(e.data); o = JSON.parse(m.message); } catch (x) { return; }
+    if (!o) return;
+    if (o.t === 'hi') { answered = true; setState(true, 'Ansluten till ' + (o.tv || 'TV:n') + (o.tmdb ? ' · TMDB-nyckeln finns' : '')); }
+    if (o.t === 'note') {
+      var target = /TMDB|nyckel/i.test(o.say) ? 'tmdbNote' : 'textNote', n = document.getElementById(target);
+      n.className = 'note' + (o.bad ? ' bad' : '');
+      n.textContent = o.say;
+      if (o.tmdb) document.getElementById('tmdb').value = '';
+    }
+  };
+  function hello() {
+    send({t: 'hello'});
+    setTimeout(function () { if (!answered) setState(false, 'TV:n svarar inte. Är Free My TV öppen på projektorn?'); }, 6000);
+  }
+  es.onopen = hello;
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) { answered = false; hello(); } });
+
+  // Knapparna: en tryckning, och upprepning när man håller kvar på pilarna.
+  var buttons = document.querySelectorAll('[data-k]');
+  Array.prototype.forEach.call(buttons, function (b) {
+    var timer = 0;
+    function go() { send({t: 'key', k: b.getAttribute('data-k')}); if (navigator.vibrate) navigator.vibrate(10); }
+    function stop() { clearInterval(timer); timer = 0; }
+    b.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      go();
+      if (/up|down|left|right/.test(b.getAttribute('data-k'))) { stop(); timer = setTimeout(function () { timer = setInterval(go, 220); }, 450); }
+    });
+    b.addEventListener('pointerup', stop);
+    b.addEventListener('pointerleave', stop);
+    b.addEventListener('pointercancel', stop);
+  });
+
+  document.getElementById('textForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = document.getElementById('text').value;
+    if (!v) return;
+    send({t: 'text', v: v});
+  });
+  document.getElementById('tmdbForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = document.getElementById('tmdb').value.replace(/\s+/g, '');
+    if (!v) return;
+    var n = document.getElementById('tmdbNote');
+    n.className = 'note'; n.textContent = 'Skickar till TV:n…';
+    send({t: 'tmdb', v: v});
+  });
+})();
+</script>
+</body>
+</html>
