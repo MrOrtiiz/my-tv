@@ -1,5 +1,5 @@
 {
- "updated": 1795288474453,
+ "updated": 1795288827387,
  "source": "iptv-org (github.com/iptv-org/iptv)",
  "groups": [
   {
@@ -24,6 +24,136 @@
      "name": "SVT2",
      "logo": "https://i.imgur.com/pGWvCxp.png",
      "url": "https://svt-live-channel.akamaized.net/l6/se/svt2/master-fmp4.m3u8?defaultSubLang=1&format=hls"
+    },
+    {
+     "name": "ATG Live",
+     "logo": "https://i.imgur.com/bPWFXkL.png",
+     "url": "https://kanal75xto-llhls.akamaized.net/live/Data/atg-kanal-15-02a-rr/HLS-Legacy-HL/atg-kanal-15-02a-rr.m3u8"
+    },
+    {
+     "name": "Di TV",
+     "logo": "https://i.imgur.com/zApTDWn.png",
+     "url": "https://cdn0-03837-liveedge0.dna.ip-only.net/03837-liveedge0/smil:03837-tx4/playlist.m3u8"
+    },
+    {
+     "name": "Expressen TV",
+     "logo": "https://i.imgur.com/ai0BIci.png",
+     "url": "https://cdn0-03837-liveedge0.dna.ip-only.net/03837-liveedge0/smil:03837-tx2/playlist.m3u8"
+    },
+    {
+     "name": "Are we there Yet?",
+     "logo": "https://i.imgur.com/3BJQiHP.png",
+     "url": "https://cdn-ue1-prod.tsv2.amagi.tv/linear/amg00353-lionsgatestudio-arewethereyetse-samsungse/playlist.m3u8"
+    },
+    {
+     "name": "Artflix Movie Classics",
+     "logo": "https://i.imgur.com/5pOZQB4.png",
+     "url": "https://amogonetworx-artflix-1-se.samsung.wurl.tv/playlist.m3u8"
+    },
+    {
+     "name": "Failarmy International",
+     "logo": "https://i.imgur.com/VIpQJxL.png",
+     "url": "https://failarmy-international-se.samsung.wurl.tv/playlist.m3u8"
+    },
+    {
+     "name": "GB News",
+     "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/GB_News_Logo.svg/960px-GB_News_Logo.svg.png",
+     "url": "https://amg01076-lightningintern-gbnewsse-samsungse-q7qjc.amagi.tv/playlist/amg01076-lightningintern-gbnewsse-samsungse/playlist.m3u8"
+    },
+    {
+     "name": "Grjngo Western Movies",
+     "logo": "https://i.imgur.com/wFqhK3p.png",
+     "url": "https://amogonetworx-grjngo-3-se.samsung.wurl.tv/playlist.m3u8"
+    },
+    {
+     "name": "Hell's Kitchen",
+     "logo": "https://i.imgur.com/P9eT0O9.png",
+     "url": "https://amg00654-itvstudios-hellskitchen-samsungse-9n806.amagi.tv/playlist/amg00654-itvstudios-hellskitchen-samsungse/playlist.m3u8"
+    },
+    {
+     "name": "Homes Under The Hammer",
+     "logo": "https://i.imgur.com/P5Haaln.png",
+     "url": "https://all3media-homes-under-the-hammer-1-se.samsung.wurl.tv/playlist.m3u8"
+    },
+    {
+     "name": "Just For Laughs Gags",
+     "logo": "https://i.imgur.com/HjVEVMJ.png",
+     "url": "https://distributionsjustepourrire-justforlaughsgags-1-se.samsung.wurl.tv/playlist.m3u8"
+    },
+    {
+     "name": "Love Pets",
+     "logo": "https://lovepetstv.com/wp-content/uploads/2022/12/LovePets_Logo_SecondaryColor.png",
+     "url": "https://amg01576-blueskyeenterta-lovepetsemea-samsungse-ctamh.amagi.tv/playlist/amg01576-blueskyeenterta-lovepetsemea-samsungse/playlist.m3u8"
+    },
+    {
+     "name": "Mechplus",
+     "logo": "",
+     "url": "https://mechtvltd-mechplus-1-se.samsung.wurl.tv/playlist.m3u8"
+    },
+    {
+     "name": "NatureTime",
+     "logo": "https://i.imgur.com/72JmyjM.png",
+     "url": "https://amg00090-blueantmedia-naturetime-samsungse-axgcn.amagi.tv/playlist/amg00090-blueantmedia-naturetime-samsungse/playlist.m3u8"
+    },
+    {
+     "name": "Now 80s",
+     "logo": "https://i.imgur.com/YyPnMeB.png",
+     "url": "https://lightning-now80s-samsungse.amagi.tv/playlist.m3u8"
+    },
+    {
+     "name": "Now Rock",
+     "logo": "https://i.imgur.com/GuM4GnX.png",
+     "url": "https://lightning-now90s-samsungse.amagi.tv/playlist.m3u8"
+    },
+    {
+     "name": "People are Awesome",
+     "logo": "https://i.imgur.com/MsIx7Ax.png",
+     "url": "https://jukin-peopleareawesome-2-se.samsung.wurl.tv/playlist.m3u8"
+    },
+    {
+     "name": "Real Crime",
+     "logo": "",
+     "url": "https://amg00426-littledotstudio-realcrimebeta-samsungse-lpne7.amagi.tv/playlist/amg00426-littledotstudio-realcrimebeta-samsungse/playlist.m3u8"
+    },
+    {
+     "name": "Strongman Champions League",
+     "logo": "https://images-0.rakuten.tv/storage/global-live-channel/translation/artwork/30ccc088-dca7-4458-ad5a-328fef06e1ca-width200-quality90.png",
+     "url": "https://rightsboosterltd-scl-1-se.samsung.wurl.tv/playlist.m3u8"
+    },
+    {
+     "name": "The Pet Collective Sweden",
+     "logo": "https://i.imgur.com/yH7n2dF.png",
+     "url": "https://the-pet-collective-international-se.samsung.wurl.tv/playlist.m3u8"
+    },
+    {
+     "name": "The Wicked Tuna Channel",
+     "logo": "",
+     "url": "https://amg00353-lionsgatestudio-wickedtunase-samsungse-w4kcr.amagi.tv/playlist/amg00353-lionsgatestudio-wickedtunase-samsungse/playlist.m3u8"
+    },
+    {
+     "name": "Trace Urban",
+     "logo": "https://i.imgur.com/DLIbUMx.png",
+     "url": "https://amg01131-tracetv-traceurbanse-samsungse-ov22d.amagi.tv/playlist/amg01131-tracetv-traceurbanse-samsungse/playlist.m3u8"
+    },
+    {
+     "name": "Trailers",
+     "logo": "https://i.imgur.com/RwZ1hCN.png",
+     "url": "https://amg01821-lovetvchannels-lovemagazineuk-samsungse-p1sf1.amagi.tv/playlist/amg01821-lovetvchannels-lovemagazineuk-samsungse/playlist.m3u8"
+    },
+    {
+     "name": "Waterbear",
+     "logo": "",
+     "url": "https://cdn-ue1-prod.tsv2.amagi.tv/linear/amg01415-waterbearnetwor-waterbear-samsungse/playlist.m3u8"
+    },
+    {
+     "name": "World Of Love Island",
+     "logo": "",
+     "url": "https://amg00654-itvstudios-worldofloveisland-samsungse-nbyj3.amagi.tv/playlist/amg00654-itvstudios-worldofloveisland-samsungse/playlist.m3u8"
+    },
+    {
+     "name": "Xplore",
+     "logo": "https://i.imgur.com/WaGRlFO.png",
+     "url": "https://amg00111-hearstmediaprod-xploreintlse-samsungse-lvo6s.amagi.tv/playlist/amg00111-hearstmediaprod-xploreintlse-samsungse/playlist.m3u8"
     },
     {
      "name": "21 Jump Street",
@@ -71,24 +201,9 @@
      "url": "https://jmp2.uk/plu-6364f6cd308d210007b5eee9.m3u8"
     },
     {
-     "name": "Are we there Yet?",
-     "logo": "https://i.imgur.com/3BJQiHP.png",
-     "url": "https://cdn-ue1-prod.tsv2.amagi.tv/linear/amg00353-lionsgatestudio-arewethereyetse-samsungse/playlist.m3u8"
-    },
-    {
      "name": "Are You The One?",
      "logo": "https://i.imgur.com/cIt8UWE.png",
      "url": "https://jmp2.uk/plu-61c0ac242bb0cf0007015f89.m3u8"
-    },
-    {
-     "name": "Artflix Movie Classics",
-     "logo": "https://i.imgur.com/5pOZQB4.png",
-     "url": "https://amogonetworx-artflix-1-se.samsung.wurl.tv/playlist.m3u8"
-    },
-    {
-     "name": "ATG Live",
-     "logo": "https://i.imgur.com/bPWFXkL.png",
-     "url": "https://kanal75xto-llhls.akamaized.net/live/Data/atg-kanal-15-02a-rr/HLS-Legacy-HL/atg-kanal-15-02a-rr.m3u8"
     },
     {
      "name": "Auction Hunters",
@@ -271,11 +386,6 @@
      "url": "https://jmp2.uk/plu-66461f433d173b000805eeeb.m3u8"
     },
     {
-     "name": "Di TV",
-     "logo": "https://i.imgur.com/zApTDWn.png",
-     "url": "https://cdn0-03837-liveedge0.dna.ip-only.net/03837-liveedge0/smil:03837-tx4/playlist.m3u8"
-    },
-    {
      "name": "Diagnosis Murder",
      "logo": "",
      "url": "https://jmp2.uk/plu-668bf9be0642e5000815102d.m3u8"
@@ -331,19 +441,9 @@
      "url": "https://jmp2.uk/plu-61c09072a09bbe00078f5692.m3u8"
     },
     {
-     "name": "Expressen TV",
-     "logo": "https://i.imgur.com/ai0BIci.png",
-     "url": "https://cdn0-03837-liveedge0.dna.ip-only.net/03837-liveedge0/smil:03837-tx2/playlist.m3u8"
-    },
-    {
      "name": "FailArmy",
      "logo": "https://i.imgur.com/VIpQJxL.png",
      "url": "https://jmp2.uk/plu-6178037c35922000072a2ff5.m3u8"
-    },
-    {
-     "name": "Failarmy International",
-     "logo": "https://i.imgur.com/VIpQJxL.png",
-     "url": "https://failarmy-international-se.samsung.wurl.tv/playlist.m3u8"
     },
     {
      "name": "Family Ties",
@@ -381,11 +481,6 @@
      "url": "https://jmp2.uk/plu-61c19099bf8c520007a93cff.m3u8"
     },
     {
-     "name": "GB News",
-     "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/GB_News_Logo.svg/960px-GB_News_Logo.svg.png",
-     "url": "https://amg01076-lightningintern-gbnewsse-samsungse-q7qjc.amagi.tv/playlist/amg01076-lightningintern-gbnewsse-samsungse/playlist.m3u8"
-    },
-    {
      "name": "Geordie Shore",
      "logo": "https://images.pluto.tv/channels/6442512cee6a2f0008d3351f/colorLogoPNG.png",
      "url": "https://jmp2.uk/plu-64424be3e94c380008d0a66d.m3u8"
@@ -396,29 +491,14 @@
      "url": "https://jmp2.uk/plu-619e4726b9997a00072a4059.m3u8"
     },
     {
-     "name": "Grjngo Western Movies",
-     "logo": "https://i.imgur.com/wFqhK3p.png",
-     "url": "https://amogonetworx-grjngo-3-se.samsung.wurl.tv/playlist.m3u8"
-    },
-    {
      "name": "Happy Days",
      "logo": "",
      "url": "https://jmp2.uk/plu-654a52254d6d8f00084eacfc.m3u8"
     },
     {
-     "name": "Hell's Kitchen",
-     "logo": "https://i.imgur.com/P9eT0O9.png",
-     "url": "https://amg00654-itvstudios-hellskitchen-samsungse-9n806.amagi.tv/playlist/amg00654-itvstudios-hellskitchen-samsungse/playlist.m3u8"
-    },
-    {
      "name": "Highway to Heaven",
      "logo": "https://i.imgur.com/e6pvibn.png",
      "url": "https://jmp2.uk/plu-68c015dc6523408b14f54dee.m3u8"
-    },
-    {
-     "name": "Homes Under The Hammer",
-     "logo": "https://i.imgur.com/P5Haaln.png",
-     "url": "https://all3media-homes-under-the-hammer-1-se.samsung.wurl.tv/playlist.m3u8"
     },
     {
      "name": "Horse & Country",
@@ -501,11 +581,6 @@
      "url": "https://jmp2.uk/plu-6380c4ab81c8d2000790fbf3.m3u8"
     },
     {
-     "name": "Just For Laughs Gags",
-     "logo": "https://i.imgur.com/HjVEVMJ.png",
-     "url": "https://distributionsjustepourrire-justforlaughsgags-1-se.samsung.wurl.tv/playlist.m3u8"
-    },
-    {
      "name": "Key & Peele",
      "logo": "https://images.pluto.tv/channels/65cba715dc10a40008034917/colorLogoPNG.png",
      "url": "https://jmp2.uk/plu-65cba798d77d450008d056e5.m3u8"
@@ -521,11 +596,6 @@
      "url": "https://jmp2.uk/plu-654a517ff91d250008ac2d4a.m3u8"
     },
     {
-     "name": "Love Pets",
-     "logo": "https://lovepetstv.com/wp-content/uploads/2022/12/LovePets_Logo_SecondaryColor.png",
-     "url": "https://amg01576-blueskyeenterta-lovepetsemea-samsungse-ctamh.amagi.tv/playlist/amg01576-blueskyeenterta-lovepetsemea-samsungse/playlist.m3u8"
-    },
-    {
      "name": "Lyxfällan",
      "logo": "https://images.pluto.tv/channels/61c18f62f5acaf0007f83135/colorLogoPNG.png",
      "url": "https://jmp2.uk/plu-61c18f62f5acaf0007f83135.m3u8"
@@ -534,76 +604,6 @@
      "name": "Lyxfällan Danmark",
      "logo": "https://images.pluto.tv/channels/61c19165decece0007e9b2f3/colorLogoPNG.png",
      "url": "https://jmp2.uk/plu-61c19165decece0007e9b2f3.m3u8"
-    },
-    {
-     "name": "Lyxfällan Norge",
-     "logo": "https://images.pluto.tv/channels/67f7d328efc5473b6b4ac5f4/colorLogoPNG_1745915912635.png",
-     "url": "https://jmp2.uk/plu-67f7d328efc5473b6b4ac5f4.m3u8"
-    },
-    {
-     "name": "MacGyver",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-63a19eceb3d0eb0007439c34.m3u8"
-    },
-    {
-     "name": "Man with a Plan",
-     "logo": "https://images.pluto.tv/channels/678f88bb272ded16b1558c5e/colorLogoPNG.png",
-     "url": "https://jmp2.uk/plu-6825efbb9eed174f7ffbe5b0.m3u8"
-    },
-    {
-     "name": "Mannen som talar med hundar",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-6501ae4998020f00085040ed.m3u8"
-    },
-    {
-     "name": "Matlock",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-66290c12801af8000850c1a9.m3u8"
-    },
-    {
-     "name": "Mechplus",
-     "logo": "",
-     "url": "https://mechtvltd-mechplus-1-se.samsung.wurl.tv/playlist.m3u8"
-    },
-    {
-     "name": "Medium",
-     "logo": "https://images.pluto.tv/channels/68f0f54ca362b63a8df4d5a9/colorLogoPNG_1760622009795.png",
-     "url": "https://jmp2.uk/plu-68f0f642a25ba0aab3e64e66.m3u8"
-    },
-    {
-     "name": "Melrose Place",
-     "logo": "https://i.imgur.com/hXDj0fV.png",
-     "url": "https://jmp2.uk/plu-62a0b070d4566c0007a0d1bd.m3u8"
-    },
-    {
-     "name": "Merry Christmas from Viafree",
-     "logo": "https://images.pluto.tv/channels/63048147b09fd60007847a08/colorLogoPNG.png",
-     "url": "https://jmp2.uk/plu-6304854ac6073d0007259fe1.m3u8"
-    },
-    {
-     "name": "Modern Marvels",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-6578878132c1b300089aa005.m3u8"
-    },
-    {
-     "name": "MODUS Super Series Darts",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-6716571bc7626f000890c518.m3u8"
-    },
-    {
-     "name": "Monster Jam",
-     "logo": "https://images-1.rakuten.tv/storage/global-live-channel/translation/artwork/0734ee9d-7417-4f53-a092-e29d6e8146ee-width200-quality90.jpeg",
-     "url": "https://jmp2.uk/plu-65c340983ba51e00083988e8.m3u8"
-    },
-    {
-     "name": "MTV Catfish",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-61780d4267bf4d00077ddd73.m3u8"
-    },
-    {
-     "name": "MTV Dating",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-685140f121f49d1b9d178249.m3u8"
     }
    ]
   },
@@ -614,6 +614,46 @@
      "name": "24 Horas",
      "logo": "https://i.ibb.co/21sXZ3GT/24h.png",
      "url": "https://n-5-2.eu.cdn-redge.media/livehls/oeu/mt/live/24h/live.livx/playlist.m3u8"
+    },
+    {
+     "name": "La 1",
+     "logo": "https://i.ibb.co/MxJNPHsn/La-1.png",
+     "url": "https://rtvelivestream.rtve.es/rtvesec/la1/la1_main_dvr.m3u8"
+    },
+    {
+     "name": "La 1 Canarias",
+     "logo": "https://i.ibb.co/MxJNPHsn/La-1.png",
+     "url": "https://ztnr.rtve.es/ztnr/5190066.m3u8"
+    },
+    {
+     "name": "La 1 Catalunya",
+     "logo": "https://i.ibb.co/MxJNPHsn/La-1.png",
+     "url": "https://ztnr.rtve.es/ztnr/3293681.m3u8"
+    },
+    {
+     "name": "La 2",
+     "logo": "https://i.ibb.co/rfsr9PSh/La-2.png",
+     "url": "https://rtvelivestream.rtve.es/rtvesec/la2/la2_main.m3u8"
+    },
+    {
+     "name": "La 2 Canarias",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Logo_La_2_Canarias.png/960px-Logo_La_2_Canarias.png",
+     "url": "https://ztnr.rtve.es/ztnr/5468585.m3u8"
+    },
+    {
+     "name": "La 2 Catalunya",
+     "logo": "https://i.ibb.co/Lztt9rgr/La-2-Catalunya.png",
+     "url": "https://ztnr.rtve.es/ztnr/3987218.m3u8"
+    },
+    {
+     "name": "BBC Series",
+     "logo": "",
+     "url": "https://jmp2.uk/plu-60dafb9a0df1ba000758d37b.m3u8"
+    },
+    {
+     "name": "BBC Drama",
+     "logo": "https://i.imgur.com/HctHhLL.png",
+     "url": "https://amg00793-amg00793c40-rakuten-es-5444.playouts.now.amagi.tv/playlist.m3u8"
     },
     {
      "name": "3Cat Càmeres del temps",
@@ -629,11 +669,6 @@
      "name": "3CatInfo",
      "logo": "https://statics.3cat.cat/img/logos/3CatInfo_negre.svg",
      "url": "https://directes-tv-int.3catdirectes.cat/live-origin/canal324-hls/master.m3u8"
-    },
-    {
-     "name": "7 TeleValencia",
-     "logo": "https://i.imgur.com/ILfXDRs.png",
-     "url": "https://play.cdn.enetres.net/9E9557EFCEBB43A89CEC8FBD3C500247022/028/playlist.m3u8"
     },
     {
      "name": "7TV",
@@ -661,19 +696,9 @@
      "url": "https://amg01821-lovetv-amg01821c27-lg-es-6726.playouts.now.amagi.tv/playlist/amg01821-lovetvfast-lovenews-lges/playlist.m3u8"
     },
     {
-     "name": "Al salir de clase",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-65b91e530d9ab40008340d8d.m3u8"
-    },
-    {
      "name": "Alacantí TV",
      "logo": "https://i.imgur.com/pcWU6e1.png",
      "url": "https://streaming01.gestec-video.com/hls/artequatreAlacanti.m3u8"
-    },
-    {
-     "name": "Alaska y Mario",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-69c51060ed1b1f1acb5092dc.m3u8"
     },
     {
      "name": "Alcarria TV",
@@ -681,54 +706,9 @@
      "url": "http://217.182.77.27/live/alcarriatv-livestream.m3u8"
     },
     {
-     "name": "Alice Nevers",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-66d71f8ee5de930008016f83.m3u8"
-    },
-    {
-     "name": "America's Next Top Model",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-686cd84603ad75cfd132d672.m3u8"
-    },
-    {
-     "name": "Ana y los 7",
-     "logo": "https://i.imgur.com/X5g6gXS.png",
-     "url": "https://jmp2.uk/plu-5f1acce7f17797000718f9be.m3u8"
-    },
-    {
      "name": "Arabí TV",
      "logo": "https://i.ibb.co/9Vp9Ghg/LOGO-WEB-ARABI-TV-3.png",
      "url": "https://streamtv2.elitecomunicacion.cloud:3628/live/arabitv2025live.m3u8"
-    },
-    {
-     "name": "Archivos Forenses",
-     "logo": "https://i.imgur.com/Pxrl9Ug.png",
-     "url": "https://jmp2.uk/plu-5f984f4a09e92d0007d74647.m3u8"
-    },
-    {
-     "name": "Barbie & Friends",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-688892172928933015abe479.m3u8"
-    },
-    {
-     "name": "BBC Drama",
-     "logo": "https://i.imgur.com/HctHhLL.png",
-     "url": "https://amg00793-amg00793c40-rakuten-es-5444.playouts.now.amagi.tv/playlist.m3u8"
-    },
-    {
-     "name": "BBC Series",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-60dafb9a0df1ba000758d37b.m3u8"
-    },
-    {
-     "name": "Beyblade en Español",
-     "logo": "",
-     "url": "https://amg01796-amg01796c8-rakuten-es-5333.playouts.now.amagi.tv/playlist/amg01796-fastmediafast-beybladees-rakutenes/playlist.m3u8"
-    },
-    {
-     "name": "Bob Esponja",
-     "logo": "https://i.imgur.com/nmZ2nId.png",
-     "url": "https://jmp2.uk/plu-5f1aca0b4e448e00075e7c5e.m3u8"
     },
     {
      "name": "Bom Cine",
@@ -739,11 +719,6 @@
      "name": "Bon Dia TV",
      "logo": "https://i.imgur.com/VgRCu2U.png",
      "url": "https://directes-tv-int.3catdirectes.cat/live-content/bondia-hls/master.m3u8"
-    },
-    {
-     "name": "Call the Midwife",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-65dded6966eec80008947157.m3u8"
     },
     {
      "name": "Canal 10 Empordà",
@@ -836,34 +811,9 @@
      "url": "https://cdnlive.codev8.net/rtvalive/smil:channel42.smil/playlist.m3u8"
     },
     {
-     "name": "Cazasubastas",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-6335a6b6e6f7a600076e589e.m3u8"
-    },
-    {
-     "name": "CBS News 24/7",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/CBS_News_247_logo.svg/960px-CBS_News_247_logo.svg.png",
-     "url": "https://jmp2.uk/plu-6231ede1be5b460007f91bc1.m3u8"
-    },
-    {
      "name": "Cetelmón TV",
      "logo": "https://i.imgur.com/GGn7itj.png",
      "url": "http://player.cetelmon.tv/protecteddfd43c2f3a8b41f3f28582bf8993aca6/992_high.m3u8"
-    },
-    {
-     "name": "CGTN Spanish",
-     "logo": "https://i.imgur.com/Poz3xfi.png",
-     "url": "https://amg01314-cgtn-amg01314c3-rakuten-uk-1318.playouts.now.amagi.tv/cgtn-es-rakuten/playlist.m3u8"
-    },
-    {
-     "name": "Cherif",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-66d71c656b63480008cf0427.m3u8"
-    },
-    {
-     "name": "Ciudadanos por el mundo",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-622f42b831233300078658cc.m3u8"
     },
     {
      "name": "Ciudades Del Ocio TV",
@@ -891,16 +841,6 @@
      "url": "https://cdnapisec.kaltura.com/p/2288691/sp/228869100/playManifest/entryId/1_gnz6ity9/protocol/https/format/applehttp/flavorIds/1_a9gxgxzy,1_v71ryg4b,1_vbfvtjw6,1_obo1bqsx,1_3shk3s5d/a.m3u8"
     },
     {
-     "name": "CNN Headlines International",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-66c45c0de7f5e80008b82005.m3u8"
-    },
-    {
-     "name": "Comedia a lo bestia de Pluto TV",
-     "logo": "https://images.pluto.tv/channels/68de3db35fc0afe85de0b843/colorLogoPNG_1759402494389.png",
-     "url": "https://jmp2.uk/plu-68de3db35fc0afe85de0b843.m3u8"
-    },
-    {
      "name": "Congreso de los Diputados 1",
      "logo": "https://i.imgur.com/3Qxpe72.png",
      "url": "https://congresodirecto.akamaized.net/hls/live/2038274/canal1/master.m3u8"
@@ -926,34 +866,9 @@
      "url": "https://congresodirecto.akamaized.net/hls/live/2038278/canal5/master.m3u8"
     },
     {
-     "name": "COPS",
-     "logo": "https://i.imgur.com/J3XO6V2.png",
-     "url": "https://jmp2.uk/plu-6554bd45aa9ffb00088e5589.m3u8"
-    },
-    {
      "name": "Costa Noroeste TV",
      "logo": "https://i.imgur.com/iM9AN6Z.png",
      "url": "https://limited31.todostreaming.es/live/noroestetv-livestream.m3u8"
-    },
-    {
-     "name": "Crimen & Historia",
-     "logo": "https://images.pluto.tv/channels/64ddcbb14c5ed80008fad416/colorLogoPNG.png",
-     "url": "https://jmp2.uk/plu-64ddcbb14c5ed80008fad416.m3u8"
-    },
-    {
-     "name": "Crímenes Reales",
-     "logo": "",
-     "url": "https://amg01796-amg01796c13-rakuten-gb-6739.playouts.now.amagi.tv/playlist.m3u8"
-    },
-    {
-     "name": "Curro Jiménez",
-     "logo": "https://i.imgur.com/e3biTY5.png",
-     "url": "https://jmp2.uk/plu-5f1acd36779de70007a680d1.m3u8"
-    },
-    {
-     "name": "Detective Conan",
-     "logo": "https://images.pluto.tv/channels/629a066860ef810008267b70/solidLogoPNG.png?w=512",
-     "url": "https://jmp2.uk/plu-629a066860ef810008267b70.m3u8"
     },
     {
      "name": "Diez TV Las Villas",
@@ -971,16 +886,6 @@
      "url": "https://nlb2-live.emitstream.com/hls/3mn7wpcv7hbmxmdzaxap/master.m3u8"
     },
     {
-     "name": "Dragon Ball",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-685a996c7c4f2ad40cb4f276.m3u8"
-    },
-    {
-     "name": "Dragon Ball Z",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-68e8fd7c3ede4398bc69af93.m3u8"
-    },
-    {
      "name": "Dreiko TV",
      "logo": "https://i.imgur.com/k8U0e0b.png",
      "url": "https://cloudvideo.servers10.com:8081/8020/index.m3u8"
@@ -996,31 +901,6 @@
      "url": "https://directes-tv-int.3catdirectes.cat/live-content/c33-super3-hls/master.m3u8"
     },
     {
-     "name": "El Comisario",
-     "logo": "https://i.imgur.com/XYt8utn.png",
-     "url": "https://jmp2.uk/plu-60c343007bcabe0007242aa6.m3u8"
-    },
-    {
-     "name": "El Detective Endeavour",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-619b9f16b8fee4000832d447.m3u8"
-    },
-    {
-     "name": "El encantador de perros",
-     "logo": "https://i.imgur.com/hYqjQ1n.png",
-     "url": "https://jmp2.uk/plu-60e45687313c5f0007bc8e94.m3u8"
-    },
-    {
-     "name": "El Mueble",
-     "logo": "https://provider-static.plex.tv/epg/cms/production/d64983e2-55b1-410b-9599-98a28f7b94ba/Logo_ElMueble_1500x1000_AllWhite_-_Belen_Bruno.png",
-     "url": "https://jmp2.uk/plu-690dd10a37b131228d76d5b1.m3u8"
-    },
-    {
-     "name": "El Reino Infantil",
-     "logo": "https://i.imgur.com/u7DOoBK.png",
-     "url": "https://jmp2.uk/plu-6523f672a6c38300088cb807.m3u8"
-    },
-    {
      "name": "El Toro TV",
      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Eltorotv.png",
      "url": "https://streaming-1.eltorotv.com/lb0/eltorotv-streaming-web/index.m3u8"
@@ -1031,24 +911,9 @@
      "url": "https://elche7tv.gestec-video.com/hls/canal2.m3u8"
     },
     {
-     "name": "Embrujadas",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-657868a7a620e30008fdbfeb.m3u8"
-    },
-    {
-     "name": "Empeños a lo bestia",
-     "logo": "https://i.imgur.com/EOttSdW.png",
-     "url": "https://jmp2.uk/plu-60218baa464ef900073168c1.m3u8"
-    },
-    {
      "name": "Empordà TV",
      "logo": "https://i.imgur.com/jc0lUbX.png",
      "url": "https://video3.lhdserver.es/empordatv2/live.m3u8"
-    },
-    {
-     "name": "En el punto de mira",
-     "logo": "https://i.imgur.com/E9grXd9.png",
-     "url": "https://jmp2.uk/plu-61922be835f3910007fc58f6.m3u8"
     },
     {
      "name": "Esport3",
@@ -1059,11 +924,6 @@
      "name": "Estepona Televisión",
      "logo": "https://i.imgur.com/rMAB720.png",
      "url": "https://cloudvideo.servers10.com:8081/8022/index.m3u8"
-    },
-    {
-     "name": "Estilo y Vida",
-     "logo": "",
-     "url": "https://4a7284f0c8334835adb8f223c36fbc37.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6232/master.m3u8"
     },
     {
      "name": "ETB 1",
@@ -1091,21 +951,6 @@
      "url": "https://cdn1.etbon.eus/etb2on/index.m3u8"
     },
     {
-     "name": "Euronews Spanish",
-     "logo": "https://a.jsrdn.com/hls/22886/euronews-spa/extras/1080_logo.png",
-     "url": "https://jmp2.uk/plu-60d3583ef310610007fb02b1.m3u8"
-    },
-    {
-     "name": "FailArmy",
-     "logo": "https://i.imgur.com/VIpQJxL.png",
-     "url": "https://jmp2.uk/plu-5f1abf5fafb5ee0007d4d0ca.m3u8"
-    },
-    {
-     "name": "FIFA+",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
-     "url": "https://jmp2.uk/plu-660c29f80cd4630008f1547c.m3u8"
-    },
-    {
      "name": "Fuerteventura TV",
      "logo": "https://i.ibb.co/MpvjCzC/Fuerteventura-tv-service-webtv-488969d1-1.png",
      "url": "https://5c0956165db0b.streamlock.net/ftv/directo/.m3u8"
@@ -1116,19 +961,9 @@
      "url": "https://crtvg-europa.flumotion.cloud/playlist.m3u8"
     },
     {
-     "name": "Gata salvaje",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-69c5100c3d2597380f0f6422.m3u8"
-    },
-    {
      "name": "Goiena Eus",
      "logo": "https://i.imgur.com/eaLIJzK.png",
      "url": "https://zuzenean.goienamedia.eus/goiena-telebista.m3u8"
-    },
-    {
-     "name": "Grjngo Spain",
-     "logo": "",
-     "url": "https://amogo-networx-grjngopelculasdeloeste-1-es.rakuten.wurl.tv/playlist.m3u8"
     },
     {
      "name": "Guada TV",
@@ -1136,44 +971,14 @@
      "url": "https://cloud.streamingconnect.tv/hls/guadatv/guadatv.m3u8"
     },
     {
-     "name": "Heidi",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-68779a09c691b3f0964127c6.m3u8"
-    },
-    {
      "name": "Historia HD",
      "logo": "https://i.imgur.com/VUy8xIG.png",
      "url": "https://d1k3vzh2ivy22k.cloudfront.net/Historia1080.m3u8"
     },
     {
-     "name": "Historia y Vida",
-     "logo": "https://i.imgur.com/3lbh2X6.png",
-     "url": "https://jmp2.uk/plu-67517f923a61d40008c451f0.m3u8"
-    },
-    {
-     "name": "iCarly",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-6181404ef48321000797bc41.m3u8"
-    },
-    {
-     "name": "Ice Pilots",
-     "logo": "https://i.imgur.com/F8GBYq3.png",
-     "url": "https://jmp2.uk/plu-61b9edc4a4ca6100070bb407.m3u8"
-    },
-    {
-     "name": "Ideas en 5 minutos",
-     "logo": "",
-     "url": "https://soul-5mincraftspa-rakuten.amagi.tv/playlist.m3u8"
-    },
-    {
      "name": "Imás TV",
      "logo": "https://i.imgur.com/a9hgTmM.png",
      "url": "https://secure3.todostreaming.es/live/imastv-livestream.m3u8"
-    },
-    {
-     "name": "Inazuma Eleven",
-     "logo": "https://i.imgur.com/pLv0T3D.png",
-     "url": "https://jmp2.uk/plu-632c6df43d2bc5000751f621.m3u8"
     },
     {
      "name": "Interalmeria TV",
@@ -1191,54 +996,14 @@
      "url": "https://c82fe9a663ed758d6c517fb44c28ba73.4gfbw5.channel-assembly.mediatailor.eu-west-1.amazonaws.com/v1/channel/648c271d2bfab0e4177a0d61/648c271d2bfab0e4177a0d61/3.m3u8"
     },
     {
-     "name": "La 1",
-     "logo": "https://i.ibb.co/MxJNPHsn/La-1.png",
-     "url": "https://rtvelivestream.rtve.es/rtvesec/la1/la1_main_dvr.m3u8"
-    },
-    {
-     "name": "La 1 Canarias",
-     "logo": "https://i.ibb.co/MxJNPHsn/La-1.png",
-     "url": "https://ztnr.rtve.es/ztnr/5190066.m3u8"
-    },
-    {
-     "name": "La 1 Catalunya",
-     "logo": "https://i.ibb.co/MxJNPHsn/La-1.png",
-     "url": "https://ztnr.rtve.es/ztnr/3293681.m3u8"
-    },
-    {
-     "name": "La 2",
-     "logo": "https://i.ibb.co/rfsr9PSh/La-2.png",
-     "url": "https://rtvelivestream.rtve.es/rtvesec/la2/la2_main.m3u8"
-    },
-    {
-     "name": "La 2 Canarias",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Logo_La_2_Canarias.png/960px-Logo_La_2_Canarias.png",
-     "url": "https://ztnr.rtve.es/ztnr/5468585.m3u8"
-    },
-    {
-     "name": "La 2 Catalunya",
-     "logo": "https://i.ibb.co/Lztt9rgr/La-2-Catalunya.png",
-     "url": "https://ztnr.rtve.es/ztnr/3987218.m3u8"
-    },
-    {
      "name": "La 8 Mediterraneo",
      "logo": "https://tbsfibra.es/wp-content/uploads/2022/07/17-8-MEDITERRANEO.png",
      "url": "https://newscript.gestec-video.com/hls/8TVEVENTOS.m3u8"
     },
     {
-     "name": "La fiebre del Jade",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-65254e8d81f9420008342cee.m3u8"
-    },
-    {
      "name": "Lancelot TV",
      "logo": "https://i.imgur.com/RlzVIJP.png",
      "url": "https://5c0956165db0b.streamlock.net:8090/directo/_definst_/lancelot.television/master.m3u8"
-    },
-    {
-     "name": "Las Tortugas Ninja",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-61373f1a12dd9f00077dcd6f.m3u8"
     },
     {
      "name": "Logos TV",
@@ -1251,59 +1016,9 @@
      "url": "https://streamer1.streamhost.org/salive/logoskidsH/playlist.m3u8"
     },
     {
-     "name": "Lone Star",
-     "logo": "https://xstreamcp-assets-msp.streamready.in/assets/DISTROTV/LIVECHANNEL/666988e3bac4421ebc533621/images/logo_20231219_215208_70.png",
-     "url": "https://lonestar-rakuten.amagi.tv/playlist.m3u8"
-    },
-    {
-     "name": "Los archivos del FBI",
-     "logo": "https://i.imgur.com/eDCdJO2.png",
-     "url": "https://jmp2.uk/plu-5f1acbed25948a0007ffbe65.m3u8"
-    },
-    {
-     "name": "Los Asesinatos de Midsomer",
-     "logo": "https://i.imgur.com/JIbupT1.png",
-     "url": "https://jmp2.uk/plu-5f1aca8310a30e00074fab92.m3u8"
-    },
-    {
-     "name": "Los caballeros del Zodiaco",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-680ba8c3a48b3ead0db701cc.m3u8"
-    },
-    {
-     "name": "Los Gipsy Kings",
-     "logo": "",
-     "url": "https://gipsy-kings-rakuten-tv-es.fast.rakuten.tv/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6752/master.m3u8"
-    },
-    {
-     "name": "Los misterios de Murdoch",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-6682bd9b8768aa0008f25be5.m3u8"
-    },
-    {
-     "name": "Los nuevos detectives",
-     "logo": "https://i.imgur.com/Iru8tqj.png",
-     "url": "https://jmp2.uk/plu-5f1acba0d1f6340007db8843.m3u8"
-    },
-    {
-     "name": "Los Pitufos",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-68d27949793c71d988ca624c.m3u8"
-    },
-    {
      "name": "Love The Planet",
      "logo": "https://i.imgur.com/RBcD49X.png",
      "url": "https://amg01821-lovetv-amg01821c8-xumo-us-3443.playouts.now.amagi.tv/playlist.m3u8"
-    },
-    {
-     "name": "Lupin",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-683457e5f59cc6a13212fce4.m3u8"
-    },
-    {
-     "name": "Léo Mattéï: Brigada de protección",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-6964d2179ba4ac18051a18ce.m3u8"
     },
     {
      "name": "M95 Televisión Marbella",
@@ -1311,54 +1026,339 @@
      "url": "https://limited2.todostreaming.es/live/m95-livestream.m3u8"
     },
     {
-     "name": "Mattel Junior",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-6888928eb52fb742416673d2.m3u8"
-    },
-    {
-     "name": "Medium",
-     "logo": "https://images.pluto.tv/channels/6578808014fbe400086e21bc/colorLogoPNG.png",
-     "url": "https://jmp2.uk/plu-6578808014fbe400086e21bc.m3u8"
-    },
-    {
-     "name": "Melrose Place",
-     "logo": "https://i.imgur.com/hXDj0fV.png",
-     "url": "https://jmp2.uk/plu-6245c03922d9d4000760d205.m3u8"
-    },
-    {
-     "name": "Merlí",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-683457aebbc703dfd45a89eb.m3u8"
-    },
-    {
-     "name": "Metal Rocks",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-686cd8bb9d079f48dbbdfecb.m3u8"
-    },
-    {
      "name": "Mijas 3.40TV",
      "logo": "https://i.imgur.com/RH1zLLs.png",
      "url": "https://streaming004.gestec-video.com/hls/MIJAS.m3u8"
     },
     {
-     "name": "MODUS Super Series Darts",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-67164414e40c4a00087f450d.m3u8"
+     "name": "Music TV Granada",
+     "logo": "https://i.ibb.co/Swd9NP7n/music-tv-granada.png",
+     "url": "https://cloudvideo.servers10.com:8081/8032/index.m3u8"
     },
     {
-     "name": "Monster High",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-68e8fe3bcba140ddfe903677.m3u8"
+     "name": "NatureTime",
+     "logo": "https://i.imgur.com/72JmyjM.png",
+     "url": "https://shls-live-ak.akamaized.net/out/v1/b06a89a463764d3688cda337d40dc5bf/index.m3u8"
     },
     {
-     "name": "Mr. Bean Anime Spain",
-     "logo": "https://static.wikia.nocookie.net/logopedia/images/2/25/Mr._Bean_Animated_Series_stacked_logo.png",
-     "url": "https://amg00627-amg00627c30-rakuten-es-3990.playouts.now.amagi.tv/playlist/amg00627-banijayfast-mrbeanescc-rakutenes/playlist.m3u8"
+     "name": "Negocios TV",
+     "logo": "https://i.imgur.com/yNRipxu.png",
+     "url": "https://streaming013.gestec-video.com/hls/negociostv.m3u8"
     },
     {
-     "name": "MTV Catfish TV Show",
+     "name": "NORTEvisión",
+     "logo": "https://i.imgur.com/C5SYw7B.png",
+     "url": "http://amaru.dyndns.org:8870/0.m3u8"
+    },
+    {
+     "name": "Onda 15 TV",
+     "logo": "https://i.imgur.com/mUrZz9O.png",
+     "url": "https://cloudvideo.servers10.com:8081/8034/index.m3u8"
+    },
+    {
+     "name": "Onda Algeciras TV",
+     "logo": "https://i.imgur.com/kUhFkVF.png",
+     "url": "https://cloudtv.provideo.es/live/algecirastv-livestream.m3u8"
+    },
+    {
+     "name": "Onda Cádiz 24h",
+     "logo": "https://i.imgur.com/sOBMnby.png",
+     "url": "https://ondacadiztv.es:30443/octv/24h/playlist.m3u8"
+    },
+    {
+     "name": "Onda Valencia",
+     "logo": "https://i.imgur.com/6HxLUQd.png",
+     "url": "https://cloudvideo.servers10.com:8081/8116/index.m3u8"
+    },
+    {
+     "name": "Platzi TV",
+     "logo": "https://i.imgur.com/vEzeqHP.png",
+     "url": "https://mdstrm.com/live-stream-playlist/629a63ae8df27c082901f78b.m3u8"
+    },
+    {
+     "name": "POP World TV",
+     "logo": "https://i.imgur.com/LQB6G3s.jpg",
+     "url": "https://janus.xpbroadcasting.com:8443/hls/popworld.m3u8"
+    },
+    {
+     "name": "Punt 3 Vall Uixó",
+     "logo": "https://i.imgur.com/i9tsnhD.png",
+     "url": "https://bit.controlstreams.com:5443/LiveApp/streams/punt3.m3u8"
+    },
+    {
+     "name": "Radio 3",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/RNE_Radio_3_2026.svg/500px-RNE_Radio_3_2026.svg.png",
+     "url": "https://rtvelivestream.rtve.es/rtvesec/rne/rne3_main.m3u8"
+    },
+    {
+     "name": "Radio Carnaval TV",
+     "logo": "https://i.imgur.com/cdpbkSo.png",
+     "url": "https://eu1.servers10.com:8081/8116/index.m3u8"
+    },
+    {
+     "name": "Real Madrid TV",
+     "logo": "https://i.imgur.com/5pMo7dL.png",
+     "url": "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8"
+    },
+    {
+     "name": "Real Madrid TV English",
+     "logo": "https://i.imgur.com/5pMo7dL.png",
+     "url": "http://88.212.15.50/live/real_madrid_tv/index.m3u8"
+    },
+    {
+     "name": "Ribera TV",
+     "logo": "https://i.imgur.com/mPvSubP.png",
+     "url": "https://common01.todostreaming.es/live/ribera-livestream.m3u8"
+    },
+    {
+     "name": "RNE para todos",
+     "logo": "https://i.ibb.co/dsgrWTP8/fast-rneaudioparatodos-nac.png",
+     "url": "https://rtvelivestream.rtve.es/rtvesec/rne/rne_para_todos_main.m3u8"
+    },
+    {
+     "name": "RTV Vida",
+     "logo": "https://i.imgur.com/EqUfEAh.png",
+     "url": "https://vidartv2.todostreaming.es/live/radiovida-emisiontvhd.m3u8"
+    },
+    {
+     "name": "Ràdio Bocairent TV",
+     "logo": "https://i.imgur.com/MzUQtrl.png",
+     "url": "http://185.81.77.4/BocairentTV/index.m3u8"
+    },
+    {
+     "name": "Sevilla FC TV",
+     "logo": "https://i.imgur.com/yujGVbm.png",
+     "url": "https://open.http.mp.streamamg.com/p/3001314/sp/300131400/playManifest/entryId/0_ye0b8tc0/format/applehttp/protocol/https/uiConfId/30026292/a.m3u8"
+    },
+    {
+     "name": "Sol Música",
+     "logo": "https://i.imgur.com/rbJrmPw.png",
+     "url": "https://d2glyu450vvghm.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-21u4g5cjglv02/sm.m3u8"
+    },
+    {
+     "name": "SpektraTV",
+     "logo": "https://i.imgur.com/0zCt8e4.png",
+     "url": "https://cloudvideo.servers10.com:8081/8026/tracks-v1a1/index.m3u8"
+    },
+    {
+     "name": "Squirrel",
+     "logo": "https://i.imgur.com/9y8VcBr.png",
+     "url": "https://cdn78-at.azotosolutions.com/cdnedge39/Canale1/master.m3u8"
+    },
+    {
+     "name": "Tarotéame",
      "logo": "",
-     "url": "https://jmp2.uk/plu-5f1ab3c7778230000735cf41.m3u8"
+     "url": "https://5d2733224ac48.streamlock.net/taroteame/tarot_web/playlist.m3u8"
+    },
+    {
+     "name": "TBN España",
+     "logo": "https://i.imgur.com/oGvsUH9.png",
+     "url": "https://edge.xn--tbnespaa-j3a.es/LiveApp/streams/tbnlive.m3u8"
+    },
+    {
+     "name": "Tele Elx",
+     "logo": "https://i.imgur.com/w5NTWpl.png",
+     "url": "https://tvdirecto.teleelx.es/stream/teleelx.m3u8"
+    },
+    {
+     "name": "Tele Safor",
+     "logo": "https://i.imgur.com/EowJfr0.png",
+     "url": "https://video.telesafor.com/hls/video.m3u8"
+    },
+    {
+     "name": "Teledeporte",
+     "logo": "https://i.ibb.co/0jxLdjnY/TDP.png",
+     "url": "https://rtvelivestream.rtve.es/rtvesec/tdp/tdp_main.m3u8"
+    },
+    {
+     "name": "Teleganés",
+     "logo": "https://i.imgur.com/BXyplMX.png",
+     "url": "https://nlb2-live.emitstream.com/hls/5z6oj7ziwxzfnj78vg2m/master.m3u8"
+    },
+    {
+     "name": "Telemadrid HD",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/TeleMadrid.svg/960px-TeleMadrid.svg.png",
+     "url": "https://live.telemadrid.cross-media.es/6389770581112/eu-central-1/6416060453001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoiajI5YjgyLmVncmVzcy5haGc3NmwiLCJhY2NvdW50X2lkIjoiNjQxNjA2MDQ1MzAwMSIsImVobiI6ImxpdmUudGVsZW1hZHJpZC5jcm9zcy1tZWRpYS5lcyIsImlzcyI6ImJsaXZlLXBsYXliYWNrLXNvdXJjZS1hcGkiLCJzdWIiOiJwYXRobWFwdG9rZW4iLCJhdWQiOlsiNjQxNjA2MDQ1MzAwMSJdLCJqdGkiOiI2Mzg5NzcwNTgxMTEyIn0.kqriAMUkHT6m0V6wkCHJum_EUyL4PAi1zJMKlfmYHEU/playlist-hls.m3u8"
+    },
+    {
+     "name": "Television Canaria",
+     "logo": "https://rtvc.es/archivos/2020/03/logo-mobilretina.png",
+     "url": "https://rtvclive.flumotion.cloud/rtvc1live/smil:channel1PRG.smil/playlist.m3u8"
+    },
+    {
+     "name": "Televisión Aranda",
+     "logo": "https://i.imgur.com/FwIIdKG.png",
+     "url": "https://cloud.streamingconnect.tv/hls/telearanda/telearanda.m3u8"
+    },
+    {
+     "name": "Televisión Consciente",
+     "logo": "https://i.imgur.com/6QVHKPw.png",
+     "url": "https://cdn318.fractalmedia.es/318/live/hls/tvc/master.m3u8"
+    },
+    {
+     "name": "Tito TV",
+     "logo": "https://tvomix.com/Logos/Titotv.png",
+     "url": "https://cloud.tvomix.com/TITOTV/index.m3u8"
+    },
+    {
+     "name": "Trece TV",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Trece.svg/960px-Trece.svg.png",
+     "url": "https://play.cdn.enetres.net/091DB7AFBD77442B9BA2F141DCC182F5021/live.smil/playlist.m3u8"
+    },
+    {
+     "name": "TV Artequatre",
+     "logo": "https://i.imgur.com/aobkgrS.png",
+     "url": "https://streaming007.gestec-video.com/hls/artequatreTVA.m3u8"
+    },
+    {
+     "name": "TVE Internacional America",
+     "logo": "https://i.ibb.co/RpKLCMvp/tve.png",
+     "url": "https://rtvelivestream-rtveplayplus.rtve.es/rtvesec/int/tvei_ame_main_576.m3u8"
+    },
+    {
+     "name": "TVE Internacional America HD",
+     "logo": "https://i.ibb.co/RpKLCMvp/tve.png",
+     "url": "https://rtvelivestream-rtveplayplus.rtve.es/rtvesec/int/tvei_ame_main_1080.m3u8"
+    },
+    {
+     "name": "TVE Internacional Asia-Oceania",
+     "logo": "https://i.ibb.co/RpKLCMvp/tve.png",
+     "url": "https://rtvelivestream-rtveplayplus.rtve.es/rtvesec/int/tvei_asia_main_576.m3u8"
+    },
+    {
+     "name": "TVE Internacional Asia-Oceania HD",
+     "logo": "https://i.ibb.co/RpKLCMvp/tve.png",
+     "url": "https://rtvelivestream-rtveplayplus.rtve.es/rtvesec/int/tvei_asia_main_1080.m3u8"
+    },
+    {
+     "name": "TVE Internacional Europe",
+     "logo": "https://i.ibb.co/RpKLCMvp/tve.png",
+     "url": "https://r.eu.cdn-redge.media/livehls/oeu/mt/live/tve/live.livx/playlist.m3u8"
+    },
+    {
+     "name": "TVE Internacional Europe HD",
+     "logo": "https://i.ibb.co/RpKLCMvp/tve.png",
+     "url": "https://rtvelivestream-rtveplayplus.rtve.es/rtvesec/int/tvei_eu_main_1080.m3u8"
+    },
+    {
+     "name": "TVE Star",
+     "logo": "https://i.ibb.co/j98NY8Mr/starcolor.png",
+     "url": "https://rtvelivestream-rtveplayplus.rtve.es/rtvesec/int/star_main_576.m3u8"
+    },
+    {
+     "name": "TVE Star HD",
+     "logo": "https://i.ibb.co/j98NY8Mr/starcolor.png",
+     "url": "https://rtvelivestream-rtveplayplus.rtve.es/rtvesec/int/star_main_1080.m3u8"
+    },
+    {
+     "name": "TVG2",
+     "logo": "https://i.imgur.com/yFy6gxg.png",
+     "url": "https://crtvg-tvg2.flumotion.cloud/playlist.m3u8"
+    },
+    {
+     "name": "TVO Jesus",
+     "logo": "https://tvomix.com/Logos/Tvojesus.png",
+     "url": "https://cloud.tvomix.com/TVOJESUS/index.m3u8"
+    },
+    {
+     "name": "TVOMIX",
+     "logo": "https://ugc.production.linktr.ee/7ef61237-c46d-456b-afe3-a42ef49a979e_Mejorado2.png",
+     "url": "https://cloud.tvomix.com/TVOMIX/index.m3u8"
+    },
+    {
+     "name": "TVReus",
+     "logo": "https://i.imgur.com/Ee0C8UH.jpg",
+     "url": "https://eu1.servers10.com:8081/8166/index.m3u8"
+    },
+    {
+     "name": "Une Vinalopó",
+     "logo": "https://i.imgur.com/WpGR7RQ.png",
+     "url": "https://streamingtvi.gestec-video.com/hls/unesd.m3u8"
+    },
+    {
+     "name": "Univers TV",
+     "logo": "https://i.imgur.com/EW2bfix.png",
+     "url": "https://cloud2.streaminglivehd.com:1936/universfaller/universfaller/playlist.m3u8"
+    },
+    {
+     "name": "Urola Telebista",
+     "logo": "https://i.imgur.com/V23bltn.png",
+     "url": "https://5940924978228.streamlock.net/j_Directo2/mp4:j_Directo2/playlist.m3u8"
+    },
+    {
+     "name": "XPTV US",
+     "logo": "https://i.imgur.com/1m7kDmc.png",
+     "url": "https://janus.xpbroadcasting.com:8443/hls/xptvUS.m3u8"
+    },
+    {
+     "name": "XPTV1",
+     "logo": "https://i.imgur.com/Ty7GkoN.png",
+     "url": "https://janus.xpbroadcasting.com:8443/hls/xptv1.m3u8"
+    },
+    {
+     "name": "XPTV2",
+     "logo": "https://i.imgur.com/74Z8ATB.png",
+     "url": "https://janus.xpbroadcasting.com:8443/hls/xptv2.m3u8"
+    },
+    {
+     "name": "People are Awesome",
+     "logo": "https://i.imgur.com/MsIx7Ax.png",
+     "url": "https://jukin-peopleareawesome-2-es.samsung.wurl.tv/playlist.m3u8"
+    },
+    {
+     "name": "The Pet Collective",
+     "logo": "https://i.imgur.com/yH7n2dF.png",
+     "url": "https://the-pet-collective-international-es.samsung.wurl.tv/playlist.m3u8"
+    },
+    {
+     "name": "Trace Sport Stars",
+     "logo": "https://i.imgur.com/FabFP5A.png",
+     "url": "http://tracesportstars-samsunges.amagi.tv/hls/amagi_hls_data_samsunguk-tracesport-samsungspain/CDN/playlist.m3u8"
+    },
+    {
+     "name": "Al salir de clase",
+     "logo": "",
+     "url": "https://jmp2.uk/plu-65b91e530d9ab40008340d8d.m3u8"
+    },
+    {
+     "name": "Alaska y Mario",
+     "logo": "",
+     "url": "https://jmp2.uk/plu-69c51060ed1b1f1acb5092dc.m3u8"
+    },
+    {
+     "name": "Alice Nevers",
+     "logo": "",
+     "url": "https://jmp2.uk/plu-66d71f8ee5de930008016f83.m3u8"
+    },
+    {
+     "name": "America's Next Top Model",
+     "logo": "",
+     "url": "https://jmp2.uk/plu-686cd84603ad75cfd132d672.m3u8"
+    },
+    {
+     "name": "Ana y los 7",
+     "logo": "https://i.imgur.com/X5g6gXS.png",
+     "url": "https://jmp2.uk/plu-5f1acce7f17797000718f9be.m3u8"
+    },
+    {
+     "name": "Archivos Forenses",
+     "logo": "https://i.imgur.com/Pxrl9Ug.png",
+     "url": "https://jmp2.uk/plu-5f984f4a09e92d0007d74647.m3u8"
+    },
+    {
+     "name": "Barbie & Friends",
+     "logo": "",
+     "url": "https://jmp2.uk/plu-688892172928933015abe479.m3u8"
+    },
+    {
+     "name": "Bob Esponja",
+     "logo": "https://i.imgur.com/nmZ2nId.png",
+     "url": "https://jmp2.uk/plu-5f1aca0b4e448e00075e7c5e.m3u8"
+    },
+    {
+     "name": "Call the Midwife",
+     "logo": "",
+     "url": "https://jmp2.uk/plu-65dded6966eec80008947157.m3u8"
     }
    ]
   },
@@ -1371,76 +1371,6 @@
      "url": "https://n-5-2.eu.cdn-redge.media/livehls/oeu/mt/live/24h/live.livx/playlist.m3u8"
     },
     {
-     "name": "3CatInfo",
-     "logo": "https://statics.3cat.cat/img/logos/3CatInfo_negre.svg",
-     "url": "https://directes-tv-int.3catdirectes.cat/live-origin/canal324-hls/master.m3u8"
-    },
-    {
-     "name": "ABC News Live 1",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/ABC_News_Live_logo_2021.svg/960px-ABC_News_Live_logo_2021.svg.png",
-     "url": "https://abcnews-streams.akamaized.net/hls/live/2023560/abcnewshudson1/master.m3u8"
-    },
-    {
-     "name": "ABC News Live 10",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/ABC_News_Live_logo_2021.svg/960px-ABC_News_Live_logo_2021.svg.png",
-     "url": "https://abcnews-streams.akamaized.net/hls/live/2023569/abcnewshudson10/master.m3u8"
-    },
-    {
-     "name": "ABC News Live 2",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/ABC_News_Live_logo_2021.svg/960px-ABC_News_Live_logo_2021.svg.png",
-     "url": "https://abcnews-streams.akamaized.net/hls/live/2023561/abcnewshudson2/master.m3u8"
-    },
-    {
-     "name": "ABC News Live 3",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/ABC_News_Live_logo_2021.svg/960px-ABC_News_Live_logo_2021.svg.png",
-     "url": "https://abcnews-streams.akamaized.net/hls/live/2023562/abcnewshudson3/master.m3u8"
-    },
-    {
-     "name": "ABC News Live 4",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/ABC_News_Live_logo_2021.svg/960px-ABC_News_Live_logo_2021.svg.png",
-     "url": "https://abcnews-streams.akamaized.net/hls/live/2023563/abcnewshudson4/master.m3u8"
-    },
-    {
-     "name": "ABC News Live 5",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/ABC_News_Live_logo_2021.svg/960px-ABC_News_Live_logo_2021.svg.png",
-     "url": "https://abcnews-streams.akamaized.net/hls/live/2023564/abcnewshudson5/master.m3u8"
-    },
-    {
-     "name": "ABC News Live 6",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/ABC_News_Live_logo_2021.svg/960px-ABC_News_Live_logo_2021.svg.png",
-     "url": "https://abcnews-streams.akamaized.net/hls/live/2023565/abcnewshudson6/master.m3u8"
-    },
-    {
-     "name": "ABC News Live 7",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/ABC_News_Live_logo_2021.svg/960px-ABC_News_Live_logo_2021.svg.png",
-     "url": "https://abcnews-streams.akamaized.net/hls/live/2023566/abcnewshudson7/master.m3u8"
-    },
-    {
-     "name": "ABC News Live 8",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/ABC_News_Live_logo_2021.svg/960px-ABC_News_Live_logo_2021.svg.png",
-     "url": "https://abcnews-streams.akamaized.net/hls/live/2023567/abcnewshudson8/master.m3u8"
-    },
-    {
-     "name": "ABC News Live 9",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/ABC_News_Live_logo_2021.svg/960px-ABC_News_Live_logo_2021.svg.png",
-     "url": "https://abcnews-streams.akamaized.net/hls/live/2023568/abcnewshudson9/master.m3u8"
-    },
-    {
-     "name": "Actualidad 360",
-     "logo": "https://i.imgur.com/3YeTu0n.png",
-     "url": "https://amg01821-lovetv-amg01821c27-lg-es-6726.playouts.now.amagi.tv/playlist/amg01821-lovetvfast-lovenews-lges/playlist.m3u8"
-    },
-    {
-     "name": "Al Jazeera",
-     "logo": "https://dtil.tmsimg.com/assets/s159135_ld_h15_aa.png?lock=720x540",
-     "url": "https://amg00222-amg00222c4-amgplt0002.playout.now3.amagi.tv/aljazeera-noscte/playlist.m3u8"
-    },
-    {
-     "name": "BBC News",
-     "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
-     "url": "https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/mobile_wifi_main_hd_abr_v2.m3u8"
-    },
-    {
      "name": "BBC News Europe",
      "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
      "url": "https://stream8.cinerama.uz/1251/tracks-v1a1/mono.m3u8"
@@ -1449,11 +1379,6 @@
      "name": "BBC News North America",
      "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
      "url": "https://tvsen1.aynaott.com/shn6jGTk/index.m3u8"
-    },
-    {
-     "name": "BBC News Pashto",
-     "logo": "https://static.files.bbci.co.uk/ws/simorgh-assets/public/pashto/images/metadata/poster-1024x576.png",
-     "url": "https://vs-hls-pushb-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_afghan_tv/t=3840/v=pv14/b=5070016/main.m3u8"
     },
     {
      "name": "BBC News South Asia",
@@ -1466,6 +1391,26 @@
      "url": "https://n-5-1.eu.cdn-redge.media/livehls/oeu/mt/live/bbc_news/live.livx/playlist.m3u8"
     },
     {
+     "name": "BBC News",
+     "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
+     "url": "https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/mobile_wifi_main_hd_abr_v2.m3u8"
+    },
+    {
+     "name": "BBC News Pashto",
+     "logo": "https://static.files.bbci.co.uk/ws/simorgh-assets/public/pashto/images/metadata/poster-1024x576.png",
+     "url": "https://vs-hls-pushb-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_afghan_tv/t=3840/v=pv14/b=5070016/main.m3u8"
+    },
+    {
+     "name": "3CatInfo",
+     "logo": "https://statics.3cat.cat/img/logos/3CatInfo_negre.svg",
+     "url": "https://directes-tv-int.3catdirectes.cat/live-origin/canal324-hls/master.m3u8"
+    },
+    {
+     "name": "Actualidad 360",
+     "logo": "https://i.imgur.com/3YeTu0n.png",
+     "url": "https://amg01821-lovetv-amg01821c27-lg-es-6726.playouts.now.amagi.tv/playlist/amg01821-lovetvfast-lovenews-lges/playlist.m3u8"
+    },
+    {
      "name": "Bloomberg TV EMEA Live Event",
      "logo": "https://i.imgur.com/OuogLHx.png",
      "url": "https://bloomberg.com/media-manifest/streams/eu-event.m3u8"
@@ -1474,11 +1419,6 @@
      "name": "Bloomberg TV Europe",
      "logo": "https://i.imgur.com/OuogLHx.png",
      "url": "https://bloomberg.com/media-manifest/streams/eu.m3u8"
-    },
-    {
-     "name": "Bloomberg TV+",
-     "logo": "https://i.imgur.com/OuogLHx.png",
-     "url": "https://d8975dc3.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9CbG9vbWJlcmdUVlBsdXNfSExT/playlist.m3u8"
     },
     {
      "name": "Canal 24 Horas",
@@ -1501,9 +1441,99 @@
      "url": "https://cdnlive.codev8.net/rtvalive/smil:channel42.smil/playlist.m3u8"
     },
     {
+     "name": "CNBC Europe",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/b/bc/CNBC_2025.svg",
+     "url": "https://r.eu.cdn-redge.media/livehls/oeu/mt/live/cnbc_europe/live.livx/playlist.m3u8"
+    },
+    {
+     "name": "CNBC UK",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/b/bc/CNBC_2025.svg",
+     "url": "https://amg01079-nbcuuk-amg01079c2-lg-gb-2030.playouts.now.amagi.tv/playlist.m3u8"
+    },
+    {
+     "name": "Di TV",
+     "logo": "https://i.imgur.com/zApTDWn.png",
+     "url": "https://cdn0-03837-liveedge0.dna.ip-only.net/03837-liveedge0/smil:03837-tx4/playlist.m3u8"
+    },
+    {
+     "name": "Expressen TV",
+     "logo": "https://i.imgur.com/ai0BIci.png",
+     "url": "https://cdn0-03837-liveedge0.dna.ip-only.net/03837-liveedge0/smil:03837-tx2/playlist.m3u8"
+    },
+    {
+     "name": "Onda Cádiz 24h",
+     "logo": "https://i.imgur.com/sOBMnby.png",
+     "url": "https://ondacadiztv.es:30443/octv/24h/playlist.m3u8"
+    },
+    {
+     "name": "Sky News Weather",
+     "logo": "https://pbs.twimg.com/profile_images/1604994875459518464/lGt2wEqM_400x400.jpg",
+     "url": "https://distro001-gb-hls1-prd.delivery.skycdp.com/easel_cdn/ngrp:weather_loop.stream_all/playlist.m3u8"
+    },
+    {
+     "name": "GB News",
+     "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/GB_News_Logo.svg/960px-GB_News_Logo.svg.png",
+     "url": "https://amg01076-lightningintern-gbnewsse-samsungse-q7qjc.amagi.tv/playlist/amg01076-lightningintern-gbnewsse-samsungse/playlist.m3u8"
+    },
+    {
+     "name": "Al Jazeera",
+     "logo": "https://dtil.tmsimg.com/assets/s159135_ld_h15_aa.png?lock=720x540",
+     "url": "https://amg00222-amg00222c4-amgplt0002.playout.now3.amagi.tv/aljazeera-noscte/playlist.m3u8"
+    },
+    {
+     "name": "Bloomberg TV+",
+     "logo": "https://i.imgur.com/OuogLHx.png",
+     "url": "https://d8975dc3.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9CbG9vbWJlcmdUVlBsdXNfSExT/playlist.m3u8"
+    },
+    {
      "name": "CBS News 24/7",
      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/CBS_News_247_logo.svg/960px-CBS_News_247_logo.svg.png",
      "url": "https://jmp2.uk/plu-6231e9b7f6deff00074674f4.m3u8"
+    },
+    {
+     "name": "CNBC",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/b/bc/CNBC_2025.svg",
+     "url": "https://amg01079-nbcuuk-amg01079c2-samsung-gb-1258.playouts.now.amagi.tv/playlist.m3u8"
+    },
+    {
+     "name": "Dateline 24/7",
+     "logo": "https://i.imgur.com/8mAJuut.png",
+     "url": "https://d1si3n1st4nkgb.cloudfront.net/10502/88896029/hls/master.m3u8?ads.xumo_channelId=88896029"
+    },
+    {
+     "name": "Emergency 24/7",
+     "logo": "",
+     "url": "https://d3cm8xyrjwa22p.cloudfront.net/30504/88896036/hls/master.m3u8?ads.xumo_channelId=88896036"
+    },
+    {
+     "name": "Euronews English",
+     "logo": "https://a.jsrdn.com/hls/22886/euronews/extras/1080_logo.png",
+     "url": "https://jmp2.uk/plu-61de90a47365340007f77c27.m3u8"
+    },
+    {
+     "name": "Euronews Spanish",
+     "logo": "https://a.jsrdn.com/hls/22886/euronews-spa/extras/1080_logo.png",
+     "url": "https://jmp2.uk/plu-60d3583ef310610007fb02b1.m3u8"
+    },
+    {
+     "name": "France 24 English",
+     "logo": "https://jiotvimages.cdn.jio.com/dare_images/images/France_24.png",
+     "url": "https://amg00106-france24-france24-samsunguk-qvpp8.amagi.tv/playlist/amg00106-france24-france24-samsunguk/playlist.m3u8"
+    },
+    {
+     "name": "INTER 24/7",
+     "logo": "",
+     "url": "https://amg27604-amg27604c1-amgplt0002.playout.now3.amagi.tv/playlist/amg27604-amg27604c1-amgplt0002/playlist.m3u8"
+    },
+    {
+     "name": "NBC News NOW",
+     "logo": "https://i.imgur.com/JZt2qh5.png",
+     "url": "https://d1si3n1st4nkgb.cloudfront.net/10502/88896001/hls/master.m3u8?ads.xumo_channelId=88896001"
+    },
+    {
+     "name": "Euronews",
+     "logo": "https://a.jsrdn.com/hls/22886/euronews/extras/1080_logo.png",
+     "url": "https://jmp2.uk/plu-5ca1da6c593a5d78f0e7edce.m3u8"
     },
     {
      "name": "CBS News Baltimore",
@@ -1576,276 +1606,6 @@
      "url": "https://cbsn-dal.cbsnstream.cbsnews.com/out/v1/ffa98bbf7d2b4c038c229bd4d9122708/master.m3u8"
     },
     {
-     "name": "CNBC",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/b/bc/CNBC_2025.svg",
-     "url": "https://amg01079-nbcuuk-amg01079c2-samsung-gb-1258.playouts.now.amagi.tv/playlist.m3u8"
-    },
-    {
-     "name": "CNBC Europe",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/b/bc/CNBC_2025.svg",
-     "url": "https://r.eu.cdn-redge.media/livehls/oeu/mt/live/cnbc_europe/live.livx/playlist.m3u8"
-    },
-    {
-     "name": "CNBC UK",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/b/bc/CNBC_2025.svg",
-     "url": "https://amg01079-nbcuuk-amg01079c2-lg-gb-2030.playouts.now.amagi.tv/playlist.m3u8"
-    },
-    {
-     "name": "Dateline 24/7",
-     "logo": "https://i.imgur.com/8mAJuut.png",
-     "url": "https://d1si3n1st4nkgb.cloudfront.net/10502/88896029/hls/master.m3u8?ads.xumo_channelId=88896029"
-    },
-    {
-     "name": "Di TV",
-     "logo": "https://i.imgur.com/zApTDWn.png",
-     "url": "https://cdn0-03837-liveedge0.dna.ip-only.net/03837-liveedge0/smil:03837-tx4/playlist.m3u8"
-    },
-    {
-     "name": "Emergency 24/7",
-     "logo": "",
-     "url": "https://d3cm8xyrjwa22p.cloudfront.net/30504/88896036/hls/master.m3u8?ads.xumo_channelId=88896036"
-    },
-    {
-     "name": "Euronews",
-     "logo": "https://a.jsrdn.com/hls/22886/euronews/extras/1080_logo.png",
-     "url": "https://jmp2.uk/plu-5ca1da6c593a5d78f0e7edce.m3u8"
-    },
-    {
-     "name": "Euronews English",
-     "logo": "https://a.jsrdn.com/hls/22886/euronews/extras/1080_logo.png",
-     "url": "https://jmp2.uk/plu-61de90a47365340007f77c27.m3u8"
-    },
-    {
-     "name": "Euronews Spanish",
-     "logo": "https://a.jsrdn.com/hls/22886/euronews-spa/extras/1080_logo.png",
-     "url": "https://jmp2.uk/plu-60d3583ef310610007fb02b1.m3u8"
-    },
-    {
-     "name": "Expressen TV",
-     "logo": "https://i.imgur.com/ai0BIci.png",
-     "url": "https://cdn0-03837-liveedge0.dna.ip-only.net/03837-liveedge0/smil:03837-tx2/playlist.m3u8"
-    },
-    {
-     "name": "France 24 English",
-     "logo": "https://jiotvimages.cdn.jio.com/dare_images/images/France_24.png",
-     "url": "https://amg00106-france24-france24-samsunguk-qvpp8.amagi.tv/playlist/amg00106-france24-france24-samsunguk/playlist.m3u8"
-    },
-    {
-     "name": "GB News",
-     "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/GB_News_Logo.svg/960px-GB_News_Logo.svg.png",
-     "url": "https://amg01076-lightningintern-gbnewsse-samsungse-q7qjc.amagi.tv/playlist/amg01076-lightningintern-gbnewsse-samsungse/playlist.m3u8"
-    },
-    {
-     "name": "INTER 24/7",
-     "logo": "",
-     "url": "https://amg27604-amg27604c1-amgplt0002.playout.now3.amagi.tv/playlist/amg27604-amg27604c1-amgplt0002/playlist.m3u8"
-    },
-    {
-     "name": "NBC News NOW",
-     "logo": "https://i.imgur.com/JZt2qh5.png",
-     "url": "https://d1si3n1st4nkgb.cloudfront.net/10502/88896001/hls/master.m3u8?ads.xumo_channelId=88896001"
-    },
-    {
-     "name": "Onda Cádiz 24h",
-     "logo": "https://i.imgur.com/sOBMnby.png",
-     "url": "https://ondacadiztv.es:30443/octv/24h/playlist.m3u8"
-    },
-    {
-     "name": "Sky News Weather",
-     "logo": "https://pbs.twimg.com/profile_images/1604994875459518464/lGt2wEqM_400x400.jpg",
-     "url": "https://distro001-gb-hls1-prd.delivery.skycdp.com/easel_cdn/ngrp:weather_loop.stream_all/playlist.m3u8"
-    }
-   ]
-  },
-  {
-   "name": "Sport",
-   "channels": [
-    {
-     "name": "ATG Live",
-     "logo": "https://i.imgur.com/bPWFXkL.png",
-     "url": "https://kanal75xto-llhls.akamaized.net/live/Data/atg-kanal-15-02a-rr/HLS-Legacy-HL/atg-kanal-15-02a-rr.m3u8"
-    },
-    {
-     "name": "CBS Sports HQ",
-     "logo": "https://i.imgur.com/q8BENJg.png",
-     "url": "https://propee33f9c2.airspace-cdn.cbsivideo.com/index.m3u8"
-    },
-    {
-     "name": "Earth: Final Conflict",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-66f1331f9409630008077623.m3u8"
-    },
-    {
-     "name": "Esport3",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Esport3.svg/960px-Esport3.svg.png",
-     "url": "https://directes-tv-int.3catdirectes.cat/live-content/esport3-hls/master.m3u8"
-    },
-    {
-     "name": "Eurovision Sport",
-     "logo": "https://images.ctfassets.net/2b1dkanupt14/1A1Z8Gcn2NkbJRzTjxuj6h/2c14436cdc5b78e746a256e9f0c11a70/eurovision-icon.png",
-     "url": "https://amg26268-amg26268c34-amgplt0018.playout.now3.amagi.tv/ts-us-e2-n1/playlist/amg26268-amg26268c34-amgplt0018/playlist.m3u8"
-    },
-    {
-     "name": "FIFA+",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
-     "url": "https://jmp2.uk/plu-660c29f80cd4630008f1547c.m3u8"
-    },
-    {
-     "name": "FIFA+ French",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
-     "url": "https://37b4c228.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWZyX0ZJRkFQbHVzRnJlbmNoX0hMUw/playlist.m3u8"
-    },
-    {
-     "name": "FIFA+ German",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
-     "url": "https://4397879b.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWRlX0ZJRkFQbHVzR2VybWFuX0hMUw/playlist.m3u8"
-    },
-    {
-     "name": "FIFA+ Hispanic America",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
-     "url": "https://6c849fb3.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctbXhfRklGQVBsdXNTcGFuaXNoLTFfSExT/playlist.m3u8"
-    },
-    {
-     "name": "FIFA+ Italy",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
-     "url": "https://5d95f7d7.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWl0X0ZJRkFQbHVzSXRhbGlhbl9ITFM/playlist.m3u8"
-    },
-    {
-     "name": "FIFA+ Portuguese",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
-     "url": "https://e3be9ac5.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctYnJfRklGQVBsdXNQb3J0dWd1ZXNlX0hMUw/playlist.m3u8"
-    },
-    {
-     "name": "FIFA+ Spain",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
-     "url": "https://d63fabad.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWVzX0ZJRkFQbHVzU3BhbmlzaF9ITFM/playlist.m3u8"
-    },
-    {
-     "name": "FIFA+ United States",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
-     "url": "https://d2w9q46ikgrcwx.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-of5cbk3sav3w5/v1/sysdata_s_p_a_fifa_7/samsungheadend_us/latest/main/hls/playlist.m3u8"
-    },
-    {
-     "name": "FIFA+ Women",
-     "logo": "https://i.ibb.co/LhpwRm8V/GB3800009-F0-20251028-T010335-SQUARE.png",
-     "url": "https://cffda8ff.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9GSUZBUGx1c3dvbWVuX0hMUw/playlist.m3u8"
-    },
-    {
-     "name": "Horse & Country",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-671b4e8bc7626f00089b7194.m3u8"
-    },
-    {
-     "name": "Horse & Country TV",
-     "logo": "https://i.imgur.com/1x6zYZr.png",
-     "url": "https://hnc-free-viewlift.amagi.tv/HNC_AUSTRALIA.m3u8"
-    },
-    {
-     "name": "Horse and Country",
-     "logo": "https://i.imgur.com/1x6zYZr.png",
-     "url": "https://hncfree-samsung-uk.amagi.tv/playlist.m3u8"
-    },
-    {
-     "name": "Pluto TV Buskis",
-     "logo": "https://images.pluto.tv/channels/660d5f2a635c75000828855f/colorLogoPNG.png",
-     "url": "https://jmp2.uk/plu-660d5f2a635c75000828855f.m3u8"
-    },
-    {
-     "name": "Pluto TV Motor",
-     "logo": "https://images.pluto.tv/channels/68ac51dede4a734954b5a67a/colorLogoPNG_1761126157471.png",
-     "url": "https://jmp2.uk/plu-68ac52fac9b5923e0585578b.m3u8"
-    },
-    {
-     "name": "Pluto TV Sport",
-     "logo": "https://images.pluto.tv/channels/6357f3de3643ba0007bc0b50/colorLogoPNG_1746816938506.png",
-     "url": "https://jmp2.uk/plu-62cd74e38f6f0d000798cd93.m3u8"
-    },
-    {
-     "name": "Retake E-sport Live",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-69a164f76c0414a7ec68de54.m3u8"
-    },
-    {
-     "name": "talkSPORT",
-     "logo": "https://upload.wikimedia.org/wikipedia/en/9/9d/Talksport_logo.png",
-     "url": "https://af7a8b4e.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctZ2JfdGFsa1NQT1JUX0hMUw/playlist.m3u8"
-    },
-    {
-     "name": "Teledeporte",
-     "logo": "https://i.ibb.co/0jxLdjnY/TDP.png",
-     "url": "https://rtvelivestream.rtve.es/rtvesec/tdp/tdp_main.m3u8"
-    },
-    {
-     "name": "Tennis Channel",
-     "logo": "https://i.imgur.com/tsljAnY.png",
-     "url": "https://jmp2.uk/plu-6870c9ca759366af055fe891.m3u8"
-    },
-    {
-     "name": "Trace Sport Stars",
-     "logo": "https://i.imgur.com/FabFP5A.png",
-     "url": "http://tracesportstars-samsunges.amagi.tv/hls/amagi_hls_data_samsunguk-tracesport-samsungspain/CDN/playlist.m3u8"
-    },
-    {
-     "name": "U&Transport",
-     "logo": "",
-     "url": "https://amg00886-uktvmedialimite-uktvplayfullthrottle-samsunguk-36uja.amagi.tv/playlist/amg00886-uktvmedialimite-uktvplayfullthrottle-samsunguk/playlist.m3u8"
-    }
-   ]
-  },
-  {
-   "name": "Engelska",
-   "channels": [
-    {
-     "name": "&TV International",
-     "logo": "https://dtil.tmsimg.com/assets/GNLZZGG0022RLRS.png?lock=720x540",
-     "url": "https://3f56f997.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9BbmRUVl9ITFM/playlist.m3u8"
-    },
-    {
-     "name": "5 Cops",
-     "logo": "https://i.imgur.com/QFPRaXK.png",
-     "url": "https://jmp2.uk/plu-5d2c571faeb3e2738ae27933.m3u8"
-    },
-    {
-     "name": "5 Emergency Rescue",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-63c1384e829c850007922ca4.m3u8"
-    },
-    {
-     "name": "5 Exploring Britain",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-5ddf901280e3550009139c86.m3u8"
-    },
-    {
-     "name": "5 Trucking Hell",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-656df2849d5ac400083be647.m3u8"
-    },
-    {
-     "name": "60 Days in Jail",
-     "logo": "",
-     "url": "https://39328386.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl82MERheXNJbklOVExfSExT/playlist.m3u8"
-    },
-    {
-     "name": "8 Out Of 10 Cats",
-     "logo": "",
-     "url": "https://d1l7vcuh4hn9ei.cloudfront.net/8OutOf10Cats_GB.m3u8"
-    },
-    {
-     "name": "A Haunting",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-64ff1d92d545e9000877fba4.m3u8"
-    },
-    {
-     "name": "A New Life In The Sun",
-     "logo": "",
-     "url": "https://d36zu8tswi4fqu.cloudfront.net/playlist.m3u8"
-    },
-    {
-     "name": "Aathavan TV",
-     "logo": "https://i.imgur.com/LEVEhTH.png",
-     "url": "https://oj7lnxonyg82-hls-live.5centscdn.com/uks/24263a839810d2041a349baaeef36a79.sdp/playlist.m3u8"
-    },
-    {
      "name": "ABC News Live 1",
      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/ABC_News_Live_logo_2021.svg/960px-ABC_News_Live_logo_2021.svg.png",
      "url": "https://abcnews-streams.akamaized.net/hls/live/2023560/abcnewshudson1/master.m3u8"
@@ -1894,11 +1654,201 @@
      "name": "ABC News Live 9",
      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/ABC_News_Live_logo_2021.svg/960px-ABC_News_Live_logo_2021.svg.png",
      "url": "https://abcnews-streams.akamaized.net/hls/live/2023568/abcnewshudson9/master.m3u8"
+    }
+   ]
+  },
+  {
+   "name": "Sport",
+   "channels": [
+    {
+     "name": "ATG Live",
+     "logo": "https://i.imgur.com/bPWFXkL.png",
+     "url": "https://kanal75xto-llhls.akamaized.net/live/Data/atg-kanal-15-02a-rr/HLS-Legacy-HL/atg-kanal-15-02a-rr.m3u8"
     },
     {
-     "name": "Adventure Earth",
-     "logo": "https://d3b6luslimvglo.cloudfront.net/images/79/rlaxximages/channels-rescaled/icon-white/adventureearth_white.png",
-     "url": "https://autentic-adventure-earth-1-gb.samsung.wurl.tv/playlist.m3u8"
+     "name": "Esport3",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Esport3.svg/960px-Esport3.svg.png",
+     "url": "https://directes-tv-int.3catdirectes.cat/live-content/esport3-hls/master.m3u8"
+    },
+    {
+     "name": "Eurovision Sport",
+     "logo": "https://images.ctfassets.net/2b1dkanupt14/1A1Z8Gcn2NkbJRzTjxuj6h/2c14436cdc5b78e746a256e9f0c11a70/eurovision-icon.png",
+     "url": "https://amg26268-amg26268c34-amgplt0018.playout.now3.amagi.tv/ts-us-e2-n1/playlist/amg26268-amg26268c34-amgplt0018/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ French",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://37b4c228.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWZyX0ZJRkFQbHVzRnJlbmNoX0hMUw/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ German",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://4397879b.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWRlX0ZJRkFQbHVzR2VybWFuX0hMUw/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ Hispanic America",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://6c849fb3.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctbXhfRklGQVBsdXNTcGFuaXNoLTFfSExT/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ Italy",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://5d95f7d7.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWl0X0ZJRkFQbHVzSXRhbGlhbl9ITFM/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ Portuguese",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://e3be9ac5.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctYnJfRklGQVBsdXNQb3J0dWd1ZXNlX0hMUw/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ Spain",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://d63fabad.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWVzX0ZJRkFQbHVzU3BhbmlzaF9ITFM/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ United States",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://d2w9q46ikgrcwx.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-of5cbk3sav3w5/v1/sysdata_s_p_a_fifa_7/samsungheadend_us/latest/main/hls/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ Women",
+     "logo": "https://i.ibb.co/LhpwRm8V/GB3800009-F0-20251028-T010335-SQUARE.png",
+     "url": "https://cffda8ff.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9GSUZBUGx1c3dvbWVuX0hMUw/playlist.m3u8"
+    },
+    {
+     "name": "Horse & Country TV",
+     "logo": "https://i.imgur.com/1x6zYZr.png",
+     "url": "https://hnc-free-viewlift.amagi.tv/HNC_AUSTRALIA.m3u8"
+    },
+    {
+     "name": "talkSPORT",
+     "logo": "https://upload.wikimedia.org/wikipedia/en/9/9d/Talksport_logo.png",
+     "url": "https://af7a8b4e.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctZ2JfdGFsa1NQT1JUX0hMUw/playlist.m3u8"
+    },
+    {
+     "name": "Teledeporte",
+     "logo": "https://i.ibb.co/0jxLdjnY/TDP.png",
+     "url": "https://rtvelivestream.rtve.es/rtvesec/tdp/tdp_main.m3u8"
+    },
+    {
+     "name": "Trace Sport Stars",
+     "logo": "https://i.imgur.com/FabFP5A.png",
+     "url": "http://tracesportstars-samsunges.amagi.tv/hls/amagi_hls_data_samsunguk-tracesport-samsungspain/CDN/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://jmp2.uk/plu-660c29f80cd4630008f1547c.m3u8"
+    },
+    {
+     "name": "Horse & Country",
+     "logo": "",
+     "url": "https://jmp2.uk/plu-671b4e8bc7626f00089b7194.m3u8"
+    },
+    {
+     "name": "Horse and Country",
+     "logo": "https://i.imgur.com/1x6zYZr.png",
+     "url": "https://hncfree-samsung-uk.amagi.tv/playlist.m3u8"
+    },
+    {
+     "name": "Pluto TV Motor",
+     "logo": "https://images.pluto.tv/channels/68ac51dede4a734954b5a67a/colorLogoPNG_1761126157471.png",
+     "url": "https://jmp2.uk/plu-68ac52fac9b5923e0585578b.m3u8"
+    },
+    {
+     "name": "Pluto TV Sport",
+     "logo": "https://images.pluto.tv/channels/6357f3de3643ba0007bc0b50/colorLogoPNG_1746816938506.png",
+     "url": "https://jmp2.uk/plu-62cd74e38f6f0d000798cd93.m3u8"
+    },
+    {
+     "name": "Retake E-sport Live",
+     "logo": "",
+     "url": "https://jmp2.uk/plu-69a164f76c0414a7ec68de54.m3u8"
+    },
+    {
+     "name": "Tennis Channel",
+     "logo": "https://i.imgur.com/tsljAnY.png",
+     "url": "https://jmp2.uk/plu-6870c9ca759366af055fe891.m3u8"
+    },
+    {
+     "name": "U&Transport",
+     "logo": "",
+     "url": "https://amg00886-uktvmedialimite-uktvplayfullthrottle-samsunguk-36uja.amagi.tv/playlist/amg00886-uktvmedialimite-uktvplayfullthrottle-samsunguk/playlist.m3u8"
+    },
+    {
+     "name": "CBS Sports HQ",
+     "logo": "https://i.imgur.com/q8BENJg.png",
+     "url": "https://propee33f9c2.airspace-cdn.cbsivideo.com/index.m3u8"
+    }
+   ]
+  },
+  {
+   "name": "Engelska",
+   "channels": [
+    {
+     "name": "BBC Earth Czechia",
+     "logo": "https://i.imgur.com/nGSsUd4.png",
+     "url": "http://88.212.7.14/live/test_bbc_eartch_hevc/playlist.m3u8"
+    },
+    {
+     "name": "BBC Four",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/BBC_Four_logo_2021.svg/960px-BBC_Four_logo_2021.svg.png",
+     "url": "https://r.eu.cdn-redge.media/livehls/oeu/mt/live/bbc_four/live.livx/playlist.m3u8"
+    },
+    {
+     "name": "BBC News Europe",
+     "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
+     "url": "https://stream8.cinerama.uz/1251/tracks-v1a1/mono.m3u8"
+    },
+    {
+     "name": "BBC News North America",
+     "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
+     "url": "https://tvsen1.aynaott.com/shn6jGTk/index.m3u8"
+    },
+    {
+     "name": "BBC News South Asia",
+     "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
+     "url": "https://mumbai-edge.smartplaytv.in/BBCNews/index.m3u8"
+    },
+    {
+     "name": "BBC News UK HD",
+     "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
+     "url": "https://n-5-1.eu.cdn-redge.media/livehls/oeu/mt/live/bbc_news/live.livx/playlist.m3u8"
+    },
+    {
+     "name": "BBC One",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/BBC_One_logo_2021.svg/960px-BBC_One_logo_2021.svg.png",
+     "url": "https://r.eu.cdn-redge.media/livehls/oeu/mt/live/bbc_one/live.livx/playlist.m3u8"
+    },
+    {
+     "name": "BBC Two HD",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/BBC_Two_logo_2021.svg/960px-BBC_Two_logo_2021.svg.png",
+     "url": "https://n-5-1.eu.cdn-redge.media/livehls/oeu/mt/live/bbc_two/live.livx/playlist.m3u8"
+    },
+    {
+     "name": "BBC Arabic",
+     "logo": "https://i.imgur.com/ScyTG6P.png",
+     "url": "https://vs-hls-pushb-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_arabic_tv/mobile_wifi_main_hd_abr_v2.m3u8"
+    },
+    {
+     "name": "BBC News",
+     "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
+     "url": "https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/mobile_wifi_main_hd_abr_v2.m3u8"
+    },
+    {
+     "name": "BBC News Pashto",
+     "logo": "https://static.files.bbci.co.uk/ws/simorgh-assets/public/pashto/images/metadata/poster-1024x576.png",
+     "url": "https://vs-hls-pushb-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_afghan_tv/t=3840/v=pv14/b=5070016/main.m3u8"
+    },
+    {
+     "name": "BBC Persian",
+     "logo": "https://i.imgur.com/4uTMnPb.png",
+     "url": "https://vs-hls-pushb-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_persian_tv/mobile_wifi_main_hd_abr_v2.m3u8"
+    },
+    {
+     "name": "Aathavan TV",
+     "logo": "https://i.imgur.com/LEVEhTH.png",
+     "url": "https://oj7lnxonyg82-hls-live.5centscdn.com/uks/24263a839810d2041a349baaeef36a79.sdp/playlist.m3u8"
     },
     {
      "name": "Afghanistan International",
@@ -1921,11 +1871,6 @@
      "url": "https://cdn-globecast.akamaized.net/live/eds/akaal_tv/hls1_smart_akaal/akaal_tv.m3u8"
     },
     {
-     "name": "Al Jazeera",
-     "logo": "https://dtil.tmsimg.com/assets/s159135_ld_h15_aa.png?lock=720x540",
-     "url": "https://amg00222-amg00222c4-amgplt0002.playout.now3.amagi.tv/aljazeera-noscte/playlist.m3u8"
-    },
-    {
      "name": "AlbUK TV",
      "logo": "https://i.imgur.com/TMg4Kxi.png",
      "url": "http://albuk.dyndns.tv:1935/albuk/albuk.stream/playlist.m3u8"
@@ -1936,44 +1881,9 @@
      "url": "https://mn-nl.mncdn.com/alhiwar_live/smil:alhiwar.smil/playlist.m3u8"
     },
     {
-     "name": "America's Got Talent",
-     "logo": "",
-     "url": "https://d2mexh8isep4mf.cloudfront.net/AmericasGotTalent_GB.m3u8"
-    },
-    {
-     "name": "American Idol",
-     "logo": "",
-     "url": "https://d2yn8dyffvmgy.cloudfront.net/AmericanIdol_GB.m3u8"
-    },
-    {
      "name": "Anand TV",
      "logo": "https://i.imgur.com/5VOPFzs.png",
      "url": "https://live-anandtv.anandmedia.net/anandtvapp/anandtv/index.m3u8"
-    },
-    {
-     "name": "Andromeda",
-     "logo": "https://i.imgur.com/6ot2lmd.png",
-     "url": "https://jmp2.uk/plu-5e8db96bccae160007c71eec.m3u8"
-    },
-    {
-     "name": "Antiques Road Trip",
-     "logo": "https://i.imgur.com/kkm7VqV.png",
-     "url": "https://d3v8uchko88gmi.cloudfront.net/PBSART_GB.m3u8"
-    },
-    {
-     "name": "Are We There Yet?",
-     "logo": "https://i.imgur.com/3BJQiHP.png",
-     "url": "https://amg00353-lionsgatestudio-arewethereyet-samsunguk-6h2ju.amagi.tv/playlist/amg00353-lionsgatestudio-arewethereyet-samsunguk/playlist.m3u8"
-    },
-    {
-     "name": "Arthur",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-62556bfa3261a300076b0baa.m3u8"
-    },
-    {
-     "name": "Artist of the Year",
-     "logo": "",
-     "url": "https://d3cm8xyrjwa22p.cloudfront.net/30504/88896035/hls/master.m3u8?ads.xumo_channelId=88896035"
     },
     {
      "name": "ATN Bangla UK",
@@ -1981,119 +1891,9 @@
      "url": "https://app.ncare.live/c3VydmVyX8RpbEU9Mi8xNy8yMDE0GIDU6RgzQ6NTAgdEoaeFzbF92YWxIZTO0U0ezN1IzMyfvcGVMZEJCTEFWeVN3PTOmdFsaWRtaW51aiPhnPTI2/atnbanglauk-off.stream/playlist.m3u8"
     },
     {
-     "name": "Auction Hunters",
-     "logo": "https://i.imgur.com/4SPOVN7.png",
-     "url": "https://jmp2.uk/plu-62ac50e92c48f900071444c9.m3u8"
-    },
-    {
-     "name": "Autentic History",
-     "logo": "https://d3b6luslimvglo.cloudfront.net/images/79/rlaxximages/channels-rescaled/icon-white/autentichistory_white.png",
-     "url": "https://autentic-autentichistory-1-gb.samsung.wurl.tv/playlist.m3u8"
-    },
-    {
-     "name": "Autentic Travel",
-     "logo": "https://d3b6luslimvglo.cloudfront.net/images/79/rlaxximages/channels-rescaled/icon-white/autentictravel_white.png",
-     "url": "https://autentic-autentictravel-1-gb.samsung.wurl.tv/playlist.m3u8"
-    },
-    {
-     "name": "Avatar",
-     "logo": "https://i.imgur.com/2ijwlnR.png",
-     "url": "https://jmp2.uk/plu-656df599c0fc8800089c75ab.m3u8"
-    },
-    {
-     "name": "AWSN",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-66fd37885049580008d295b6.m3u8"
-    },
-    {
-     "name": "Ax Men",
-     "logo": "",
-     "url": "https://bcadcc64.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9BeE1lbl9ITFM/playlist.m3u8"
-    },
-    {
      "name": "BabyTV Latin America",
      "logo": "https://i.imgur.com/4BDJ5FT.png",
      "url": "http://138.121.15.230:9002/BABY-TV/index.m3u8"
-    },
-    {
-     "name": "BBC Arabic",
-     "logo": "https://i.imgur.com/ScyTG6P.png",
-     "url": "https://vs-hls-pushb-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_arabic_tv/mobile_wifi_main_hd_abr_v2.m3u8"
-    },
-    {
-     "name": "BBC Earth Czechia",
-     "logo": "https://i.imgur.com/nGSsUd4.png",
-     "url": "http://88.212.7.14/live/test_bbc_eartch_hevc/playlist.m3u8"
-    },
-    {
-     "name": "BBC Four",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/BBC_Four_logo_2021.svg/960px-BBC_Four_logo_2021.svg.png",
-     "url": "https://r.eu.cdn-redge.media/livehls/oeu/mt/live/bbc_four/live.livx/playlist.m3u8"
-    },
-    {
-     "name": "BBC News",
-     "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
-     "url": "https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/mobile_wifi_main_hd_abr_v2.m3u8"
-    },
-    {
-     "name": "BBC News Europe",
-     "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
-     "url": "https://stream8.cinerama.uz/1251/tracks-v1a1/mono.m3u8"
-    },
-    {
-     "name": "BBC News North America",
-     "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
-     "url": "https://tvsen1.aynaott.com/shn6jGTk/index.m3u8"
-    },
-    {
-     "name": "BBC News Pashto",
-     "logo": "https://static.files.bbci.co.uk/ws/simorgh-assets/public/pashto/images/metadata/poster-1024x576.png",
-     "url": "https://vs-hls-pushb-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_afghan_tv/t=3840/v=pv14/b=5070016/main.m3u8"
-    },
-    {
-     "name": "BBC News South Asia",
-     "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
-     "url": "https://mumbai-edge.smartplaytv.in/BBCNews/index.m3u8"
-    },
-    {
-     "name": "BBC News UK HD",
-     "logo": "https://dtil.tmsimg.com/assets/s158142_ld_h15_aa.png?lock=720x540",
-     "url": "https://n-5-1.eu.cdn-redge.media/livehls/oeu/mt/live/bbc_news/live.livx/playlist.m3u8"
-    },
-    {
-     "name": "BBC One",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/BBC_One_logo_2021.svg/960px-BBC_One_logo_2021.svg.png",
-     "url": "https://r.eu.cdn-redge.media/livehls/oeu/mt/live/bbc_one/live.livx/playlist.m3u8"
-    },
-    {
-     "name": "BBC Persian",
-     "logo": "https://i.imgur.com/4uTMnPb.png",
-     "url": "https://vs-hls-pushb-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_persian_tv/mobile_wifi_main_hd_abr_v2.m3u8"
-    },
-    {
-     "name": "BBC Two HD",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/BBC_Two_logo_2021.svg/960px-BBC_Two_logo_2021.svg.png",
-     "url": "https://n-5-1.eu.cdn-redge.media/livehls/oeu/mt/live/bbc_two/live.livx/playlist.m3u8"
-    },
-    {
-     "name": "Best of Dr. Phil",
-     "logo": "https://i.imgur.com/Jj0wTFQ.png",
-     "url": "https://jmp2.uk/plu-65a7b01907e03a0008913e8f.m3u8"
-    },
-    {
-     "name": "BET Pluto TV",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-604f8f8622166000071a929f.m3u8"
-    },
-    {
-     "name": "Beyond Belief: Fact or Fiction",
-     "logo": "https://i.imgur.com/3uXQg7Y.png",
-     "url": "https://jmp2.uk/plu-611f85396abc84000738417b.m3u8"
-    },
-    {
-     "name": "Bloodline Detectives",
-     "logo": "",
-     "url": "https://4399c7ad.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9NZWRpY2FsRGV0ZWN0aXZlc19ITFM/playlist.m3u8"
     },
     {
      "name": "Bloomberg TV EMEA Live Event",
@@ -2106,34 +1906,9 @@
      "url": "https://bloomberg.com/media-manifest/streams/eu.m3u8"
     },
     {
-     "name": "Bloomberg TV+",
-     "logo": "https://i.imgur.com/OuogLHx.png",
-     "url": "https://d8975dc3.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9CbG9vbWJlcmdUVlBsdXNfSExT/playlist.m3u8"
-    },
-    {
-     "name": "Bondi Rescue",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-660be37e7bcd860008793a6a.m3u8"
-    },
-    {
-     "name": "Born to Kill",
-     "logo": "",
-     "url": "https://amg00654-itv-amg00654c7-samsung-gb-1168.playouts.now.amagi.tv/playlist/amg00654-itvstudiosfast-truelives-samsunggb/playlist.m3u8"
-    },
-    {
      "name": "Brit Asia TV",
      "logo": "https://i.imgur.com/ULm80XF.png",
      "url": "https://hls.autopo.st/hls/britasiatv/index.m3u8"
-    },
-    {
-     "name": "British Screen Classics",
-     "logo": "",
-     "url": "https://amg00654-itv-amg00654c25-samsung-gb-4838.playouts.now.amagi.tv/playlist.m3u8"
-    },
-    {
-     "name": "Cagney & Lacey",
-     "logo": "https://images.pluto.tv/channels/6960c5a906d76f50db2816dc/colorLogoPNG_1767949823270.png",
-     "url": "https://jmp2.uk/plu-6960c5a906d76f50db2816dc.m3u8"
     },
     {
      "name": "Canaf54 TV",
@@ -2186,14 +1961,229 @@
      "url": "http://92.114.85.87:8007/play/a008"
     },
     {
-     "name": "Cash in the Attic",
-     "logo": "",
-     "url": "https://fifth-season-cashintheattic-1-gb.samsung.wurl.tv/playlist.m3u8"
+     "name": "Channel 4",
+     "logo": "https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/512/512/skychb1621.png",
+     "url": "https://r.eu.cdn-redge.media/livehls/oeu/mt/live/channel_4/live.livx/playlist.m3u8"
     },
     {
-     "name": "Catfish",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-625eaebc2a73a00007d3f855.m3u8"
+     "name": "Channel S",
+     "logo": "https://i.imgur.com/hJxFLvF.png",
+     "url": "https://app.ncare.live/c3VydmVyX8RpbEU9Mi8xNy8yMDE0GIDU6RgzQ6NTAgdEoaeFzbF92YWxIZTO0U0ezN1IzMyfvcGVMZEJCTEFWeVN3PTOmdFsaWRtaW51aiPhnPTI/chsukoff.stream/playlist.m3u8"
+    },
+    {
+     "name": "CNBC Europe",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/b/bc/CNBC_2025.svg",
+     "url": "https://r.eu.cdn-redge.media/livehls/oeu/mt/live/cnbc_europe/live.livx/playlist.m3u8"
+    },
+    {
+     "name": "CNBC UK",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/b/bc/CNBC_2025.svg",
+     "url": "https://amg01079-nbcuuk-amg01079c2-lg-gb-2030.playouts.now.amagi.tv/playlist.m3u8"
+    },
+    {
+     "name": "Crime + Investigation CEE",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Crime_%2B_Investigation_Logo_10.2019.svg",
+     "url": "http://88.212.7.14/live/test_cai_hevc/playlist.m3u8"
+    },
+    {
+     "name": "Deen TV",
+     "logo": "https://i.imgur.com/Zp62Nbd.png",
+     "url": "https://cd198.anystream.uk:9092/iqapp/d33ntv/playlist.m3u8"
+    },
+    {
+     "name": "English Club TV (576i)",
+     "logo": "https://i.imgur.com/9FMvaRK.png",
+     "url": "https://stream8.cinerama.uz/1442/tracks-v1a1/mono.m3u8"
+    },
+    {
+     "name": "ENT Channel",
+     "logo": "https://static.elektamedia.com/ch/entch.png",
+     "url": "https://cdn.global.elektamedia.com/live/c7eds/ENT_Channel/SA_LIVE_hls_enc/master.m3u8"
+    },
+    {
+     "name": "ENT Family",
+     "logo": "https://static.elektamedia.com/ch/entf.png",
+     "url": "https://cdn.global.elektamedia.com/live/c7eds/ENT_Family/SA_LIVE_hls_enc/master.m3u8"
+    },
+    {
+     "name": "Eurovision Sport",
+     "logo": "https://images.ctfassets.net/2b1dkanupt14/1A1Z8Gcn2NkbJRzTjxuj6h/2c14436cdc5b78e746a256e9f0c11a70/eurovision-icon.png",
+     "url": "https://amg26268-amg26268c34-amgplt0018.playout.now3.amagi.tv/ts-us-e2-n1/playlist/amg26268-amg26268c34-amgplt0018/playlist.m3u8"
+    },
+    {
+     "name": "Faith UK",
+     "logo": "https://i.imgur.com/mn8I2wt.png",
+     "url": "https://faithnow-hls.secdn.net/faithnow-c-channel/play/FaithUK.smil/playlist.m3u8"
+    },
+    {
+     "name": "Faith World TV",
+     "logo": "https://i.imgur.com/RLHRjQ3.png",
+     "url": "https://faithworldtv.abs.tv/1826926230/index.m3u8"
+    },
+    {
+     "name": "FIFA+",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://a62dad94.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0ZJRkFQbHVzRW5nbGlzaF9ITFM/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ French",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://37b4c228.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWZyX0ZJRkFQbHVzRnJlbmNoX0hMUw/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ German",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://4397879b.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWRlX0ZJRkFQbHVzR2VybWFuX0hMUw/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ Hispanic America",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://6c849fb3.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctbXhfRklGQVBsdXNTcGFuaXNoLTFfSExT/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ Italy",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://5d95f7d7.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWl0X0ZJRkFQbHVzSXRhbGlhbl9ITFM/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ Portuguese",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://e3be9ac5.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctYnJfRklGQVBsdXNQb3J0dWd1ZXNlX0hMUw/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ Spain",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://d63fabad.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWVzX0ZJRkFQbHVzU3BhbmlzaF9ITFM/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ United States",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/9c/FIFA%2B_%282025%29.svg",
+     "url": "https://d2w9q46ikgrcwx.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-of5cbk3sav3w5/v1/sysdata_s_p_a_fifa_7/samsungheadend_us/latest/main/hls/playlist.m3u8"
+    },
+    {
+     "name": "FIFA+ Women",
+     "logo": "https://i.ibb.co/LhpwRm8V/GB3800009-F0-20251028-T010335-SQUARE.png",
+     "url": "https://cffda8ff.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9GSUZBUGx1c3dvbWVuX0hMUw/playlist.m3u8"
+    },
+    {
+     "name": "Frecuencia Musical TV",
+     "logo": "https://i.imgur.com/vPxvbVv.png",
+     "url": "https://s2.tvdatta.com:3307/hybrid/play.m3u8"
+    },
+    {
+     "name": "GB News",
+     "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/GB_News_Logo.svg/960px-GB_News_Logo.svg.png",
+     "url": "https://amg01076-lightning-amg01076c7-lg-gb-2019.playouts.now.amagi.tv/playlist/amg01076-lightning-gbnews-lggb/playlist.m3u8"
+    },
+    {
+     "name": "Gems TV",
+     "logo": "https://i.imgur.com/WgaJufI.png",
+     "url": "https://lo3.gemporia.com/abrgemporiaukgfx/smil:livestream.smil/playlist.m3u8"
+    },
+    {
+     "name": "GREAT! movies",
+     "logo": "https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/512/512/skychb3709.png",
+     "url": "https://amg01753-narrativeuk-amg01753c3-lg-gb-1833.playouts.now.amagi.tv/playlist/amg01753-narrativeuk-greatmovies-lggb/playlist.m3u8"
+    },
+    {
+     "name": "GREAT! romance",
+     "logo": "https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/512/512/skychb3643.png",
+     "url": "https://amg01753-narrativeuk-amg01753c2-lg-gb-1832.playouts.now.amagi.tv/playlist/amg01753-narrativeuk-greatchristmas-lggb/playlist.m3u8"
+    },
+    {
+     "name": "Hellenic TV",
+     "logo": "https://i.imgur.com/NE7ddhC.png",
+     "url": "https://l5.cloudskep.com/hellenictv/htv/playlist.m3u8"
+    },
+    {
+     "name": "Hobby Maker",
+     "logo": "https://i.imgur.com/VWHp5Tl.png",
+     "url": "https://lo3.gemporia.com/abrhobbymakerukgfx/smil:livestreamFullHD.smil/playlist.m3u8"
+    },
+    {
+     "name": "Horse & Country TV",
+     "logo": "https://i.imgur.com/1x6zYZr.png",
+     "url": "https://hnc-free-viewlift.amagi.tv/HNC_AUSTRALIA.m3u8"
+    },
+    {
+     "name": "Iqra Bangla",
+     "logo": "https://i.imgur.com/BZBZAeC.png",
+     "url": "https://tvsen3.aynaott.com/EuEy5mBW/index.m3u8"
+    },
+    {
+     "name": "Iran International",
+     "logo": "https://i.imgur.com/55RpaF3.png",
+     "url": "https://hlspackager.akamaized.net/live/DB/IRAN_INTERNATIONAL/HLS/IRAN_INTERNATIONAL.m3u8"
+    },
+    {
+     "name": "IraneFarda TV",
+     "logo": "https://i.imgur.com/ixgcgZY.png",
+     "url": "https://iranefardalive.com/stream/live.m3u8"
+    },
+    {
+     "name": "JimJam Europe",
+     "logo": "https://i.imgur.com/ODhkYyx.png",
+     "url": "http://212.5.144.156:8080/jimjam/index.m3u8"
+    },
+    {
+     "name": "Kanshi TV",
+     "logo": "https://i.imgur.com/w6uXMrK.png",
+     "url": "https://live.kanshitv.co.uk/mobile/kanshitvkey.m3u8"
+    },
+    {
+     "name": "Latest TV",
+     "logo": "https://i.imgur.com/Cl1iGEb.jpeg",
+     "url": "https://5a0e89631aa14.streamlock.net/live/LatestTelevision/playlist.m3u8"
+    },
+    {
+     "name": "Magnavision TV",
+     "logo": "https://i.imgur.com/mUHixbi.png",
+     "url": "https://manatv.akamaized.net/120723/smil:magnavision.smil/playlist.m3u8"
+    },
+    {
+     "name": "Master Chefs Academy TV",
+     "logo": "https://platform-iuoamc.uk/storage/tv/branding/mca-tv-official-logo.png",
+     "url": "https://platform-iuoamc.uk/iptv/mca-tv/index.m3u8"
+    },
+    {
+     "name": "Moonbug Kids",
+     "logo": "https://i.imgur.com/vZHtxQb.png",
+     "url": "https://mumbai-edge.smartplaytv.in/Moonbug/index.m3u8"
+    },
+    {
+     "name": "Mr Bean Live Action",
+     "logo": "https://d2yv6y0n3qsl5c.cloudfront.net/MBEANP/MrBeanLiveAction-LG_LOGO_800x200.png",
+     "url": "https://amg00627-amg00627c40-rakuten-uk-5725.playouts.now.amagi.tv/playlist/amg00627-banijayfast-mrbeanpopupcc-rakutenuk/playlist.m3u8"
+    },
+    {
+     "name": "MTA1 World",
+     "logo": "https://i.imgur.com/bYiRfAg.png",
+     "url": "https://chlivemta1.akamaized.net/hls/live/2008145/mta1/playlist.m3u8"
+    },
+    {
+     "name": "MTA2 Europe",
+     "logo": "https://i.imgur.com/aVts0sz.png",
+     "url": "https://chlivemta1.akamaized.net/hls/live/2008145/mta2/playlist.m3u8"
+    },
+    {
+     "name": "MTA3 Al-Arabia",
+     "logo": "https://i.imgur.com/m3PEldJ.png",
+     "url": "https://chlivemta1.akamaized.net/hls/live/2010556/mta3alarabia/playlist.m3u8"
+    },
+    {
+     "name": "MTA4 Africa",
+     "logo": "https://i.imgur.com/lmVeQQX.png",
+     "url": "https://chlivemta.akamaized.net/hls/live/2010555/mtaafrica1/playlist.m3u8"
+    },
+    {
+     "name": "MTA5 Africa",
+     "logo": "https://i.imgur.com/9Cobb2i.png",
+     "url": "https://chlivemta.akamaized.net/hls/live/2010555/mtaafrica2/playlist.m3u8"
+    },
+    {
+     "name": "MTA6 Asia",
+     "logo": "https://i.imgur.com/nhCNPJI.png",
+     "url": "https://livemtaasia.akamaized.net/hls/live/2039224/mta6asia/playlist.m3u8"
     }
    ]
   }
