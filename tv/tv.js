@@ -2,6 +2,7 @@
  * The TV's side of the web home screen: its apps, opening one, its inputs, its settings, the Back key, its time zone.
  *  - LG webOS: the TV's service bus (Luna), the same calls LG's launcher makes.
  *  - Samsung Tizen: Tizen's web APIs (tizen.application for the apps, tizen.tvwindow for the inputs).
+ *  - Android (kompisens HY300-projektor): the Android app's bridge (window.FMTVAndroid, android/ in the repo).
  *  - A desktop browser: a stand-in with sample apps, so the screen can be previewed and tested on a computer.
  * Plain ES5: older TVs run a Chromium from 2015-2017 (webOS 3 and 4, Tizen 3).
  */
@@ -10,6 +11,9 @@ var TV = (function () {
 
   var webos = typeof window.PalmServiceBridge !== 'undefined';
   var samsung = !webos && typeof window.tizen !== 'undefined' && !!window.tizen.application;
+  // Android: the WebView of android/ (Java) hands over its bridge as window.FMTVAndroid; every call answers at once.
+  var droid = !webos && !samsung && typeof window.FMTVAndroid !== 'undefined' ? window.FMTVAndroid : null;
+  var android = !!droid;
   var calls = [];   // a bridge is collected if nothing holds it before its reply arrives
   var tizen2 = samsung && /Tizen 2\./.test(navigator.userAgent);
   // 2017 and 2018 Samsungs (Tizen 3 and 4) freeze opening their settings from an app (MU6100, MU6122, NU7400, #257).
@@ -21,7 +25,10 @@ var TV = (function () {
   // size: none at a ratio of 1 has been measured. deviceMemory (webOS 5+, Tizen 5+) is the nearest power of two, so it
   // reads 1 up to about 1.5 GB.
   var lowMemory = navigator.deviceMemory && navigator.deviceMemory <= 1;
-  if (tizen2 || (webos && lowMemory) || (samsung && lowMemory && (window.devicePixelRatio || 1) > 1)) {
+  // Android: the app says when the device is small (a HY300 Pro+ has 1 GB, of which ~400 MB free).
+  var androidLow = false;
+  if (android) { try { androidLow = !!droid.lowRam(); } catch (e) { androidLow = !!lowMemory; } }
+  if (tizen2 || (webos && lowMemory) || (samsung && lowMemory && (window.devicePixelRatio || 1) > 1) || androidLow) {
     document.documentElement.className += ' lite';
   } else if (samsung && navigator.deviceMemory && navigator.deviceMemory <= 2) {
     // Samsungs up to 2 GB keep the animations but not the soft shadows of the parts that move (home.css): a 2021 Frame
@@ -520,6 +527,47 @@ var TV = (function () {
     }
   }
 
+  // MARK: - Android
+
+  /** A bridge call that answers JSON; null when it fails. */
+  function droidJson(name, arg) {
+    try { return JSON.parse(arg === undefined ? droid[name]() : droid[name](arg)); } catch (e) { return null; }
+  }
+
+  /** The app's icons, drawn by the Android app at this address (served from the app, not the internet). */
+  var DROID_ICON = 'https://appassets.androidplatform.net/icon/';
+
+  function androidApps(done) {
+    var list = droidJson('apps') || [], out = [];
+    for (var i = 0; i < list.length; i++) {
+      var a = list[i];
+      if (!a || !a.id) continue;
+      var title = /^Amazon( Prime)? Video$/i.test(a.title) ? 'Prime Video' : a.title || a.id;
+      var key = String(title).toLowerCase().replace(/[^a-z0-9]/g, '');
+      // Our own logos where we have one (the same as on Samsung), else the app's own icon.
+      var byName = Object.prototype.hasOwnProperty.call(SAMSUNG_ICON_NAMES, key) ? SAMSUNG_ICON_NAMES[key] : '';
+      out.push({id: a.id, title: title, icon: byName || DROID_ICON + encodeURIComponent(a.id), color: ''});
+    }
+    out.sort(function (x, y) { var p = x.title.toLowerCase(), q = y.title.toLowerCase(); return p < q ? -1 : p > q ? 1 : 0; });
+    done(out);
+  }
+
+  /** The device's own inputs (HDMI) where Android tells of them (TvInputManager): [{id, key, label, symbol, connected}]. */
+  function androidInputs() {
+    var list = droidJson('inputs') || [], out = [];
+    for (var i = 0; i < list.length; i++) {
+      if (!list[i] || !list[i].id) continue;
+      out.push({id: 'input:' + list[i].id, key: 'hdmi' + (i + 1), label: list[i].label || 'HDMI ' + (i + 1), symbol: 'hdmi', connected: true});
+    }
+    return out;
+  }
+
+  function androidCall(name, arg, done) {
+    var ok = false;
+    try { ok = !!(arg === undefined ? droid[name]() : droid[name](arg)); } catch (e) {}
+    if (done) setTimeout(function () { done(ok); }, 0);
+  }
+
   // MARK: - About this TV
 
   /** done({model, firmware, system, version, ip}), with '' for what the TV doesn't tell. */
@@ -573,6 +621,14 @@ var TV = (function () {
       };
       try { x.open('GET', 'appinfo.json', true); x.send(); } catch (e) { finish(); }
       }
+    } else if (android) {
+      var o = droidJson('about') || {};
+      out.model = o.model || '';
+      out.firmware = o.firmware || '';
+      out.system = o.system || '';
+      out.ip = o.ip || '';
+      var LD = window.FMTV_LOADER;
+      out.version = (o.version || '') + (LD ? ' · ' + LD.commit : '');
     } else if (samsung) {
       var info = window.tizen.systeminfo;
       try { out.model = info.getCapability('http://tizen.org/system/model_name') || ''; } catch (e) {}
@@ -606,7 +662,10 @@ var TV = (function () {
   // MARK: - The TV, whichever it is
 
   return {
-    name: webos ? 'webos' : samsung ? 'tizen' : 'browser',
+    name: webos ? 'webos' : samsung ? 'tizen' : android ? 'android' : 'browser',
+
+    /** Whether the TV has inputs to show (the Inputs button): Android only where it tells of any. */
+    hasInputs: android ? androidInputs().length > 0 : true,
 
     /**
      * Whether an app can open the TV's settings. Not on Tizen 2 (a 2016 KU6300): the "settings" request and
@@ -618,6 +677,7 @@ var TV = (function () {
     /** Installed apps, as the TV's launcher lists them: [{id, title, icon, color}]. */
     apps: function (done) {
       if (samsung) { samsungApps(done); return; }
+      if (android) { androidApps(done); return; }
       if (!webos) {
         done(SAMPLE.map(function (s) { return {id: s[0], title: s[1], icon: '', color: s[2]}; }));
         return;
@@ -659,6 +719,11 @@ var TV = (function () {
 
     /** Opens an app (or an input); done(ok). */
     launch: function (id, params, done) {
+      if (android) {
+        if (id.indexOf('input:') === 0) androidCall('openInput', id.slice(6), done);
+        else androidCall('launch', id, done);
+        return;
+      }
       if (samsung) {
         if (id.indexOf('source:') === 0) samsungSource(id, done);
         else samsungLaunch(id, function (ok) { if (ok) watchApp(id); if (done) done(ok); });
@@ -676,6 +741,7 @@ var TV = (function () {
     /** The antenna and HDMI inputs; `connected` when the TV says a device is on (when it tells). */
     inputs: function (done) {
       if (samsung) { samsungInputs(done); return; }
+      if (android) { var found = androidInputs(); setTimeout(function () { done(found); }, 0); return; }
       var list = INPUTS.map(function (x) { return {id: x.id, key: x.key, label: x.label, symbol: x.symbol, connected: true}; });
       if (!webos) {
         list[2].connected = false;
@@ -723,14 +789,21 @@ var TV = (function () {
         return;
       }
       if (webos) { this.launch(appId || 'youtube.leanback.v4', {contentTarget: 'https://www.youtube.com/tv?v=' + video}, done); return; }
+      if (android) { androidCall('youtube', video, done); return; }
       if (done) setTimeout(function () { done(false); }, 0);
     },
 
     /** The TV's own settings; done(ok). */
     settings: function (done) {
-      if (samsung) samsungSettings(done);
+      if (android) androidCall('settings', undefined, done);
+      else if (samsung) samsungSettings(done);
       else this.launch('com.palm.app.settings', null, done);
     },
+
+    /** Android: whether Free My TV is the home screen, asking to become it, and the projector's own home screen. */
+    isHome: function () { if (!android) return true; try { return !!droid.isHome(); } catch (e) { return true; } },
+    makeHome: function (done) { androidCall('makeHome', undefined, done); },
+    stockHome: function (done) { androidCall('launch', 'stockhome', done); },
 
     /** The TV's model, firmware, system, IP address and this app's version, for About this TV. */
     about: about,
@@ -743,6 +816,7 @@ var TV = (function () {
 
     /** Back on the first screen: back to wherever the person came from. */
     back: function () {
+      if (android) { try { droid.back(); } catch (e) {} return; }
       if (samsung) {
         try { window.tizen.application.getCurrentApplication().hide(); } catch (e) {}
         return;
@@ -752,13 +826,16 @@ var TV = (function () {
 
     /** The TV's time zone ("America/Sao_Paulo"), or ''. */
     zone: function () {
+      if (android) {
+        try { var z = droid.zone(); if (z) return z; } catch (e) {}
+      }
       if (samsung) {
         try { return window.tizen.time.getLocalTimezone() || ''; } catch (e) {}
       }
       try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; }
     },
 
-    /** Key codes: the arrows, OK and the TV's Back (LG 461, Samsung 10009). */
+    /** Key codes: the arrows, OK and the TV's Back (LG 461, Samsung 10009; the Android app sends Back as 461). */
     keys: {left: 37, up: 38, right: 39, down: 40, ok: 13, back: samsung ? 10009 : 461}
   };
 })();

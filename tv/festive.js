@@ -97,7 +97,8 @@ var Festive = (function () {
 
   // Birthdays in the family, as [month, day, b(oy) or g(irl)] only: no names (this file is public). The balloons take
   // their colors from it.
-  var BIRTHDAYS = [[11, 25, 'g'], [1, 6, 'b'], [1, 16, 'b'], [5, 11, 'g'], [6, 29, 'g'], [7, 16, 'g'], [10, 7, 'g']];
+  // CONFIG.birthdays replaces them on another family's TV (android/kompis.js: none).
+  var BIRTHDAYS = (window.CONFIG && CONFIG.birthdays) || [[11, 25, 'g'], [1, 6, 'b'], [1, 16, 'b'], [5, 11, 'g'], [6, 29, 'g'], [7, 16, 'g'], [10, 7, 'g']];
   var BALLOONS = {
     g: ['255,105,180', '255,69,140', '191,90,242', '255,182,213', '255,204,0', '230,130,255'],
     b: ['10,132,255', '90,200,250', '52,199,89', '48,90,220', '0,199,190', '255,204,0']

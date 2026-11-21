@@ -328,6 +328,18 @@
   /** The Barça box's place in the top row (after the tabs 0-2 and the buttons 3-6): OK plays the match (iptv.js). */
   var BARCA = 7;
   function barcaShown() { return !!$('barca'); }
+
+  /**
+   * The buttons at the top right, in order (they hold the top row's places 3, 4, …). CONFIG.buttons can leave some out
+   * (android/kompis.js: no search or games on the friend's projector); Inputs only where the TV has inputs to show.
+   */
+  var ALL_BUTTONS = [['search', 'search', 'Sök'], ['games', 'gamepad', 'Spel'], ['inputs', 'hdmi', 'Inputs', true], ['shortcuts', 'apps', 'Shortcuts', true]];
+  var BUTTONS = ALL_BUTTONS.filter(function (b) {
+    if (CONFIG.buttons && CONFIG.buttons.indexOf(b[0]) < 0) return false;
+    return b[0] !== 'inputs' || TV.hasInputs !== false;
+  });
+  if (!BUTTONS.length) BUTTONS = [ALL_BUTTONS[3]];
+  var LAST_TOP = 2 + BUTTONS.length;   // the last button's place in the top row
   var st = {pick: 0, zone: Z.SHELF, top: 0, tab: 0, card: 0, shelf: 0, drawer: 0, grid: 0, row: 0, edit: 0, lang: 0, city: 0, key: 0};
   var cards = [];
 
@@ -410,12 +422,13 @@
     }
     var buttons = $('buttons');
     buttons.innerHTML = '';
-    var defs = [['search', 'Sök'], ['gamepad', 'Spel'], ['hdmi', tr('Inputs')], ['apps', tr('Shortcuts')]];   // live TV is under Inputs
-    for (var b = 0; b < 4; b++) {
-      var r = el('button', 'round' + (b === 3 ? ' last' : ''), buttons);
-      r.style.left = (1508 + 88 * b) + 'px';
-      sym(defs[b][0], r);
-      el('div', 'tip', r, defs[b][1]);
+    // Live TV is under Inputs. Fewer buttons keep the same right edge.
+    var n = BUTTONS.length;
+    for (var b = 0; b < n; b++) {
+      var r = el('button', 'round' + (b === n - 1 ? ' last' : ''), buttons);
+      r.style.left = (1508 + 88 * (b + 4 - n)) + 'px';
+      sym(BUTTONS[b][1], r);
+      el('div', 'tip', r, BUTTONS[b][3] ? tr(BUTTONS[b][2]) : BUTTONS[b][2]);
       hover(r, Z.TOP, 3 + b);
     }
   }
@@ -922,6 +935,10 @@
     out.push({label: tr('Home Settings'), symbol: 'settings', run: openSettings});
     if (window.IPTV) out.push({label: 'IPTV-länk', symbol: 'live_tv', run: function () { openKey('iptv'); }});
     if (TV.canOpenSettings) out.push({label: tr('TV Settings'), symbol: 'tv_settings', run: tvSettings});
+    if (TV.name === 'android') {   // kompisens projektor: skärpa och keystone finns i projektorns egen startskärm
+      out.push({label: 'Projektorns egen startskärm', symbol: 'keystone', run: function () { TV.stockHome(); }});
+      if (!TV.isHome()) out.push({label: 'Gör Free My TV till startskärm', symbol: 'home', run: function () { TV.makeHome(); }});
+    }
     out.push({label: tr('About this TV'), symbol: 'settings', run: openAbout});
     return out;
   }
@@ -1671,10 +1688,9 @@
       case Z.TOP:
         if (st.top < 3) return;
         if (st.top === BARCA) { if (window.BarcaBox && BarcaBox.play) BarcaBox.play(toast); return; }
-        if (st.top === 3) { if (window.Search) Search.open(); }
-        else if (st.top === 4) openPicker('games');
-        else if (st.top === 5) openPicker('inputs');
-        else openPicker('shortcuts');
+        var kind = (BUTTONS[st.top - 3] || ALL_BUTTONS[3])[0];
+        if (kind === 'search') { if (window.Search) Search.open(); }
+        else openPicker(kind);
         return;
       case Z.CARDS:
         playTrailer(cards[st.card]);
@@ -1768,7 +1784,7 @@
         }
         if (below && dx < 0 && st.top === 3) break;
         if (dx) {
-          st.top = Math.max(picksShown() ? 0 : 3, Math.min(6, st.top + dx));   // without the picks the tabs can't hold focus
+          st.top = Math.max(picksShown() ? 0 : 3, Math.min(LAST_TOP, st.top + dx));   // without the picks the tabs can't hold focus
           if (st.top < 3) selectTab(st.top);   // as on Apple TV: focusing a tab selects it
         } else if (dy > 0) {
           if (cards.length) { st.zone = Z.CARDS; st.card = Math.min(cards.length - 1, st.top < 3 ? 0 : cards.length - 1); }
