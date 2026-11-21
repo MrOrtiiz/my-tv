@@ -25,9 +25,9 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       KS_PASS: freemytv
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'

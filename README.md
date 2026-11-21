@@ -6,6 +6,9 @@ Free My TV-hemskärmen för Samsung The Frame, i en egen version (Uppsala, svens
   pushas hit syns på TV:n nästa gång Free My TV startar, utan någon ny installation.
 - `lg/` är barnens LG (webOS): laddaren som hämtar `tv/` på samma sätt, barn-TV:ns egna standardval (`barn.js`),
   förlängningen av Developer Mode (`devmode.js`) och `build.py`, som bygger `FreeMyTV-LG.ipk`.
+- `android/` är kompisens projektor (HY300 Pro+, Android 14): en Android-app (WebView) som hämtar `tv/` på samma sätt,
+  projektorns egna val (`kompis.js`) och `build.sh`. GitHub Actions (`android.yml`) bygger `FreeMyTV-projektor.apk` i
+  releasen [projektor](https://github.com/MrOrtiiz/my-tv/releases/tag/projektor) när något i `android/` ändras.
 - `source/web/` är källkoden för de filerna (från [simbasjungles/free-my-tv](https://github.com/simbasjungles/free-my-tv), MIT).
 
 Inga nycklar finns här: TMDB-nyckeln skrivs in på TV:n och stannar där.
