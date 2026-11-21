@@ -1,0 +1,340 @@
+{
+ "updated": 1795285087268,
+ "status": "ok",
+ "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
+ "matches": [
+  {
+   "title": "Valencia – Osasuna",
+   "competition": "LaLiga",
+   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/97.png",
+   "start": 1795957200000,
+   "stop": 1795964400000,
+   "live": false,
+   "channels": [],
+   "channel_ids": [],
+   "channel_langs": [],
+   "more": 0
+  }
+ ],
+ "source": [
+  "espn esp.1",
+  "espn uefa.champions",
+  "espn esp.copa_del_rey",
+  "espn esp.super_cup",
+  "espn club.friendly"
+ ],
+ "source_errors": [
+  "thesportsdb: LookupError"
+ ],
+ "guide": {
+  "channels": 5637,
+  "programmes": 294156,
+  "barca_listings": 19,
+  "until": "2026-11-22T20:55:00+01:00"
+ },
+ "barca_titles_seen": [
+  "11-22 17:00 | LIVE: Košarka - Španjolska liga: Valencia - Breogan  | 120 min",
+  "11-22 08:10 | Nogomet - Španjolska liga: Rayo Vallecano - Valencia  | 110 min",
+  "11-22 18:30 | Piłka nożna: Liga hiszpańska - mecz: Rayo Vallecano - Valencia CF  | 145 min",
+  "11-22 17:00 | LIVE: Košarka - Španjolska liga: Valencia - Breogan  | 120 min",
+  "11-22 08:10 | Nogomet - Španjolska liga: Rayo Vallecano - Valencia  | 110 min",
+  "11-22 01:00 | Rayo Vallecano - Valencia  | 120 min",
+  "11-22 01:00 | Rayo Vallecano - Valencia  | 120 min",
+  "11-22 00:00 | Rayo Vallecano - Valencia  | 120 min",
+  "11-22 06:00 | Rayo Vallecano - Valencia  | 120 min",
+  "11-22 01:08 | SailGP: Valencia 2026 – Highlights  | 54 min",
+  "11-21 16:05 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 235 min",
+  "11-21 16:05 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 235 min",
+  "11-21 16:05 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 235 min",
+  "11-21 23:00 | Fotbal Spania: Rayo Vallecano - Valencia  | 120 min",
+  "11-22 05:00 | Fotbal Spania: Rayo Vallecano - Valencia  | 120 min",
+  "11-21 23:00 | Fotbal Spania: Rayo Vallecano - Valencia  | 120 min",
+  "11-22 05:00 | Fotbal Spania: Rayo Vallecano - Valencia  | 120 min",
+  "11-21 16:05 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 235 min",
+  "11-21 18:10 | LaLiga EA Sports - Matchday 13: Rayo Vallecano vs Valencia  | 125 min",
+  "11-21 22:50 | LaLiga HL 26/27 Valencia v R Madrid  | 5 min",
+  "11-22 05:00 | LaLiga 26/27: Rayo v Valencia  | 120 min",
+  "11-22 13:45 | LaLiga EA Sports - Matchday 13: Rayo Vallecano vs Valencia  | 120 min",
+  "11-21 06:15 | Liga 26/27: Valencia vs Real Madrid  | 1364 min"
+ ],
+ "table": {
+  "league": "LaLiga",
+  "rows": [
+   {
+    "rank": 1,
+    "team": "Barcelona",
+    "short": "Barcelona",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
+    "points": 33,
+    "played": 12,
+    "gd": 35,
+    "barca": false
+   },
+   {
+    "rank": 2,
+    "team": "Real Madrid",
+    "short": "Real Madrid",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/86.png",
+    "points": 30,
+    "played": 12,
+    "gd": 21,
+    "barca": false
+   },
+   {
+    "rank": 3,
+    "team": "Atlético Madrid",
+    "short": "Atlético",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
+    "points": 28,
+    "played": 12,
+    "gd": 13,
+    "barca": false
+   },
+   {
+    "rank": 4,
+    "team": "Real Betis",
+    "short": "Betis",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/244.png",
+    "points": 26,
+    "played": 12,
+    "gd": 5,
+    "barca": false
+   },
+   {
+    "rank": 5,
+    "team": "Real Sociedad",
+    "short": "Real Sociedad",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/89.png",
+    "points": 22,
+    "played": 12,
+    "gd": 1,
+    "barca": false
+   },
+   {
+    "rank": 6,
+    "team": "Sevilla",
+    "short": "Sevilla",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/243.png",
+    "points": 18,
+    "played": 12,
+    "gd": -2,
+    "barca": false
+   },
+   {
+    "rank": 7,
+    "team": "Athletic Club",
+    "short": "Athletic",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/93.png",
+    "points": 16,
+    "played": 12,
+    "gd": 3,
+    "barca": false
+   },
+   {
+    "rank": 8,
+    "team": "Alavés",
+    "short": "Alavés",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/96.png",
+    "points": 16,
+    "played": 13,
+    "gd": 0,
+    "barca": false
+   },
+   {
+    "rank": 9,
+    "team": "Villarreal",
+    "short": "Villarreal",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
+    "points": 15,
+    "played": 12,
+    "gd": 2,
+    "barca": false
+   },
+   {
+    "rank": 10,
+    "team": "Espanyol",
+    "short": "Espanyol",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/88.png",
+    "points": 15,
+    "played": 13,
+    "gd": 0,
+    "barca": false
+   },
+   {
+    "rank": 11,
+    "team": "Deportivo",
+    "short": "Deportivo",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/90.png",
+    "points": 15,
+    "played": 13,
+    "gd": -1,
+    "barca": false
+   },
+   {
+    "rank": 12,
+    "team": "Racing Santander",
+    "short": "Racing",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/87.png",
+    "points": 14,
+    "played": 12,
+    "gd": -13,
+    "barca": false
+   },
+   {
+    "rank": 13,
+    "team": "Celta Vigo",
+    "short": "Celta Vigo",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
+    "points": 13,
+    "played": 12,
+    "gd": 0,
+    "barca": false
+   },
+   {
+    "rank": 14,
+    "team": "Rayo Vallecano",
+    "short": "Rayo",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/101.png",
+    "points": 12,
+    "played": 12,
+    "gd": -7,
+    "barca": false
+   },
+   {
+    "rank": 15,
+    "team": "Getafe",
+    "short": "Getafe",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2922.png",
+    "points": 12,
+    "played": 12,
+    "gd": -10,
+    "barca": false
+   },
+   {
+    "rank": 16,
+    "team": "Osasuna",
+    "short": "Osasuna",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/97.png",
+    "points": 12,
+    "played": 12,
+    "gd": -11,
+    "barca": false
+   },
+   {
+    "rank": 17,
+    "team": "Valencia",
+    "short": "Valencia",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
+    "points": 12,
+    "played": 13,
+    "gd": -11,
+    "barca": true
+   },
+   {
+    "rank": 18,
+    "team": "Levante",
+    "short": "Levante",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1538.png",
+    "points": 11,
+    "played": 12,
+    "gd": -5,
+    "barca": false
+   },
+   {
+    "rank": 19,
+    "team": "Elche",
+    "short": "Elche",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3751.png",
+    "points": 10,
+    "played": 12,
+    "gd": -6,
+    "barca": false
+   },
+   {
+    "rank": 20,
+    "team": "Málaga",
+    "short": "Málaga",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
+    "points": 5,
+    "played": 12,
+    "gd": -14,
+    "barca": false
+   }
+  ]
+ },
+ "form": [
+  {
+   "date": "2026-10-24T16:30Z",
+   "res": "F",
+   "opp": "Villarreal",
+   "home": true,
+   "comp": "LaLiga",
+   "score": "1–2"
+  },
+  {
+   "date": "2026-11-01T17:30Z",
+   "res": "V",
+   "opp": "Elche",
+   "home": false,
+   "comp": "LaLiga",
+   "score": "1–0"
+  },
+  {
+   "date": "2026-11-07T20:00Z",
+   "res": "F",
+   "opp": "Real Madrid",
+   "home": true,
+   "comp": "LaLiga",
+   "score": "0–3"
+  },
+  {
+   "date": "2026-11-10T20:00Z",
+   "res": "V",
+   "opp": "UE Tavernes",
+   "home": false,
+   "comp": "Copa del Rey",
+   "score": "6–0"
+  },
+  {
+   "date": "2026-11-21T15:15Z",
+   "res": "V",
+   "opp": "Rayo",
+   "home": false,
+   "comp": "LaLiga",
+   "score": "1–0"
+  }
+ ],
+ "scorers": [
+  {
+   "name": "Raphinha",
+   "team": "Barcelona",
+   "goals": 15,
+   "barca": false
+  },
+  {
+   "name": "Kylian Mbappé",
+   "team": "Real Madrid",
+   "goals": 13,
+   "barca": false
+  },
+  {
+   "name": "Lamine Yamal",
+   "team": "Barcelona",
+   "goals": 10,
+   "barca": false
+  },
+  {
+   "name": "Yassir Zabiri",
+   "team": "Racing Santander",
+   "goals": 9,
+   "barca": false
+  },
+  {
+   "name": "Ante Budimir",
+   "team": "Osasuna",
+   "goals": 8,
+   "barca": false
+  }
+ ],
+ "league_errors": []
+}
