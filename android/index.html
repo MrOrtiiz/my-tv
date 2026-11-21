@@ -12,14 +12,14 @@
  * Free My TV på kompisens projektor (Android): laddaren, som lg/index.html. Vid varje start hämtar den den senaste
  * koden från GitHub-repot MrOrtiiz/my-tv (mappen tv/, samma som The Frame och LG) via jsDelivr, låst till senaste
  * commit, och skriver in den i den här sidan, som har kvar appens eget ursprung (lagringen och bryggan FMTVAndroid).
- * Efter tv/config.js läses android/kompis.js (projektorns egna val, bl.a. Valencia i Barça-rutan). IPTV, sök och
- * spelen tas bort (SKIP): de är bara för Yuris TV:ar. Utan internet: den inbyggda kopian i app/. ES5.
+ * Efter tv/config.js läses android/kompis.js (projektorns egna val, bl.a. Valencia i Barça-rutan). IPTV och spelen
+ * tas bort (SKIP): de är bara för Yuris TV:ar. Utan internet: den inbyggda kopian i app/. ES5.
  */
 (function () {
   'use strict';
-  var REPO = 'MrOrtiiz/my-tv', VERSION = '1.1.0';
+  var REPO = 'MrOrtiiz/my-tv', VERSION = '1.2.0';
   var KEY = 'fmtv.live';   // senaste commit som gick att ladda
-  var SKIP = ['iptv.js', 'search.js', 'dance.js', 'rush.js', 'iptv.css', 'search.css', 'dance.css', 'rush.css'];
+  var SKIP = ['iptv.js', 'dance.js', 'rush.js', 'iptv.css', 'dance.css', 'rush.css'];
 
   function stored() { try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; } }
   function store(sha) { try { localStorage.setItem(KEY, sha); } catch (e) {} }
