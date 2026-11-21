@@ -1,7 +1,7 @@
 /*
  * Kompisens projektor (HY300 Pro+, Android 14): det som skiljer från The Frame. Läses efter tv/config.js, bara där.
  * Allt annat (väder i Uppsala, svenska, iOS-stilen, filmtips, högtider) är samma kod som på The Frame.
- * Barça-rutan, IPTV, sök och spelen laddas inte alls på projektorn (android/index.html, FMTV_SKIP).
+ * IPTV, sök och spelen laddas inte alls på projektorn (android/index.html, SKIP). Barça-rutan visar Valencia (c.team).
  * defaultShelf gäller bara en ny installation (ingen sparad favoritrad); favoritraden ändras sedan på projektorn
  * (Genvägar → Favoritappar). Appar som inte finns på projektorn hoppas över.
  */
@@ -13,4 +13,16 @@
   c.birthdays = [];          // Yuris familjs födelsedagar gäller inte här
   c.ownInputs = {};          // PS5 på HDMI 4 gäller The Frame
   c.buttons = ['inputs', 'shortcuts'];   // ingen sök- eller spelknapp; Ingångar bara om projektorn har någon
+
+  // Valencia-rutan: Barça-rutan (tv/barca.js) för Valencia CF, från data/valencia.json (barca.yml skriver den), med
+  // Valencias färger på matchdagen (festive.js).
+  c.team = {name: 'Valencia CF', key: 'valencia', espn: '94', file: 'valencia.json', label: 'Valencia-ruta',
+    theme: 'valencia', stripes: ['255,128,0', '240,240,240']};
+  // Laddaren i APK 1.0.0 tar bort barca.js: då läses den här, efter de andra skripten (samma ordning som i tv/index.html).
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.BarcaBox) return;
+    var s = document.createElement('script');
+    s.src = 'barca.js';
+    document.body.appendChild(s);
+  });
 })(window.CONFIG);

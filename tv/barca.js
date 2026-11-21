@@ -5,9 +5,13 @@
  */
 var BarcaBox = (function () {
   'use strict';
+  // The team: FC Barcelona, or the one CONFIG.team names (android/kompis.js: Valencia CF on the friend's projector), with
+  // its file in data/ (written by barca.yml), the name ESPN's scoreboard gives it and its ESPN id (the crest).
+  var TEAM = (window.CONFIG && CONFIG.team) || {name: 'FC Barcelona', key: 'barcelona', espn: '83', file: 'barca.json'};
+  var TEAM_RE = new RegExp(TEAM.key, 'i');
   // GitHub's API answers with the file as it is now; raw.githubusercontent.com can lag minutes behind (its cache).
-  var API = 'https://api.github.com/repos/MrOrtiiz/my-tv/contents/data/barca.json?ref=main';
-  var RAW = 'https://raw.githubusercontent.com/MrOrtiiz/my-tv/main/data/barca.json';
+  var API = 'https://api.github.com/repos/MrOrtiiz/my-tv/contents/data/' + TEAM.file + '?ref=main';
+  var RAW = 'https://raw.githubusercontent.com/MrOrtiiz/my-tv/main/data/' + TEAM.file;
   var EVERY = 15 * 60000, SHOW = 3;
 
   // MARK: - Live: the score during a match, from ESPN's open scoreboard, every 30 seconds from a quarter before kick-off
@@ -34,12 +38,12 @@ var BarcaBox = (function () {
     for (var i = 0; i < evs.length; i++) {
       var c = (evs[i].competitions || [])[0], teams = (c && c.competitors) || [];
       var isBarca = false;
-      for (var k = 0; k < teams.length; k++) if (/barcelona/i.test((teams[k].team || {}).displayName || '')) isBarca = true;
+      for (var k = 0; k < teams.length; k++) if (TEAM_RE.test((teams[k].team || {}).displayName || '')) isBarca = true;
       if (!isBarca) continue;
       var st = evs[i].status || {}, type = st.type || {}, home = null, away = null;
       for (k = 0; k < teams.length; k++) {
         var t = {name: (teams[k].team || {}).shortDisplayName || (teams[k].team || {}).displayName || '', score: parseInt(teams[k].score, 10) || 0,
-          id: (teams[k].team || {}).id, barca: /barcelona/i.test((teams[k].team || {}).displayName || '')};
+          id: (teams[k].team || {}).id, barca: TEAM_RE.test((teams[k].team || {}).displayName || '')};
         if (teams[k].homeAway === 'home') home = t; else away = t;
       }
       var goals = [], det = (c && c.details) || [];
@@ -88,7 +92,7 @@ var BarcaBox = (function () {
     if (!(live && live.state === 'post') && !document.hidden) fetchLive(m, 0);
     liveTimer = setTimeout(pollLive, live && live.state === 'post' ? 5 * 60000 : LIVE_EVERY);
   }
-  var CREST = 'https://a.espncdn.com/i/teamlogos/soccer/500/83.png';
+  var CREST = 'https://a.espncdn.com/i/teamlogos/soccer/500/' + TEAM.espn + '.png';
   var data = null, timer = 0;
   var DAYS = ['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör'];
   var MONTHS = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
@@ -213,11 +217,11 @@ var BarcaBox = (function () {
     dot.style.display = 'none';
     crest.onerror = function () { crest.style.display = 'none'; dot.style.display = ''; };
     crest.src = data.crest || CREST;
-    el('span', 'name', head, 'FC Barcelona');
+    el('span', 'name', head, TEAM.name);
     // When the match list was made: shows at once whether the TV has the newest one.
     var u = new Date(data.updated);
     el('span', 'stamp', head, 'uppdaterad ' + two(u.getHours()) + ':' + two(u.getMinutes()));
-    el('div', 'playhint', box, 'OK spelar matchen i din IPTV');
+    if (window.IPTV) el('div', 'playhint', box, 'OK spelar matchen i din IPTV');
     var pg = pages(), which = pg[page % pg.length];
     if (pg.length > 1) {
       var dots = el('div', 'dots', box);

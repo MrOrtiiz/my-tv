@@ -15,8 +15,15 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 
-OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'barca.json')
-TEAM = re.compile(r'\bbar(?:c|ç)elona\b|\bbar(?:c|ç)a\b|\bfcb\b', re.I)
+# The team: FC Barcelona unless the environment names another (the workflow's Valencia step for the friend's projector):
+# TEAM_NAME as in titles, TEAM_KEY as ESPN's name holds it (lower case, no accents), TEAM_ESPN its ESPN id, TEAM_RE how
+# the guide names it, TEAM_SPORTSDB its TheSportsDB id ('' leaves that source out), TEAM_OUT the file.
+TEAM_NAME = os.environ.get('TEAM_NAME') or 'Barcelona'
+TEAM_KEY = os.environ.get('TEAM_KEY') or 'barcelona'
+TEAM_ESPN = os.environ.get('TEAM_ESPN') or '83'
+TEAM_SPORTSDB = os.environ.get('TEAM_SPORTSDB', '133739')
+OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'data', os.environ.get('TEAM_OUT') or 'barca.json')
+TEAM = re.compile(os.environ.get('TEAM_RE') or r'\bbar(?:c|ç)elona\b|\bbar(?:c|ç)a\b|\bfcb\b', re.I)
 NOT_LIVE = re.compile(r'highlight|höjdpunkt|sammandrag|magasin|magazine|repris|replay|rewind|classic|klassiker|'
                       r'preview|previa|pre-?match|optakt|studio|förhands|dokument|documentary|\(r\)|\brep\b|reprise|resumen|tennis|basket|handball|'
                       r'handboll|futsal|hockey|esport|\bopen\b', re.I)
@@ -89,10 +96,10 @@ def when(text):
 
 # Barça's football fixtures, the truth the guide is checked against: ESPN's open schedule per competition, and
 # TheSportsDB as a second source. A listing counts only when it starts at a fixture's kick-off: no basketball, no replays.
-ESPN = 'https://site.api.espn.com/apis/site/v2/sports/soccer/%s/teams/83/schedule?fixture=true'
+ESPN = 'https://site.api.espn.com/apis/site/v2/sports/soccer/%s/teams/' + TEAM_ESPN + '/schedule?fixture=true'
 LEAGUES = [('esp.1', 'LaLiga'), ('uefa.champions', 'Champions League'), ('esp.copa_del_rey', 'Copa del Rey'),
            ('esp.super_cup', 'Supercopa'), ('club.friendly', 'Träningsmatch')]
-SPORTSDB = 'https://www.thesportsdb.com/api/v1/json/3/eventsnext.php?id=133739'
+SPORTSDB = 'https://www.thesportsdb.com/api/v1/json/3/eventsnext.php?id=' + TEAM_SPORTSDB if TEAM_SPORTSDB else ''
 OTHER_SPORT = re.compile(r'koszyk|basket|baloncesto|b[aà]squet|euroleague|euroliga|\bacb\b|handbal|futsal|hockey|'
                          r'waterpolo|volley|siatk|r[eé]plica|repet|\b(19|20)\d\d/\d\d\b|\b\d\d/\d\d\b', re.I)
 
@@ -140,18 +147,20 @@ def fixtures(now, until):
             teams = [c.get('team', {}).get('displayName', '') for c in comps]
             logos = {c.get('team', {}).get('displayName', ''): logo(c.get('team', {})) for c in comps}
             for name, href in logos.items():
-                if 'barcelona' in fold(name) and href and not CREST['url']:
+                if TEAM_KEY in fold(name) and href and not CREST['url']:
                     CREST['url'] = href
             home = next((c.get('team', {}).get('displayName', '') for c in (ev.get('competitions') or [{}])[0].get('competitors', [])
                          if c.get('homeAway') == 'home'), teams[0] if teams else '')
-            rival = next((t for t in teams if 'barcelona' not in fold(t)), '')
+            rival = next((t for t in teams if TEAM_KEY not in fold(t)), '')
             if not rival:
                 continue
-            title = 'Barcelona – %s' % rival if 'barcelona' in fold(home) else '%s – Barcelona' % rival
+            title = '%s – %s' % (TEAM_NAME, rival) if TEAM_KEY in fold(home) else '%s – %s' % (rival, TEAM_NAME)
             out[kick.strftime('%Y%m%d%H')] = {'kick': kick, 'rival': rival, 'title': title, 'competition': comp,
                                               'rival_logo': logos.get(rival, '')}
         used.append('espn ' + slug)
     try:
+        if not SPORTSDB:
+            raise LookupError('off')
         data = json.loads(fetch(SPORTSDB))
         for ev in data.get('events') or []:
             if (ev.get('strSport') or 'Soccer') != 'Soccer':
@@ -166,11 +175,11 @@ def fixtures(now, until):
             if not now - timedelta(hours=2) <= kick <= until:
                 continue
             home, away = ev.get('strHomeTeam') or '', ev.get('strAwayTeam') or ''
-            rival = away if 'barcelona' in fold(home) else home
+            rival = away if TEAM_KEY in fold(home) else home
             key = kick.strftime('%Y%m%d%H')
             if key not in out and rival:
                 out[key] = {'kick': kick, 'rival': rival, 'competition': ev.get('strLeague') or '', 'rival_logo': '',
-                            'title': 'Barcelona – %s' % rival if 'barcelona' in fold(home) else '%s – Barcelona' % rival}
+                            'title': '%s – %s' % (TEAM_NAME, rival) if TEAM_KEY in fold(home) else '%s – %s' % (rival, TEAM_NAME)}
         used.append('thesportsdb')
     except Exception as e:
         errors.append('thesportsdb: %s' % type(e).__name__)
@@ -228,7 +237,7 @@ def guide(url):
 # LaLiga's table, Barça's form (the last five, every competition) and the league's top scorers, for the box's pages
 # when it isn't match day. Each part on its own: one that fails is left out and named in league_errors.
 STANDINGS = 'https://site.api.espn.com/apis/v2/sports/soccer/esp.1/standings'
-RESULTS = 'https://site.api.espn.com/apis/site/v2/sports/soccer/%s/teams/83/schedule'
+RESULTS = 'https://site.api.espn.com/apis/site/v2/sports/soccer/%s/teams/' + TEAM_ESPN + '/schedule'
 SCORERS = ['https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/statistics',
            'https://site.web.api.espn.com/apis/site/v2/sports/soccer/esp.1/statistics']
 
@@ -253,7 +262,7 @@ def table():
         t = e.get('team') or {}
         rows.append({'rank': num(st.get('rank')), 'team': t.get('displayName') or '', 'short': t.get('shortDisplayName') or t.get('displayName') or '',
                      'logo': logo(t), 'points': num(st.get('points')), 'played': num(st.get('gamesPlayed')),
-                     'gd': num(st.get('pointDifferential')), 'barca': 'barcelona' in fold(t.get('displayName') or '')})
+                     'gd': num(st.get('pointDifferential')), 'barca': TEAM_KEY in fold(t.get('displayName') or '')})
     rows = [r for r in rows if r['rank'] is not None]
     rows.sort(key=lambda r: r['rank'])
     if not rows:
@@ -276,7 +285,7 @@ def form():
             for t in c.get('competitors') or []:
                 side = {'name': (t.get('team') or {}).get('shortDisplayName') or (t.get('team') or {}).get('displayName') or '',
                         'score': num(t.get('score')), 'home': t.get('homeAway') == 'home'}
-                if 'barcelona' in fold((t.get('team') or {}).get('displayName') or ''):
+                if TEAM_KEY in fold((t.get('team') or {}).get('displayName') or ''):
                     us = side
                 else:
                     them = side
@@ -305,7 +314,7 @@ def scorers():
                 a = l.get('athlete') or {}
                 team = (a.get('team') or l.get('team') or {}).get('shortDisplayName') or (a.get('team') or l.get('team') or {}).get('displayName') or ''
                 out.append({'name': a.get('displayName') or a.get('shortName') or '', 'team': team, 'goals': num(l.get('value')),
-                            'barca': 'barcelona' in fold(team)})
+                            'barca': TEAM_KEY in fold(team)})
             if out:
                 return out
     raise ValueError('no scorers')

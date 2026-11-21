@@ -1045,7 +1045,7 @@
         step: function () { Prefs.set('saverWatch', !Prefs.saverWatch()); }},
       {label: tr('Weather widget'), toggle: Prefs.weather(),
         step: function () { Prefs.set('weather', !Prefs.weather()); renderPanels(); }},
-      {label: tr('Barça box'), toggle: Prefs.barca(),
+      {label: (CONFIG.team && CONFIG.team.label) || tr('Barça box'), toggle: Prefs.barca(),
         step: function () { Prefs.set('barca', !Prefs.barca()); if (window.BarcaBox) BarcaBox.refresh(); }},
       {label: tr('Weather background'), toggle: Prefs.weatherBg(),
         step: function () { Prefs.set('weatherBg', !Prefs.weatherBg()); bgUrl = null; checkNight(); followSoon(); }},

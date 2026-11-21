@@ -156,7 +156,8 @@ var Festive = (function () {
       var k = new Date(match.start), hm = (k.getHours() < 10 ? '0' : '') + k.getHours() + ':' + (k.getMinutes() < 10 ? '0' : '') + k.getMinutes();
       var bday = birthday(t) ? 'Grattis på födelsedagen!' : '';
       var others = [bday, h ? h.name : ''].filter(function (x) { return x; });
-      return {name: 'Matchdag ' + hm + (others.length ? '  ·  ' + others.join('  ·  ') : ''), red: !!(h && h.red), anim: 'barca', theme: 'barca'};
+      var club = (window.CONFIG && CONFIG.team && CONFIG.team.theme) || 'barca';   // Valencia's colors on the friend's projector
+      return {name: 'Matchdag ' + hm + (others.length ? '  ·  ' + others.join('  ·  ') : ''), red: !!(h && h.red), anim: 'barca', theme: club};
     }
     // A birthday comes first; on a holiday too, both names show and a red day stays red.
     if (birthday(t)) return {name: 'Grattis på födelsedagen!' + (h ? '  ·  ' + h.name : ''), red: !!(h && h.red), anim: 'birthday', theme: 'birthday-' + who};
@@ -167,6 +168,7 @@ var Festive = (function () {
   // [accent, second color, tint at the top, tint at the bottom], as "r,g,b" and "r,g,b,a".
   var THEMES = {
     barca: ['220,30,80', '237,187,0', '0,77,152,0.26', '165,0,68,0.26'],
+    valencia: ['255,128,0', '245,245,245', '20,20,24,0.3', '255,110,0,0.2'],
     christmas: ['255,69,58', '255,214,10', '20,120,60,0.16', '170,20,30,0.22'],
     newyear: ['255,214,10', '210,215,255', '60,30,120,0.18', '255,190,60,0.12'],
     lucia: ['255,200,110', '255,240,210', '255,170,60,0.08', '255,150,40,0.2'],
@@ -279,7 +281,8 @@ var Festive = (function () {
     sparkle: function () { for (var i = 0; i < 34; i++) parts.push({t: 'spark', x: rand(0, W), y: rand(0, H * 0.75), p: rand(0, 6.3)}); },
     // Match day: the kit's blue and garnet stripes glowing and drifting, gold sparks, and a ball now and then.
     barca: function () {
-      for (var i = 0; i < 10; i++) parts.push({t: 'stripe', i: i, x: i * (W / 9) - 40, c: i % 2 ? '165,0,68' : '0,77,152', p: rand(0, 6.3)});
+      var kit = (window.CONFIG && CONFIG.team && CONFIG.team.stripes) || ['0,77,152', '165,0,68'];   // the club's two colors
+      for (var i = 0; i < 10; i++) parts.push({t: 'stripe', i: i, x: i * (W / 9) - 40, c: kit[i % 2], p: rand(0, 6.3)});
       for (var j = 0; j < 40; j++) parts.push({t: 'gold', x: rand(0, W), y: rand(0, H), v: rand(10, 26), p: rand(0, 6.3)});
       parts.push({t: 'balls', next: 1});
     },
