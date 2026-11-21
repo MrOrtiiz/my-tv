@@ -1,0 +1,33 @@
+# Fria TV-kanaler för kompisens projektor (knappen TV-kanaler): gratis, öppna strömmar från iptv-org, provade varje
+# morgon. Skriver data/fria-kanaler.json och data/fria-kanaler.m3u.
+name: Fria kanaler
+on:
+  schedule:
+    - cron: '23 4 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/scripts/fria.py', '.github/workflows/fria.yml']
+permissions:
+  contents: write
+concurrency: fria
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - name: Prova kanalerna
+        run: python3 .github/scripts/fria.py
+      - name: Spara
+        run: |
+          git config user.name "my-tv bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/fria-kanaler.json data/fria-kanaler.m3u
+          if git diff --cached --quiet; then echo "Ingen ändring."; exit 0; fi
+          # Bara tiden ändrades: ingen commit.
+          if [ "$(git diff --cached --numstat -- data/fria-kanaler.json | awk '{s+=$1} END {print s+0}')" = "1" ] \
+             && git diff --cached --quiet -- data/fria-kanaler.m3u; then echo "Bara tiden."; exit 0; fi
+          git commit -m "Fria kanaler: dagens lista"
+          git pull -q --rebase origin main
+          git push
