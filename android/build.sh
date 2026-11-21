@@ -11,8 +11,10 @@ VERSION_NAME="$(grep -o "VERSION = '[^']*'" android/index.html | cut -d"'" -f2)"
 VERSION_CODE="${VERSION_CODE:-1}"
 SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
 [ -n "$SDK" ] && [ -d "$SDK/build-tools" ] || { echo "Android SDK saknas (ANDROID_HOME)."; exit 1; }
-BT="$SDK/build-tools/$(ls "$SDK/build-tools" | sort -V | tail -1)"
-AJ="$(ls -d "$SDK"/platforms/android-*/android.jar | sort -V | tail -1)"
+# Beprövade versioner före de senaste (build-tools 34/35, plattform 34/35): äldre projektorer läser deras APK:er säkert.
+pick() { for v in "$@"; do [ -e "$v" ] && { echo "$v"; return; }; done; }
+BT="$(pick "$SDK/build-tools/34.0.0" "$SDK/build-tools/35.0.0" "$SDK/build-tools/$(ls "$SDK/build-tools" | sort -V | tail -1)")"
+AJ="$(pick "$SDK/platforms/android-34/android.jar" "$SDK/platforms/android-35/android.jar" "$(ls -d "$SDK"/platforms/android-*/android.jar | sort -V | tail -1)")"
 echo "build-tools: $BT"
 echo "plattform:   $AJ"
 echo "version:     $VERSION_NAME ($VERSION_CODE)"
@@ -41,5 +43,6 @@ if [ -z "${KEYSTORE:-}" ]; then
 fi
 "$BT/apksigner" sign --ks "$KEYSTORE" --ks-pass env:KS_PASS --key-pass env:KS_PASS \
   --out FreeMyTV-projektor.apk "$OUT/aligned.apk"
-"$BT/apksigner" verify FreeMyTV-projektor.apk
+"$BT/apksigner" verify --verbose FreeMyTV-projektor.apk | head -6
+"$BT/aapt2" dump badging FreeMyTV-projektor.apk | head -3
 ls -la FreeMyTV-projektor.apk
