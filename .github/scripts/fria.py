@@ -135,11 +135,11 @@ def main():
             prev = names[g].get(key)
             if prev is not None:   # samma kanal flera gånger: den med högst upplösning
                 if it['res'] > prev[1]:
-                    groups[g][prev[0]] = ch
+                    groups[g][prev[0]] = dict(ch)
                     names[g][key] = (prev[0], it['res'])
                 continue
             names[g][key] = (len(groups[g]), it['res'])
-            groups[g].append(ch)
+            groups[g].append(dict(ch))
 
     # SVT först, sedan landets egna kanaler (den första listan) före Pluto/Samsung, i bokstavsordning.
     order = lambda c: (0 if re.match(r'svt|kunskap|la 1\b|la 2\b|24 horas|antena 3|bbc', c['name'], re.I) else 1, c['prio'], c['name'].lower())
