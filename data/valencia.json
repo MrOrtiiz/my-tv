@@ -1,5 +1,5 @@
 {
- "updated": 1795287822033,
+ "updated": 1795298117004,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
  "matches": [
@@ -28,9 +28,9 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 294520,
-  "barca_listings": 15,
-  "until": "2026-11-22T20:55:00+01:00"
+  "programmes": 287995,
+  "barca_listings": 20,
+  "until": "2026-11-22T23:15:00+01:00"
  },
  "barca_titles_seen": [
   "11-22 17:00 | LIVE: Košarka - Španjolska liga: Valencia - Breogan  | 120 min",
@@ -43,12 +43,16 @@
   "11-22 00:00 | Rayo Vallecano - Valencia  | 120 min",
   "11-22 06:00 | Rayo Vallecano - Valencia  | 120 min",
   "11-22 01:08 | SailGP: Valencia 2026 – Highlights  | 54 min",
+  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
   "11-21 23:00 | Fotbal Spania: Rayo Vallecano - Valencia  | 120 min",
   "11-22 05:00 | Fotbal Spania: Rayo Vallecano - Valencia  | 120 min",
   "11-21 23:00 | Fotbal Spania: Rayo Vallecano - Valencia  | 120 min",
   "11-22 05:00 | Fotbal Spania: Rayo Vallecano - Valencia  | 120 min",
-  "11-21 18:10 | LaLiga EA Sports - Matchday 13: Rayo Vallecano vs Valencia  | 125 min",
-  "11-21 22:50 | LaLiga HL 26/27 Valencia v R Madrid  | 5 min",
+  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
   "11-22 05:00 | LaLiga 26/27: Rayo v Valencia  | 120 min",
   "11-22 13:45 | LaLiga EA Sports - Matchday 13: Rayo Vallecano vs Valencia  | 120 min",
   "11-21 06:15 | Liga 26/27: Valencia vs Real Madrid  | 1364 min"
@@ -91,8 +95,8 @@
     "team": "Real Betis",
     "short": "Betis",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/244.png",
-    "points": 26,
-    "played": 12,
+    "points": 27,
+    "played": 13,
     "gd": 5,
     "barca": false
    },
@@ -111,8 +115,8 @@
     "team": "Sevilla",
     "short": "Sevilla",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/243.png",
-    "points": 18,
-    "played": 12,
+    "points": 19,
+    "played": 13,
     "gd": -2,
     "barca": false
    },
