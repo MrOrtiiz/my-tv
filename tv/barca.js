@@ -221,7 +221,7 @@ var BarcaBox = (function () {
     // When the match list was made: shows at once whether the TV has the newest one.
     var u = new Date(data.updated);
     el('span', 'stamp', head, 'uppdaterad ' + two(u.getHours()) + ':' + two(u.getMinutes()));
-    if (window.IPTV) el('div', 'playhint', box, 'OK spelar matchen i din IPTV');
+    if (window.IPTV && typeof Prefs !== 'undefined' && Prefs.iptv && Prefs.iptv()) el('div', 'playhint', box, 'OK spelar matchen i din IPTV');
     var pg = pages(), which = pg[page % pg.length];
     if (pg.length > 1) {
       var dots = el('div', 'dots', box);
@@ -366,7 +366,7 @@ var BarcaBox = (function () {
   }
 
   /** OK on the box: the match on your IPTV (iptv.js). */
-  function play(say) { if (window.IPTV) IPTV.barca(data, say); }
+  function play(say) { if (window.IPTV && typeof Prefs !== 'undefined' && Prefs.iptv && Prefs.iptv()) IPTV.barca(data, say); }
 
   return {refresh: load, matchToday: matchToday, live: pollLive, play: play};
 })();

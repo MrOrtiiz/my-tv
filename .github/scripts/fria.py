@@ -31,8 +31,8 @@ SOURCES = [
 ]
 NEWS = re.compile(r'news|noticias|nyheter|\b24\b|24h|euronews|al ?jazeera|\bdw\b|france ?24|bloomberg|cnbc|sky news|'
                   r'expressen|\bdi tv\b|info\b|actualidad', re.I)
-SPORT = re.compile(r'sport|deporte|f[uú]tbol|football|soccer|golf|racing|\batg\b|motor|fight|boxing|tennis|nfl|nba|'
-                   r'fifa|uefa|liga|horse|ski|esport', re.I)
+SPORT = re.compile(r'sport|deporte|f[uú]tbol|football|soccer|golf|racing|\batg\b|motor|\bfight|boxing|tennis|\bnfl\b|\bnba\b|'
+                   r'fifa|uefa|laliga|\bliga\b|horse|\bski\b|esport', re.I)
 SKIP = re.compile(r'adult|xxx|playboy|religio|church|iglesia|gospel|bible|quran|islam|god tv|miracle|mission', re.I)
 MAX = {'Sverige': 120, 'España': 150, 'Nyheter': 60, 'Sport': 60, 'Engelska': 80}
 
@@ -96,7 +96,7 @@ def main():
 
     entries, seen = [], set()
     for group, lists, keep_geo in SOURCES:
-        for name in lists:
+        for prio, name in enumerate(lists):
             try:
                 items = parse(fetch(RAW % name).decode('utf-8', 'replace'))
             except Exception as e:
@@ -109,7 +109,7 @@ def main():
                 base, tags = clean(it['raw'])
                 if not base or SKIP.search(base):
                     continue
-                it.update({'group': group, 'name': base, 'keep_geo': keep_geo, **tags})
+                it.update({'group': group, 'name': base, 'keep_geo': keep_geo, 'prio': prio, **tags})
                 it['logo'] = logos.get(it['id'].split('@')[0], '')
                 entries.append(it)
     print('provar', len(entries), 'strömmar')
@@ -124,7 +124,7 @@ def main():
         ok = it['state'] == 'ok' or (it['state'] == 'geo' and (it['keep_geo'] or it['geo']) and it['group'] == 'Sverige')
         if not ok:
             continue
-        ch = {'name': it['name'], 'logo': it['logo'], 'url': it['url']}
+        ch = {'name': it['name'], 'logo': it['logo'], 'url': it['url'], 'prio': it['prio']}
         targets = [it['group']]
         if NEWS.search(it['name']):
             targets.append('Nyheter')
@@ -141,11 +141,13 @@ def main():
             names[g][key] = (len(groups[g]), it['res'])
             groups[g].append(ch)
 
-    # SVT först i Sverige, sedan i bokstavsordning.
-    order = lambda c: (0 if re.match(r'svt|kunskap', c['name'], re.I) else 1, c['name'].lower())
+    # SVT först, sedan landets egna kanaler (den första listan) före Pluto/Samsung, i bokstavsordning.
+    order = lambda c: (0 if re.match(r'svt|kunskap|la 1\b|la 2\b|24 horas|antena 3|bbc', c['name'], re.I) else 1, c['prio'], c['name'].lower())
     out = []
     for g in ['Sverige', 'España', 'Nyheter', 'Sport', 'Engelska']:
         chans = sorted(groups[g], key=order)[:MAX[g]]
+        for c in chans:
+            c.pop('prio', None)
         if chans:
             out.append({'name': g, 'channels': chans})
         print(g, len(chans))

@@ -222,7 +222,7 @@ var Marvel = (function () {
   // MARK: - Tangenter
 
   window.addEventListener('keydown', function (e) {
-    if (!opened) return;
+    if (!opened || e.defaultPrevented) return;   // spelaren (iptv.js, före oss) har redan tagit tangenten
     var k = e.keyCode, back = (window.TV && TV.keys && k === TV.keys.back) || k === 461 || k === 10009 || k === 27 || k === 8;
     e.preventDefault();
     e.stopPropagation();

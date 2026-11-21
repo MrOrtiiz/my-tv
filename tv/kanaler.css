@@ -1,0 +1,28 @@
+/* TV-kanaler (kanaler.js): fria kanaler som rutor med logga, grupperna som flikar. */
+.kanaler { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 59; display: none; color: #fff;
+  background: radial-gradient(ellipse at 50% -10%, rgba(10, 132, 255, 0.28), rgba(10, 10, 14, 0) 60%), #0B0B0E; }
+.kanaler.open { display: block; }
+.kanaler .kn-head { position: absolute; left: 0; right: 0; top: 56px; text-align: center; }
+.kanaler .kn-title { font-size: 54px; font-weight: 800; }
+.kanaler .kn-sub { margin-top: 8px; font-size: 24px; color: rgba(255, 255, 255, 0.6); }
+.kanaler .kn-tabs { position: absolute; left: 0; right: 0; top: 196px; text-align: center; white-space: nowrap; }
+.kanaler .kn-tab { display: inline-block; margin: 0 8px; padding: 10px 26px; border-radius: 26px; font-size: 26px; font-weight: 600;
+  color: rgba(255, 255, 255, 0.65); background: rgba(255, 255, 255, 0.06); }
+.kanaler .kn-tab.on { color: #0B0B0E; background: rgba(255, 255, 255, 0.85); }
+.kanaler .kn-tab.focus { color: #0B0B0E; background: #fff; box-shadow: 0 0 0 4px #0A84FF; }
+.kanaler .kn-count { font-size: 18px; font-weight: 500; opacity: 0.6; }
+.kanaler .kn-view { position: absolute; left: 0; right: 0; top: 284px; height: 690px; overflow: hidden; }
+.kanaler .kn-grid { position: absolute; left: 0; top: 14px; width: 1920px; -webkit-transition: -webkit-transform 0.3s ease; transition: transform 0.3s ease; }
+.kanaler .kn-card { position: absolute; width: 264px; }
+.kanaler .kn-logo { position: relative; width: 264px; height: 150px; border-radius: 18px; background: #1E1E24; overflow: hidden;
+  display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; -webkit-box-pack: center; justify-content: center; }
+.kanaler .kn-logo img { max-width: 70%; max-height: 64%; -o-object-fit: contain; object-fit: contain; }
+.kanaler .kn-initial { padding: 0 18px; font-size: 26px; font-weight: 700; text-align: center; color: rgba(255, 255, 255, 0.85); }
+.kanaler .kn-name { margin-top: 10px; font-size: 20px; font-weight: 600; line-height: 26px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: rgba(255, 255, 255, 0.75); }
+.kanaler .kn-card.focus .kn-logo { box-shadow: 0 0 0 5px #fff; background: #2C2C34; }
+.kanaler .kn-card.focus .kn-name { color: #fff; }
+.kanaler .kn-card.last .kn-name::before { content: '● '; color: #0A84FF; }
+.kanaler .kn-hint { position: absolute; left: 0; right: 0; bottom: 30px; text-align: center; font-size: 22px; color: rgba(255, 255, 255, 0.45); }
+.lite .kanaler .kn-grid { -webkit-transition: none; transition: none; }
+.lite .kanaler .kn-card.focus .kn-logo { box-shadow: none; outline: 5px solid #fff; }

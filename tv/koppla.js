@@ -160,7 +160,7 @@ var Koppla = (function () {
   }
 
   window.addEventListener('keydown', function (e) {
-    if (!opened) return;
+    if (!opened || e.defaultPrevented) return;   // spelaren (iptv.js, före oss) har redan tagit tangenten
     var k = e.keyCode;
     e.preventDefault();
     e.stopPropagation();
