@@ -1,5 +1,5 @@
 {
- "updated": 1795255294780,
+ "updated": 1795266876264,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -9,11 +9,50 @@
    "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
    "start": 1795352400000,
    "stop": 1795359600000,
-   "live": false,
-   "channels": [],
-   "channel_ids": [],
-   "channel_langs": [],
-   "more": 0
+   "live": true,
+   "channels": [
+    "Movistar Vamos 3 FHD",
+    "Premier Sports 2 UK",
+    "Premier Sports 2 Ireland UK",
+    "beIN SPORTS 1 EN FHD",
+    "SuperSport La Liga",
+    "Premier Sports 1 UK",
+    "beIN Sports 1 AU",
+    "Premier Sports 1 Ireland UK",
+    "ESPN Deportes US",
+    "VIP beIN SPORTS 1 FHD",
+    "Eleven Sports 1 FHD PT",
+    "Go3 Sport FHD LT"
+   ],
+   "channel_ids": [
+    "mplusellasv.es",
+    "premiersports2.uk",
+    "premiersports2.ie",
+    "beinsports1en.qa",
+    "supersportlaliga.za",
+    "premiersports1.uk",
+    "beinsports1.au",
+    "premiersports1.ie",
+    "espndeportes.us",
+    "beinsports1.qa",
+    "elevensports1.pt",
+    "go3sport.lt"
+   ],
+   "channel_langs": [
+    "es",
+    "en",
+    "en",
+    "en",
+    "en",
+    "en",
+    "en",
+    "en",
+    "en",
+    "xx",
+    "xx",
+    "xx"
+   ],
+   "more": 3
   },
   {
    "title": "Sabah FK – Barcelona",
@@ -64,9 +103,9 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 305773,
-  "barca_listings": 11,
-  "until": "2026-11-22T08:44:59+01:00"
+  "programmes": 302420,
+  "barca_listings": 42,
+  "until": "2026-11-22T16:30:00+01:00"
  },
  "barca_titles_seen": [
   "11-22 05:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
@@ -75,11 +114,17 @@
   "11-22 06:00 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 145 min",
   "11-22 08:20 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
   "11-22 08:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min",
+  "11-22 13:30 | LaLiga: Barcelona – Villarreal | 120 min",
+  "11-22 13:55 | LaLiga: Barcelona – Villarreal | 125 min",
+  "11-22 13:30 | LaLiga: Barcelona – Villarreal | 120 min",
   "11-22 08:20 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
   "11-22 08:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min",
-  "11-21 11:45 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
-  "11-21 11:45 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
-  "11-21 11:45 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
+  "11-22 13:55 | LaLiga: Barcelona – Villarreal | 135 min",
+  "11-22 13:55 | LaLiga: Barcelona – Villarreal | 135 min",
+  "11-22 13:50 | La Liga EA Sports 2026-27 - Barcelona x Villarreal (Direto)  | 135 min",
+  "11-22 13:50 | La Liga EA Sports 2026-27 - Barcelona x Villarreal (Direto)  | 135 min",
+  "11-22 13:50 | La Liga EA Sports 2026-27 - Barcelona x Villarreal (Direto)  | 135 min",
+  "11-22 13:55 | LaLiga: Barcelona – Villarreal | 130 min",
   "11-21 15:00 | Elche vs Barcelona  | 104 min",
   "11-22 07:00 | Elche vs Barcelona  | 104 min",
   "11-22 04:45 | Extreme Barcelona  | 135 min",
@@ -87,13 +132,7 @@
   "11-22 08:20 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
   "11-22 08:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min",
   "11-22 07:00 | Rukomet - EHF Liga šampiona: Kielce - Barca  | 90 min",
-  "11-22 07:00 | Rukomet - EHF Liga šampiona: Kielce - Barca  | 90 min",
-  "11-22 02:15 | Barcelona Heat  | 30 min",
-  "11-22 02:15 | Barcelona Heat  | 30 min",
-  "11-21 15:00 | Elche vs Barcelona  | 104 min",
-  "11-22 07:00 | Elche vs Barcelona  | 104 min",
-  "11-21 11:00 | Fotbal Spania: Atletico - Barcelona  | 120 min",
-  "11-21 11:00 | Fotbal Spania: Atletico - Barcelona  | 120 min"
+  "11-22 13:30 | LaLiga: Barcelona – Villarreal | 120 min"
  ],
  "table": {
   "league": "LaLiga",
