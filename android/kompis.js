@@ -12,7 +12,7 @@
   c.picksOn = true;          // filmtipsen (behöver en TMDB-nyckel: Genvägar → Hemskärm → TMDB-nyckel)
   c.birthdays = [];          // Yuris familjs födelsedagar gäller inte här
   c.ownInputs = {};          // PS5 på HDMI 4 gäller The Frame
-  c.buttons = ['inputs', 'shortcuts'];   // ingen sök- eller spelknapp; Ingångar bara om projektorn har någon
+  c.buttons = ['marvel', 'inputs', 'shortcuts'];   // Marvel (tv/marvel.js); ingen sök- eller spelknapp; Ingångar bara om projektorn har någon
 
   // Valencia-rutan: Barça-rutan (tv/barca.js) för Valencia CF, från data/valencia.json (barca.yml skriver den), med
   // Valencias färger på matchdagen (festive.js).
@@ -26,10 +26,14 @@
   });
 
   // Laddaren i APK 1.0.0 tar bort barca.js: då läses den här, efter de andra skripten (samma ordning som i tv/index.html).
+  // Marvel före Doomsday (tv/marvel.js, knappen Marvel) laddas bara här.
   document.addEventListener('DOMContentLoaded', function () {
-    if (window.BarcaBox) return;
-    var s = document.createElement('script');
-    s.src = 'barca.js';
-    document.body.appendChild(s);
+    function add(src) { var s = document.createElement('script'); s.src = src; document.body.appendChild(s); }
+    if (!window.BarcaBox) add('barca.js');
+    var css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'marvel.css';
+    document.head.appendChild(css);
+    add('marvel.js');
   });
 })(window.CONFIG);

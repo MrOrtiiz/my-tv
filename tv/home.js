@@ -333,12 +333,14 @@
    * The buttons at the top right, in order (they hold the top row's places 3, 4, …). CONFIG.buttons can leave some out
    * (android/kompis.js: no search or games on the friend's projector); Inputs only where the TV has inputs to show.
    */
-  var ALL_BUTTONS = [['search', 'search', 'Sök'], ['games', 'gamepad', 'Spel'], ['inputs', 'hdmi', 'Inputs', true], ['shortcuts', 'apps', 'Shortcuts', true]];
+  // [kind, symbol, tip, tip to translate, only where CONFIG.buttons names it]. Marvel: marvel.js (the friend's projector).
+  var ALL_BUTTONS = [['marvel', 'play', 'Marvel', false, true], ['search', 'search', 'Sök'], ['games', 'gamepad', 'Spel'],
+    ['inputs', 'hdmi', 'Inputs', true], ['shortcuts', 'apps', 'Shortcuts', true]];
   var BUTTONS = ALL_BUTTONS.filter(function (b) {
-    if (CONFIG.buttons && CONFIG.buttons.indexOf(b[0]) < 0) return false;
+    if (CONFIG.buttons ? CONFIG.buttons.indexOf(b[0]) < 0 : b[4]) return false;
     return b[0] !== 'inputs' || TV.hasInputs !== false;
   });
-  if (!BUTTONS.length) BUTTONS = [ALL_BUTTONS[3]];
+  if (!BUTTONS.length) BUTTONS = [ALL_BUTTONS[4]];
   var LAST_TOP = 2 + BUTTONS.length;   // the last button's place in the top row
   var st = {pick: 0, zone: Z.SHELF, top: 0, tab: 0, card: 0, shelf: 0, drawer: 0, grid: 0, row: 0, edit: 0, lang: 0, city: 0, key: 0};
   var cards = [];
@@ -1688,8 +1690,9 @@
       case Z.TOP:
         if (st.top < 3) return;
         if (st.top === BARCA) { if (window.BarcaBox && BarcaBox.play) BarcaBox.play(toast); return; }
-        var kind = (BUTTONS[st.top - 3] || ALL_BUTTONS[3])[0];
+        var kind = (BUTTONS[st.top - 3] || ALL_BUTTONS[4])[0];
         if (kind === 'search') { if (window.Search) Search.open(); }
+        else if (kind === 'marvel') { if (window.Marvel) Marvel.open(); }
         else openPicker(kind);
         return;
       case Z.CARDS:
@@ -2168,7 +2171,7 @@
     checkNight();
     Data.refresh();
     applyDim();   // automatic: medium from 22:00, off again at 07:00
-    if ((window.IPTV && IPTV.playing()) || (window.Search && Search.isOpen()) || (window.Dance && Dance.isOpen()) || (window.Rush && Rush.isOpen())) idleAt = Date.now();   // no screensaver over a match, a search or a game
+    if ((window.IPTV && IPTV.playing()) || (window.Search && Search.isOpen()) || (window.Dance && Dance.isOpen()) || (window.Rush && Rush.isOpen()) || (window.Marvel && Marvel.isOpen())) idleAt = Date.now();   // no screensaver over a match, a search or a game
     if (!document.hidden && !saverOn && !ambientOn && !sheetOpen() && Date.now() - idleAt > SAVER_AFTER) {
       if (saverMode() === 'clock') showAmbient(); else showSaver();
     }
