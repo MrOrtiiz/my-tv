@@ -1,5 +1,5 @@
 {
- "updated": 1795233975561,
+ "updated": 1795246032671,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -64,9 +64,9 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 314894,
-  "barca_listings": 27,
-  "until": "2026-11-22T07:00:00+01:00"
+  "programmes": 309020,
+  "barca_listings": 23,
+  "until": "2026-11-22T08:44:59+01:00"
  },
  "barca_titles_seen": [
   "11-22 05:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
@@ -75,24 +75,24 @@
   "11-21 08:00 | Barcelona-Real Madrid  | 120 min",
   "11-21 08:00 | Barcelona-Real Madrid  | 120 min",
   "11-21 13:35 | Jeździectwo: League of Nations - Barcelona  | 155 min",
+  "11-22 06:00 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 145 min",
   "11-21 08:25 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 95 min",
   "11-21 11:45 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
   "11-21 11:45 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
   "11-21 11:45 | UEFA Champions League 26/27 - PSG x Barcelona  | 120 min",
   "11-21 15:00 | Elche vs Barcelona  | 104 min",
+  "11-22 07:00 | Elche vs Barcelona  | 104 min",
   "11-22 04:45 | Extreme Barcelona  | 135 min",
   "11-21 08:00 | Barcelona-Real Madrid  | 120 min",
   "11-22 04:45 | Extreme Barcelona  | 135 min",
+  "11-22 07:00 | Rukomet - EHF Liga šampiona: Kielce - Barca  | 90 min",
   "11-21 07:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
   "11-21 07:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
   "11-21 07:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
-  "11-21 06:00 | Tennis: ATP Barcelona Open 2026  | 60 min",
+  "11-22 07:00 | Rukomet - EHF Liga šampiona: Kielce - Barca  | 90 min",
   "11-22 02:15 | Barcelona Heat  | 30 min",
   "11-22 02:15 | Barcelona Heat  | 30 min",
   "11-21 06:30 | Barcelona vs Servette - UEFA Women’s Champions League 2026/2027 - MD5  | 120 min",
-  "11-21 06:34 | Barcelona vs Servette - UEFA Women’s Champions League 2026/2027 - MD5  | 102 min",
-  "11-21 06:30 | Barcelona vs Servette - UEFA Women’s Champions League 2026/2027 - MD5  | 120 min",
-  "11-21 06:34 | Barcelona vs Servette - UEFA Women’s Champions League 2026/2027 - MD5  | 102 min",
   "11-21 06:30 | Barcelona vs Servette - UEFA Women’s Champions League 2026/2027 - MD5  | 120 min"
  ],
  "table": {
