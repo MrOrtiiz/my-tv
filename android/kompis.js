@@ -18,6 +18,13 @@
   // Valencias färger på matchdagen (festive.js).
   c.team = {name: 'Valencia CF', key: 'valencia', espn: '94', file: 'valencia.json', label: 'Valencia-ruta',
     theme: 'valencia', stripes: ['255,128,0', '240,240,240']};
+  // Nyaste koden även utan omstart: när hemskärmen kommer tillbaka (efter en app) och sidan är äldre än en timme laddas
+  // den om, och laddaren hämtar då senaste commit från GitHub.
+  var loadedAt = Date.now();
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && Date.now() - loadedAt > 3600000) location.reload();
+  });
+
   // Laddaren i APK 1.0.0 tar bort barca.js: då läses den här, efter de andra skripten (samma ordning som i tv/index.html).
   document.addEventListener('DOMContentLoaded', function () {
     if (window.BarcaBox) return;
