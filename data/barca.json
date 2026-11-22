@@ -1,5 +1,5 @@
 {
- "updated": 1795332469782,
+ "updated": 1795341585762,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -115,9 +115,9 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 305191,
-  "barca_listings": 89,
-  "until": "2026-11-23T10:00:00+01:00"
+  "programmes": 302259,
+  "barca_listings": 87,
+  "until": "2026-11-23T12:30:00+01:00"
  },
  "barca_titles_seen": [
   "11-22 23:00 | Košarka - Španska liga: Tenerife - Barcelona  | 120 min",
@@ -132,8 +132,6 @@
   "11-22 14:00 | Futboll: La Liga Barcelona - Villarreal  | 135 min",
   "11-22 14:00 | Barcelona-Villarreal  | 120 min",
   "11-23 06:00 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 185 min",
-  "11-22 08:20 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
-  "11-22 08:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min",
   "11-23 00:25 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
   "11-23 00:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min",
   "11-22 13:30 | LaLiga: Barcelona – Villarreal | 120 min",
@@ -141,10 +139,12 @@
   "11-22 13:30 | LaLiga: Barcelona – Villarreal | 120 min",
   "11-22 23:45 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 110 min",
   "11-22 14:00 | LIVE: Nogomet - Španjolska liga: Barcelona - Villarreal  | 120 min",
-  "11-22 08:20 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
-  "11-22 08:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min",
   "11-23 00:25 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
-  "11-23 00:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min"
+  "11-23 00:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min",
+  "11-22 13:55 | LaLiga: Barcelona – Villarreal | 135 min",
+  "11-22 13:55 | LaLiga: Barcelona – Villarreal | 135 min",
+  "11-22 13:50 | La Liga EA Sports 2026-27 - Barcelona x Villarreal (Direto)  | 135 min",
+  "11-22 13:50 | La Liga EA Sports 2026-27 - Barcelona x Villarreal (Direto)  | 135 min"
  ],
  "table": {
   "league": "LaLiga",
