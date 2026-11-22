@@ -1,8 +1,74 @@
 {
- "updated": 1795374307082,
- "status": "error",
- "error": "The guide answered HTTP 502.",
- "matches": [],
+ "updated": 1795384625287,
+ "status": "ok",
+ "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
+ "matches": [
+  {
+   "title": "Valencia – Osasuna",
+   "competition": "LaLiga",
+   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/97.png",
+   "start": 1795957200000,
+   "stop": 1795964400000,
+   "live": false,
+   "channels": [],
+   "channel_ids": [],
+   "channel_langs": [],
+   "more": 0
+  },
+  {
+   "title": "Getafe – Valencia",
+   "competition": "LaLiga",
+   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2922.png",
+   "start": 1796578200000,
+   "stop": 1796585400000,
+   "live": false,
+   "channels": [],
+   "channel_ids": [],
+   "channel_langs": [],
+   "more": 0
+  }
+ ],
+ "source": [
+  "espn esp.1",
+  "espn uefa.champions",
+  "espn esp.copa_del_rey",
+  "espn esp.super_cup",
+  "espn club.friendly"
+ ],
+ "source_errors": [
+  "thesportsdb: LookupError"
+ ],
+ "guide": {
+  "channels": 5637,
+  "programmes": 292542,
+  "barca_listings": 21,
+  "until": "2026-11-23T20:00:00+01:00"
+ },
+ "barca_titles_seen": [
+  "11-23 00:08 | Verdi: Un Ballo In Maschera - Palau De Les Arts, Valencia  | 146 min",
+  "11-23 17:30 | Košarka - Španska liga: Valencia - Breogan  | 150 min",
+  "11-23 17:30 | Košarka - Španska liga: Valencia - Breogan  | 150 min",
+  "11-23 17:30 | Košarka - Španska liga: Valencia - Breogan  | 150 min",
+  "11-23 10:24 | SailGP: Valencia 2026 – Highlights  | 54 min",
+  "11-23 18:45 | SailGP: Valencia 2026 – Highlights  | 55 min",
+  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-23 02:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-23 14:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-23 02:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-23 14:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-23 02:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-23 14:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-23 02:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-23 14:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-23 00:08 | Verdi: Un Ballo in maschera - Palau de les Arts Valencia  | 146 min",
+  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-23 02:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-23 14:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min"
+ ],
  "table": {
   "league": "LaLiga",
   "rows": [
@@ -128,6 +194,16 @@
    },
    {
     "rank": 13,
+    "team": "Osasuna",
+    "short": "Osasuna",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/97.png",
+    "points": 15,
+    "played": 13,
+    "gd": -10,
+    "barca": false
+   },
+   {
+    "rank": 14,
     "team": "Celta Vigo",
     "short": "Celta Vigo",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
@@ -137,7 +213,7 @@
     "barca": false
    },
    {
-    "rank": 14,
+    "rank": 15,
     "team": "Rayo Vallecano",
     "short": "Rayo",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/101.png",
@@ -147,23 +223,13 @@
     "barca": false
    },
    {
-    "rank": 15,
+    "rank": 16,
     "team": "Getafe",
     "short": "Getafe",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2922.png",
     "points": 12,
     "played": 12,
     "gd": -10,
-    "barca": false
-   },
-   {
-    "rank": 16,
-    "team": "Osasuna",
-    "short": "Osasuna",
-    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/97.png",
-    "points": 12,
-    "played": 12,
-    "gd": -11,
     "barca": false
    },
    {
@@ -202,8 +268,8 @@
     "short": "Málaga",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
     "points": 5,
-    "played": 12,
-    "gd": -14,
+    "played": 13,
+    "gd": -15,
     "barca": false
    }
   ]
