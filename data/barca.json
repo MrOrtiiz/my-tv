@@ -1,5 +1,5 @@
 {
- "updated": 1795298093750,
+ "updated": 1795310776640,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -52,7 +52,7 @@
     "xx",
     "xx"
    ],
-   "more": 9
+   "more": 12
   },
   {
    "title": "Sabah FK – Barcelona",
@@ -115,36 +115,36 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 287995,
-  "barca_listings": 60,
-  "until": "2026-11-22T21:00:00+01:00"
+  "programmes": 310742,
+  "barca_listings": 80,
+  "until": "2026-11-23T04:00:00+01:00"
  },
  "barca_titles_seen": [
   "11-22 05:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
+  "11-22 23:00 | Košarka - Španska liga: Tenerife - Barcelona  | 120 min",
   "11-22 05:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
+  "11-22 23:00 | Košarka - Španska liga: Tenerife - Barcelona  | 120 min",
   "11-22 19:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
   "11-22 19:00 | Fudbal - Liga šampiona: Barcelona - Aston Villa  | 120 min",
   "11-22 17:00 | Košarka - Španska liga: Tenerife - Barcelona  | 120 min",
   "11-22 17:00 | Košarka - Španska liga: Tenerife - Barcelona  | 120 min",
+  "11-22 23:45 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 110 min",
   "11-22 14:00 | LIVE: Nogomet - Španjolska liga: Barcelona - Villarreal  | 120 min",
+  "11-22 14:00 | Barcelona-Villarreal  | 120 min",
+  "11-22 14:00 | Futboll: La Liga Barcelona - Villarreal  | 135 min",
+  "11-22 14:00 | Barcelona-Villarreal  | 120 min",
   "11-22 06:00 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Leyma Coruna  | 145 min",
   "11-22 08:20 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
   "11-22 08:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min",
+  "11-23 00:25 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
+  "11-23 00:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min",
   "11-22 13:30 | LaLiga: Barcelona – Villarreal | 120 min",
   "11-22 13:55 | LaLiga: Barcelona – Villarreal | 125 min",
   "11-22 13:30 | LaLiga: Barcelona – Villarreal | 120 min",
+  "11-22 23:45 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 110 min",
   "11-22 14:00 | LIVE: Nogomet - Španjolska liga: Barcelona - Villarreal  | 120 min",
   "11-22 08:20 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
-  "11-22 08:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min",
-  "11-22 13:55 | LaLiga: Barcelona – Villarreal | 135 min",
-  "11-22 13:55 | LaLiga: Barcelona – Villarreal | 135 min",
-  "11-22 13:50 | La Liga EA Sports 2026-27 - Barcelona x Villarreal (Direto)  | 135 min",
-  "11-22 13:50 | La Liga EA Sports 2026-27 - Barcelona x Villarreal (Direto)  | 135 min",
-  "11-22 13:50 | La Liga EA Sports 2026-27 - Barcelona x Villarreal (Direto)  | 135 min",
-  "11-22 13:55 | LaLiga: Barcelona – Villarreal | 130 min",
-  "11-22 07:00 | Elche vs Barcelona  | 104 min",
-  "11-22 04:45 | Extreme Barcelona  | 135 min",
-  "11-22 04:45 | Extreme Barcelona  | 135 min"
+  "11-22 08:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min"
  ],
  "table": {
   "league": "LaLiga",
@@ -164,9 +164,9 @@
     "team": "Real Madrid",
     "short": "Real Madrid",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/86.png",
-    "points": 30,
-    "played": 12,
-    "gd": 21,
+    "points": 33,
+    "played": 13,
+    "gd": 22,
     "barca": false
    },
    {
@@ -275,8 +275,8 @@
     "short": "Celta Vigo",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
     "points": 13,
-    "played": 12,
-    "gd": 0,
+    "played": 13,
+    "gd": -1,
     "barca": false
    },
    {
