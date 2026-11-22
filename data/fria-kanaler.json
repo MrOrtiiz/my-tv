@@ -1,5 +1,5 @@
 {
- "updated": 1795288827387,
+ "updated": 1795324584429,
  "source": "iptv-org (github.com/iptv-org/iptv)",
  "groups": [
   {
@@ -656,6 +656,11 @@
      "url": "https://amg00793-amg00793c40-rakuten-es-5444.playouts.now.amagi.tv/playlist.m3u8"
     },
     {
+     "name": "28 kanala",
+     "logo": "https://i.imgur.com/DyvK28q.png",
+     "url": "https://streaming.28kanala.eus/hls/z.m3u8"
+    },
+    {
      "name": "3Cat Càmeres del temps",
      "logo": "https://i.imgur.com/zXy2kbe.png",
      "url": "https://directes-tv-int.3catdirectes.cat/live-content/beauties-hls/master.m3u8"
@@ -669,6 +674,11 @@
      "name": "3CatInfo",
      "logo": "https://statics.3cat.cat/img/logos/3CatInfo_negre.svg",
      "url": "https://directes-tv-int.3catdirectes.cat/live-origin/canal324-hls/master.m3u8"
+    },
+    {
+     "name": "7 TeleValencia",
+     "logo": "https://i.imgur.com/ILfXDRs.png",
+     "url": "https://play.cdn.enetres.net/9E9557EFCEBB43A89CEC8FBD3C500247022/028/playlist.m3u8"
     },
     {
      "name": "7TV",
@@ -711,6 +721,11 @@
      "url": "https://streamtv2.elitecomunicacion.cloud:3628/live/arabitv2025live.m3u8"
     },
     {
+     "name": "AXN",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/AXN_logo_%282015%29.svg/960px-AXN_logo_%282015%29.svg.png",
+     "url": "https://vuvuu-geil-m3u8.yaskar661.workers.dev/?url=https%3A%2F%2Fgeil.to%2Flive%2Fplay%2F4238619703"
+    },
+    {
      "name": "Bom Cine",
      "logo": "https://bomcine.com/img/ico/logo-bom-negro.svg",
      "url": "https://cdn78-at.azotosolutions.com/cdnedge39/Canale3/master.m3u8"
@@ -719,11 +734,6 @@
      "name": "Bon Dia TV",
      "logo": "https://i.imgur.com/VgRCu2U.png",
      "url": "https://directes-tv-int.3catdirectes.cat/live-content/bondia-hls/master.m3u8"
-    },
-    {
-     "name": "Canal 10 Empordà",
-     "logo": "https://i.imgur.com/ojQ6wzX.png",
-     "url": "https://ventdelnord.tv:8080/escala/directe.m3u8"
     },
     {
      "name": "Canal 24 Horas",
@@ -751,11 +761,6 @@
      "url": "https://media2.streambrothers.com:1936/8140/8140/playlist.m3u8"
     },
     {
-     "name": "Canal 4 Mancha Centro",
-     "logo": "https://i.imgur.com/t3O3O9M.png",
-     "url": "https://5924d3ad0efcf.streamlock.net/canal4/canal4live/playlist.m3u8"
-    },
-    {
      "name": "Canal 45",
      "logo": "https://i.imgur.com/yEfSnGt.png",
      "url": "https://nlb1-live.emitstream.com/hls/625csn5et2iszm9oze65/master.m3u8"
@@ -769,11 +774,6 @@
      "name": "Canal Diocesano",
      "logo": "https://i.imgur.com/uWhVKL3.png",
      "url": "https://nlb2-live.emitstream.com/hls/5i3pxfuz4az356yu22ij/master.m3u8"
-    },
-    {
-     "name": "Canal Doñana",
-     "logo": "https://i.imgur.com/0WrKIxm.png",
-     "url": "https://secure5.todostreaming.es/live/division-alm.m3u8"
     },
     {
      "name": "Canal Málaga RTV",
@@ -991,11 +991,6 @@
      "url": "https://streamingtvi.gestec-video.com/hls/tvixa.m3u8"
     },
     {
-     "name": "Kidz",
-     "logo": "https://i.imgur.com/iBgsCOV.png",
-     "url": "https://c82fe9a663ed758d6c517fb44c28ba73.4gfbw5.channel-assembly.mediatailor.eu-west-1.amazonaws.com/v1/channel/648c271d2bfab0e4177a0d61/648c271d2bfab0e4177a0d61/3.m3u8"
-    },
-    {
      "name": "La 8 Mediterraneo",
      "logo": "https://tbsfibra.es/wp-content/uploads/2022/07/17-8-MEDITERRANEO.png",
      "url": "https://newscript.gestec-video.com/hls/8TVEVENTOS.m3u8"
@@ -1089,11 +1084,6 @@
      "name": "Radio 3",
      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/RNE_Radio_3_2026.svg/500px-RNE_Radio_3_2026.svg.png",
      "url": "https://rtvelivestream.rtve.es/rtvesec/rne/rne3_main.m3u8"
-    },
-    {
-     "name": "Radio Carnaval TV",
-     "logo": "https://i.imgur.com/cdpbkSo.png",
-     "url": "https://eu1.servers10.com:8081/8116/index.m3u8"
     },
     {
      "name": "Real Madrid TV",
@@ -1359,6 +1349,16 @@
      "name": "Call the Midwife",
      "logo": "",
      "url": "https://jmp2.uk/plu-65dded6966eec80008947157.m3u8"
+    },
+    {
+     "name": "Cazasubastas",
+     "logo": "",
+     "url": "https://jmp2.uk/plu-6335a6b6e6f7a600076e589e.m3u8"
+    },
+    {
+     "name": "CBS News 24/7",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/CBS_News_247_logo.svg/960px-CBS_News_247_logo.svg.png",
+     "url": "https://jmp2.uk/plu-6231ede1be5b460007f91bc1.m3u8"
     }
    ]
   },
@@ -1941,6 +1941,11 @@
      "url": "http://45.132.87.69:8080/cartoon_network/index.m3u8"
     },
     {
+     "name": "Cartoon Network Western Europe Portugal",
+     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Cartoon_Network_2010_logo.svg/960px-Cartoon_Network_2010_logo.svg.png",
+     "url": "https://vuvuu-geil-m3u8.yaskar661.workers.dev/?url=https%3A%2F%2Fvavoo.to%2Fvavoo-iptv%2Fplay%2F327818589842dbaee1327c"
+    },
+    {
      "name": "Cartoonito CEE",
      "logo": "https://i.imgur.com/9MrzLb1.png",
      "url": "http://193.33.39.108:9019/play/a00t"
@@ -1989,11 +1994,6 @@
      "name": "Deen TV",
      "logo": "https://i.imgur.com/Zp62Nbd.png",
      "url": "https://cd198.anystream.uk:9092/iqapp/d33ntv/playlist.m3u8"
-    },
-    {
-     "name": "English Club TV (576i)",
-     "logo": "https://i.imgur.com/9FMvaRK.png",
-     "url": "https://stream8.cinerama.uz/1442/tracks-v1a1/mono.m3u8"
     },
     {
      "name": "ENT Channel",
@@ -2091,6 +2091,11 @@
      "url": "https://amg01753-narrativeuk-amg01753c2-lg-gb-1832.playouts.now.amagi.tv/playlist/amg01753-narrativeuk-greatchristmas-lggb/playlist.m3u8"
     },
     {
+     "name": "Hala London",
+     "logo": "https://i.imgur.com/bM4VZDH.png",
+     "url": "https://halalondon-live.ercdn.net/halalondon/halalondon.m3u8"
+    },
+    {
      "name": "Hellenic TV",
      "logo": "https://i.imgur.com/NE7ddhC.png",
      "url": "https://l5.cloudskep.com/hellenictv/htv/playlist.m3u8"
@@ -2129,11 +2134,6 @@
      "name": "Kanshi TV",
      "logo": "https://i.imgur.com/w6uXMrK.png",
      "url": "https://live.kanshitv.co.uk/mobile/kanshitvkey.m3u8"
-    },
-    {
-     "name": "Latest TV",
-     "logo": "https://i.imgur.com/Cl1iGEb.jpeg",
-     "url": "https://5a0e89631aa14.streamlock.net/live/LatestTelevision/playlist.m3u8"
     },
     {
      "name": "Magnavision TV",
