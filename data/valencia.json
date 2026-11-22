@@ -1,64 +1,8 @@
 {
- "updated": 1795310796773,
- "status": "ok",
- "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
- "matches": [
-  {
-   "title": "Valencia – Osasuna",
-   "competition": "LaLiga",
-   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/97.png",
-   "start": 1795957200000,
-   "stop": 1795964400000,
-   "live": false,
-   "channels": [],
-   "channel_ids": [],
-   "channel_langs": [],
-   "more": 0
-  }
- ],
- "source": [
-  "espn esp.1",
-  "espn uefa.champions",
-  "espn esp.copa_del_rey",
-  "espn esp.super_cup",
-  "espn club.friendly"
- ],
- "source_errors": [
-  "thesportsdb: LookupError"
- ],
- "guide": {
-  "channels": 5637,
-  "programmes": 310742,
-  "barca_listings": 25,
-  "until": "2026-11-23T04:15:00+01:00"
- },
- "barca_titles_seen": [
-  "11-22 17:00 | LIVE: Košarka - Španjolska liga: Valencia - Breogan  | 120 min",
-  "11-22 08:10 | Nogomet - Španjolska liga: Rayo Vallecano - Valencia  | 110 min",
-  "11-22 18:30 | Piłka nożna: Liga hiszpańska - mecz: Rayo Vallecano - Valencia CF  | 145 min",
-  "11-22 03:40 | Futboll: LA Liga Rayo Vallecano - Valencia  | 130 min",
-  "11-22 17:00 | LIVE: Košarka - Španjolska liga: Valencia - Breogan  | 120 min",
-  "11-22 08:10 | Nogomet - Španjolska liga: Rayo Vallecano - Valencia  | 110 min",
-  "11-23 00:08 | Verdi: Un Ballo In Maschera - Palau De Les Arts, Valencia  | 146 min",
-  "11-22 01:00 | Rayo Vallecano - Valencia  | 120 min",
-  "11-22 01:00 | Rayo Vallecano - Valencia  | 120 min",
-  "11-22 06:00 | Rayo Vallecano - Valencia  | 120 min",
-  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-23 02:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-23 02:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-23 02:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-23 02:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-23 00:08 | Verdi: Un Ballo in maschera - Palau de les Arts Valencia  | 146 min",
-  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-23 02:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-22 05:00 | Fotbal Spania: Rayo Vallecano - Valencia  | 120 min",
-  "11-22 05:00 | Fotbal Spania: Rayo Vallecano - Valencia  | 120 min",
-  "11-22 21:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-22 05:00 | LaLiga 26/27: Rayo v Valencia  | 120 min"
- ],
+ "updated": 1795320567657,
+ "status": "error",
+ "error": "Could not read the guide (IncompleteRead).",
+ "matches": [],
  "table": {
   "league": "LaLiga",
   "rows": [

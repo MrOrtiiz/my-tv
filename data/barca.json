@@ -1,5 +1,5 @@
 {
- "updated": 1795310776640,
+ "updated": 1795320547286,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -115,9 +115,9 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 310742,
-  "barca_listings": 80,
-  "until": "2026-11-23T04:00:00+01:00"
+  "programmes": 310621,
+  "barca_listings": 85,
+  "until": "2026-11-23T07:20:00+01:00"
  },
  "barca_titles_seen": [
   "11-22 05:00 | Košarka - Euroleague: Barcelona - Crvena zvezda  | 120 min",
