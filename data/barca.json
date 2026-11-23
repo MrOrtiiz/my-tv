@@ -1,5 +1,5 @@
 {
- "updated": 1795450889831,
+ "updated": 1795461380270,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -63,25 +63,15 @@
   "thesportsdb: HTTPError"
  ],
  "guide": {
-  "channels": 5638,
-  "programmes": 197166,
-  "barca_listings": 21,
+  "channels": 5636,
+  "programmes": 305458,
+  "barca_listings": 32,
   "until": "2026-11-24T17:15:00+01:00"
  },
  "barca_titles_seen": [
-  "11-23 20:50 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 130 min",
-  "11-24 03:05 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 175 min",
-  "11-24 04:00 | LaLiga EA Sports: Barcelona - Villarreal  | 120 min",
-  "11-23 16:00 | Liga Acb 26/27 - Tenerife x Barcelona  | 120 min",
-  "11-23 23:00 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 120 min",
-  "11-24 02:00 | Tennis: ATP Barcelona Open 2026  | 60 min",
-  "11-24 15:00 | Tennis: ATP Barcelona Open 2026  | 60 min",
-  "11-24 04:00 | Barcelona vs Villarreal - Spanish LaLiga 2026/2027 - Week 13  | 30 min",
-  "11-24 01:00 | Barcelona vs Villarreal - Spanish LaLiga 2026/2027 - Week 13  | 30 min",
-  "11-23 19:45 | Barcelona vs Villarreal - Spanish LaLiga 2026/2027 - Week 13  | 45 min",
-  "11-24 15:30 | Barcelona vs Villarreal - Spanish LaLiga 2026/2027 - Week 13  | 105 min",
-  "11-23 18:30 | FCB total  | 30 min",
-  "11-23 19:30 | FCB total  | 30 min",
+  "11-23 19:00 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 120 min",
+  "11-24 00:40 | Košarka - Španjolska liga: Tenerife - Barcelona  | 90 min",
+  "11-23 19:00 | Barcelona-Villarreal  | 120 min",
   "11-23 20:30 | FCB total  | 30 min",
   "11-23 21:30 | FCB total  | 30 min",
   "11-23 22:30 | FCB total  | 30 min",
@@ -93,7 +83,17 @@
   "11-24 04:30 | FCB total  | 30 min",
   "11-24 05:30 | FCB total  | 30 min",
   "11-24 06:30 | FCB total  | 30 min",
-  "11-24 07:30 | FCB total  | 30 min"
+  "11-24 07:30 | FCB total  | 30 min",
+  "11-24 08:30 | FCB total  | 30 min",
+  "11-24 10:30 | FCB total  | 30 min",
+  "11-24 11:30 | FCB total  | 30 min",
+  "11-24 12:30 | FCB total  | 30 min",
+  "11-24 13:30 | FCB total  | 30 min",
+  "11-24 14:35 | FCB total  | 25 min",
+  "11-24 15:35 | FCB total  | 25 min",
+  "11-24 16:35 | FCB total  | 25 min",
+  "11-24 17:35 | FCB total  | 25 min",
+  "11-23 19:00 | Barcelona-Villarreal  | 120 min"
  ],
  "table": {
   "league": "LaLiga",

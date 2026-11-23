@@ -1,5 +1,5 @@
 {
- "updated": 1795450905653,
+ "updated": 1795461398607,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
  "matches": [
@@ -9,6 +9,18 @@
    "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/97.png",
    "start": 1795957200000,
    "stop": 1795964400000,
+   "live": false,
+   "channels": [],
+   "channel_ids": [],
+   "channel_langs": [],
+   "more": 0
+  },
+  {
+   "title": "Real Jaen CF – Valencia",
+   "competition": "Copa del Rey",
+   "rival_logo": "",
+   "start": 1796241600000,
+   "stop": 1796248800000,
    "live": false,
    "channels": [],
    "channel_ids": [],
@@ -39,18 +51,19 @@
   "thesportsdb: LookupError"
  ],
  "guide": {
-  "channels": 5638,
-  "programmes": 197166,
-  "barca_listings": 5,
+  "channels": 5636,
+  "programmes": 305458,
+  "barca_listings": 6,
   "until": "2026-11-24T19:00:00+01:00"
  },
  "barca_titles_seen": [
-  "11-23 18:45 | SailGP: Valencia 2026 – Highlights  | 55 min",
-  "11-23 17:30 | Košarka - Španska liga: Valencia - Breogan  | 150 min",
   "11-23 23:00 | Fotbal Spania: Valencia - Real Sociedad  | 120 min",
-  "11-24 06:00 | Meci Fotbal La Liga: Rayo Vallecano - Valencia  | 120 min",
-  "11-24 15:00 | LaLiga EA Sports - Matchday 13: Rayo Vallecano vs Valencia  | 120 min",
   "11-24 17:00 | Fotbal Spania: Santander - Valencia  | 120 min",
+  "11-24 06:00 | Meci Fotbal La Liga: Rayo Vallecano - Valencia  | 120 min",
+  "11-23 23:00 | Fotbal Spania: Valencia - Real Sociedad  | 120 min",
+  "11-24 17:00 | Fotbal Spania: Santander - Valencia  | 120 min",
+  "11-24 15:00 | LaLiga EA Sports - Matchday 13: Rayo Vallecano vs Valencia  | 120 min",
+  "11-24 09:50 | Porsche Sprint Cup Challenge SE: Valencia Sport Division Race 2  | 70 min",
   "11-24 09:50 | Porsche Sprint Cup Challenge SE: Valencia Sport Division Race 2  | 70 min"
  ],
  "table": {
