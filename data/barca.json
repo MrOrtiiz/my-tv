@@ -1,5 +1,5 @@
 {
- "updated": 1795384608019,
+ "updated": 1795397449728,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -64,36 +64,36 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 292542,
-  "barca_listings": 42,
-  "until": "2026-11-23T20:16:00+01:00"
+  "programmes": 317656,
+  "barca_listings": 64,
+  "until": "2026-11-24T03:30:00+01:00"
  },
  "barca_titles_seen": [
-  "11-22 23:00 | Košarka - Španska liga: Tenerife - Barcelona  | 120 min",
-  "11-22 23:00 | Košarka - Španska liga: Tenerife - Barcelona  | 120 min",
-  "11-22 23:45 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 110 min",
+  "11-23 19:00 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 120 min",
+  "11-24 00:40 | Košarka - Španjolska liga: Tenerife - Barcelona  | 90 min",
+  "11-23 08:30 | Košarka - Španjolska liga: Tenerife - Barcelona  | 90 min",
+  "11-23 11:25 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 105 min",
+  "11-23 19:00 | Barcelona-Villarreal  | 120 min",
+  "11-23 05:50 | Futboll: La Liga Barcelona - Villarreal  | 120 min",
   "11-23 18:30 | FCB total  | 30 min",
   "11-23 19:30 | FCB total  | 30 min",
   "11-23 20:30 | FCB total  | 30 min",
   "11-23 21:30 | FCB total  | 30 min",
   "11-23 22:30 | FCB total  | 30 min",
+  "11-23 23:30 | FCB total  | 30 min",
+  "11-24 00:30 | FCB total  | 30 min",
+  "11-24 01:30 | FCB total  | 30 min",
+  "11-23 19:00 | Barcelona-Villarreal  | 120 min",
   "11-23 06:00 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 185 min",
   "11-23 20:50 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 130 min",
-  "11-23 00:25 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
-  "11-23 00:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min",
-  "11-22 23:45 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 110 min",
-  "11-23 00:25 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
-  "11-23 00:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min",
-  "11-23 16:00 | Liga Acb 26/27 - Tenerife x Barcelona  | 120 min",
-  "11-23 16:00 | Liga Acb 26/27 - Tenerife x Barcelona  | 120 min",
-  "11-23 16:00 | Liga Acb 26/27 - Tenerife x Barcelona  | 120 min",
-  "11-23 04:00 | Fussball: FC Barcelona - Aston Villa FC  | 200 min",
-  "11-23 00:25 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 70 min",
-  "11-23 00:30 | Autourheilu kestävyysajo: FIA WEC - 6 tuntia Barcelona  | 60 min",
-  "11-23 02:00 | Fudbal - Španska liga: Barcelona - Villarreal  | 120 min",
-  "11-23 15:30 | Košarka - Španska liga: Tenerife - Barcelona  | 120 min",
-  "11-23 02:00 | Fudbal - Španska liga: Barcelona - Villarreal  | 120 min",
-  "11-23 15:30 | Košarka - Španska liga: Tenerife - Barcelona  | 120 min"
+  "11-23 19:00 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 120 min",
+  "11-24 00:40 | Košarka - Španjolska liga: Tenerife - Barcelona  | 90 min",
+  "11-23 08:30 | Košarka - Španjolska liga: Tenerife - Barcelona  | 90 min",
+  "11-23 11:25 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 105 min",
+  "11-23 22:55 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 125 min",
+  "11-23 23:00 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 120 min",
+  "11-23 22:55 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 125 min",
+  "11-23 23:00 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
@@ -123,9 +123,9 @@
     "team": "Atlético Madrid",
     "short": "Atlético",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
-    "points": 28,
-    "played": 12,
-    "gd": 13,
+    "points": 31,
+    "played": 13,
+    "gd": 16,
     "barca": false
    },
    {
@@ -250,22 +250,22 @@
    },
    {
     "rank": 16,
-    "team": "Getafe",
-    "short": "Getafe",
-    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2922.png",
-    "points": 12,
-    "played": 12,
-    "gd": -10,
-    "barca": false
-   },
-   {
-    "rank": 17,
     "team": "Valencia",
     "short": "Valencia",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
     "points": 12,
     "played": 13,
     "gd": -11,
+    "barca": false
+   },
+   {
+    "rank": 17,
+    "team": "Getafe",
+    "short": "Getafe",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2922.png",
+    "points": 12,
+    "played": 13,
+    "gd": -13,
     "barca": false
    },
    {
