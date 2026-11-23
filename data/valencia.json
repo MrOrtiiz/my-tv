@@ -1,5 +1,5 @@
 {
- "updated": 1795420346768,
+ "updated": 1795429683564,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
  "matches": [
@@ -40,7 +40,7 @@
  ],
  "guide": {
   "channels": 5637,
-  "programmes": 313276,
+  "programmes": 310972,
   "barca_listings": 11,
   "until": "2026-11-24T08:00:00+01:00"
  },
@@ -48,7 +48,6 @@
   "11-23 17:30 | Košarka - Španska liga: Valencia - Breogan  | 150 min",
   "11-23 17:30 | Košarka - Španska liga: Valencia - Breogan  | 150 min",
   "11-23 17:30 | Košarka - Španska liga: Valencia - Breogan  | 150 min",
-  "11-23 10:24 | SailGP: Valencia 2026 – Highlights  | 54 min",
   "11-23 18:45 | SailGP: Valencia 2026 – Highlights  | 55 min",
   "11-23 14:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
   "11-23 14:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
@@ -57,7 +56,9 @@
   "11-23 14:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
   "11-23 23:00 | Fotbal Spania: Valencia - Real Sociedad  | 120 min",
   "11-24 06:00 | Meci Fotbal La Liga: Rayo Vallecano - Valencia  | 120 min",
-  "11-23 23:00 | Fotbal Spania: Valencia - Real Sociedad  | 120 min"
+  "11-23 23:00 | Fotbal Spania: Valencia - Real Sociedad  | 120 min",
+  "11-24 09:50 | Porsche Sprint Cup Challenge SE: Valencia Sport Division Race 2  | 70 min",
+  "11-24 09:50 | Porsche Sprint Cup Challenge SE: Valencia Sport Division Race 2  | 70 min"
  ],
  "table": {
   "league": "LaLiga",
@@ -320,21 +321,21 @@
    "barca": false
   },
   {
+   "name": "Yassir Zabiri",
+   "team": "Racing Santander",
+   "goals": 11,
+   "barca": false
+  },
+  {
    "name": "Lamine Yamal",
    "team": "Barcelona",
    "goals": 10,
    "barca": false
   },
   {
-   "name": "Yassir Zabiri",
-   "team": "Racing Santander",
-   "goals": 9,
-   "barca": false
-  },
-  {
    "name": "Ante Budimir",
    "team": "Osasuna",
-   "goals": 8,
+   "goals": 9,
    "barca": false
   }
  ],
