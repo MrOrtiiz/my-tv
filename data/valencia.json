@@ -1,5 +1,5 @@
 {
- "updated": 1795441084134,
+ "updated": 1795450905653,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
  "matches": [
@@ -39,25 +39,18 @@
   "thesportsdb: LookupError"
  ],
  "guide": {
-  "channels": 5637,
-  "programmes": 307993,
-  "barca_listings": 11,
-  "until": "2026-11-24T08:00:00+01:00"
+  "channels": 5638,
+  "programmes": 197166,
+  "barca_listings": 5,
+  "until": "2026-11-24T19:00:00+01:00"
  },
  "barca_titles_seen": [
-  "11-23 17:30 | Košarka - Španska liga: Valencia - Breogan  | 150 min",
-  "11-23 17:30 | Košarka - Španska liga: Valencia - Breogan  | 150 min",
-  "11-23 17:30 | Košarka - Španska liga: Valencia - Breogan  | 150 min",
   "11-23 18:45 | SailGP: Valencia 2026 – Highlights  | 55 min",
-  "11-23 14:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-23 14:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-23 14:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-23 14:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-23 14:15 | Rayo Vallaecano vs Valencia - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
+  "11-23 17:30 | Košarka - Španska liga: Valencia - Breogan  | 150 min",
   "11-23 23:00 | Fotbal Spania: Valencia - Real Sociedad  | 120 min",
   "11-24 06:00 | Meci Fotbal La Liga: Rayo Vallecano - Valencia  | 120 min",
-  "11-23 23:00 | Fotbal Spania: Valencia - Real Sociedad  | 120 min",
-  "11-24 09:50 | Porsche Sprint Cup Challenge SE: Valencia Sport Division Race 2  | 70 min",
+  "11-24 15:00 | LaLiga EA Sports - Matchday 13: Rayo Vallecano vs Valencia  | 120 min",
+  "11-24 17:00 | Fotbal Spania: Santander - Valencia  | 120 min",
   "11-24 09:50 | Porsche Sprint Cup Challenge SE: Valencia Sport Division Race 2  | 70 min"
  ],
  "table": {
