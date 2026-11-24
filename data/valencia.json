@@ -1,5 +1,5 @@
 {
- "updated": 1795527180363,
+ "updated": 1795537596936,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
  "matches": [
@@ -19,8 +19,8 @@
    "title": "Real Jaen CF – Valencia",
    "competition": "Copa del Rey",
    "rival_logo": "",
-   "start": 1796241600000,
-   "stop": 1796248800000,
+   "start": 1796328000000,
+   "stop": 1796335200000,
    "live": false,
    "channels": [],
    "channel_ids": [],
@@ -52,8 +52,8 @@
  ],
  "guide": {
   "channels": 5636,
-  "programmes": 311148,
-  "barca_listings": 12,
+  "programmes": 306143,
+  "barca_listings": 11,
   "until": "2026-11-25T08:00:00+01:00"
  },
  "barca_titles_seen": [
@@ -69,8 +69,7 @@
   "11-24 17:00 | Fotbal Spania: Santander - Valencia  | 120 min",
   "11-25 03:00 | Fotbal Spania: Valencia - Bilbao  | 120 min",
   "11-24 17:00 | Fotbal Spania: Santander - Valencia  | 120 min",
-  "11-25 03:00 | Fotbal Spania: Valencia - Bilbao  | 120 min",
-  "11-24 15:00 | LaLiga EA Sports - Matchday 13: Rayo Vallecano vs Valencia  | 120 min"
+  "11-25 03:00 | Fotbal Spania: Valencia - Bilbao  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
