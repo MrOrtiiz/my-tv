@@ -1,5 +1,5 @@
 {
- "updated": 1795493781560,
+ "updated": 1795505947468,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
  "matches": [
@@ -52,21 +52,24 @@
  ],
  "guide": {
   "channels": 5636,
-  "programmes": 325803,
-  "barca_listings": 9,
-  "until": "2026-11-25T05:00:00+01:00"
+  "programmes": 319457,
+  "barca_listings": 12,
+  "until": "2026-11-25T08:00:00+01:00"
  },
  "barca_titles_seen": [
   "11-24 10:00 | Košarka - Euroleague: Valencia - Virtus Bologna  | 120 min",
   "11-24 10:00 | Košarka - Euroleague: Valencia - Virtus Bologna  | 120 min",
   "11-24 20:30 | LIVE: Košarka - Euroleague: Valencia - Panathinaikos  | 130 min",
+  "11-25 06:00 | LaLiga EA Sports: Rayo Vallecano - Valencia  | 120 min",
   "11-24 20:30 | LIVE: Košarka - Euroleague: Valencia - Panathinaikos  | 130 min",
   "11-24 23:22 | Verdi: Ernani - Palau De Les Arts Reina Sofía, Valencia  | 130 min",
+  "11-25 06:00 | LaLiga EA Sports: Rayo Vallecano - Valencia  | 120 min",
   "11-24 16:00 | Rayo Vallecano - Valencia  | 120 min",
+  "11-25 06:00 | Rayo Vallecano - Valencia  | 120 min",
+  "11-25 06:00 | LaLiga EA Sports: Rayo Vallecano - Valencia  | 120 min",
   "11-24 23:22 | Verdi : Ernani - Palau de les Arts de Valencia  | 130 min",
   "11-24 17:00 | Fotbal Spania: Santander - Valencia  | 120 min",
   "11-25 03:00 | Fotbal Spania: Valencia - Bilbao  | 120 min",
-  "11-24 06:00 | Meci Fotbal La Liga: Rayo Vallecano - Valencia  | 120 min",
   "11-24 17:00 | Fotbal Spania: Santander - Valencia  | 120 min",
   "11-25 03:00 | Fotbal Spania: Valencia - Bilbao  | 120 min",
   "11-24 15:00 | LaLiga EA Sports - Matchday 13: Rayo Vallecano vs Valencia  | 120 min",
