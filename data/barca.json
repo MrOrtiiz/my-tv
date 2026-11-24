@@ -1,5 +1,5 @@
 {
- "updated": 1795471528674,
+ "updated": 1795483777003,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -64,15 +64,14 @@
  ],
  "guide": {
   "channels": 5636,
-  "programmes": 305960,
-  "barca_listings": 25,
-  "until": "2026-11-24T17:15:00+01:00"
+  "programmes": 326186,
+  "barca_listings": 43,
+  "until": "2026-11-25T03:00:00+01:00"
  },
  "barca_titles_seen": [
-  "11-24 00:40 | Košarka - Španjolska liga: Tenerife - Barcelona  | 90 min",
-  "11-23 23:30 | FCB total  | 30 min",
-  "11-24 00:30 | FCB total  | 30 min",
-  "11-24 01:30 | FCB total  | 30 min",
+  "11-24 08:25 | Košarka - Španjolska liga: Tenerife - Barcelona  | 90 min",
+  "11-24 21:00 | LIVE: Košarka - Euroleague: Barcelona - Fenerbahce  | 120 min",
+  "11-24 18:00 | Atl Madrid-Barcelona  | 120 min",
   "11-24 02:30 | FCB total  | 30 min",
   "11-24 03:30 | FCB total  | 30 min",
   "11-24 04:30 | FCB total  | 30 min",
@@ -89,11 +88,12 @@
   "11-24 16:35 | FCB total  | 25 min",
   "11-24 17:35 | FCB total  | 25 min",
   "11-24 20:55 | Koszykówka mężczyzn: Euroliga - mecz: Barca - Fenerbahce Tarfin Stambuł  | 125 min",
+  "11-24 18:00 | Atl Madrid-Barcelona  | 120 min",
+  "11-24 03:55 | LaLiga EA Sports: Barcelona - Villarreal  | 125 min",
   "11-24 04:00 | LaLiga EA Sports: Barcelona - Villarreal  | 120 min",
   "11-24 03:05 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 175 min",
-  "11-24 00:40 | Košarka - Španjolska liga: Tenerife - Barcelona  | 90 min",
-  "11-23 22:55 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 125 min",
-  "11-23 23:00 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 120 min"
+  "11-24 08:25 | Košarka - Španjolska liga: Tenerife - Barcelona  | 90 min",
+  "11-24 21:00 | LIVE: Košarka - Euroleague: Barcelona - Fenerbahce  | 120 min"
  ],
  "table": {
   "league": "LaLiga",

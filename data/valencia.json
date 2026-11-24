@@ -1,5 +1,5 @@
 {
- "updated": 1795471544857,
+ "updated": 1795483792097,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
  "matches": [
@@ -52,15 +52,20 @@
  ],
  "guide": {
   "channels": 5636,
-  "programmes": 305960,
-  "barca_listings": 6,
-  "until": "2026-11-24T19:00:00+01:00"
+  "programmes": 326186,
+  "barca_listings": 7,
+  "until": "2026-11-25T01:32:00+01:00"
  },
  "barca_titles_seen": [
-  "11-23 23:00 | Fotbal Spania: Valencia - Real Sociedad  | 120 min",
+  "11-24 10:00 | Košarka - Euroleague: Valencia - Virtus Bologna  | 120 min",
+  "11-24 10:00 | Košarka - Euroleague: Valencia - Virtus Bologna  | 120 min",
+  "11-24 20:30 | LIVE: Košarka - Euroleague: Valencia - Panathinaikos  | 130 min",
+  "11-24 20:30 | LIVE: Košarka - Euroleague: Valencia - Panathinaikos  | 130 min",
+  "11-24 23:22 | Verdi: Ernani - Palau De Les Arts Reina Sofía, Valencia  | 130 min",
+  "11-24 16:00 | Rayo Vallecano - Valencia  | 120 min",
+  "11-24 23:22 | Verdi : Ernani - Palau de les Arts de Valencia  | 130 min",
   "11-24 17:00 | Fotbal Spania: Santander - Valencia  | 120 min",
   "11-24 06:00 | Meci Fotbal La Liga: Rayo Vallecano - Valencia  | 120 min",
-  "11-23 23:00 | Fotbal Spania: Valencia - Real Sociedad  | 120 min",
   "11-24 17:00 | Fotbal Spania: Santander - Valencia  | 120 min",
   "11-24 15:00 | LaLiga EA Sports - Matchday 13: Rayo Vallecano vs Valencia  | 120 min",
   "11-24 09:50 | Porsche Sprint Cup Challenge SE: Valencia Sport Division Race 2  | 70 min",
