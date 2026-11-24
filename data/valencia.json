@@ -1,5 +1,5 @@
 {
- "updated": 1795547774454,
+ "updated": 1795558328303,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
  "matches": [
@@ -51,24 +51,18 @@
   "thesportsdb: LookupError"
  ],
  "guide": {
-  "channels": 5636,
-  "programmes": 304368,
-  "barca_listings": 10,
+  "channels": 5637,
+  "programmes": 190483,
+  "barca_listings": 6,
   "until": "2026-11-25T21:00:00+01:00"
  },
  "barca_titles_seen": [
-  "11-24 20:30 | LIVE: Košarka - Euroleague: Valencia - Panathinaikos  | 130 min",
-  "11-25 06:00 | LaLiga EA Sports: Rayo Vallecano - Valencia  | 120 min",
-  "11-24 20:30 | LIVE: Košarka - Euroleague: Valencia - Panathinaikos  | 130 min",
-  "11-24 23:22 | Verdi: Ernani - Palau De Les Arts Reina Sofía, Valencia  | 130 min",
-  "11-25 06:00 | LaLiga EA Sports: Rayo Vallecano - Valencia  | 120 min",
-  "11-25 06:00 | Rayo Vallecano - Valencia  | 120 min",
-  "11-25 06:00 | LaLiga EA Sports: Rayo Vallecano - Valencia  | 120 min",
   "11-24 23:22 | Verdi : Ernani - Palau de les Arts de Valencia  | 130 min",
+  "11-25 06:00 | LaLiga EA Sports: Rayo Vallecano - Valencia  | 120 min",
+  "11-24 23:22 | Verdi: Ernani - Palau De Les Arts Reina Sofía, Valencia  | 130 min",
   "11-25 03:00 | Fotbal Spania: Valencia - Bilbao  | 120 min",
   "11-25 19:00 | Fotbal Spania: Valencia - Villarreal  | 120 min",
-  "11-25 03:00 | Fotbal Spania: Valencia - Bilbao  | 120 min",
-  "11-25 19:00 | Fotbal Spania: Valencia - Villarreal  | 120 min"
+  "11-25 06:00 | Rayo Vallecano - Valencia  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
