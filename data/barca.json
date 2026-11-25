@@ -1,5 +1,5 @@
 {
- "updated": 1795558314772,
+ "updated": 1795570528310,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -14,27 +14,29 @@
     "Fox Sports America Argentina HD ARG",
     "beIN SPORTS 1 EN FHD",
     "TNT Sports 4 (HEVC) UK",
+    "VIP beIN SPORTS 3 FHD",
     "VIP beIN SPORTS 2 FHD",
+    "Nova Sport 4 FHD CZ",
     "TV3 Sport FHD DK",
     "beIN SPORTS 1 FR FHD",
-    "Prima Sport 1 FHD RO",
     "Arena Sport 2 FHD HR",
     "Arena Sport Premium 2 FHD BA",
-    "Ziggo Sport FHD NL",
-    "Ziggo Sport  Select HD NL"
+    "Prima Sport 1 FHD RO",
+    "Ziggo Sport FHD NL"
    ],
    "channel_ids": [
     "foxsports.ar",
     "beinsports1en.qa",
     "tntsports4.uk",
+    "beinsports3.qa",
     "beinsports2.qa",
+    "6123",
     "tv3sport.dk",
     "beinsports1fr.qa",
-    "primasport1.ro",
     "arenasport2.hr",
     "arenasportpremium2.ba",
-    "ziggosport.nl",
-    "ziggosportselect.nl"
+    "primasport1.ro",
+    "ziggosport.nl"
    ],
    "channel_langs": [
     "es",
@@ -47,9 +49,10 @@
     "xx",
     "xx",
     "xx",
+    "xx",
     "xx"
    ],
-   "more": 0
+   "more": 1
   },
   {
    "title": "Deportivo – Barcelona",
@@ -111,37 +114,37 @@
   "thesportsdb: HTTPError"
  ],
  "guide": {
-  "channels": 5637,
-  "programmes": 190483,
-  "barca_listings": 25,
-  "until": "2026-11-26T01:00:00+01:00"
+  "channels": 5636,
+  "programmes": 319163,
+  "barca_listings": 80,
+  "until": "2026-11-26T04:00:00+01:00"
  },
  "barca_titles_seen": [
-  "11-25 10:00 | Europakonzert 2023 : les Berliner Philharmoniker en Barcelona  | 80 min",
-  "11-25 18:40 | UEFA Champions League: Sabah Baku - FC Barcelona  | 135 min",
+  "11-25 03:25 | Košarka - Euroleague: Barcelona - Fenerbahce  | 100 min",
+  "11-25 15:15 | Košarka - Euroleague: Barcelona - Fenerbahce  | 105 min",
+  "11-25 15:00 | Barcelona-Villarreal  | 120 min",
   "11-25 18:45 | Champions League: Sabah FK – Barcelona | 120 min",
-  "11-25 18:35 | UEFA Champions League 26/27 - Sabah x Barcelona (Direto)  | 115 min",
-  "11-25 16:30 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 110 min",
-  "11-25 11:00 | Liga Acb 26/27 - Tenerife x Barcelona  | 120 min",
-  "11-25 10:00 | Europakonzert 2023 : The Berliner Philharmoniker In Barcelona  | 80 min",
+  "11-25 15:00 | Barcelona-Villarreal  | 120 min",
+  "11-25 18:40 | UEFA Champions League: Sabah Baku - FC Barcelona  | 135 min",
   "11-25 18:30 | Sabah Baku (Aze) vs. Barcelona (Esp)  | 120 min",
   "11-25 12:40 | UCL 26/27: Sabah v Barcelona  | 125 min",
-  "11-25 02:00 | Tennis: ATP Barcelona Open 2026  | 60 min",
-  "11-25 12:10 | Extreme Barcelona  | 60 min",
-  "11-25 03:30 | Barcelona vs Villarreal - Spanish LaLiga 2026/2027 - Week 13  | 30 min",
-  "11-25 18:00 | Sabah vs Barcelona - UEFA Champions League MD5  | 180 min",
-  "11-25 18:15 | Sabah vs Barcelona - UEFA Champions League MD5  | 155 min",
-  "11-24 23:15 | Barcelona vs Villarreal - Spanish LaLiga 2026/2027 - Week 13  | 120 min",
-  "11-25 18:00 | UCL 26/27: Sabah v Barcelona  | 120 min",
-  "11-25 18:40 | Champions League: Sabah FK – Barcelona | 135 min",
-  "11-25 01:00 | Fotbal Spania: Betis - Barcelona  | 120 min",
-  "11-25 10:00 | Europakonzert 2023 : le Berliner Philharmoniker à Barcelona  | 80 min",
-  "11-25 15:00 | Levante vs Barcelona  | 119 min",
-  "11-25 18:40 | LIVE Champions League: Sabah-Barcelona Etapa 5  | 49 min",
-  "11-25 19:45 | LIVE Champions League: Sabah-Barcelona Etapa 5  | 59 min",
-  "11-25 13:40 | Barca visurilor  | 94 min",
-  "11-25 16:00 | Clifford, câinele mare şi roşu: Ghicirea viitorului / Barca unei capre  | 30 min",
-  "11-25 18:45 | LIVE: Fotbal UEFA Champions League: Sabah - Barcelona  | 135 min"
+  "11-25 03:25 | Košarka - Euroleague: Barcelona - Fenerbahce  | 100 min",
+  "11-25 15:15 | Košarka - Euroleague: Barcelona - Fenerbahce  | 105 min",
+  "11-25 18:45 | SABAH - BARCELONA  | 135 min",
+  "11-25 18:40 | UEFA Champions League: Sabah Baku - FC Barcelona  | 135 min",
+  "11-25 18:40 | UEFA Champions League: Sabah Baku - FC Barcelona  | 135 min",
+  "11-25 18:35 | UEFA Champions League 26/27 - Sabah x Barcelona (Direto)  | 115 min",
+  "11-25 18:35 | UEFA Champions League 26/27 - Sabah x Barcelona (Direto)  | 115 min",
+  "11-25 18:35 | UEFA Champions League 26/27 - Sabah x Barcelona (Direto)  | 115 min",
+  "11-25 16:30 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 110 min",
+  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 115 min",
+  "11-25 16:30 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 110 min",
+  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 115 min",
+  "11-25 16:30 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 110 min",
+  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 115 min",
+  "11-25 11:00 | Liga Acb 26/27 - Tenerife x Barcelona  | 120 min",
+  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 120 min",
+  "11-25 11:00 | Liga Acb 26/27 - Tenerife x Barcelona  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
