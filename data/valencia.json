@@ -1,5 +1,5 @@
 {
- "updated": 1795623902304,
+ "updated": 1795633920337,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
  "matches": [
@@ -52,8 +52,8 @@
  ],
  "guide": {
   "channels": 5636,
-  "programmes": 300685,
-  "barca_listings": 11,
+  "programmes": 296297,
+  "barca_listings": 10,
   "until": "2026-11-26T18:40:00+01:00"
  },
  "barca_titles_seen": [
@@ -72,7 +72,6 @@
   "11-25 19:00 | Fotbal Spania: Valencia - Villarreal  | 120 min",
   "11-26 09:00 | LIVE: Moto Mini: Finala Mondială Valencia  | 345 min",
   "11-25 19:00 | Fotbal Spania: Valencia - Villarreal  | 120 min",
-  "11-25 17:00 | LaLiga EA Sports - Matchday 13: Rayo Vallecano vs Valencia  | 115 min",
   "11-26 16:35 | Ravel : L'Heure espagnole - Puccini : Gianni Schicchi - Palau de les Arts, Valencia  | 125 min",
   "11-26 16:35 | Ravel : L'Heure espagnole - Puccini : Gianni Schicchi - Palau de les Arts, Valencia  | 125 min"
  ],
