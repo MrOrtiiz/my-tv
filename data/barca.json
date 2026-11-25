@@ -1,59 +1,8 @@
 {
- "updated": 1795633901830,
+ "updated": 1795644739270,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
-  {
-   "title": "Sabah FK – Barcelona",
-   "competition": "Champions League",
-   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/21922.png",
-   "start": 1795628700000,
-   "stop": 1795635900000,
-   "live": true,
-   "channels": [
-    "Fox Sports America Argentina HD ARG",
-    "beIN SPORTS 1 EN FHD",
-    "TNT Sports 4 (HEVC) UK",
-    "VIP beIN SPORTS 3 FHD",
-    "VIP beIN SPORTS 2 FHD",
-    "Nova Sport 4 FHD CZ",
-    "TV3 Sport FHD DK",
-    "beIN SPORTS 1 FR FHD",
-    "Arena Sport 2 FHD HR",
-    "Arena Sport Premium 2 FHD BA",
-    "Prima Sport 1 FHD RO",
-    "Ziggo Sport FHD NL"
-   ],
-   "channel_ids": [
-    "foxsports.ar",
-    "beinsports1en.qa",
-    "tntsports4.uk",
-    "beinsports3.qa",
-    "beinsports2.qa",
-    "6123",
-    "tv3sport.dk",
-    "beinsports1fr.qa",
-    "arenasport2.hr",
-    "arenasportpremium2.ba",
-    "primasport1.ro",
-    "ziggosport.nl"
-   ],
-   "channel_langs": [
-    "es",
-    "en",
-    "en",
-    "xx",
-    "xx",
-    "xx",
-    "xx",
-    "xx",
-    "xx",
-    "xx",
-    "xx",
-    "xx"
-   ],
-   "more": 1
-  },
   {
    "title": "Deportivo – Barcelona",
    "competition": "LaLiga",
@@ -115,36 +64,36 @@
  ],
  "guide": {
   "channels": 5636,
-  "programmes": 296297,
-  "barca_listings": 96,
-  "until": "2026-11-26T22:00:00+01:00"
+  "programmes": 293047,
+  "barca_listings": 62,
+  "until": "2026-11-27T00:02:00+01:00"
  },
  "barca_titles_seen": [
+  "11-26 20:40 | EHF Men's Champions League: FC Barcelona - GOG  | 125 min",
   "11-26 09:00 | Tennis: ATP Barcelona Open 2026  | 60 min",
   "11-26 10:00 | Košarka - Euroleague: Barcelona - Fenerbahce  | 120 min",
   "11-26 10:00 | Košarka - Euroleague: Barcelona - Fenerbahce  | 120 min",
   "11-26 19:50 | Košarka - Španjolska liga: Tenerife - Barcelona  | 95 min",
   "11-26 08:10 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 110 min",
   "11-26 15:40 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - Villarreal CF  | 140 min",
-  "11-25 18:45 | Champions League: Sabah FK – Barcelona | 120 min",
+  "11-26 20:40 | EHF Men's Champions League: FC Barcelona - GOG  | 125 min",
   "11-26 09:00 | Tennis: ATP Barcelona Open 2026  | 60 min",
-  "11-25 18:40 | UEFA Champions League: Sabah Baku - FC Barcelona  | 135 min",
   "11-26 14:00 | UEFA Champions League: Sabah Baku - FC Barcelona  | 120 min",
   "11-26 11:00 | 6 Hours of Barcelona, Fecha 7  | 60 min",
-  "11-25 18:30 | Sabah Baku (Aze) vs. Barcelona (Esp)  | 120 min",
   "11-26 06:00 | Sabah Baku (Aze) vs. Barcelona (Esp)  | 0 min",
   "11-26 13:00 | Sabah Baku (Aze) vs. Barcelona (Esp)  | 120 min",
   "11-26 19:50 | Košarka - Španjolska liga: Tenerife - Barcelona  | 95 min",
   "11-26 08:10 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 110 min",
-  "11-25 18:45 | SABAH - BARCELONA  | 135 min",
-  "11-25 18:40 | UEFA Champions League: Sabah Baku - FC Barcelona  | 135 min",
   "11-26 14:00 | UEFA Champions League: Sabah Baku - FC Barcelona  | 120 min",
-  "11-25 18:40 | UEFA Champions League: Sabah Baku - FC Barcelona  | 135 min",
   "11-26 14:00 | UEFA Champions League: Sabah Baku - FC Barcelona  | 120 min",
-  "11-25 18:35 | UEFA Champions League 26/27 - Sabah x Barcelona (Direto)  | 115 min",
-  "11-25 18:35 | UEFA Champions League 26/27 - Sabah x Barcelona (Direto)  | 115 min",
-  "11-25 18:35 | UEFA Champions League 26/27 - Sabah x Barcelona (Direto)  | 115 min",
-  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 115 min"
+  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 115 min",
+  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 115 min",
+  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 115 min",
+  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 120 min",
+  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 120 min",
+  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 120 min",
+  "11-26 07:00 | Levante vs Barcelona  | 119 min",
+  "11-26 01:30 | Sabah FK vs. Barcelona  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
@@ -353,14 +302,6 @@
  },
  "form": [
   {
-   "date": "2026-10-25T20:00Z",
-   "res": "F",
-   "opp": "Real Madrid",
-   "home": true,
-   "comp": "LaLiga",
-   "score": "1–2"
-  },
-  {
    "date": "2026-10-31T20:00Z",
    "res": "V",
    "opp": "Alavés",
@@ -391,6 +332,14 @@
    "home": true,
    "comp": "LaLiga",
    "score": "3–2"
+  },
+  {
+   "date": "2026-11-25T17:45Z",
+   "res": "V",
+   "opp": "Sabah",
+   "home": false,
+   "comp": "Champions League",
+   "score": "4–1"
   }
  ],
  "scorers": [
