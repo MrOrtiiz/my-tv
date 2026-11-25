@@ -1,5 +1,5 @@
 {
- "updated": 1795497938069,
+ "updated": 1795584465995,
  "source": "iptv-org (github.com/iptv-org/iptv)",
  "groups": [
   {
@@ -351,11 +351,6 @@
      "url": "https://jmp2.uk/plu-6400be67219c4c00081755d3.m3u8"
     },
     {
-     "name": "Crazy Ex-Girlfriend",
-     "logo": "https://images.pluto.tv/channels/693ae5660eedebc8d5db6579/colorLogoPNG_1770039249880.png",
-     "url": "https://jmp2.uk/plu-693ae5b792fad2e93412a2c7.m3u8"
-    },
-    {
      "name": "Crime 360",
      "logo": "https://i.imgur.com/IjtaG1m.png",
      "url": "https://jmp2.uk/plu-6578875614fbe400086e319e.m3u8"
@@ -604,6 +599,11 @@
      "name": "Lyxfällan Danmark",
      "logo": "https://images.pluto.tv/channels/61c19165decece0007e9b2f3/colorLogoPNG.png",
      "url": "https://jmp2.uk/plu-61c19165decece0007e9b2f3.m3u8"
+    },
+    {
+     "name": "Lyxfällan Norge",
+     "logo": "https://images.pluto.tv/channels/67f7d328efc5473b6b4ac5f4/colorLogoPNG_1745915912635.png",
+     "url": "https://jmp2.uk/plu-67f7d328efc5473b6b4ac5f4.m3u8"
     }
    ]
   },
@@ -724,11 +724,6 @@
      "name": "AXN",
      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/AXN_logo_%282015%29.svg/960px-AXN_logo_%282015%29.svg.png",
      "url": "https://vuvuu-geil-m3u8.yaskar661.workers.dev/?url=https%3A%2F%2Fgeil.to%2Flive%2Fplay%2F4238619703"
-    },
-    {
-     "name": "Bom Cine",
-     "logo": "https://bomcine.com/img/ico/logo-bom-negro.svg",
-     "url": "https://cdn78-at.azotosolutions.com/cdnedge39/Canale3/master.m3u8"
     },
     {
      "name": "Bon Dia TV",
@@ -916,11 +911,6 @@
      "url": "https://elche7tv.gestec-video.com/hls/canal2.m3u8"
     },
     {
-     "name": "Empordà TV",
-     "logo": "https://i.imgur.com/jc0lUbX.png",
-     "url": "https://video3.lhdserver.es/empordatv2/live.m3u8"
-    },
-    {
      "name": "Esport3",
      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Esport3.svg/960px-Esport3.svg.png",
      "url": "https://directes-tv-int.3catdirectes.cat/live-content/esport3-hls/master.m3u8"
@@ -986,6 +976,11 @@
      "url": "https://interalmeria.tv/directo/live.m3u8"
     },
     {
+     "name": "Intercomarcal TV",
+     "logo": "https://i.imgur.com/KLPSnAT.png",
+     "url": "https://streamingtvi.gestec-video.com/hls/tvixa.m3u8"
+    },
+    {
      "name": "La 8 Mediterraneo",
      "logo": "https://tbsfibra.es/wp-content/uploads/2022/07/17-8-MEDITERRANEO.png",
      "url": "https://newscript.gestec-video.com/hls/8TVEVENTOS.m3u8"
@@ -1036,6 +1031,11 @@
      "url": "https://streaming013.gestec-video.com/hls/negociostv.m3u8"
     },
     {
+     "name": "Nortevision",
+     "logo": "https://i.imgur.com/C5SYw7B.png",
+     "url": "http://amaru.dyndns.org:8870/1.m3u8"
+    },
+    {
      "name": "NORTEvisión",
      "logo": "https://i.imgur.com/C5SYw7B.png",
      "url": "http://amaru.dyndns.org:8870/0.m3u8"
@@ -1064,6 +1064,11 @@
      "name": "Platzi TV",
      "logo": "https://i.imgur.com/vEzeqHP.png",
      "url": "https://mdstrm.com/live-stream-playlist/629a63ae8df27c082901f78b.m3u8"
+    },
+    {
+     "name": "POP World TV",
+     "logo": "https://i.imgur.com/LQB6G3s.jpg",
+     "url": "https://janus.xpbroadcasting.com:8443/hls/popworld.m3u8"
     },
     {
      "name": "Punt 3 Vall Uixó",
@@ -1129,11 +1134,6 @@
      "name": "SpektraTV",
      "logo": "https://i.imgur.com/0zCt8e4.png",
      "url": "https://cloudvideo.servers10.com:8081/8026/tracks-v1a1/index.m3u8"
-    },
-    {
-     "name": "Squirrel",
-     "logo": "https://i.imgur.com/9y8VcBr.png",
-     "url": "https://cdn78-at.azotosolutions.com/cdnedge39/Canale1/master.m3u8"
     },
     {
      "name": "Tarotéame",
@@ -1281,6 +1281,11 @@
      "url": "https://eu1.servers10.com:8081/8166/index.m3u8"
     },
     {
+     "name": "Une Vinalopó",
+     "logo": "https://i.imgur.com/WpGR7RQ.png",
+     "url": "https://streamingtvi.gestec-video.com/hls/unesd.m3u8"
+    },
+    {
      "name": "Univers TV",
      "logo": "https://i.imgur.com/EW2bfix.png",
      "url": "https://cloud2.streaminglivehd.com:1936/universfaller/universfaller/playlist.m3u8"
@@ -1289,6 +1294,21 @@
      "name": "Urola Telebista",
      "logo": "https://i.imgur.com/V23bltn.png",
      "url": "https://5940924978228.streamlock.net/j_Directo2/mp4:j_Directo2/playlist.m3u8"
+    },
+    {
+     "name": "XPTV US",
+     "logo": "https://i.imgur.com/1m7kDmc.png",
+     "url": "https://janus.xpbroadcasting.com:8443/hls/xptvUS.m3u8"
+    },
+    {
+     "name": "XPTV1",
+     "logo": "https://i.imgur.com/Ty7GkoN.png",
+     "url": "https://janus.xpbroadcasting.com:8443/hls/xptv1.m3u8"
+    },
+    {
+     "name": "XPTV2",
+     "logo": "https://i.imgur.com/74Z8ATB.png",
+     "url": "https://janus.xpbroadcasting.com:8443/hls/xptv2.m3u8"
     },
     {
      "name": "People are Awesome",
@@ -1339,26 +1359,6 @@
      "name": "Barbie & Friends",
      "logo": "",
      "url": "https://jmp2.uk/plu-688892172928933015abe479.m3u8"
-    },
-    {
-     "name": "Bob Esponja",
-     "logo": "https://i.imgur.com/nmZ2nId.png",
-     "url": "https://jmp2.uk/plu-5f1aca0b4e448e00075e7c5e.m3u8"
-    },
-    {
-     "name": "Call the Midwife",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-65dded6966eec80008947157.m3u8"
-    },
-    {
-     "name": "Cazasubastas",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-6335a6b6e6f7a600076e589e.m3u8"
-    },
-    {
-     "name": "CBS News 24/7",
-     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/CBS_News_247_logo.svg/960px-CBS_News_247_logo.svg.png",
-     "url": "https://jmp2.uk/plu-6231ede1be5b460007f91bc1.m3u8"
     }
    ]
   },
@@ -1911,6 +1911,11 @@
      "url": "https://hls.autopo.st/hls/britasiatv/index.m3u8"
     },
     {
+     "name": "Canaf54 TV",
+     "logo": "https://i.imgur.com/viB0FS2.png",
+     "url": "https://5caf24a595d94.streamlock.net:1937/pvyugfkzkc/pvyugfkzkc/playlist.m3u8"
+    },
+    {
      "name": "Cartoon Network CEE",
      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Cartoon_Network_2010_logo.svg/960px-Cartoon_Network_2010_logo.svg.png",
      "url": "http://193.33.39.108:9007/play/a00l"
@@ -2121,6 +2126,11 @@
      "url": "https://hnc-free-viewlift.amagi.tv/HNC_AUSTRALIA.m3u8"
     },
     {
+     "name": "Iqra Bangla",
+     "logo": "https://i.imgur.com/BZBZAeC.png",
+     "url": "https://tvsen3.aynaott.com/EuEy5mBW/index.m3u8"
+    },
+    {
      "name": "Iran International",
      "logo": "https://i.imgur.com/55RpaF3.png",
      "url": "https://hlspackager.akamaized.net/live/DB/IRAN_INTERNATIONAL/HLS/IRAN_INTERNATIONAL.m3u8"
@@ -2134,11 +2144,6 @@
      "name": "JimJam Europe",
      "logo": "https://i.imgur.com/ODhkYyx.png",
      "url": "http://212.5.144.156:8080/jimjam/index.m3u8"
-    },
-    {
-     "name": "Kanshi TV",
-     "logo": "https://i.imgur.com/w6uXMrK.png",
-     "url": "https://live.kanshitv.co.uk/mobile/kanshitvkey.m3u8"
     },
     {
      "name": "Magnavision TV",
@@ -2179,11 +2184,6 @@
      "name": "MTA4 Africa",
      "logo": "https://i.imgur.com/lmVeQQX.png",
      "url": "https://chlivemta.akamaized.net/hls/live/2010555/mtaafrica1/playlist.m3u8"
-    },
-    {
-     "name": "MTA5 Africa",
-     "logo": "https://i.imgur.com/9Cobb2i.png",
-     "url": "https://chlivemta.akamaized.net/hls/live/2010555/mtaafrica2/playlist.m3u8"
     }
    ]
   }
