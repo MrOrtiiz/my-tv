@@ -1,5 +1,5 @@
 {
- "updated": 1795580691686,
+ "updated": 1795592481699,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -115,18 +115,21 @@
  ],
  "guide": {
   "channels": 5636,
-  "programmes": 315889,
-  "barca_listings": 80,
-  "until": "2026-11-26T07:00:00+01:00"
+  "programmes": 311554,
+  "barca_listings": 84,
+  "until": "2026-11-26T10:00:00+01:00"
  },
  "barca_titles_seen": [
+  "11-26 08:10 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 110 min",
   "11-25 15:15 | Košarka - Euroleague: Barcelona - Fenerbahce  | 105 min",
   "11-25 15:00 | Barcelona-Villarreal  | 120 min",
   "11-25 18:45 | Champions League: Sabah FK – Barcelona | 120 min",
   "11-25 15:00 | Barcelona-Villarreal  | 120 min",
   "11-25 18:40 | UEFA Champions League: Sabah Baku - FC Barcelona  | 135 min",
   "11-25 18:30 | Sabah Baku (Aze) vs. Barcelona (Esp)  | 120 min",
+  "11-26 06:00 | Sabah Baku (Aze) vs. Barcelona (Esp)  | 0 min",
   "11-25 12:40 | UCL 26/27: Sabah v Barcelona  | 125 min",
+  "11-26 08:10 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 110 min",
   "11-25 15:15 | Košarka - Euroleague: Barcelona - Fenerbahce  | 105 min",
   "11-25 18:45 | SABAH - BARCELONA  | 135 min",
   "11-25 18:40 | UEFA Champions League: Sabah Baku - FC Barcelona  | 135 min",
@@ -141,10 +144,7 @@
   "11-25 16:30 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 110 min",
   "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 115 min",
   "11-25 11:00 | Liga Acb 26/27 - Tenerife x Barcelona  | 120 min",
-  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 120 min",
-  "11-25 11:00 | Liga Acb 26/27 - Tenerife x Barcelona  | 120 min",
-  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 120 min",
-  "11-25 11:00 | Liga Acb 26/27 - Tenerife x Barcelona  | 120 min"
+  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 120 min"
  ],
  "table": {
   "league": "LaLiga",
