@@ -1,5 +1,5 @@
 {
- "updated": 1795613937323,
+ "updated": 1795623884357,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -115,36 +115,36 @@
  ],
  "guide": {
   "channels": 5636,
-  "programmes": 304632,
-  "barca_listings": 99,
-  "until": "2026-11-26T16:00:00+01:00"
+  "programmes": 300685,
+  "barca_listings": 98,
+  "until": "2026-11-26T19:00:00+01:00"
  },
  "barca_titles_seen": [
   "11-26 09:00 | Tennis: ATP Barcelona Open 2026  | 60 min",
   "11-26 10:00 | Košarka - Euroleague: Barcelona - Fenerbahce  | 120 min",
   "11-26 10:00 | Košarka - Euroleague: Barcelona - Fenerbahce  | 120 min",
   "11-26 08:10 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 110 min",
-  "11-25 15:15 | Košarka - Euroleague: Barcelona - Fenerbahce  | 105 min",
-  "11-25 15:00 | Barcelona-Villarreal  | 120 min",
+  "11-26 15:40 | Piłka nożna: Liga hiszpańska - mecz: FC Barcelona - Villarreal CF  | 140 min",
   "11-25 18:45 | Champions League: Sabah FK – Barcelona | 120 min",
   "11-26 09:00 | Tennis: ATP Barcelona Open 2026  | 60 min",
-  "11-25 15:00 | Barcelona-Villarreal  | 120 min",
   "11-25 18:40 | UEFA Champions League: Sabah Baku - FC Barcelona  | 135 min",
   "11-26 14:00 | UEFA Champions League: Sabah Baku - FC Barcelona  | 120 min",
   "11-26 11:00 | 6 Hours of Barcelona, Fecha 7  | 60 min",
   "11-25 18:30 | Sabah Baku (Aze) vs. Barcelona (Esp)  | 120 min",
   "11-26 06:00 | Sabah Baku (Aze) vs. Barcelona (Esp)  | 0 min",
   "11-26 13:00 | Sabah Baku (Aze) vs. Barcelona (Esp)  | 120 min",
-  "11-25 12:40 | UCL 26/27: Sabah v Barcelona  | 125 min",
   "11-26 08:10 | Nogomet - Španjolska liga: Barcelona - Villarreal  | 110 min",
-  "11-25 15:15 | Košarka - Euroleague: Barcelona - Fenerbahce  | 105 min",
   "11-25 18:45 | SABAH - BARCELONA  | 135 min",
   "11-25 18:40 | UEFA Champions League: Sabah Baku - FC Barcelona  | 135 min",
   "11-26 14:00 | UEFA Champions League: Sabah Baku - FC Barcelona  | 120 min",
   "11-25 18:40 | UEFA Champions League: Sabah Baku - FC Barcelona  | 135 min",
   "11-26 14:00 | UEFA Champions League: Sabah Baku - FC Barcelona  | 120 min",
   "11-25 18:35 | UEFA Champions League 26/27 - Sabah x Barcelona (Direto)  | 115 min",
-  "11-25 18:35 | UEFA Champions League 26/27 - Sabah x Barcelona (Direto)  | 115 min"
+  "11-25 18:35 | UEFA Champions League 26/27 - Sabah x Barcelona (Direto)  | 115 min",
+  "11-25 18:35 | UEFA Champions League 26/27 - Sabah x Barcelona (Direto)  | 115 min",
+  "11-25 16:30 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 110 min",
+  "11-26 00:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 115 min",
+  "11-25 16:30 | La Liga EA Sports 2026-27 - Barcelona x Villarreal  | 110 min"
  ],
  "table": {
   "league": "LaLiga",
