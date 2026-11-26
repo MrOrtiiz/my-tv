@@ -1,5 +1,5 @@
 {
- "updated": 1795656954714,
+ "updated": 1795666875160,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
  "matches": [
@@ -52,7 +52,7 @@
  ],
  "guide": {
   "channels": 5636,
-  "programmes": 315855,
+  "programmes": 312941,
   "barca_listings": 9,
   "until": "2026-11-27T01:00:00+01:00"
  },
@@ -62,6 +62,9 @@
   "11-26 07:00 | Košarka - Euroleague: Valencia - Panathinaikos  | 120 min",
   "11-26 12:00 | Košarka - Španska liga: Valencia - Breogan  | 120 min",
   "11-26 20:15 | Košarka - Euroleague: Valencia - Panathinaikos  | 95 min",
+  "11-27 02:55 | MotoGP '26: Valencia Moto3 Practice 1  | 50 min",
+  "11-27 03:45 | MotoGP '26: Valencia Moto2 Practice 1  | 55 min",
+  "11-27 04:40 | MotoGP '26: Valencia MotoGP Practice 1  | 75 min",
   "11-26 20:15 | Košarka - Euroleague: Valencia - Panathinaikos  | 95 min",
   "11-26 16:35 | Ravel: L'heure Espagnole - Puccini: Gianni Schicchi - Palau De Les Arts, Valencia  | 125 min",
   "11-26 13:00 | Minigp Valencia  | 30 min",
@@ -74,6 +77,7 @@
   "11-26 23:00 | Fotbal Spania: Elche - Valencia  | 120 min",
   "11-26 09:00 | LIVE: Moto Mini: Finala Mondială Valencia  | 345 min",
   "11-26 23:00 | Fotbal Spania: Elche - Valencia  | 120 min",
+  "11-27 03:00 | LaLiga 26/27: Rayo v Valencia  | 120 min",
   "11-26 16:35 | Ravel : L'Heure espagnole - Puccini : Gianni Schicchi - Palau de les Arts, Valencia  | 125 min",
   "11-26 16:35 | Ravel : L'Heure espagnole - Puccini : Gianni Schicchi - Palau de les Arts, Valencia  | 125 min"
  ],
