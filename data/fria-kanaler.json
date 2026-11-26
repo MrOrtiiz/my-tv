@@ -1,5 +1,5 @@
 {
- "updated": 1795584465995,
+ "updated": 1795670893363,
  "source": "iptv-org (github.com/iptv-org/iptv)",
  "groups": [
   {
@@ -911,6 +911,11 @@
      "url": "https://elche7tv.gestec-video.com/hls/canal2.m3u8"
     },
     {
+     "name": "Empordà TV",
+     "logo": "https://i.imgur.com/jc0lUbX.png",
+     "url": "https://video3.lhdserver.es/empordatv2/live.m3u8"
+    },
+    {
      "name": "Esport3",
      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Esport3.svg/960px-Esport3.svg.png",
      "url": "https://directes-tv-int.3catdirectes.cat/live-content/esport3-hls/master.m3u8"
@@ -969,6 +974,11 @@
      "name": "Historia HD",
      "logo": "https://i.imgur.com/VUy8xIG.png",
      "url": "https://d1k3vzh2ivy22k.cloudfront.net/Historia1080.m3u8"
+    },
+    {
+     "name": "Imás TV",
+     "logo": "https://i.imgur.com/a9hgTmM.png",
+     "url": "https://secure3.todostreaming.es/live/imastv-livestream.m3u8"
     },
     {
      "name": "Interalmeria TV",
@@ -1349,16 +1359,6 @@
      "name": "Ana y los 7",
      "logo": "https://i.imgur.com/X5g6gXS.png",
      "url": "https://jmp2.uk/plu-5f1acce7f17797000718f9be.m3u8"
-    },
-    {
-     "name": "Archivos Forenses",
-     "logo": "https://i.imgur.com/Pxrl9Ug.png",
-     "url": "https://jmp2.uk/plu-5f984f4a09e92d0007d74647.m3u8"
-    },
-    {
-     "name": "Barbie & Friends",
-     "logo": "",
-     "url": "https://jmp2.uk/plu-688892172928933015abe479.m3u8"
     }
    ]
   },
@@ -2126,11 +2126,6 @@
      "url": "https://hnc-free-viewlift.amagi.tv/HNC_AUSTRALIA.m3u8"
     },
     {
-     "name": "Iqra Bangla",
-     "logo": "https://i.imgur.com/BZBZAeC.png",
-     "url": "https://tvsen3.aynaott.com/EuEy5mBW/index.m3u8"
-    },
-    {
      "name": "Iran International",
      "logo": "https://i.imgur.com/55RpaF3.png",
      "url": "https://hlspackager.akamaized.net/live/DB/IRAN_INTERNATIONAL/HLS/IRAN_INTERNATIONAL.m3u8"
@@ -2144,6 +2139,11 @@
      "name": "JimJam Europe",
      "logo": "https://i.imgur.com/ODhkYyx.png",
      "url": "http://212.5.144.156:8080/jimjam/index.m3u8"
+    },
+    {
+     "name": "Kanshi TV",
+     "logo": "https://i.imgur.com/w6uXMrK.png",
+     "url": "https://live.kanshitv.co.uk/mobile/kanshitvkey.m3u8"
     },
     {
      "name": "Magnavision TV",
