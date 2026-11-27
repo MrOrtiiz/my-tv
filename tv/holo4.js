@@ -918,8 +918,6 @@ var Holo4 = (function () {
 
   function renderBar() {
     if (!bar) return;
-    var d = new Date(), city = (typeof Prefs !== 'undefined' && Prefs.city ? Prefs.city() : '') || 'Uppsala';
-    bar.childNodes[1].textContent = city.toUpperCase() + '  ::  VECKA ' + week(d) + '  ::  DAG ' + model.doy;
     var r = model.temp !== undefined ? 'UTE ' + deg(model.temp) : '';
     if (model.riseAt) r += (r ? '  ::  ' : '') + 'SOL ' + hm(model.riseAt) + '–' + hm(model.setAt);
     bar.childNodes[2].textContent = r;
@@ -1116,8 +1114,9 @@ var Holo4 = (function () {
     nightEl.id = 'h4night';
     bar = el('div', '', top);
     bar.id = 'h4bar';
-    el('span', 'tag', bar, 'KONTROLLRUM');
-    el('span', 'l', bar);
+    // Namnet uppe till vänster (Yuris val 2026-11-28; tidigare KONTROLLRUM och stad, vecka, dag)
+    el('span', 'tag', bar, 'O.R.T.I.');
+    el('span', 'l', bar, "ORTIZ'S RESPONSIVE TACTICAL INTELLIGENCE");
     el('span', 'r', bar);
     return true;
   }
