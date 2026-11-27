@@ -3,10 +3,18 @@
 # aapt2 -> javac -> d8 -> zipalign -> apksigner, som simbasjungles/free-my-tv build.sh (MIT).
 # Behöver en JDK (17+) och Android SDK (build-tools 34+, en plattform android-34+). Körs av .github/workflows/android.yml.
 #   KEYSTORE=nyckel.keystore KS_PASS=… bash android/build.sh   → FreeMyTV-projektor.apk i repots rot
+#   PROFILE=kontor bash android/build.sh                          → FreeMyTV-kontor.apk: Yuris TV på jobbet (Xiaomi-stickan),
+#     egen app (io.freemytv.kontor) som läser android/kontor.js i stället för kompis.js. Samma kod i övrigt.
 # Utan KEYSTORE skapas en tillfällig nyckel (en sådan APK kan inte uppdatera en installerad, signerad med den riktiga).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+PROFILE="${PROFILE:-kompis}"
+case "$PROFILE" in
+  kompis) PKG=io.freemytv.projektor; LABEL="Free My TV"; APK=FreeMyTV-projektor.apk ;;
+  kontor) PKG=io.freemytv.kontor; LABEL="Free My TV Kontor"; APK=FreeMyTV-kontor.apk ;;
+  *) echo "Okänd PROFILE: $PROFILE"; exit 1 ;;
+esac
 VERSION_NAME="$(grep -o "VERSION = '[^']*'" android/index.html | cut -d"'" -f2)"
 VERSION_CODE="${VERSION_CODE:-1}"
 SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
@@ -18,15 +26,19 @@ AJ="$(pick "$SDK/platforms/android-34/android.jar" "$SDK/platforms/android-35/an
 echo "build-tools: $BT"
 echo "plattform:   $AJ"
 echo "version:     $VERSION_NAME ($VERSION_CODE)"
+echo "profil:      $PROFILE ($PKG)"
 
 OUT=android/out
 rm -rf "$OUT"
 mkdir -p "$OUT/assets" "$OUT/classes" "$OUT/gen"
 
-python3 android/assets.py "$OUT/assets"
+python3 android/assets.py "$OUT/assets" "$PROFILE"
+# Appens namn för profilen; paketnamnet byts av aapt2 (klasserna ligger kvar i io.freemytv.projektor).
+sed "s|android:label=\"Free My TV\"|android:label=\"$LABEL\"|" android/AndroidManifest.xml > "$OUT/AndroidManifest.xml"
 
 "$BT/aapt2" compile --dir android/res -o "$OUT/res.zip"
-"$BT/aapt2" link -o "$OUT/base.apk" -I "$AJ" --manifest android/AndroidManifest.xml -A "$OUT/assets" \
+"$BT/aapt2" link -o "$OUT/base.apk" -I "$AJ" --manifest "$OUT/AndroidManifest.xml" -A "$OUT/assets" \
+  --rename-manifest-package "$PKG" \
   --java "$OUT/gen" --min-sdk-version 24 --target-sdk-version 34 \
   --version-code "$VERSION_CODE" --version-name "$VERSION_NAME" "$OUT/res.zip"
 
@@ -42,7 +54,7 @@ if [ -z "${KEYSTORE:-}" ]; then
     -keyalg RSA -keysize 2048 -validity 20000 -dname "CN=Free My TV Projektor (tillfällig)" >/dev/null 2>&1
 fi
 "$BT/apksigner" sign --ks "$KEYSTORE" --ks-pass env:KS_PASS --key-pass env:KS_PASS \
-  --out FreeMyTV-projektor.apk "$OUT/aligned.apk"
-"$BT/apksigner" verify --verbose FreeMyTV-projektor.apk | head -6
-"$BT/aapt2" dump badging FreeMyTV-projektor.apk | head -3
-ls -la FreeMyTV-projektor.apk
+  --out "$APK" "$OUT/aligned.apk"
+"$BT/apksigner" verify --verbose "$APK" | head -6
+"$BT/aapt2" dump badging "$APK" | head -3
+ls -la "$APK"

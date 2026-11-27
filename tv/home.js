@@ -1075,6 +1075,13 @@
     var iptvLink = Prefs.iptv(), iptvHost = /^https?:\/\/([^\/:?#]+)/i.exec(iptvLink);
     rows.push({label: 'IPTV-länk', value: iptvLink ? (iptvHost ? iptvHost[1] : '••••') : tr('Not set'), opens: true, iptvRow: true,
       step: function (d) { if (d >= 0) openKey('iptv'); }});
+    if (window.Trafik) {   // kontorets TV (android/kontor.js): trafikrutan och dess TomTom-nyckel
+      rows.push({label: 'Trafikruta', toggle: Prefs.traffic(),
+        step: function () { Prefs.set('traffic', !Prefs.traffic()); Trafik.refresh(); }});
+      var tt = Prefs.tomtomKey();
+      rows.push({label: 'Trafiknyckel', value: tt.length >= 4 ? '•••• ' + tt.slice(-4) : tr('Not set'), opens: true, trafikRow: true,
+        step: function (d) { if (d >= 0) openKey('trafik'); }});
+    }
     var sv = Data.services();
     if (sv.length) {
       var someOff = false;   // only the services this TV has count
@@ -1315,15 +1322,19 @@
   // MARK: - TMDB key: typed on the TV, so builds without one (the releases) get the picks too; TMDB checks it first
 
   var keyStatus = '', keyWarn = false, keyTimer = 0, keySeq = 0, keyAsking = false;
-  /** The sheet asks for the TMDB key ('tmdb') or the IPTV list's link ('iptv', iptv.js); both only on the TV. */
-  var keyMode = 'tmdb', CHECKING_IPTV = 'Kollar länken mot din IPTV…';
+  /** The sheet asks for the TMDB key ('tmdb'), the IPTV list's link ('iptv', iptv.js) or the TomTom key ('trafik',
+   * trafik.js); all only on the TV. */
+  var keyMode = 'tmdb', CHECKING_IPTV = 'Kollar länken mot din IPTV…', CHECKING_TT = 'Provar nyckeln hos TomTom…';
 
-  function keyOnTV() { return keyMode === 'iptv' ? !!Prefs.iptv() : Prefs.tmdbKeyOnTV(); }
-  function keyChecking() { return keyStatus === tr('Checking the key with TMDB…') || keyStatus === CHECKING_IPTV; }
+  function keyOnTV() { return keyMode === 'iptv' ? !!Prefs.iptv() : keyMode === 'trafik' ? !!Prefs.tomtomKey() : Prefs.tmdbKeyOnTV(); }
+  function keyChecking() { return keyStatus === tr('Checking the key with TMDB…') || keyStatus === CHECKING_IPTV || keyStatus === CHECKING_TT; }
 
   function keyRows() { return keyAsking ? 2 : keyOnTV() ? 3 : 2; }
 
   function keySteps() {
+    if (keyMode === 'trafik') return 'Nyckeln hämtar restiden hem med köer från TomTom. Den sparas bara på TV:n.\n'
+      + 'Gratis: developer.tomtom.com → Dashboard → Keys (Routing API ska vara med).\n'
+      + 'Tips: knappen Mobilen gör mobilen till tangentbord, så kan du klistra in nyckeln.';
     if (keyMode === 'iptv') return 'Din M3U-länk eller Xtream-inloggning (samma länk som i GitHub-hemligheten EPG_URL). '
       + 'Den sparas bara på TV:n och används för att spela Barças matcher från Barça-rutan.\n'
       + 'Tips: i SmartThings-appen på mobilen kan du klistra in länken i TV:ns tangentbord.';
@@ -1335,8 +1346,9 @@
   function renderKey() {
     var box = $('keypick').firstChild, old = fieldOf('keypick'), typed = old ? old.value : '', inField = typingIn('keypick');
     box.innerHTML = '';
-    var iptv = keyMode === 'iptv';
-    el('div', 'title', box, keyAsking ? (iptv ? 'Ta bort IPTV-länken?' : tr('Remove the TMDB key?')) : (iptv ? 'IPTV-länk' : tr('TMDB key')));
+    var iptv = keyMode === 'iptv', tt = keyMode === 'trafik';
+    el('div', 'title', box, keyAsking ? (iptv ? 'Ta bort IPTV-länken?' : tt ? 'Ta bort trafiknyckeln?' : tr('Remove the TMDB key?'))
+      : (iptv ? 'IPTV-länk' : tt ? 'Trafiknyckel (TomTom)' : tr('TMDB key')));
     var list = el('div', 'list', box), holder = el('div', 'rows', list);
     list.style.height = keyRows() * 78 + 'px';
     if (keyAsking) {
@@ -1346,6 +1358,7 @@
       return;
     }
     var keyField = iptv ? textField(holder, Z.KEY, typed, 'http://…', 'IPTV-länk')
+      : tt ? textField(holder, Z.KEY, typed, 'TomTom API-nyckel', 'Trafiknyckel')
       : textField(holder, Z.KEY, typed, tr('API Read Access Token or API Key'), tr('TMDB key'));
     // A v3 key is lowercase hex: the TV's keyboard mustn't capitalize it (the city's field wants capitals).
     keyField.setAttribute('autocapitalize', 'none');
@@ -1353,7 +1366,7 @@
     var save = el('div', 'row', holder, tr('Save'));
     sym('chevron_right', el('span', 'value', save));
     hover(save, Z.KEY, 1);
-    if (keyOnTV()) hover(el('div', 'row', holder, iptv ? 'Ta bort länken' : tr('Remove the key')), Z.KEY, 2);
+    if (keyOnTV()) hover(el('div', 'row', holder, iptv ? 'Ta bort länken' : tt ? 'Ta bort nyckeln' : tr('Remove the key')), Z.KEY, 2);
     if (keyStatus) setClass(el('div', 'hint', box, keyStatus), 'warn', keyWarn);
     el('div', 'hint steps', box, keySteps());
     if (inField) openField('keypick');
@@ -1361,7 +1374,7 @@
   }
 
   function openKey(mode) {
-    keyMode = mode === 'iptv' ? 'iptv' : 'tmdb';
+    keyMode = mode === 'iptv' || mode === 'trafik' ? mode : 'tmdb';
     setClass($('settings'), 'open', false);
     st.zone = Z.KEY;
     st.key = 0;
@@ -1377,7 +1390,7 @@
     keyStatus = text;
     keyWarn = !!warn;
     clearTimeout(keyTimer);
-    if (text && text !== tr('Checking the key with TMDB…') && text !== CHECKING_IPTV) keyTimer = setTimeout(function () {
+    if (text && text !== tr('Checking the key with TMDB…') && text !== CHECKING_IPTV && text !== CHECKING_TT) keyTimer = setTimeout(function () {
       keyStatus = '';
       var line = st.zone === Z.KEY && $('keypick').querySelector('.hint:not(.steps)');
       if (line) line.parentNode.removeChild(line);
@@ -1396,6 +1409,7 @@
     if (!typed.replace(/\s+/g, '')) { st.key = 0; openField('keypick'); updateFocus(); return; }
     if (keyChecking()) return;
     if (keyMode === 'iptv') { saveIptv(typed.replace(/\s+/g, '')); return; }
+    if (keyMode === 'trafik') { saveTrafik(key); return; }
     if (!key) { setKeyStatus(tr("That doesn't look like a TMDB key."), true); return; }
     setKeyStatus(tr('Checking the key with TMDB…'));
     var mine = ++keySeq;   // an answer for a sheet already closed is dropped
@@ -1424,9 +1438,26 @@
     });
   }
 
+  /** The TomTom key: TomTom answers a route with it first, then it's kept on the TV only. */
+  function saveTrafik(key) {
+    if (!key) { setKeyStatus('Det ser inte ut som en TomTom-nyckel.', true); return; }
+    if (!window.Trafik) { setKeyStatus('Trafikrutan har inte laddats. Starta om appen.', true); return; }
+    setKeyStatus(CHECKING_TT);
+    var mine = ++keySeq;
+    Trafik.check(key, function (err) {
+      if (mine !== keySeq || st.zone !== Z.KEY) return;
+      if (err) { setKeyStatus(err.rejected ? 'TomTom godkände inte nyckeln.' : 'Kunde inte nå TomTom: ' + err.message + '.', true); return; }
+      Prefs.set('tomtomKey', key);
+      if (fieldOf('keypick')) fieldOf('keypick').value = '';
+      Trafik.refresh();
+      setKeyStatus('Sparad. Trafikrutan visar restiden hem.');
+    });
+  }
+
   /** Back to config.properties' key (none in the releases): the picks go. */
   function removeKey() {
     if (keyMode === 'iptv') { Prefs.set('iptv', undefined); if (window.IPTV) IPTV.forget(); closeKey(); return; }
+    if (keyMode === 'trafik') { Prefs.set('tomtomKey', undefined); closeKey(); if (window.Trafik) Trafik.refresh(); return; }
     Prefs.set('tmdbKey', undefined);   // left out of the saved settings
     closeKey();
     Data.keyChanged();
@@ -1443,7 +1474,7 @@
     var f = fieldOf('keypick');
     if (f) f.value = '';
     openSettings();
-    for (var i = 0; i < rowsNow.length; i++) if (keyMode === 'iptv' ? rowsNow[i].iptvRow : rowsNow[i].tmdb) st.row = i;
+    for (var i = 0; i < rowsNow.length; i++) if (keyMode === 'iptv' ? rowsNow[i].iptvRow : keyMode === 'trafik' ? rowsNow[i].trafikRow : rowsNow[i].tmdb) st.row = i;
     updateFocus();
   }
 

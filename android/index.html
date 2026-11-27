@@ -18,6 +18,8 @@
 (function () {
   'use strict';
   var REPO = 'MrOrtiiz/my-tv', VERSION = '1.3.0';
+  // Vilken TV: 'kompis' (kompisens projektor) eller 'kontor' (Yuris TV på jobbet); android/build.sh sätter den.
+  var PROFILE = 'kompis';
   var KEY = 'fmtv.live';   // senaste commit som gick att ladda
   var SKIP = ['dance.js', 'rush.js', 'dance.css', 'rush.css'];
 
@@ -48,7 +50,7 @@
       html = html.replace('<script src="' + SKIP[i] + '"><\/script>', '').replace('<link rel="stylesheet" href="' + SKIP[i] + '">', '');
     }
     return html.replace(/<head>/i, '<head>' + before + info)
-      .replace('<script src="config.js"><\/script>', '<script src="config.js"><\/script><script src="../android/kompis.js"><\/script>');
+      .replace('<script src="config.js"><\/script>', '<script src="config.js"><\/script><script src="../android/' + PROFILE + '.js"><\/script>');
   }
 
   /** Skriver in tv/index.html från commit `sha`; otherwise() om den inte gick att hämta. */

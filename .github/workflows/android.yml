@@ -1,4 +1,6 @@
-# Bygger Free My TV för kompisens projektor (android/) och lägger APK:n i releasen "projektor":
+# Bygger Free My TV för kompisens projektor (android/) och lägger APK:n i releasen "projektor",
+# och kontorets version (PROFILE=kontor) i releasen "kontor":
+# https://github.com/MrOrtiiz/my-tv/releases/download/kontor/FreeMyTV-kontor.apk
 # https://github.com/MrOrtiiz/my-tv/releases/download/projektor/FreeMyTV-projektor.apk
 # Hemskärmens kod (tv/) behöver ingen ny APK: appen hämtar den vid varje start. Bara ändringar i android/ bygger om.
 # Signeringsnyckeln ligger i ett utkast till release ("android-signing"), som bara den med skrivrätt ser, så att varje
@@ -53,6 +55,23 @@ jobs:
         env:
           VERSION_CODE: ${{ github.run_number }}
         run: bash android/build.sh
+
+      # Yuris TV på jobbet: samma app med android/kontor.js (trafikrutan), egen app (io.freemytv.kontor).
+      - name: Bygg kontorets APK
+        env:
+          VERSION_CODE: ${{ github.run_number }}
+          PROFILE: kontor
+        run: bash android/build.sh
+
+      - name: Lägg i releasen "kontor"
+        run: |
+          notes="Free My TV för TV:n på jobbet (Xiaomi TV Stick 4K). Commit ${GITHUB_SHA::7}. Installera med: adb install -r FreeMyTV-kontor.apk"
+          if gh release view kontor >/dev/null 2>&1; then
+            gh release upload kontor FreeMyTV-kontor.apk --clobber
+            gh release edit kontor --notes "$notes"
+          else
+            gh release create kontor FreeMyTV-kontor.apk --title "Free My TV – kontoret" --notes "$notes" --latest=false
+          fi
 
       - name: Lägg i releasen "projektor"
         run: |

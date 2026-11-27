@@ -1,0 +1,23 @@
+/* Trafikrutan (trafik.js): restiden hem just nu, under Barça-rutan uppe till höger. Bara på kontorets TV. */
+#trafik { position: absolute; right: 80px; top: 216px; width: 540px; padding: 20px 28px 22px; border-radius: 30px; color: #1D1D1F;
+  box-sizing: border-box; -webkit-transition: top 0.25s; transition: top 0.25s; }
+#trafik .head { font-size: 22px; font-weight: 600; color: #6E6E73; white-space: nowrap; }
+#trafik .dot { display: inline-block; width: 14px; height: 14px; border-radius: 7px; margin-right: 14px; vertical-align: 1px; background: #8E8E93; }
+#trafik.green .dot { background: #34C759; }
+#trafik.yellow .dot { background: #FF9F0A; }
+#trafik.red .dot { background: #FF3B30; }
+#trafik .stamp { float: right; font-size: 17px; font-weight: 500; opacity: 0.7; margin-top: 4px; }
+#trafik .now { margin-top: 8px; white-space: nowrap; }
+#trafik .time { font-size: 54px; font-weight: 600; line-height: 64px; letter-spacing: -0.5px; vertical-align: middle;
+  -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
+#trafik .state { display: inline-block; margin-left: 18px; padding: 0 16px; border-radius: 19px; font-size: 21px; font-weight: 600;
+  line-height: 38px; vertical-align: middle; color: #fff; background: #8E8E93; }
+#trafik .state.green { background: #34C759; }
+#trafik .state.yellow { background: #FF9F0A; }
+#trafik .state.red { background: #FF3B30; }
+#trafik .line { margin-top: 6px; font-size: 20px; font-weight: 500; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#trafik .none { margin-top: 10px; font-size: 22px; font-weight: 500; line-height: 30px; color: #6E6E73; }
+#trafik .warn { margin-top: 6px; font-size: 17px; font-weight: 500; color: #D70015; }
+.night #trafik { color: #F5F5F7; }
+.night #trafik .head, .night #trafik .line, .night #trafik .none { color: rgba(255, 255, 255, 0.68); }
+.night #trafik .warn { color: #FF6961; }
