@@ -146,9 +146,14 @@ var Hud = (function () {
     el('div', 'time', mid);
     el('div', 'date', mid);
 
-    el("div", "info left", shift);
-    el("div", "info right", shift);
-    el("div", "info bottom", shift);
+    // Läsrutorna runt ringarna och statusraden överst (stilen: tunna versaler, "ETIKETT :: värde", hörnmarkeringar).
+    el('div', 'info left', shift);
+    el('div', 'info right', shift);
+    el('div', 'info bottom', shift);
+    var bar = el('div', 'bar', root);
+    el('span', 'l', bar);
+    el('span', 'c', bar);
+    el('span', 'r', bar);
   }
 
   function paintAccent(level) {
@@ -169,38 +174,77 @@ var Hud = (function () {
     return h < 5 ? 'God natt, Yuri' : h < 10 ? 'God morgon, Yuri' : h < 12 ? 'God förmiddag, Yuri' : h < 18 ? 'God eftermiddag, Yuri' : 'God kväll, Yuri';
   }
 
-  function tile(cls, label, big, small, level) {
-    var t = root.querySelector(".info." + cls);
+  /** ISO-veckonumret, som i svenska kalendrar. */
+  function week(d) {
+    var t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), day = t.getUTCDay() || 7;
+    t.setUTCDate(t.getUTCDate() + 4 - day);
+    return Math.ceil(((t - Date.UTC(t.getUTCFullYear(), 0, 1)) / 86400000 + 1) / 7);
+  }
+  function clock(ms) { var k = new Date(ms); return two(k.getHours()) + ':' + two(k.getMinutes()); }
+  function short(ms) { var k = new Date(ms); return DAYS[k.getDay()].slice(0, 3).toUpperCase(); }
+
+  /** En läsruta: rubrik, ett stort värde och rader "ETIKETT :: värde". Utan big göms den. */
+  function panel(cls, title, big, level, rows) {
+    var t = root.querySelector('.info.' + cls);
     t.innerHTML = '';
     t.style.display = big ? '' : 'none';
     if (!big) return;
-    el('div', 'label', t, label);
-    var b = el('div', 'big', t, big);
-    if (level) b.className = 'big ' + level;
-    if (small) el('div', 'small', t, small);
+    el('span', 'corner tl', t); el('span', 'corner tr', t); el('span', 'corner bl', t); el('span', 'corner br', t);
+    el('div', 'label', t, title);
+    el('div', 'big' + (level ? ' ' + level : ''), t, big);
+    for (var i = 0; i < rows.length; i++) {
+      if (!rows[i]) continue;
+      var r = el('div', 'row', t);
+      el('span', 'k', r, rows[i][0]);
+      el('span', 'sep', r, '::');
+      el('span', 'v' + (rows[i][2] ? ' ' + rows[i][2] : ''), r, rows[i][1]);
+    }
   }
 
   function update() {
     if (!root) return;
     var d = new Date();
     root.querySelector('.time').textContent = two(d.getHours()) + ':' + two(d.getMinutes());
-    root.querySelector('.date').textContent = DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()];
+    root.querySelector('.date').textContent = (DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()]).toUpperCase();
 
     var t = window.Trafik && Trafik.state ? Trafik.state() : null, h = d.getHours(), weekday = d.getDay() >= 1 && d.getDay() <= 5;
     root.querySelector('.hello').textContent = t && weekday && h >= 15 && h < 18
       ? 'Dags att åka hem? ' + t.min + ' min'
       : hello(d);
-    tile('left', 'RESTID HEM', t ? t.min + ' min' : '', t ? (t.delay >= 1 ? '+' + t.delay + ' min kö' : 'Fritt') + '  ·  framme ' + t.arrive : '', t ? t.level : '');
+    panel('left', 'TRAFIK  ::  HEM', t ? t.min + ' MIN' : '', t ? t.level : '', t ? [
+      ['KÖ', t.delay >= 1 ? '+' + t.delay + ' MIN' : 'FRITT', t.level],
+      ['FRAMME', t.arrive],
+      t.km ? ['STRÄCKA', t.km + ' KM'] : null,
+      ['HÄMTAD', t.at]
+    ] : []);
     paintAccent(t ? t.level : 'green');
 
-    var w = typeof Data !== 'undefined' && Prefs.weather() ? Data.weather : null;
-    tile('right', 'UPPSALA', w && !isNaN(w.temp) ? Data.degrees(w.temp) : '', w ? Data.condition(w.code, w.isDay) : '');
+    var w = typeof Data !== 'undefined' && Prefs.weather() ? Data.weather : null, rows = [];
+    if (w && !isNaN(w.temp)) {
+      rows.push(['LÄGE', Data.condition(w.code, w.isDay).toUpperCase()]);
+      if (!isNaN(w.max)) rows.push(['MAX / MIN', Data.degrees(w.max) + ' / ' + Data.degrees(w.min)]);
+      if (w.sunrise) rows.push(['SOL UPP', clock(w.sunrise)]);
+      if (w.sunset) rows.push(['SOL NED', clock(w.sunset)]);
+      for (var i = 1; w.days && i < w.days.length && i <= 3; i++) {
+        rows.push([short(w.days[i].at), Data.degrees(w.days[i].max) + ' / ' + Data.degrees(w.days[i].min)]);
+      }
+    }
+    panel('right', 'VÄDER  ::  ' + (Prefs.city() || 'UPPSALA').toUpperCase(), w && !isNaN(w.temp) ? Data.degrees(w.temp) : '', '', rows);
 
     var m = window.BarcaBox && BarcaBox.next ? BarcaBox.next() : null;
     if (m) {
       var k = new Date(m.start);
-      tile('bottom', 'NÄSTA MATCH', m.title, DAYS[k.getDay()] + ' ' + k.getDate() + ' ' + MONTHS[k.getMonth()] + '  ·  ' + two(k.getHours()) + ':' + two(k.getMinutes()) + (m.competition ? '  ·  ' + m.competition : ''));
-    } else tile('bottom', '', '', '');
+      panel('bottom', 'NÄSTA MATCH', m.title.toUpperCase(), '', [
+        ['DAG', (DAYS[k.getDay()] + ' ' + k.getDate() + ' ' + MONTHS[k.getMonth()]).toUpperCase()],
+        ['AVSPARK', clock(m.start)],
+        m.competition ? ['TURNERING', m.competition.toUpperCase()] : null
+      ]);
+    } else panel('bottom', '', '', '', []);
+
+    var bar = root.querySelector('.bar');
+    bar.querySelector('.l').textContent = 'KONTROLLRUM  ::  HUL  ::  UPPSALA';
+    bar.querySelector('.c').textContent = (DAYS[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()].slice(0, 3) + ' ' + d.getFullYear()).toUpperCase() + '  ::  VECKA ' + week(d);
+    bar.querySelector('.r').textContent = (w && !isNaN(w.temp) ? Data.degrees(w.temp) + '  ::  ' : '') + (t ? 'HEM ' + t.min + ' MIN' : 'TRAFIK  ::  –');
 
     // Hela bilden glider sakta (10 minuter ett varv), som klockan i den andra skärmsläckaren.
     var phase = 2 * Math.PI * (d.getTime() / 1000 % 600) / 600;
@@ -231,7 +275,21 @@ var Hud = (function () {
     var bg = el('div', '', sky);
     bg.id = 'hudbg';
     rings(bg);
+    // Statusraden överst på startsidan: plats, vecka, vädret och restiden hem.
+    var top = document.getElementById('top');
+    if (!top) return;
+    var bar = el('div', '', top);
+    bar.id = 'hudbar';
+    var l = el('span', 'l', bar), r = el('span', 'r', bar);
+    function tick() {
+      var d = new Date(), w = typeof Data !== 'undefined' && Prefs.weather() ? Data.weather : null, t = window.Trafik && Trafik.state ? Trafik.state() : null;
+      l.textContent = 'KONTROLLRUM  ::  UPPSALA  ::  VECKA ' + week(d);
+      r.textContent = (w && !isNaN(w.temp) ? Data.degrees(w.temp) + '  ::  ' : '') + (t ? 'HEM ' + t.min + ' MIN' + (t.delay >= 1 ? ' (+' + t.delay + ')' : '') : 'TRAFIK  ::  –');
+    }
+    tick();
+    setTimeout(tick, 3000);   // trafiken och vädret kommer strax efter start
+    setInterval(tick, 30000);
   }
 
-  return {show: show, hide: hide, isOn: function () { return on; }, decorate: decorate};
+  return {show: show, hide: hide, isOn: function () { return on; }, decorate: decorate, week: week};
 })();

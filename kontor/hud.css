@@ -21,19 +21,37 @@
 
 #hud .mid { position: absolute; left: 960px; top: 540px; width: 520px; margin-left: -260px; margin-top: -120px; text-align: center; }
 #hud .hello { font-size: 21px; font-weight: 600; letter-spacing: 2.5px; color: rgba(150, 220, 255, 0.85); white-space: nowrap; text-transform: uppercase; }
-#hud .time { font-size: 150px; font-weight: 300; line-height: 170px; letter-spacing: 2px; color: #F2FAFF;
+#hud .time { font-size: 150px; font-weight: 200; line-height: 170px; letter-spacing: 2px; color: #F2FAFF;
   text-shadow: 0 0 28px rgba(120, 214, 255, 0.55); -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
-#hud .date { font-size: 28px; font-weight: 500; color: rgba(190, 225, 255, 0.75); }
+#hud .date { font-size: 22px; font-weight: 500; letter-spacing: 4px; color: rgba(150, 220, 255, 0.8); }
 
-/* Rutorna runt ringarna: en etikett, ett stort värde och en rad under. */
-#hud .info { position: absolute; width: 330px; padding: 18px 0 18px 24px; border-left: 3px solid rgba(120, 214, 255, 0.7); }
-#hud .info.left { left: 110px; top: 420px; }
-#hud .info.right { left: 1480px; top: 420px; }
-#hud .info.bottom { left: 110px; top: 860px; width: 470px; }
-#hud .label { font-size: 18px; font-weight: 700; letter-spacing: 4px; color: rgba(150, 220, 255, 0.8); }
-#hud .big { font-size: 56px; font-weight: 600; line-height: 70px; color: #F2FAFF; white-space: nowrap; text-shadow: 0 0 18px rgba(120, 214, 255, 0.4); }
-#hud .info.bottom .big { font-size: 38px; line-height: 52px; overflow: hidden; text-overflow: ellipsis; }
-#hud .big.green { color: #7CF29A; text-shadow: 0 0 18px rgba(52, 199, 89, 0.5); }
-#hud .big.yellow { color: #FFD36B; text-shadow: 0 0 18px rgba(255, 201, 64, 0.5); }
-#hud .big.red { color: #FF7A70; text-shadow: 0 0 18px rgba(255, 69, 58, 0.5); }
-#hud .small { font-size: 22px; font-weight: 500; color: rgba(190, 225, 255, 0.75); white-space: nowrap; }
+/* Läsrutorna runt ringarna: tunna versaler, "ETIKETT :: värde", hörnmarkeringar i stället för ramar. */
+#hud .info { position: absolute; width: 330px; padding: 22px 26px 20px; background: rgba(8, 20, 36, 0.45); }
+#hud .info.left { left: 96px; top: 250px; }
+#hud .info.right { left: 1490px; top: 250px; }
+#hud .info.bottom { left: 96px; top: 760px; width: 370px; }
+#hud .corner { position: absolute; width: 22px; height: 22px; border: 0 solid rgba(120, 214, 255, 0.9); }
+#hud .corner.tl { left: 0; top: 0; border-left-width: 2px; border-top-width: 2px; }
+#hud .corner.tr { right: 0; top: 0; border-right-width: 2px; border-top-width: 2px; }
+#hud .corner.bl { left: 0; bottom: 0; border-left-width: 2px; border-bottom-width: 2px; }
+#hud .corner.br { right: 0; bottom: 0; border-right-width: 2px; border-bottom-width: 2px; }
+#hud .label { font-size: 16px; font-weight: 600; letter-spacing: 4px; color: rgba(150, 220, 255, 0.75); white-space: nowrap; }
+#hud .big { margin: 6px 0 10px; font-size: 64px; font-weight: 200; line-height: 72px; letter-spacing: 1px; color: #8FE3FF; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0 20px rgba(120, 214, 255, 0.55);
+  -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
+#hud .info.bottom .big { font-size: 25px; line-height: 38px; font-weight: 400; color: #EAF6FF; }
+#hud .big.green, #hud .v.green { color: #7CF29A; text-shadow: 0 0 18px rgba(52, 199, 89, 0.5); }
+#hud .big.yellow, #hud .v.yellow { color: #FFD36B; text-shadow: 0 0 18px rgba(255, 201, 64, 0.5); }
+#hud .big.red, #hud .v.red { color: #FF7A70; text-shadow: 0 0 18px rgba(255, 69, 58, 0.5); }
+#hud .row { font-size: 18px; line-height: 30px; letter-spacing: 1.5px; white-space: nowrap; border-top: 1px solid rgba(120, 214, 255, 0.12);
+  -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
+#hud .row .k { display: inline-block; width: 130px; font-weight: 500; color: rgba(150, 220, 255, 0.6); }
+#hud .row .sep { margin-right: 14px; color: rgba(120, 214, 255, 0.45); }
+#hud .row .v { font-weight: 500; color: #DDF3FF; }
+
+/* Statusraden överst: tre fält och en tunn linje. */
+#hud .bar { position: absolute; left: 60px; right: 60px; top: 26px; height: 40px; line-height: 40px; font-size: 17px; font-weight: 500;
+  letter-spacing: 3px; color: rgba(150, 220, 255, 0.8); border-bottom: 1px solid rgba(120, 214, 255, 0.35); white-space: nowrap; }
+#hud .bar .l { position: absolute; left: 0; }
+#hud .bar .c { position: absolute; left: 0; right: 0; text-align: center; }
+#hud .bar .r { position: absolute; right: 0; color: #8FE3FF; }

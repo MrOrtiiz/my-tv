@@ -13,24 +13,50 @@
 .hud #hudbg .band { -webkit-animation: hudspin 110s linear infinite; animation: hudspin 110s linear infinite; }
 .hud #hudbg .inner { -webkit-animation: hudback 320s linear infinite; animation: hudback 320s linear infinite; }
 
-/* Glasrutorna (Barça, trafiken, vädret): mörka, med en tunn glödande kant. */
-.hud .glass, .hud.night .glass {
-  background: rgba(10, 24, 42, 0.78);
-  box-shadow: 0 0 0 1px rgba(120, 214, 255, 0.38), 0 0 26px rgba(120, 214, 255, 0.14), inset 0 0 30px rgba(120, 214, 255, 0.05);
+/* Rutorna (Barça, trafiken, vädret): mörka och genomskinliga, tunn kant och hörnmarkeringar i cyan. */
+.hud .glass, .hud.night .glass, .hud.ios .glass, .hud.ios.night .glass {
+  border-radius: 6px;
+  background:
+    linear-gradient(#78D6FF, #78D6FF) left top / 24px 2px no-repeat,
+    linear-gradient(#78D6FF, #78D6FF) left top / 2px 24px no-repeat,
+    linear-gradient(#78D6FF, #78D6FF) right top / 24px 2px no-repeat,
+    linear-gradient(#78D6FF, #78D6FF) right top / 2px 24px no-repeat,
+    linear-gradient(#78D6FF, #78D6FF) left bottom / 24px 2px no-repeat,
+    linear-gradient(#78D6FF, #78D6FF) left bottom / 2px 24px no-repeat,
+    linear-gradient(#78D6FF, #78D6FF) right bottom / 24px 2px no-repeat,
+    linear-gradient(#78D6FF, #78D6FF) right bottom / 2px 24px no-repeat,
+    rgba(8, 20, 36, 0.55);
+  box-shadow: 0 0 0 1px rgba(120, 214, 255, 0.22), 0 0 24px rgba(120, 214, 255, 0.08);
   color: #EAF6FF;
 }
 .hud #barca .head, .hud #trafik .head, .hud #weather .head, .hud .panel .head {
-  font-size: 17px; font-weight: 700; letter-spacing: 3.5px; text-transform: uppercase; color: rgba(150, 220, 255, 0.85);
+  font-size: 16px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: rgba(150, 220, 255, 0.75);
 }
-.hud #barca .when, .hud.night #barca .when { color: #FFC940; }
-.hud #barca .stamp, .hud #trafik .stamp { letter-spacing: 1px; text-transform: none; font-weight: 500; }
-.hud #barca .channels, .hud #barca .none, .hud #trafik .line, .hud #trafik .none { color: rgba(190, 225, 255, 0.72); }
-.hud #barca .match { border-top-color: rgba(120, 214, 255, 0.16); }
-.hud #trafik .time { text-shadow: 0 0 18px rgba(120, 214, 255, 0.45); }
+.hud #barca .when, .hud.night #barca .when { color: #FFC940; letter-spacing: 1px; text-transform: uppercase; font-size: 17px; }
+.hud #barca .stamp, .hud #trafik .stamp { letter-spacing: 2px; text-transform: uppercase; font-weight: 500; font-size: 14px; }
+.hud #barca .title { font-weight: 400; letter-spacing: 0.5px; }
+.hud #barca .channels, .hud #barca .none { color: rgba(150, 220, 255, 0.6); font-style: normal; letter-spacing: 0.5px; }
+.hud #barca .match { border-top-color: rgba(120, 214, 255, 0.14); }
+
+/* Trafikrutan som läsrad: tunna siffror i cyan, läget som en tunn ram, raden under med "::". */
+.hud #trafik .time { font-weight: 200; color: #8FE3FF; text-shadow: 0 0 18px rgba(120, 214, 255, 0.5); }
+.hud #trafik.yellow .time { color: #FFD36B; } .hud #trafik.red .time { color: #FF7A70; }
+.hud #trafik .state { background: none !important; font-size: 16px; letter-spacing: 3px; text-transform: uppercase; line-height: 32px;
+  border-radius: 3px; box-shadow: inset 0 0 0 1.5px currentColor; }
+.hud #trafik .state.green { color: #7CF29A; } .hud #trafik .state.yellow { color: #FFD36B; } .hud #trafik .state.red { color: #FF7A70; }
+.hud #trafik .line, .hud #trafik .none { color: rgba(150, 220, 255, 0.7); text-transform: uppercase; letter-spacing: 2px; font-size: 17px; }
+
+/* Vädret: tunna siffror i cyan. */
+.hud #weather .now .temp, .hud #wxtop .temp { font-weight: 200; color: #8FE3FF; text-shadow: 0 0 18px rgba(120, 214, 255, 0.45); }
+.hud #weather .cond, .hud #weather .range, .hud #weather .sun, .hud #wxtop .meta { text-transform: uppercase; letter-spacing: 2px; color: rgba(150, 220, 255, 0.75); }
 
 /* Klockan: tunn, ljus och glödande (också i iOS-layouten, ios.css). */
-.hud.ios.no-picks #clock .time { color: #F2FAFF; text-shadow: 0 0 34px rgba(120, 214, 255, 0.55); }
-.hud.ios.no-picks #clock .date { color: rgba(150, 220, 255, 0.85); }
+.hud.ios.no-picks #clock .time { color: #F2FAFF; font-weight: 100; text-shadow: 0 0 34px rgba(120, 214, 255, 0.55); }
+.hud.ios.no-picks #clock .date { color: rgba(150, 220, 255, 0.85); text-transform: uppercase; letter-spacing: 6px; font-size: 26px; }
+/* Statusraden överst på startsidan (hud.js, Hud.decorate). */
+.hud #hudbar { position: absolute; left: 60px; right: 60px; top: 10px; height: 34px; line-height: 34px; font-size: 15px; font-weight: 500;
+  letter-spacing: 3px; color: rgba(150, 220, 255, 0.7); border-bottom: 1px solid rgba(120, 214, 255, 0.25); white-space: nowrap; pointer-events: none; }
+.hud #hudbar .l { position: absolute; left: 0; } .hud #hudbar .r { position: absolute; right: 0; color: #8FE3FF; }
 .hud #clock, .hud.night #clock { color: #F2FAFF; text-shadow: 0 0 30px rgba(120, 214, 255, 0.5); }
 .hud #clock .date, .hud.night #clock .date { color: rgba(150, 220, 255, 0.8); text-shadow: none; }
 .hud #countdown, .hud.night #countdown { color: rgba(190, 225, 255, 0.8); }
@@ -52,3 +78,7 @@
 /* Pillerna: nästa match (Barça) i bärnsten, nedräkningen i cyan. */
 .hud #barcapill, .hud.night #barcapill { background: rgba(255, 201, 64, 0.14); color: #FFD36B; box-shadow: 0 0 0 1px rgba(255, 201, 64, 0.55), 0 0 16px rgba(255, 201, 64, 0.2); }
 .hud #countdown, .hud.night #countdown { background: rgba(10, 24, 42, 0.6); box-shadow: 0 0 0 1px rgba(120, 214, 255, 0.4); }
+
+/* iOS-layouten (ios.css) ger rutorna stora rundade hörn och ett glasskimmer: här raka hörn och inget skimmer. */
+.hud #barca, .hud #trafik, .hud #weather, .hud #wxtop, .hud #platter { border-radius: 6px; }
+.hud #wxtop::before, .hud #barca::before, .hud #platter::before { display: none; }

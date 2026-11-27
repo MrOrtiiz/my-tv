@@ -112,7 +112,7 @@ var Trafik = (function () {
       el('span', 'state ' + lv, row, delay >= 1 ? '+' + delay + ' min kö' : 'Fritt');
       var arrive = new Date(Date.now() + s.travelTimeInSeconds * 1000);
       var km = (s.lengthInMeters / 1000).toFixed(1).replace('.', ',');
-      el('div', 'line', box, km + ' km  ·  framme ' + hm(arrive) + (C.route ? '  ·  ' + C.route : ''));
+      el('div', 'line', box, km + ' km  ::  framme ' + hm(arrive) + (C.route ? '  ::  ' + C.route : ''));
       if (err) el('div', 'warn', box, err);
     }
     place(box);
@@ -131,7 +131,8 @@ var Trafik = (function () {
       if (!on() || !key() || !data) return null;
       var s = data.s, delay = Math.round((s.trafficDelayInSeconds || 0) / 60);
       return {min: Math.max(1, Math.round(s.travelTimeInSeconds / 60)), delay: delay, level: level(delay),
-        arrive: hm(new Date(Date.now() + s.travelTimeInSeconds * 1000))};
+        arrive: hm(new Date(Date.now() + s.travelTimeInSeconds * 1000)), at: hm(new Date(data.at)),
+        km: (s.lengthInMeters / 1000).toFixed(1).replace('.', ',')};
     },
     /** Provar en nyckel innan den sparas: done(error), med error.rejected när TomTom sa nej. */
     check: function (k, done) { ask(k, function (e) { done(e); }); }

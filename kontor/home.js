@@ -326,7 +326,8 @@
 
   var Z = {TOP: 'top', CARDS: 'cards', SHELF: 'shelf', DRAWER: 'drawer', APPS: 'apps', SETTINGS: 'settings', EDIT: 'edit', LANG: 'lang', CITY: 'city', KEY: 'key', ABOUT: 'about', PICK: 'pick'};
   /** The Barça box's place in the top row (after the tabs 0-2 and the buttons 3-6): OK plays the match (iptv.js). */
-  var BARCA = 7;
+  // Barça-rutans plats i översta raden: utanför knapparnas (3, 4, …), hur många knappar det än blir (kontor/ har fler).
+  var BARCA = 20;
   function barcaShown() { return !!$('barca'); }
 
   /**
