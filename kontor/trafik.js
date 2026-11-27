@@ -1,6 +1,6 @@
 /*
  * Trafikrutan, under Barça-rutan uppe till höger: restiden med bil just nu (med köer) för en sträcka, från TomTom.
- * Bara där CONFIG.traffic finns (android/kontor.js: kontorets TV, Palmbladsgatan 8 → Ritargatan 4).
+ * Bara på jobbets TV (mappen kontor/, med CONFIG.traffic från android/kontor.js: Palmbladsgatan 8 → Ritargatan 4).
  * TomTom-nyckeln skrivs in på TV:n (Inställningar → Hemskärm → Trafiknyckel) och stannar där: den finns aldrig i repot.
  * Var 5:e minut under CONFIG.traffic.days/hours (vardagar 07–18), annars var 30:e minut. ES5.
  */

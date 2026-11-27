@@ -4,7 +4,7 @@
     python3 android/assets.py <mapp> [kompis|kontor]
 
 - index.html: laddaren (android/index.html), som hämtar tv/ från GitHub vid varje start.
-- app/: en inbyggd kopia av tv/ för när projektorn saknar internet, med samma ändringar som laddaren gör
+- app/: en inbyggd kopia av TV:ns mapp (kompis/ eller kontor/) för när TV:n saknar internet, med samma ändringar som laddaren gör
   (android/kompis.js efter config.js; Barça, IPTV, sök och spelen borttagna).
 """
 import os
@@ -30,7 +30,8 @@ def main(out, profile='kompis'):
     app = os.path.join(out, 'app')
     if os.path.exists(app):
         shutil.rmtree(app)
-    shutil.copytree(os.path.join(ROOT, 'tv'), app, ignore=shutil.ignore_patterns(*skip))
+    # Varje TV har sin egen mapp (kompis/, kontor/), samma som laddaren hämtar från GitHub.
+    shutil.copytree(os.path.join(ROOT, profile), app, ignore=shutil.ignore_patterns(*skip))
     os.makedirs(os.path.join(app, 'android'))
     shutil.copy(os.path.join(ROOT, 'android', profile + '.js'), os.path.join(app, 'android', profile + '.js'))
 

@@ -1,0 +1,73 @@
+/* Ö-ruset (rush.js): the island drawn on the canvas; the menu, the HUD and the end in glass over it. */
+#rush { z-index: 71; display: none; color: #fff; background: #4FB3FF; font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; }
+#rush.on { display: block; }
+#rush .r-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#rush .r-hud, #rush .r-panel { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
+/* Glass: translucent, a bright rim and a soft sheen (as the iOS look) */
+#rush .r-box, #rush .r-score, #rush .r-right, #rush .r-hint {
+  background: -webkit-linear-gradient(top, rgba(20, 40, 90, 0.42), rgba(10, 20, 60, 0.55));
+  background: linear-gradient(rgba(20, 40, 90, 0.42), rgba(10, 20, 60, 0.55));
+  box-shadow: 0 22px 50px rgba(0, 20, 60, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 0 0 1.5px rgba(255, 255, 255, 0.24),
+    inset 0 0 40px rgba(255, 255, 255, 0.06);
+}
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  #rush .menu .r-box, #rush .over .r-box, #rush .pause .r-box {
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    backdrop-filter: blur(24px) saturate(1.6);
+  }
+}
+
+/* The menu */
+#rush .menu .r-box { position: absolute; left: 110px; top: 50%; width: 700px; padding: 54px 60px 46px; box-sizing: border-box; border-radius: 52px;
+  -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+#rush .r-title { font-size: 112px; font-weight: 800; letter-spacing: -2px; line-height: 1; text-shadow: 0 6px 24px rgba(0, 30, 80, 0.4); }
+#rush .r-title.small { font-size: 64px; letter-spacing: -1px; }
+#rush .r-sub { margin: 18px 0 30px; font-size: 27px; line-height: 38px; color: rgba(255, 255, 255, 0.82); }
+#rush .r-cast { margin: 0 0 18px; height: 100px; text-align: center; white-space: nowrap; }
+#rush .r-face { display: inline-block; width: 84px; height: 84px; margin: 8px 6px; border-radius: 42px; overflow: hidden; vertical-align: top;
+  background: rgba(10, 20, 60, 0.45) center top / cover no-repeat; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.25);
+  -webkit-transition: -webkit-transform 0.15s; transition: transform 0.15s; }
+#rush .r-face canvas { display: block; width: 84px; height: 84px; }
+#rush .r-face.on { -webkit-transform: scale(1.14); transform: scale(1.14); box-shadow: 0 0 0 4px #fff, 0 10px 24px rgba(0, 20, 60, 0.4); }
+#rush .r-note { margin: 12px 0 0; text-align: center; font-size: 21px; color: rgba(255, 255, 255, 0.75); }
+#rush .r-pick { height: 84px; line-height: 84px; border-radius: 42px; text-align: center; background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.4); font-size: 36px; font-weight: 700; }
+#rush .r-arrow { display: inline-block; width: 70px; color: rgba(255, 255, 255, 0.7); font-size: 28px; }
+#rush .r-char { display: inline-block; min-width: 330px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35); }
+#rush .r-go { margin-top: 26px; height: 96px; line-height: 96px; border-radius: 48px; text-align: center; font-size: 42px; font-weight: 800; background: #FFF; color: #0A3A7A;
+  box-shadow: 0 16px 34px rgba(0, 30, 80, 0.35); }
+#rush .r-best { margin-top: 20px; text-align: center; font-size: 25px; color: #FFE680; font-weight: 600; }
+#rush .r-help { margin-top: 26px; text-align: center; font-size: 21px; color: rgba(255, 255, 255, 0.78); }
+#rush .r-key { display: inline-block; margin: 6px 12px; }
+#rush .r-key b { display: inline-block; padding: 2px 12px; border-radius: 10px; background: rgba(255, 255, 255, 0.18); color: #fff; font-weight: 700; }
+
+/* The HUD while running */
+#rush .r-score { position: absolute; left: 60px; top: 46px; min-width: 330px; padding: 18px 30px 22px; border-radius: 38px; }
+#rush .r-num { font-size: 72px; font-weight: 800; line-height: 1; letter-spacing: -1px; }
+#rush .r-combo { margin-top: 12px; font-size: 22px; font-weight: 700; color: rgba(255, 255, 255, 0.8); }
+#rush .r-combo.hot .r-mult { color: #FFD60A; }
+#rush .r-cbar { display: block; margin-top: 8px; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.2); overflow: hidden; }
+#rush .r-cfill { display: block; height: 8px; width: 0; border-radius: 4px; background: #FFD60A; }
+#rush .r-right { position: absolute; right: 60px; top: 46px; padding: 18px 34px; border-radius: 38px; text-align: right; }
+#rush .r-hearts { font-size: 54px; line-height: 60px; color: #FF375F; letter-spacing: 6px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25); }
+#rush .r-coins { margin-top: 4px; font-size: 32px; font-weight: 800; color: #FFD60A; }
+#rush .r-hint { position: absolute; left: 50%; top: 200px; padding: 0 40px; height: 84px; line-height: 84px; border-radius: 42px; white-space: nowrap;
+  font-size: 38px; font-weight: 800; opacity: 0; -webkit-transform: translateX(-50%) scale(0.9); transform: translateX(-50%) scale(0.9);
+  -webkit-transition: opacity 0.25s, -webkit-transform 0.25s; transition: opacity 0.25s, transform 0.25s; }
+#rush .r-hint.on { opacity: 1; -webkit-transform: translateX(-50%) scale(1); transform: translateX(-50%) scale(1); }
+
+/* Pause and the end */
+#rush .pause, #rush .over { background: rgba(0, 20, 60, 0.32); }
+#rush .pause .r-box, #rush .over .r-box { position: absolute; left: 50%; top: 50%; width: 820px; padding: 50px 60px; box-sizing: border-box; border-radius: 56px;
+  text-align: center; -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%); }
+#rush .r-big { margin: 10px 0 22px; font-size: 140px; font-weight: 800; letter-spacing: -3px; line-height: 1; color: #FFD60A; }
+#rush .r-stats { margin-bottom: 34px; }
+#rush .r-stat { display: inline-block; width: 210px; }
+#rush .r-stat b { display: block; font-size: 46px; font-weight: 800; }
+#rush .r-stat span { font-size: 21px; color: rgba(255, 255, 255, 0.72); }
+#rush .r-btns { margin-top: 30px; }
+#rush .r-btn { display: inline-block; height: 90px; line-height: 90px; padding: 0 50px; margin: 0 12px; border-radius: 45px; font-size: 33px; font-weight: 700;
+  background: rgba(255, 255, 255, 0.16); box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35), inset 0 0 0 1.5px rgba(255, 255, 255, 0.16);
+  -webkit-transition: -webkit-transform 0.15s; transition: transform 0.15s; }
+#rush .r-btn.focus { background: #FFF; color: #0A3A7A; -webkit-transform: scale(1.06); transform: scale(1.06); box-shadow: 0 16px 34px rgba(0, 30, 80, 0.4); }

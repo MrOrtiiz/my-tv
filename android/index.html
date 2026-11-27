@@ -17,9 +17,11 @@
  */
 (function () {
   'use strict';
-  var REPO = 'MrOrtiiz/my-tv', VERSION = '1.3.0';
+  var REPO = 'MrOrtiiz/my-tv', VERSION = '1.4.0';
   // Vilken TV: 'kompis' (kompisens projektor) eller 'kontor' (Yuris TV på jobbet); android/build.sh sätter den.
+  // Varje TV har en egen mapp i repot (kompis/, kontor/): en ändring där syns bara på den TV:n.
   var PROFILE = 'kompis';
+  var DIR = PROFILE + '/';
   var KEY = 'fmtv.live';   // senaste commit som gick att ladda
   var SKIP = ['dance.js', 'rush.js', 'dance.css', 'rush.css'];
 
@@ -43,7 +45,7 @@
 
   function local() { location.replace('app/index.html'); }
 
-  /** tv/index.html med projektorns tillägg; samma ändringar gör android/build.sh i den inbyggda kopian. */
+  /** DIR/index.html med TV:ns tillägg; samma ändringar gör android/assets.py i den inbyggda kopian. */
   function adapt(html, before, commit) {
     var info = '<script>window.FMTV_LOADER = {platform: "android", version: "' + VERSION + '", commit: "' + commit + '"};<\/script>';
     for (var i = 0; i < SKIP.length; i++) {
@@ -53,14 +55,14 @@
       .replace('<script src="config.js"><\/script>', '<script src="config.js"><\/script><script src="../android/' + PROFILE + '.js"><\/script>');
   }
 
-  /** Skriver in tv/index.html från commit `sha`; otherwise() om den inte gick att hämta. */
+  /** Skriver in DIR/index.html från commit `sha`; otherwise() om den inte gick att hämta. */
   function open(sha, otherwise) {
     var base = 'https://cdn.jsdelivr.net/gh/' + REPO + '@' + sha + '/';
-    get(base + 'tv/index.html', 10000, {}, function (html) {
+    get(base + DIR + 'index.html', 10000, {}, function (html) {
       if (!html || html.indexOf('home.js') < 0) { otherwise(); return; }
       store(sha);
       document.open();
-      document.write(adapt(html, '<base href="' + base + 'tv/">', sha.slice(0, 7)));
+      document.write(adapt(html, '<base href="' + base + DIR + '">', sha.slice(0, 7)));
       document.close();
     });
   }

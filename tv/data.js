@@ -106,10 +106,6 @@ var Prefs = (function () {
     tmdbKeyOnTV: function () { return v.tmdbKey !== undefined; },
     /** The IPTV list's link (an M3U link or an Xtream login), typed on the TV (Home Settings → IPTV-länk); only here. */
     iptv: function () { return String(pick('iptv', '') || '').trim(); },
-    /** TomTom-nyckeln för trafikrutan (trafik.js), inskriven på TV:n (Hemskärm → Trafiknyckel); bara här. */
-    tomtomKey: function () { return String(pick('tomtomKey', '') || '').trim(); },
-    /** Trafikrutan (Hemskärm → Trafikruta), där CONFIG.traffic finns. */
-    traffic: function () { return pick('traffic', true) !== false; },
     setCity: function (name, lat, lon) { v.city = name; v.latitude = lat; v.longitude = lon; save(); this.version++; },
     /** Streaming services (keys like "netflix") whose titles are left out of the picks. */
     serviceOff: function (key) { return pick('servicesOff', []).indexOf(key) >= 0; },

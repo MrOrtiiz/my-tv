@@ -1,5 +1,5 @@
 /*
- * Kompisens projektor (HY300 Pro+, Android 14): det som skiljer från The Frame. Läses efter tv/config.js, bara där.
+ * Kompisens projektor (HY300 Pro+, Android 14): det som skiljer från The Frame. Läses efter kompis/config.js, bara där. Projektorn läser mappen kompis/ (APK 1.4.0+; äldre läser tv/).
  * Allt annat (väder i Uppsala, svenska, iOS-stilen, filmtips, högtider) är samma kod som på The Frame.
  * Spelen laddas inte på projektorn (android/index.html, SKIP). IPTV-spelaren används för de fria kanalerna. Barça-rutan visar Valencia (c.team).
  * defaultShelf gäller bara en ny installation (ingen sparad favoritrad); favoritraden ändras sedan på projektorn

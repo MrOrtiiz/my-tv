@@ -1,0 +1,30 @@
+/* Marvel före Avengers: Doomsday (marvel.js): ett mörkt helskärmsfönster med filmerna som affischer, två rader åt gången. */
+.marvel { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 60; display: none; color: #fff;
+  background: radial-gradient(ellipse at 50% -10%, rgba(226, 54, 54, 0.38), rgba(10, 10, 14, 0) 60%), #0B0B0E; }
+.marvel.open { display: block; }
+.marvel .mv-head { position: absolute; left: 0; right: 0; top: 64px; text-align: center; }
+.marvel .mv-title { font-size: 56px; font-weight: 800; letter-spacing: -0.01em; }
+.marvel .mv-sub { margin-top: 10px; font-size: 26px; font-weight: 500; color: rgba(255, 255, 255, 0.62); }
+.marvel .mv-view { position: absolute; left: 0; right: 0; top: 196px; height: 772px; overflow: hidden; }
+.marvel .mv-grid { position: absolute; left: 0; top: 24px; width: 1920px; -webkit-transition: -webkit-transform 0.35s ease; transition: transform 0.35s ease; }
+.marvel .mv-card { position: absolute; width: 188px; }
+.marvel .mv-poster { position: relative; width: 188px; height: 282px; border-radius: 16px; overflow: hidden; background: #24242A center / cover no-repeat;
+  -webkit-transition: -webkit-transform 0.18s ease; transition: transform 0.18s ease; }
+.marvel .mv-poster.has .mv-fallback { display: none; }
+.marvel .mv-fallback { position: absolute; left: 14px; right: 14px; top: 0; bottom: 0; display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center;
+  font-size: 22px; font-weight: 700; line-height: 28px; text-align: center; color: rgba(255, 255, 255, 0.85); }
+.marvel .mv-num { position: absolute; left: -10px; top: -12px; min-width: 44px; height: 44px; padding: 0 8px; box-sizing: border-box; border-radius: 22px;
+  background: #E23636; font-size: 22px; font-weight: 800; line-height: 44px; text-align: center; }
+.marvel .mv-name { margin-top: 12px; font-size: 18px; font-weight: 600; line-height: 22px; height: 44px; overflow: hidden; color: rgba(255, 255, 255, 0.78); }
+.marvel .mv-year { font-size: 16px; font-weight: 500; color: rgba(255, 255, 255, 0.45); }
+.marvel .mv-card.focus .mv-poster { -webkit-transform: scale(1.1); transform: scale(1.1); box-shadow: 0 0 0 5px #fff; }
+.marvel .mv-card.focus .mv-name { color: #fff; }
+.marvel .mv-card.last .mv-num { background: #fff; color: #E23636; }
+.marvel .mv-card.last .mv-year::after { content: '  ·  senast'; color: #FF6B6B; }
+.marvel .mv-hint { position: absolute; left: 0; right: 0; bottom: 34px; text-align: center; font-size: 22px; color: rgba(255, 255, 255, 0.5); }
+.marvel .mv-msg { position: absolute; left: 50%; bottom: 76px; -webkit-transform: translateX(-50%); transform: translateX(-50%); padding: 10px 26px;
+  border-radius: 24px; background: rgba(255, 255, 255, 0.14); font-size: 24px; font-weight: 600; white-space: nowrap; opacity: 0;
+  -webkit-transition: opacity 0.3s; transition: opacity 0.3s; }
+.marvel .mv-msg.show { opacity: 1; }
+.lite .marvel .mv-card.focus .mv-poster { box-shadow: none; outline: 5px solid #fff; }
+.lite .marvel .mv-grid, .lite .marvel .mv-poster { -webkit-transition: none; transition: none; }

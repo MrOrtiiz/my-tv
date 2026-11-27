@@ -1,0 +1,554 @@
+/*
+ * The Swedish calendar on the home screen: today's holiday or theme day next to the date (red days in red), and an
+ * animation that fits it: snow and fairy lights at Christmas, fireworks at New Year, candlelight on Lucia, hearts on
+ * Father's and Mother's Day, petals at Midsummer, feathers at Easter, embers on Walpurgis Night, blue and yellow confetti
+ * on the National Day... (Home Settings → Holidays). Easter and the days that move with it are computed for every year.
+ * One canvas at half size, 30 fps, stopped while the app is hidden. ES5 only.
+ */
+var Festive = (function () {
+  'use strict';
+  var W = 960, H = 540, FRAME = 1000 / 30;
+  var canvas = null, g = null, raf = 0, last = 0, acc = 0, kind = '', parts = [], timer = 0, forced = null, extra = 0;
+
+  function on() { return typeof Prefs === 'undefined' || !Prefs.holidays || Prefs.holidays(); }
+  function key(m, d) { return m + '-' + d; }
+  function add(date, days) { return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days); }
+
+  /** Easter Sunday (the Gregorian computus). */
+  function easter(y) {
+    var a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+    var g2 = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g2 + 15) % 30, i = Math.floor(c / 4), k = c % 4;
+    var l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+    var month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1;
+    return new Date(y, month - 1, day);
+  }
+
+  /** The first given weekday (0 Sunday … 6 Saturday) on or after a date. */
+  function onOrAfter(y, m, d, wd) { var t = new Date(y, m - 1, d); return add(t, (wd - t.getDay() + 7) % 7); }
+
+  /** The year's days: {"month-day": {name, red, anim}}. */
+  var cache = {};
+  function days(y) {
+    if (cache[y]) return cache[y];
+    var out = {};
+    // anim: the animation; theme: the colors the whole screen takes that day (THEMES), the animation's own by default.
+    function put(date, name, red, anim, theme) { out[key(date.getMonth() + 1, date.getDate())] = {name: name, red: !!red, anim: anim || 'sparkle', theme: theme || anim || 'gold'}; }
+    function fixed(m, d, name, red, anim, theme) { put(new Date(y, m - 1, d), name, red, anim, theme); }
+    fixed(1, 1, 'Nyårsdagen', true, 'newyear');
+    fixed(1, 5, 'Trettondagsafton', false, 'sparkle', 'gold');
+    fixed(1, 6, 'Trettondedag jul', true, 'sparkle', 'gold');
+    fixed(2, 6, 'Samernas nationaldag', false, 'confetti', 'sami');
+    fixed(2, 14, 'Alla hjärtans dag', false, 'hearts');
+    fixed(3, 8, 'Internationella kvinnodagen', false, 'sparkle', 'purple');
+    fixed(3, 25, 'Våffeldagen', false, 'sparkle', 'warm');
+    fixed(4, 1, 'Första april', false, 'confetti', 'fun');
+    fixed(4, 30, 'Valborgsmässoafton', false, 'valborg');
+    fixed(5, 1, 'Första maj', true, 'sparkle', 'red');
+    fixed(6, 6, 'Sveriges nationaldag', true, 'flags');
+    fixed(7, 20, 'Colombias nationaldag', false, 'confetti', 'colombia');
+    fixed(10, 4, 'Kanelbullens dag', false, 'sparkle', 'warm');
+    fixed(10, 12, 'Spaniens nationaldag', false, 'confetti', 'spain');
+    fixed(10, 24, 'FN-dagen', false, 'sparkle', 'sky');
+    fixed(10, 31, 'Halloween', false, 'halloween');
+    fixed(11, 6, 'Gustav Adolfsdagen', false, 'sparkle', 'warm');
+    fixed(11, 7, 'Kladdkakans dag', false, 'sparkle', 'warm');
+    fixed(11, 10, 'Mårtensafton', false, 'sparkle', 'warm');
+    fixed(12, 9, 'Pepparkakans dag', false, 'sparkle', 'warm');
+    fixed(12, 10, 'Nobeldagen', false, 'sparkle', 'gold');
+    fixed(12, 13, 'Lucia', false, 'lucia');
+    fixed(12, 24, 'Julafton', false, 'christmas');
+    fixed(12, 25, 'Juldagen', true, 'christmas');
+    fixed(12, 26, 'Annandag jul', true, 'christmas');
+    fixed(12, 31, 'Nyårsafton', false, 'newyear');
+    var e = easter(y);
+    put(add(e, -47), 'Fettisdagen', false, 'sparkle', 'warm');
+    put(add(e, -3), 'Skärtorsdagen', false, 'easter');
+    put(add(e, -2), 'Långfredagen', true, 'easter');
+    put(add(e, -1), 'Påskafton', false, 'easter');
+    put(e, 'Påskdagen', true, 'easter');
+    put(add(e, 1), 'Annandag påsk', true, 'easter');
+    put(add(e, 39), 'Kristi himmelsfärdsdag', true, 'sparkle', 'sky');
+    put(add(e, 48), 'Pingstafton', false, 'sparkle', 'green');
+    put(add(e, 49), 'Pingstdagen', true, 'sparkle', 'green');
+    var mid = onOrAfter(y, 6, 19, 5);
+    put(mid, 'Midsommarafton', false, 'midsummer');
+    put(add(mid, 1), 'Midsommardagen', true, 'midsummer');
+    var saints = onOrAfter(y, 10, 31, 6);
+    put(add(saints, -1), 'Alla helgons afton', false, 'candles');
+    put(saints, 'Alla helgons dag', true, 'candles');
+    // Mother's Day: the last Sunday of May. Father's Day: the second Sunday of November.
+    var may = new Date(y, 4, 31);
+    put(add(may, -may.getDay()), 'Mors dag', false, 'hearts-pink');
+    put(add(onOrAfter(y, 11, 1, 0), 7), 'Fars dag', false, 'hearts-blue');
+    // Advent: the four Sundays before Christmas Eve.
+    var first = add(onOrAfter(y, 11, 27, 0), 0), names = ['Första advent', 'Andra advent', 'Tredje advent', 'Fjärde advent'];
+    for (var a = 0; a < 4; a++) { var adv = add(first, 7 * a); if (!out[key(adv.getMonth() + 1, adv.getDate())]) put(adv, names[a], false, 'advent'); }
+    cache[y] = out;
+    return out;
+  }
+
+  // Fun days: releases worth a count-down. [year, month, day, the day's name, the count-down's name, animation].
+  // Dates as announced for Sweden (GTA VI: Rockstar, 19 Nov 2026; Avengers: Doomsday: Swedish premiere 16 Dec 2026).
+  var EVENTS = [
+    [2026, 11, 19, 'GTA VI släpps i dag!', 'GTA VI', 'neon'],
+    [2026, 12, 16, 'Avengers: Doomsday har premiär!', 'Avengers: Doomsday', 'heroes']
+  ];
+  var COUNTDOWN = 30;   // days before
+
+  // Birthdays in the family, as [month, day, b(oy) or g(irl)] only: no names (this file is public). The balloons take
+  // their colors from it.
+  // CONFIG.birthdays replaces them on another family's TV (android/kompis.js: none).
+  var BIRTHDAYS = (window.CONFIG && CONFIG.birthdays) || [[11, 25, 'g'], [1, 6, 'b'], [1, 16, 'b'], [5, 11, 'g'], [6, 29, 'g'], [7, 16, 'g'], [10, 7, 'g']];
+  var BALLOONS = {
+    g: ['255,105,180', '255,69,140', '191,90,242', '255,182,213', '255,204,0', '230,130,255'],
+    b: ['10,132,255', '90,200,250', '52,199,89', '48,90,220', '0,199,190', '255,204,0']
+  };
+  var who = 'g';
+  var BIRTHDAY_SOON = 7;   // days before, for "Födelsedag om 3 dagar"
+
+  function birthday(t) {
+    for (var i = 0; i < BIRTHDAYS.length; i++) {
+      if (BIRTHDAYS[i][0] === t.getMonth() + 1 && BIRTHDAYS[i][1] === t.getDate()) { who = BIRTHDAYS[i][2]; return true; }
+    }
+    return false;
+  }
+
+  /** Days to the next birthday within BIRTHDAY_SOON (1…7), or 0. */
+  function birthdaySoon() {
+    var t = new Date(), today0 = new Date(t.getFullYear(), t.getMonth(), t.getDate()).getTime(), best = 0;
+    for (var i = 0; i < BIRTHDAYS.length; i++) {
+      for (var y = t.getFullYear(); y <= t.getFullYear() + 1; y++) {
+        var n = Math.round((new Date(y, BIRTHDAYS[i][0] - 1, BIRTHDAYS[i][1]).getTime() - today0) / 86400000);
+        if (n >= 1 && n <= BIRTHDAY_SOON && (!best || n < best)) best = n;
+      }
+    }
+    return best;
+  }
+
+  function event(t) {
+    for (var i = 0; i < EVENTS.length; i++) {
+      var e = EVENTS[i];
+      if (e[0] === t.getFullYear() && e[1] === t.getMonth() + 1 && e[2] === t.getDate()) return {name: e[3], red: false, anim: e[5], theme: e[5]};
+    }
+    return null;
+  }
+
+  /** "GTA VI om 14 dagar", "Avengers: Doomsday i morgon": the nearest release within COUNTDOWN days, or ''. */
+  function countdown() {
+    var t = new Date(), today0 = new Date(t.getFullYear(), t.getMonth(), t.getDate()).getTime(), best = null, bestN = 1e9;
+    for (var i = 0; i < EVENTS.length; i++) {
+      var e = EVENTS[i], n = Math.round((new Date(e[0], e[1] - 1, e[2]).getTime() - today0) / 86400000);
+      if (n >= 1 && n <= COUNTDOWN && n < bestN) { best = e; bestN = n; }
+    }
+    var b = birthdaySoon(), parts2 = [];
+    if (b) parts2.push('Födelsedag ' + (b === 1 ? 'i morgon' : 'om ' + b + ' dagar'));
+    if (best) parts2.push(best[4] + (bestN === 1 ? ' i morgon' : ' om ' + bestN + ' dagar'));
+    return parts2.join('  ·  ');
+  }
+
+  /** Today's day ({name, red, anim}): a holiday first, else a release day; or null. */
+  function today() {
+    if (forced) return forced;
+    var t = new Date(), h = days(t.getFullYear())[key(t.getMonth() + 1, t.getDate())] || event(t) || null;
+    // A Barça match day comes before everything: the screen goes blaugrana. The day's own name still shows after it.
+    var match = window.BarcaBox && BarcaBox.matchToday ? BarcaBox.matchToday() : null;
+    if (match) {
+      var k = new Date(match.start), hm = (k.getHours() < 10 ? '0' : '') + k.getHours() + ':' + (k.getMinutes() < 10 ? '0' : '') + k.getMinutes();
+      var bday = birthday(t) ? 'Grattis på födelsedagen!' : '';
+      var others = [bday, h ? h.name : ''].filter(function (x) { return x; });
+      var club = (window.CONFIG && CONFIG.team && CONFIG.team.theme) || 'barca';   // Valencia's colors on the friend's projector
+      return {name: 'Matchdag ' + hm + (others.length ? '  ·  ' + others.join('  ·  ') : ''), red: !!(h && h.red), anim: 'barca', theme: club};
+    }
+    // A birthday comes first; on a holiday too, both names show and a red day stays red.
+    if (birthday(t)) return {name: 'Grattis på födelsedagen!' + (h ? '  ·  ' + h.name : ''), red: !!(h && h.red), anim: 'birthday', theme: 'birthday-' + who};
+    return h;
+  }
+
+  // MARK: - The day's colors: the whole screen matches the day (festive.css), from two colors and a tint of the sky.
+  // [accent, second color, tint at the top, tint at the bottom], as "r,g,b" and "r,g,b,a".
+  var THEMES = {
+    barca: ['220,30,80', '237,187,0', '0,77,152,0.26', '165,0,68,0.26'],
+    valencia: ['255,128,0', '245,245,245', '20,20,24,0.3', '255,110,0,0.2'],
+    christmas: ['255,69,58', '255,214,10', '20,120,60,0.16', '170,20,30,0.22'],
+    newyear: ['255,214,10', '210,215,255', '60,30,120,0.18', '255,190,60,0.12'],
+    lucia: ['255,200,110', '255,240,210', '255,170,60,0.08', '255,150,40,0.2'],
+    advent: ['255,170,80', '255,69,58', '255,150,40,0.06', '200,40,40,0.14'],
+    candles: ['255,180,90', '255,230,190', '255,150,40,0.05', '255,140,40,0.16'],
+    hearts: ['255,59,107', '255,159,181', '255,60,110,0.1', '255,60,110,0.18'],
+    'hearts-pink': ['255,105,170', '255,194,216', '255,100,170,0.1', '255,120,180,0.18'],
+    'hearts-blue': ['79,141,255', '141,184,255', '60,120,255,0.12', '60,160,255,0.16'],
+    midsummer: ['255,214,10', '52,199,89', '255,240,150,0.1', '52,199,89,0.14'],
+    easter: ['255,214,0', '255,90,160', '255,230,80,0.12', '255,120,180,0.12'],
+    valborg: ['255,140,40', '255,69,58', '255,120,30,0.04', '255,90,20,0.24'],
+    flags: ['254,204,2', '0,106,167', '0,106,167,0.2', '254,204,2,0.12'],
+    sami: ['218,41,28', '0,122,201', '0,122,201,0.14', '255,206,0,0.1'],
+    spain: ['198,11,30', '255,196,0', '198,11,30,0.12', '255,196,0,0.14'],
+    colombia: ['252,209,22', '0,56,147', '0,56,147,0.12', '206,17,38,0.12'],
+    halloween: ['255,140,0', '160,80,255', '120,40,180,0.16', '255,110,0,0.2'],
+    neon: ['255,60,180', '0,230,255', '120,0,160,0.2', '255,60,180,0.16'],
+    heroes: ['170,90,255', '255,200,80', '90,40,200,0.2', '255,180,60,0.1'],
+    'birthday-g': ['255,105,180', '255,214,10', '255,105,180,0.12', '191,90,242,0.14'],
+    'birthday-b': ['10,132,255', '255,214,10', '10,132,255,0.14', '52,199,89,0.1'],
+    gold: ['255,214,120', '255,240,200', '255,200,100,0.06', '255,190,80,0.1'],
+    warm: ['255,170,90', '200,120,60', '255,160,80,0.06', '180,100,40,0.14'],
+    red: ['255,69,58', '255,150,140', '255,60,50,0.06', '255,60,50,0.14'],
+    purple: ['191,90,242', '255,159,220', '160,80,240,0.12', '191,90,242,0.14'],
+    sky: ['90,200,250', '10,132,255', '90,200,250,0.1', '10,132,255,0.1'],
+    green: ['52,199,89', '200,240,120', '52,199,89,0.08', '120,220,90,0.12'],
+    fun: ['255,214,10', '255,69,140', '255,214,10,0.1', '10,132,255,0.12']
+  };
+  var theme = '';
+
+  /** The day's colors on the whole screen: body.fest and fest-<theme>, and the colors as CSS variables. */
+  function paintTheme(name) {
+    var body = document.body, t = THEMES[name];
+    body.className = body.className.replace(/\s*\bfest(-[\w-]+)?\b/g, '');
+    theme = t ? name : '';
+    var st = body.style;
+    if (!t) { st.removeProperty('--fa'); st.removeProperty('--fb'); st.removeProperty('--ft'); st.removeProperty('--fd'); return; }
+    body.className += ' fest fest-' + name;
+    st.setProperty('--fa', t[0]); st.setProperty('--fb', t[1]); st.setProperty('--ft', t[2]); st.setProperty('--fd', t[3]);
+  }
+
+  // MARK: - The animations
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
+
+  function heart(x, y, s, color, alpha) {
+    g.globalAlpha = alpha;
+    g.fillStyle = color;
+    g.beginPath();
+    g.moveTo(x, y + s * 0.3);
+    g.bezierCurveTo(x, y, x - s * 0.5, y, x - s * 0.5, y + s * 0.3);
+    g.bezierCurveTo(x - s * 0.5, y + s * 0.6, x, y + s * 0.8, x, y + s);
+    g.bezierCurveTo(x, y + s * 0.8, x + s * 0.5, y + s * 0.6, x + s * 0.5, y + s * 0.3);
+    g.bezierCurveTo(x + s * 0.5, y, x, y, x, y + s * 0.3);
+    g.fill();
+  }
+
+  function glow(x, y, r, rgb, a) {
+    var gr = g.createRadialGradient(x, y, 0, x, y, r);
+    gr.addColorStop(0, 'rgba(' + rgb + ',' + a + ')');
+    gr.addColorStop(1, 'rgba(' + rgb + ',0)');
+    g.fillStyle = gr;
+    g.fillRect(x - r, y - r, r * 2, r * 2);
+  }
+
+  // Flag colors for national-day confetti (repeats weight the bigger stripes).
+  var FLAG = {
+    sami: ['#DA291C', '#007AC9', '#00A651', '#FFCE00'],
+    spain: ['#C60B1E', '#FFC400', '#FFC400'],
+    colombia: ['#FCD116', '#FCD116', '#003893', '#CE1126']
+  };
+
+  var SETUP = {
+    christmas: function () {
+      for (var i = 0; i < 110; i++) parts.push({t: 'snow', x: rand(0, W), y: rand(0, H), r: rand(0.8, 2.6), v: rand(14, 40), p: rand(0, 6.3)});
+      for (var j = 0; j < 22; j++) parts.push({t: 'bulb', i: j, c: pick(['255,70,70', '255,200,60', '80,200,120', '90,160,255', '255,140,40']), p: rand(0, 6.3)});
+    },
+    newyear: function () {
+      parts.push({t: 'launcher', next: 0.4});
+      burst(W * 0.3, H * 0.28); burst(W * 0.7, H * 0.22);
+    },
+    lucia: function () {
+      for (var i = 0; i < 46; i++) parts.push({t: 'light', x: rand(0, W), y: rand(H * 0.3, H + 40), v: rand(6, 16), r: rand(10, 26), p: rand(0, 6.3)});
+      for (var j = 0; j < 40; j++) parts.push({t: 'spark', x: rand(0, W), y: rand(0, H), p: rand(0, 6.3)});
+    },
+    advent: function () {
+      for (var i = 0; i < 24; i++) parts.push({t: 'light', x: rand(0, W), y: rand(H * 0.4, H + 40), v: rand(4, 10), r: rand(8, 20), p: rand(0, 6.3)});
+      for (var j = 0; j < 40; j++) parts.push({t: 'snow', x: rand(0, W), y: rand(0, H), r: rand(0.6, 1.8), v: rand(10, 24), p: rand(0, 6.3)});
+    },
+    candles: function () {
+      for (var i = 0; i < 30; i++) parts.push({t: 'light', x: rand(0, W), y: rand(H * 0.45, H + 40), v: rand(3, 8), r: rand(8, 18), p: rand(0, 6.3)});
+    },
+    hearts: function () { for (var i = 0; i < 26; i++) parts.push({t: 'heart', x: rand(0, W), y: rand(0, H + 60), s: rand(8, 22), v: rand(14, 30), p: rand(0, 6.3), c: pick(['#FF3B6B', '#FF6B8E', '#E8174B', '#FF9FB5'])}); },
+    'hearts-pink': function () { for (var i = 0; i < 26; i++) parts.push({t: 'heart', x: rand(0, W), y: rand(0, H + 60), s: rand(8, 22), v: rand(14, 30), p: rand(0, 6.3), c: pick(['#FF8FB8', '#FF5E9C', '#FFC2D8', '#F7A1C4'])}); },
+    'hearts-blue': function () { for (var i = 0; i < 26; i++) parts.push({t: 'heart', x: rand(0, W), y: rand(0, H + 60), s: rand(8, 22), v: rand(14, 30), p: rand(0, 6.3), c: pick(['#4F8DFF', '#2F6BEA', '#8DB8FF', '#5AC8FA'])}); },
+    midsummer: function () { for (var i = 0; i < 50; i++) parts.push({t: 'petal', x: rand(0, W), y: rand(-H, H), v: rand(16, 34), a: rand(0, 6.3), va: rand(-1.5, 1.5), p: rand(0, 6.3), c: pick(['255,255,255', '255,214,230', '255,236,120', '200,160,255', '255,170,200'])}); },
+    easter: function () { for (var i = 0; i < 40; i++) parts.push({t: 'feather', x: rand(0, W), y: rand(-H, H), v: rand(12, 26), a: rand(0, 6.3), va: rand(-1, 1), p: rand(0, 6.3), c: pick(['255,214,0', '255,90,160', '90,200,255', '120,230,120', '255,140,40', '180,110,255'])}); },
+    valborg: function () { for (var i = 0; i < 90; i++) parts.push({t: 'ember', x: rand(W * 0.1, W * 0.9), y: rand(H * 0.4, H + 20), v: rand(30, 70), p: rand(0, 6.3), life: rand(0, 1)}); },
+    flags: function () { for (var i = 0; i < 90; i++) parts.push({t: 'confetti', x: rand(0, W), y: rand(-H, H), v: rand(30, 60), a: rand(0, 6.3), va: rand(-4, 4), p: rand(0, 6.3), c: i % 2 ? '#FECC02' : '#006AA7'}); },
+    // Confetti in the day's colors (the flag's own on national days).
+    confetti: function () {
+      var cols = FLAG[theme] || (THEMES[theme] ? ['rgb(' + THEMES[theme][0] + ')', 'rgb(' + THEMES[theme][1] + ')', '#FFFFFF'] : ['#FFD60A', '#FF453A', '#0A84FF']);
+      for (var i = 0; i < 80; i++) parts.push({t: 'confetti', x: rand(0, W), y: rand(-H, H), v: rand(30, 60), a: rand(0, 6.3), va: rand(-4, 4), p: rand(0, 6.3), c: pick(cols)});
+    },
+    halloween: function () {
+      for (var i = 0; i < 7; i++) parts.push({t: 'bat', x: rand(-200, W), y: rand(30, H * 0.5), v: rand(40, 80), p: rand(0, 6.3), s: rand(10, 18)});
+      for (var j = 0; j < 40; j++) parts.push({t: 'ember', x: rand(0, W), y: rand(H * 0.5, H + 20), v: rand(14, 30), p: rand(0, 6.3), life: rand(0, 1)});
+    },
+    sparkle: function () { for (var i = 0; i < 34; i++) parts.push({t: 'spark', x: rand(0, W), y: rand(0, H * 0.75), p: rand(0, 6.3)}); },
+    // Match day: the kit's blue and garnet stripes glowing and drifting, gold sparks, and a ball now and then.
+    barca: function () {
+      var kit = (window.CONFIG && CONFIG.team && CONFIG.team.stripes) || ['0,77,152', '165,0,68'];   // the club's two colors
+      for (var i = 0; i < 10; i++) parts.push({t: 'stripe', i: i, x: i * (W / 9) - 40, c: kit[i % 2], p: rand(0, 6.3)});
+      for (var j = 0; j < 40; j++) parts.push({t: 'gold', x: rand(0, W), y: rand(0, H), v: rand(10, 26), p: rand(0, 6.3)});
+      parts.push({t: 'balls', next: 1});
+    },
+    // Balloons rising, and confetti.
+    birthday: function () {
+      var pal = BALLOONS[who] || BALLOONS.g;
+      for (var i = 0; i < 16; i++) parts.push({t: 'balloon', x: rand(0, W), y: rand(H * 0.2, H + 200), v: rand(22, 42), p: rand(0, 6.3), r: rand(14, 22), c: pick(pal)});
+      for (var j = 0; j < 60; j++) parts.push({t: 'confetti', x: rand(0, W), y: rand(-H, H), v: rand(30, 60), a: rand(0, 6.3), va: rand(-4, 4), p: rand(0, 6.3), c: 'rgb(' + pick(pal) + ')'});
+    },
+    // A neon sunset over the sea, pink and cyan streaks and a slow scan line: a night in a sunny city by the ocean.
+    neon: function () {
+      parts.push({t: 'sun'});
+      for (var i = 0; i < 26; i++) parts.push({t: 'streak', x: rand(-W, W), y: rand(H * 0.1, H * 0.9), v: rand(120, 260), l: rand(40, 140), c: pick(['255,60,180', '0,230,255', '255,170,60', '180,90,255'])});
+    },
+    // Cosmic energy: rings that ripple out and sparks in purple and gold.
+    heroes: function () {
+      parts.push({t: 'rings', next: 0});
+      for (var i = 0; i < 60; i++) parts.push({t: 'cosmic', x: rand(0, W), y: rand(0, H), vx: rand(-20, 20), vy: rand(-20, 20), p: rand(0, 6.3), c: pick(['170,90,255', '255,200,80', '120,160,255'])});
+    }
+  };
+
+  function burst(x, y) {
+    var c = pick(['255,90,90', '255,210,80', '120,220,255', '190,130,255', '120,255,160', '255,255,255', '255,140,60']);
+    for (var i = 0; i < 90; i++) {
+      var a = Math.random() * 6.283, s = rand(50, 160);
+      parts.push({t: 'fw', x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 1, c: c});
+    }
+  }
+
+  function draw(dt) {
+    g.clearRect(0, 0, W, H);
+    var i, p, keep = [];
+    for (i = 0; i < parts.length; i++) {
+      p = parts[i];
+      switch (p.t) {
+        case 'snow':
+          p.y += p.v * dt; p.p += dt; if (p.y > H + 4) { p.y = -4; p.x = rand(0, W); }
+          g.globalAlpha = 0.85; g.fillStyle = '#FFF'; g.beginPath(); g.arc(p.x + Math.sin(p.p) * 8, p.y, p.r, 0, 6.283); g.fill();
+          break;
+        case 'bulb':
+          // Fairy lights hanging across the top in two gentle curves.
+          var bx = 20 + p.i * (W - 40) / 21, sag = Math.sin(Math.PI * ((p.i % 11) / 10)) * 26, by = 10 + sag;
+          p.p += dt * rand(1.5, 3);
+          var on = 0.55 + 0.45 * Math.abs(Math.sin(p.p));
+          g.globalAlpha = 1; glow(bx, by + 6, 18, p.c, 0.45 * on);
+          g.globalAlpha = 0.6; g.strokeStyle = 'rgba(40,60,40,0.6)'; g.lineWidth = 1; g.beginPath(); g.moveTo(bx, by - 2); g.lineTo(bx, by + 2); g.stroke();
+          g.globalAlpha = on; g.fillStyle = 'rgb(' + p.c + ')'; g.beginPath(); g.ellipse ? g.ellipse(bx, by + 6, 3.2, 5, 0, 0, 6.283) : g.arc(bx, by + 6, 4, 0, 6.283); g.fill();
+          break;
+        case 'light':
+          p.y -= p.v * dt; p.p += dt * 2; if (p.y < -30) { p.y = H + 30; p.x = rand(0, W); }
+          g.globalAlpha = 1; glow(p.x + Math.sin(p.p * 0.5) * 6, p.y, p.r, '255,190,90', 0.22 + 0.12 * Math.sin(p.p * 3));
+          g.globalAlpha = 0.9; g.fillStyle = 'rgb(255,226,160)'; g.beginPath(); g.arc(p.x + Math.sin(p.p * 0.5) * 6, p.y, 1.6, 0, 6.283); g.fill();
+          break;
+        case 'spark':
+          p.p += dt * 1.8;
+          var sa = Math.max(0, Math.sin(p.p)) ;
+          g.globalAlpha = sa * 0.9; g.strokeStyle = '#FFF6D8'; g.lineWidth = 1;
+          g.beginPath(); g.moveTo(p.x - 5 * sa, p.y); g.lineTo(p.x + 5 * sa, p.y); g.moveTo(p.x, p.y - 5 * sa); g.lineTo(p.x, p.y + 5 * sa); g.stroke();
+          if (p.p > 6.283) { p.p = 0; p.x = rand(0, W); p.y = rand(0, H * 0.75); }
+          break;
+        case 'heart':
+          p.y -= p.v * dt; p.p += dt; if (p.y < -40) { p.y = H + 30; p.x = rand(0, W); }
+          heart(p.x + Math.sin(p.p) * 14, p.y, p.s, p.c, 0.75);
+          break;
+        case 'petal':
+        case 'feather':
+          p.y += p.v * dt; p.p += dt; p.a += p.va * dt; if (p.y > H + 20) { p.y = -20; p.x = rand(0, W); }
+          g.save(); g.translate(p.x + Math.sin(p.p) * 20, p.y); g.rotate(p.a);
+          g.globalAlpha = 0.85; g.fillStyle = 'rgb(' + p.c + ')'; g.beginPath();
+          if (g.ellipse) g.ellipse(0, 0, p.t === 'petal' ? 5 : 3, p.t === 'petal' ? 3 : 11, 0, 0, 6.283); else g.arc(0, 0, 4, 0, 6.283);
+          g.fill(); g.restore();
+          break;
+        case 'ember':
+          p.y -= p.v * dt; p.p += dt * 6; p.life += dt * 0.35;
+          if (p.life > 1 || p.y < 0) { p.y = rand(H * 0.75, H + 20); p.x = rand(W * 0.1, W * 0.9); p.life = 0; }
+          g.globalAlpha = 1; glow(p.x + Math.sin(p.p) * 3, p.y, 6, '255,140,40', (1 - p.life) * 0.6);
+          g.globalAlpha = (1 - p.life); g.fillStyle = 'rgb(255,' + Math.floor(160 + 60 * Math.sin(p.p)) + ',60)'; g.fillRect(p.x + Math.sin(p.p) * 3, p.y, 1.6, 1.6);
+          break;
+        case 'confetti':
+          p.y += p.v * dt; p.p += dt * 3; p.a += p.va * dt; if (p.y > H + 10) { p.y = -10; p.x = rand(0, W); }
+          g.save(); g.translate(p.x + Math.sin(p.p) * 10, p.y); g.rotate(p.a); g.scale(1, Math.abs(Math.cos(p.p)));
+          g.globalAlpha = 0.95; g.fillStyle = p.c; g.fillRect(-4, -2, 8, 4); g.restore();
+          break;
+        case 'bat':
+          p.x += p.v * dt; p.p += dt * 10; if (p.x > W + 40) { p.x = -40; p.y = rand(30, H * 0.5); }
+          var flap = Math.sin(p.p) * p.s * 0.5, yy = p.y + Math.sin(p.p * 0.2) * 10;
+          g.globalAlpha = 0.85; g.fillStyle = '#15121C'; g.beginPath();
+          g.moveTo(p.x, yy); g.quadraticCurveTo(p.x - p.s * 0.6, yy - flap, p.x - p.s, yy + 2); g.quadraticCurveTo(p.x - p.s * 0.5, yy + 1, p.x, yy + 4);
+          g.quadraticCurveTo(p.x + p.s * 0.5, yy + 1, p.x + p.s, yy + 2); g.quadraticCurveTo(p.x + p.s * 0.6, yy - flap, p.x, yy); g.fill();
+          break;
+        case 'stripe':
+          p.x += 8 * dt; p.p += dt * 0.6; if (p.x > W + 60) p.x -= W / 9 * 10;
+          var sgw = g.createLinearGradient(p.x - 46, 0, p.x + 46, 0), al = 0.13 + 0.06 * Math.sin(p.p);
+          sgw.addColorStop(0, 'rgba(' + p.c + ',0)'); sgw.addColorStop(0.5, 'rgba(' + p.c + ',' + al.toFixed(3) + ')'); sgw.addColorStop(1, 'rgba(' + p.c + ',0)');
+          g.globalAlpha = 1; g.fillStyle = sgw; g.fillRect(p.x - 46, 0, 92, H);
+          break;
+        case 'gold':
+          p.y -= p.v * dt; p.p += dt * 3; if (p.y < -6) { p.y = H + 6; p.x = rand(0, W); }
+          g.globalAlpha = 1; glow(p.x, p.y, 5, '237,187,0', 0.3 + 0.2 * Math.sin(p.p));
+          g.globalAlpha = 0.9; g.fillStyle = 'rgb(255,214,90)'; g.fillRect(p.x - 0.8, p.y - 0.8, 1.6, 1.6);
+          break;
+        case 'balls':
+          p.next -= dt;
+          if (p.next <= 0) { p.next = rand(4, 8); parts.push({t: 'ball', x: rand(W * 0.1, W * 0.9), y: H + 20, vx: rand(-40, 40), vy: rand(-260, -200), a: 0}); }
+          break;
+        case 'ball':
+          p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 110 * dt; p.a += dt * 4;
+          if (p.y > H + 30 && p.vy > 0) continue;
+          g.save(); g.translate(p.x, p.y); g.rotate(p.a);
+          g.globalAlpha = 0.85; g.fillStyle = '#F4F4F6'; g.beginPath(); g.arc(0, 0, 11, 0, 6.283); g.fill();
+          g.fillStyle = '#1C1C1E'; g.beginPath();
+          for (var q = 0; q < 5; q++) { var qa = q * 1.2566 - 1.5708; g.lineTo(Math.cos(qa) * 4.2, Math.sin(qa) * 4.2); }
+          g.closePath(); g.fill();
+          for (var q2 = 0; q2 < 5; q2++) { var qb = q2 * 1.2566 + 1.5708; g.beginPath(); g.arc(Math.cos(qb) * 9.5, Math.sin(qb) * 9.5, 2.6, 0, 6.283); g.fill(); }
+          g.restore();
+          break;
+        case 'balloon':
+          p.y -= p.v * dt; p.p += dt; if (p.y < -p.r * 3) { p.y = H + p.r * 2 + rand(0, 120); p.x = rand(0, W); }
+          var bxx = p.x + Math.sin(p.p * 0.8) * 10;
+          g.globalAlpha = 0.5; g.strokeStyle = 'rgba(255,255,255,0.7)'; g.lineWidth = 0.8; g.beginPath(); g.moveTo(bxx, p.y + p.r * 1.2);
+          g.quadraticCurveTo(bxx + Math.sin(p.p * 2) * 6, p.y + p.r * 2.2, bxx, p.y + p.r * 3.2); g.stroke();
+          var bg2 = g.createRadialGradient(bxx - p.r * 0.35, p.y - p.r * 0.4, 1, bxx, p.y, p.r * 1.3);
+          bg2.addColorStop(0, 'rgba(255,255,255,0.9)'); bg2.addColorStop(0.25, 'rgba(' + p.c + ',0.95)'); bg2.addColorStop(1, 'rgba(' + p.c + ',0.8)');
+          g.globalAlpha = 0.9; g.fillStyle = bg2; g.beginPath();
+          if (g.ellipse) g.ellipse(bxx, p.y, p.r, p.r * 1.2, 0, 0, 6.283); else g.arc(bxx, p.y, p.r, 0, 6.283);
+          g.fill();
+          g.beginPath(); g.moveTo(bxx - 3, p.y + p.r * 1.25); g.lineTo(bxx + 3, p.y + p.r * 1.25); g.lineTo(bxx, p.y + p.r * 1.1); g.fill();
+          break;
+        case 'sun':
+          var sy = H * 0.62, sr = 92, sx = W * 0.82;
+          var sg = g.createLinearGradient(0, sy - sr, 0, sy + sr * 0.2);
+          sg.addColorStop(0, 'rgba(255,220,90,0.55)'); sg.addColorStop(0.55, 'rgba(255,80,160,0.5)'); sg.addColorStop(1, 'rgba(160,40,200,0.2)');
+          g.globalAlpha = 1; g.fillStyle = sg; g.beginPath(); g.arc(sx, sy, sr, Math.PI, 0); g.fill();
+          g.fillStyle = 'rgba(10,0,30,0.35)';
+          for (var b = 0; b < 5; b++) g.fillRect(sx - sr, sy - 10 - b * 15, sr * 2, 2.5 + b * 0.5);
+          glow(sx, sy, 230, '255,60,180', 0.12);
+          break;
+        case 'streak':
+          p.x += p.v * dt; if (p.x > W + p.l) { p.x = -p.l - rand(0, W); p.y = rand(H * 0.1, H * 0.9); }
+          var sgr = g.createLinearGradient(p.x - p.l, 0, p.x, 0);
+          sgr.addColorStop(0, 'rgba(' + p.c + ',0)'); sgr.addColorStop(1, 'rgba(' + p.c + ',0.8)');
+          g.globalAlpha = 1; g.strokeStyle = sgr; g.lineWidth = 1.5; g.beginPath(); g.moveTo(p.x - p.l, p.y); g.lineTo(p.x, p.y); g.stroke();
+          break;
+        case 'rings':
+          p.next -= dt;
+          if (p.next <= 0) { p.next = rand(1.2, 2.4); parts.push({t: 'ring', x: rand(W * 0.2, W * 0.8), y: rand(H * 0.2, H * 0.7), r: 4, c: pick(['170,90,255', '255,200,80'])}); }
+          break;
+        case 'ring':
+          p.r += 120 * dt;
+          if (p.r > 260) continue;
+          g.globalAlpha = Math.max(0, 1 - p.r / 260) * 0.7; g.strokeStyle = 'rgb(' + p.c + ')'; g.lineWidth = 2.5;
+          g.beginPath(); g.arc(p.x, p.y, p.r, 0, 6.283); g.stroke();
+          g.globalAlpha = 1; glow(p.x, p.y, p.r * 0.5, p.c, 0.08 * (1 - p.r / 260));
+          break;
+        case 'cosmic':
+          p.x += p.vx * dt; p.y += p.vy * dt; p.p += dt * 3;
+          if (p.x < 0) p.x = W; if (p.x > W) p.x = 0; if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+          g.globalAlpha = 1; glow(p.x, p.y, 7, p.c, 0.35 + 0.25 * Math.sin(p.p));
+          break;
+        case 'shot':
+          p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 260 * dt; p.vx *= 0.99; p.a += p.va * dt; p.life -= dt * 0.12;
+          if (p.life <= 0 || p.y > H + 20) continue;
+          g.save(); g.translate(p.x, p.y); g.rotate(p.a); g.globalAlpha = Math.min(1, p.life * 1.5); g.fillStyle = p.c; g.fillRect(-4, -2, 8, 4); g.restore();
+          break;
+        case 'launcher':
+          p.next -= dt;
+          if (p.next <= 0) { p.next = rand(0.45, 1.2); parts.push({t: 'rocket', x: rand(W * 0.12, W * 0.88), y: H, vy: rand(-380, -300), top: rand(H * 0.1, H * 0.4)}); }
+          break;
+        case 'rocket':
+          p.y += p.vy * dt;
+          g.globalAlpha = 0.9; g.fillStyle = '#FFE9B0'; g.fillRect(p.x, p.y, 1.6, 6);
+          if (p.y <= p.top) { burst(p.x, p.y); continue; }
+          break;
+        case 'fw':
+          p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 60 * dt; p.vx *= 0.985; p.vy *= 0.985; p.life -= dt * 0.55;
+          if (p.life <= 0) continue;
+          g.globalAlpha = p.life; g.fillStyle = 'rgb(' + p.c + ')'; g.fillRect(p.x - 1.2, p.y - 1.2, 2.6, 2.6);
+          if (p.life > 0.6) { g.globalAlpha = 1; glow(p.x, p.y, 5, p.c, 0.25 * p.life); }
+          break;
+      }
+      keep.push(p);
+    }
+    parts = keep;
+    g.globalAlpha = 1;
+  }
+
+  function loop(t) {
+    raf = 0;
+    if ((!kind && Date.now() > extra) || document.hidden) {
+      if (!kind && g) { g.clearRect(0, 0, W, H); parts = []; }
+      return;
+    }
+    var dt = last ? Math.min(0.1, (t - last) / 1000) : 0;
+    last = t; acc += dt * 1000;
+    if (acc >= FRAME) { draw(acc / 1000); acc = 0; }
+    raf = window.requestAnimationFrame(loop);
+  }
+  function run() { if (!raf && (kind || Date.now() < extra) && !document.hidden) { last = 0; acc = FRAME; raf = window.requestAnimationFrame(loop); } }
+  function stop() { if (raf) window.cancelAnimationFrame(raf); raf = 0; }
+
+  function ensure() {
+    if (canvas) return true;
+    var host = document.getElementById('sky');
+    if (!host) return false;
+    canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    canvas.id = 'festive';
+    host.appendChild(canvas);   // over the sky and its veil, under everything else
+    g = canvas.getContext('2d');
+    return true;
+  }
+
+  /** Starts, changes or stops the animation for today; checked again each minute (midnight changes the day). */
+  function update() {
+    if (!ensure()) return;
+    var d = on() ? today() : null, want = d ? d.anim : '', look = d ? (d.theme || d.anim) : '';
+    if (want === kind && look === theme) { run(); return; }
+    stop();
+    paintTheme(look);
+    kind = want; parts = [];
+    if (api.onChange) api.onChange();   // the date line shows the day's name
+    g.clearRect(0, 0, W, H);
+    canvas.style.opacity = kind ? '1' : '0';
+    if (kind && SETUP[kind]) SETUP[kind]();
+    run();
+  }
+
+  document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else run(); });
+  setTimeout(update, 300);
+  timer = setInterval(update, 60000);
+
+  var api = {
+    today: function () { return on() ? today() : null; },
+    countdown: function () { return on() && !forced ? countdown() : ''; },
+    update: update,
+    /** The animation in a screensaver (host, under its clock: before `before`), or back over the sky (no host). */
+    into: function (host, before) {
+      if (!ensure()) return;
+      var target = host || document.getElementById('sky');
+      if (!target) return;
+      if (canvas.parentNode !== target || (before && canvas.nextSibling !== before)) target.insertBefore(canvas, before || null);
+      canvas.className = host ? 'away' : '';
+      run();
+    },
+    /** For trying an animation: Festive.preview('newyear', 'Nyårsafton', false); Festive.preview() to stop. */
+    preview: function (anim, name, red) {
+      if (anim === 'birthday-b' || anim === 'birthday-g') { who = anim.slice(-1); anim = 'birthday'; kind = ''; }
+      forced = anim ? {anim: anim, name: name || anim, red: !!red, theme: anim === 'birthday' ? 'birthday-' + who : arguments[3] || anim} : null; update();
+    },
+    days: days,
+    /** A Barça goal: blue, garnet and gold confetti bursting from the sides and fireworks, for some ten seconds. */
+    goal: function () {
+      if (!ensure()) return;
+      canvas.style.opacity = '1';
+      extra = Date.now() + 12000;
+      var cols = ['#004D98', '#A50044', '#EDBB00', '#FFFFFF'];
+      for (var i = 0; i < 160; i++) {
+        var left = i % 2 === 0;
+        parts.push({t: 'shot', x: left ? -10 : W + 10, y: rand(H * 0.4, H), vx: (left ? 1 : -1) * rand(160, 380), vy: rand(-320, -120),
+          a: rand(0, 6.3), va: rand(-8, 8), life: 1, c: pick(cols)});
+      }
+      burst(W * 0.3, H * 0.3); burst(W * 0.7, H * 0.25); burst(W * 0.5, H * 0.18);
+      run();
+    },
+    /** Set by home.js: redraws the date line when the day changes. */
+    onChange: null
+  };
+  return api;
+})();

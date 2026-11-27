@@ -1,0 +1,256 @@
+/*
+ * iOS look (Home Settings → iOS look, body.ios): Apple's newest design language on the TV. Liquid-glass panels
+ * (translucent, a bright rim and a soft sheen, large rounded corners), the lock screen's large centered clock with the
+ * widgets under it, a glass dock for the apps and iOS-green switches. Everything here is scoped to body.ios, so turning
+ * it off brings back the original look. Blur (backdrop-filter) only where the TV has it.
+ */
+
+/* MARK: - Liquid glass */
+
+.ios .glass, .ios #platter, .ios .round {
+  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.16));
+  background: linear-gradient(rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.16));
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.16),
+    inset 0 2px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -2px 0 rgba(255, 255, 255, 0.18),
+    inset 2px 0 0 rgba(255, 255, 255, 0.28),
+    inset -2px 0 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.42),
+    inset 0 0 40px rgba(255, 255, 255, 0.12);
+}
+.ios.night .glass, .ios.night #platter, .ios.night .round {
+  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.05));
+  background: linear-gradient(rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.05));
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.38),
+    inset 0 2px 0 rgba(255, 255, 255, 0.36),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.08),
+    inset 2px 0 0 rgba(255, 255, 255, 0.12),
+    inset -2px 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.16),
+    inset 0 0 40px rgba(255, 255, 255, 0.05);
+}
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .ios .glass, .ios #platter {
+    -webkit-backdrop-filter: blur(26px) saturate(1.6);
+    backdrop-filter: blur(26px) saturate(1.6);
+  }
+}
+/* The sheen: a soft light across the top half, as light falls on curved glass. */
+.ios #wxtop::before, .ios #barca::before, .ios #platter::before {
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 0;
+  height: 46%;
+  border-radius: inherit;
+  background: -webkit-radial-gradient(50% 0%, ellipse, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 70%);
+  background: radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+}
+.ios.night #wxtop::before, .ios.night #barca::before, .ios.night #platter::before {
+  background: -webkit-radial-gradient(50% 0%, ellipse, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0) 70%);
+  background: radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0) 70%);
+}
+
+/* MARK: - Widgets: rounder, quieter labels */
+
+.ios #wxtop { border-radius: 46px; }
+.ios #barca { border-radius: 40px; }
+.ios #wxtop .meta, .ios #barca .head { letter-spacing: 0.01em; }
+.ios #barca .head .name { text-transform: uppercase; font-size: 18px; letter-spacing: 0.06em; }
+.ios #barca .when { color: #FF375F; }
+.ios.night #barca .when { color: #FF6482; }
+.ios #barca .live { background: #0A84FF; border-radius: 9px; }
+.ios #barca .match { border-top-color: rgba(127, 127, 140, 0.18); }
+
+/* MARK: - The lock screen: the date over a large clock, centered; the widgets under it */
+
+.ios.no-picks #clock {
+  left: 0;
+  right: 0;
+  top: 64px;
+  text-align: center;
+  font-size: 220px;
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: reverse;
+  -webkit-flex-direction: column-reverse;
+  flex-direction: column-reverse;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.ios.no-picks #clock .time {
+  color: rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 30px rgba(255, 255, 255, 0.08);
+}
+/* By day the sky is pale: the clock takes a deep blue that still lets the sky show, as iOS tints it to the wallpaper. */
+.ios.no-picks:not(.night) #clock .time { color: rgba(14, 34, 66, 0.42); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55); }
+.ios.no-picks:not(.night) #clock .date { color: rgba(14, 34, 66, 0.6); }
+.ios.no-picks #clock .date {
+  margin: 0 0 6px;
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: none;
+}
+/* Barça left of the clock, the weather centered under it, the apps in rows below. */
+.ios.no-picks #barca { top: 64px; left: 80px; right: auto; width: 470px; }
+.ios.no-picks #wxtop { top: 412px; left: 50%; -webkit-transform: translateX(-50%) scale(0.84); transform: translateX(-50%) scale(0.84); -webkit-transform-origin: 50% 0; transform-origin: 50% 0; }
+
+/* MARK: - With picks: the small clock in the same style */
+
+.ios:not(.no-picks) #clock { font-weight: 250; letter-spacing: -0.01em; opacity: 0.75; }
+
+/* MARK: - The dock and its apps */
+
+.ios #platter { border-radius: 70px; }
+.ios .tile { border-radius: 32px; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18); }
+.ios .tile::after { background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0)); background: linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0)); opacity: 1; }
+.ios .tile.focus { -webkit-transform: scale(1.16) translateY(-6px); transform: scale(1.16) translateY(-6px); box-shadow: 0 22px 44px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(255, 255, 255, 0.55); }
+
+/* MARK: - Round buttons: glass circles, white when focused */
+
+.ios .round { color: #FFF; }
+.ios:not(.night) .round { color: #1D1D1F; }
+.ios .round.focus { background: #FFF; color: #1D1D1F; box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3); }
+
+/* MARK: - Picks: rounder cards */
+
+.ios .card .img { border-radius: 34px; }
+
+/* MARK: - Sheets: frosted glass, iOS switches */
+
+.ios .sheet { background: rgba(0, 0, 0, 0.42); }
+.ios #settings .box, .ios #shelfedit .box, .ios #langpick .box, .ios #citypick .box, .ios #keypick .box, .ios #about .box, .ios #picker .box {
+  border-radius: 48px;
+  background: -webkit-linear-gradient(top, rgba(58, 60, 70, 0.82), rgba(28, 30, 36, 0.86));
+  background: linear-gradient(rgba(58, 60, 70, 0.82), rgba(28, 30, 36, 0.86));
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.28), inset 0 0 0 1.5px rgba(255, 255, 255, 0.12);
+}
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .ios #settings .box, .ios #shelfedit .box, .ios #langpick .box, .ios #citypick .box, .ios #keypick .box, .ios #about .box, .ios #picker .box {
+    -webkit-backdrop-filter: blur(40px) saturate(1.8);
+    backdrop-filter: blur(40px) saturate(1.8);
+  }
+}
+.ios .box .row { border-radius: 24px; }
+.ios .box .row.focus { background: rgba(255, 255, 255, 0.18); }
+.ios .toggle { background: rgba(120, 120, 128, 0.36); }
+.ios .toggle.on { background: #34C759; }
+
+/* MARK: - Favourite apps as iPhone icons in rows (home.js renderGrid): rounded squares, their names under them */
+
+.ios .tile.circ { border-radius: 25px; overflow: visible; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), inset 0 1.5px 0 rgba(255, 255, 255, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.1); }
+.ios .tile.circ::after { display: none; }
+/* A logo on a clear background: on dark glass, as iOS shows icons in dark mode. */
+.ios .tile.circ.inset {
+  background: -webkit-linear-gradient(top, #3A3A3E, #1C1C1F);
+  background: linear-gradient(#3A3A3E, #1C1C1F);
+}
+.ios .tile.circ::before {
+  content: attr(data-label);
+  position: absolute;
+  left: -36px;
+  right: -36px;
+  top: 100%;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 24px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+}
+.ios:not(.night) .tile.circ::before { color: #1D1D1F; text-shadow: 0 1px 4px rgba(255, 255, 255, 0.6); }
+.ios .tile.circ .word { left: 10%; right: 10%; }
+.ios .tile.circ img.full {
+  -webkit-transform: none;
+  transform: none;
+  max-width: none;
+  max-height: none;
+  -o-object-fit: contain;
+  object-fit: contain;
+}
+/* A full icon fills the rounded square (a hair larger, so its own rounded corners don't show). */
+/* A logo sits inside with room around it, as on an iPhone. */
+.ios .tile.circ img.full { left: 17%; top: 17%; width: 66%; height: 66%; }
+.ios .tile.circ.bleed img.full { left: -2%; top: -2%; width: 104%; height: 104%; border-radius: 26px; -o-object-fit: cover; object-fit: cover; }
+.ios .tile.circ.focus { -webkit-transform: scale(1.15); transform: scale(1.15); box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45), 0 0 0 3px rgba(255, 255, 255, 0.8); }
+
+/* The date line can carry a holiday and a count-down: kept between the Barça box and the round buttons, on two lines
+   when it needs them. */
+.ios.no-picks #clock { left: 620px; right: 620px; }
+.ios.no-picks #clock .date { white-space: normal; line-height: 42px; max-width: 680px; text-align: center; }
+
+/* The count-down: a small glass pill centered under the clock, over the weather. */
+.ios.no-picks #countdown {
+  left: 50%;
+  top: 368px;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  padding: 0 26px;
+  height: 46px;
+  line-height: 46px;
+  border-radius: 23px;
+  font-size: 24px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+.ios.no-picks:not(.night) #countdown { color: rgba(14, 34, 66, 0.82); background: rgba(255, 255, 255, 0.4); box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.5); }
+.ios.no-picks #wxtop { top: 440px; }
+
+/* With picks, the compact Barça box shows the crest at its left. */
+body:not(.no-picks) #barca .crest { width: 34px; height: 34px; margin: 0; }
+
+/* A lifted logo on the dark glass (home.js roundFace): fitted inside with room around it, as on an iPhone. */
+.ios .tile.circ .mark {
+  position: absolute;
+  left: 18%;
+  top: 24%;
+  width: 64%;
+  height: 52%;
+  -o-object-fit: contain;
+  object-fit: contain;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  max-width: none;
+  max-height: none;
+  -webkit-transform: none;
+  transform: none;
+}
+
+/* A logo drawn to its icon's edges (Netflix's N): smaller, inside, as on an iPhone. */
+.ios .tile.circ img.full.mark { left: 26%; top: 22%; width: 48%; height: 56%; }
+
+/* Spotify (home.js roundFace): a green layer in the icon's shape, the icon multiplied over it. */
+.ios .tile.circ .tintunder {
+  position: absolute; left: 17%; top: 17%; width: 66%; height: 66%;
+  background: #1ED760;
+  -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+}
+.ios .tile.circ img.full.multiply { mix-blend-mode: multiply; }
+
+/* The drawer's focused key stays white, over the glass (the glass rule above would hide it). */
+.ios .key.focus, .ios.night .key.focus { background: #F5F5F7; color: #1C1C1E; }
+
+/* More than two rows of favourites (home.js renderGrid): smaller icons, so smaller names. */
+.ios.grid-dense .tile.circ { border-radius: 21px; }
+.ios.grid-dense .tile.circ::before { font-size: 16px; line-height: 20px; margin-top: 7px; left: -30px; right: -30px; }

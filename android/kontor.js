@@ -1,8 +1,8 @@
 /*
  * Yuris TV på jobbet (Samsung RM40D med Xiaomi TV Stick 4K, Google TV): det som skiljer från The Frame. Läses efter
- * tv/config.js, bara här (appen FreeMyTV-kontor.apk, PROFILE=kontor i android/build.sh).
+ * kontor/config.js, bara här (appen FreeMyTV-kontor.apk, PROFILE=kontor i android/build.sh), som läser mappen kontor/.
  * Allt annat (väder i Uppsala, svenska, iOS-stilen, Barça-rutan, högtider) är samma kod som på The Frame.
- * Spelen laddas inte (android/index.html, SKIP). Trafikrutan (tv/trafik.js) visar restiden hem med köer från TomTom;
+ * Spelen laddas inte (android/index.html, SKIP). Trafikrutan (kontor/trafik.js) visar restiden hem med köer från TomTom;
  * nyckeln skrivs in på TV:n (Inställningar → Hemskärm → Trafiknyckel) och finns aldrig i repot.
  */
 (function (c) {
