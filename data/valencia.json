@@ -1,5 +1,5 @@
 {
- "updated": 1795753446561,
+ "updated": 1795765131182,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
  "matches": [
@@ -52,12 +52,13 @@
  ],
  "guide": {
   "channels": 5638,
-  "programmes": 303048,
+  "programmes": 297939,
   "barca_listings": 12,
-  "until": "2026-11-28T06:00:00+01:00"
+  "until": "2026-11-28T08:00:00+01:00"
  },
  "barca_titles_seen": [
   "11-28 01:20 | Moto GP Valencia: Trening 1  | 55 min",
+  "11-28 07:00 | Košarka - Euroleague: Valencia - Panathinaikos  | 100 min",
   "11-27 21:30 | Moto GP Valencia: Trening 1  | 55 min",
   "11-27 09:00 | LIVE: Moto 3 Valencia: Trening 1  | 45 min",
   "11-27 09:45 | LIVE: Moto 2 Valencia: Trening 1  | 55 min",
@@ -66,7 +67,6 @@
   "11-27 13:15 | LIVE: Moto 3 Valencia: Trening 2  | 45 min",
   "11-27 14:00 | LIVE: Moto 2 Valencia: Trening 2  | 55 min",
   "11-27 14:55 | LIVE: Moto GP Valencia: Trening 2  | 70 min",
-  "11-27 04:40 | MotoGP '26: Valencia MotoGP Practice 1  | 75 min",
   "11-27 14:45 | MotoGP '26: Valencia MotoGP Practice 1  | 60 min",
   "11-27 15:45 | MotoGP '26: Valencia MotoGP Practice  | 60 min",
   "11-27 17:00 | MotoGP '26: Valencia Moto2 Practice 1  | 60 min",
@@ -78,10 +78,10 @@
   "11-28 03:20 | MotoGP '26: Valencia Moto2 Practice 2  | 40 min",
   "11-28 04:00 | MotoGP '26: Valencia MotoGP Practice 2  | 40 min",
   "11-28 04:40 | MotoGP '26: Valencia MotoGP Qualifying  | 80 min",
-  "11-27 04:40 | MotoGP '26: Valencia MotoGP Practice 1  | 75 min",
   "11-28 02:35 | MotoGP '26: Valencia Moto3 Practice 2  | 45 min",
   "11-28 03:20 | MotoGP '26: Valencia Moto2 Practice 2  | 40 min",
-  "11-28 04:00 | MotoGP '26: Valencia MotoGP Practice 2  | 40 min"
+  "11-28 04:00 | MotoGP '26: Valencia MotoGP Practice 2  | 40 min",
+  "11-28 04:40 | MotoGP '26: Valencia MotoGP Qualifying  | 80 min"
  ],
  "table": {
   "league": "LaLiga",
