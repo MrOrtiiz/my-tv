@@ -14,7 +14,8 @@
   c.ownInputs = {};          // PS5 på HDMI 4 gäller The Frame
   // Mobilen (koppla.js: mobilen som fjärrkontroll och tangentbord, bra för nyckeln), Sök, Ingångar, Genvägar; inga spel.
   // Hem först: tar dig till den vanliga Free My TV-startsidan (den som Hem-knappen på fjärrkontrollen öppnar).
-  c.buttons = ['home', 'phone', 'search', 'inputs', 'shortcuts'];
+  // Starta om: laddar om appen med den senaste koden (efter en ändring i kontor/).
+  c.buttons = ['home', 'restart', 'phone', 'search', 'inputs', 'shortcuts'];
 
   // Trafikrutan: bil från jobbet (Palmbladsgatan 8) hem (Ritargatan 4B), koordinater från TomTom.
   c.traffic = {label: 'hem',

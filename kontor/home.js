@@ -335,7 +335,8 @@
    */
   // [kind, symbol, tip, tip to translate, only where CONFIG.buttons names it]. Marvel: marvel.js (the friend's projector).
   // Hem: den vanliga Free My TV-startsidan på jobbets sticka (TV.stockHome), bara där CONFIG.buttons tar med 'home'.
-  var ALL_BUTTONS = [['home', 'home', 'Vanliga startsidan', false, true], ['marvel', 'play', 'Marvel', false, true], ['phone', 'cast', 'Mobilen', false, true],
+  // Starta om: laddar om appen, som då hämtar senaste koden från GitHub (bara där CONFIG.buttons tar med 'restart').
+  var ALL_BUTTONS = [['home', 'home', 'Vanliga startsidan', false, true], ['restart', 'sync', 'Starta om', false, true], ['marvel', 'play', 'Marvel', false, true], ['phone', 'cast', 'Mobilen', false, true],
     ['channels', 'live_tv', 'TV-kanaler', false, true], ['search', 'search', 'Sök'], ['games', 'gamepad', 'Spel'],
     ['inputs', 'hdmi', 'Inputs', true], ['shortcuts', 'apps', 'Shortcuts', true]];
   var BUTTONS = ALL_BUTTONS.filter(function (b) {
@@ -1727,6 +1728,7 @@
         if (kind === 'search') { if (window.Search) Search.open(); }
         else if (kind === 'marvel') { if (window.Marvel) Marvel.open(); }
         else if (kind === 'phone') { if (window.Koppla) Koppla.open(); }
+        else if (kind === 'restart') { toast('Startar om…'); setTimeout(function () { location.reload(); }, 400); }
         else if (kind === 'home') { TV.stockHome(function (ok) { if (ok === false) toast('Kunde inte öppna den vanliga startsidan.'); }); }
         else if (kind === 'channels') { if (window.Kanaler) Kanaler.open(); }
         else openPicker(kind);
