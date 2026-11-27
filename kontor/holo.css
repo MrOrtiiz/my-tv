@@ -1,0 +1,156 @@
+/*
+ * Kontrollrum v3 – Holographic Interface (holo.js): body.v3. Samma rutor som v2, flyttade runt kärnan och klädda som
+ * ett ritningsliknande kontrollsystem: turkos på nästan svart, rubriker som fyllda etikettband, raka ramar, tunna
+ * siffror. v2 (hudtheme.css) ligger under och gäller när v3 är av.
+ */
+
+/* Bakgrund och lager */
+.v3 #sky { background: radial-gradient(ellipse at 50% 38%, #0E2226 0%, #08151A 45%, #040A0C 100%); }
+.v3 #hudbg { display: none; }
+.v3 #holo { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#holo, .holo-dyn { display: none; }
+.v3 #holo { display: block; }
+.v3 .holo-dyn { display: block; position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; z-index: 5; }
+.v3 .holo-static { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+.v3 .holo-ring { position: absolute; }
+/* home.css gör alla canvas i #sky till bakgrundsbilder (osynliga tills de tonas in): inte motorns. */
+.v3 #sky #holo canvas { opacity: 1; -webkit-transition: none; transition: none; }
+.v3 #sky #holo .holo-static { left: 0; top: 0; width: 1920px; height: 1080px; }
+
+/* Ringarna roterar i olika fart och riktning. Låg grafik: stilla. */
+@-webkit-keyframes holospin { from { -webkit-transform: rotate(0deg); } to { -webkit-transform: rotate(360deg); } }
+@keyframes holospin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@-webkit-keyframes holoback { from { -webkit-transform: rotate(360deg); } to { -webkit-transform: rotate(0deg); } }
+@keyframes holoback { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+@-webkit-keyframes holobreath { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+@keyframes holobreath { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+.v3 .r-outer { -webkit-animation: holospin 180s linear infinite; animation: holospin 180s linear infinite; }
+.v3 .r-scale { -webkit-animation: holoback 260s linear infinite; animation: holoback 260s linear infinite; }
+.v3 .r-inner { -webkit-animation: holospin 70s linear infinite, holobreath 7s ease-in-out infinite; animation: holospin 70s linear infinite, holobreath 7s ease-in-out infinite; }
+.v3 .r-hex { -webkit-animation: holoback 400s linear infinite; animation: holoback 400s linear infinite; }
+.v3.holo-low .holo-ring { -webkit-animation: none; animation: none; }
+
+/* Uppstart: kärnan växer fram, rutorna glider in efter varandra, det statiska lagret tänds sist. */
+@-webkit-keyframes holoin { from { opacity: 0; -webkit-transform: scale(0.6) rotate(-40deg); } to { opacity: 1; -webkit-transform: none; } }
+@keyframes holoin { from { opacity: 0; transform: scale(0.6) rotate(-40deg); } to { opacity: 1; transform: none; } }
+@-webkit-keyframes holofade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes holofade { from { opacity: 0; } to { opacity: 1; } }
+@-webkit-keyframes holoslide { from { opacity: 0; -webkit-transform: translateY(14px); } to { opacity: 1; -webkit-transform: none; } }
+@keyframes holoslide { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.v3.holo-boot #holo { -webkit-animation: holoin 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation: holoin 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.v3.holo-boot .holo-static { -webkit-animation: holofade 0.8s 1.9s both; animation: holofade 0.8s 1.9s both; }
+.v3.holo-boot #clock { -webkit-animation: holofade 0.9s 0.5s both; animation: holofade 0.9s 0.5s both; }
+.v3.holo-boot #barca, .v3.holo-boot #barcapill { -webkit-animation: holoslide 0.7s 1.0s both; animation: holoslide 0.7s 1.0s both; }
+.v3.holo-boot #trafik { -webkit-animation: holoslide 0.7s 1.15s both; animation: holoslide 0.7s 1.15s both; }
+.v3.holo-boot #wxtop { -webkit-animation: holoslide 0.7s 1.3s both; animation: holoslide 0.7s 1.3s both; }
+.v3.holo-boot #holosys { -webkit-animation: holoslide 0.7s 1.45s both; animation: holoslide 0.7s 1.45s both; }
+.v3.holo-boot #countdown { -webkit-animation: holoslide 0.7s 1.6s both; animation: holoslide 0.7s 1.6s both; }
+.v3.holo-boot #tiles, .v3.holo-boot #buttons, .v3.holo-boot #hudbar { -webkit-animation: holofade 0.8s 1.7s both; animation: holofade 0.8s 1.7s both; }
+
+/* Inbränning: hela startsidan glider några pixlar fram och tillbaka på en timme. */
+@-webkit-keyframes holodrift { 0%, 100% { -webkit-transform: translate(0, 0); } 25% { -webkit-transform: translate(5px, 3px); } 50% { -webkit-transform: translate(0, 6px); } 75% { -webkit-transform: translate(-5px, 3px); } }
+@keyframes holodrift { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(5px, 3px); } 50% { transform: translate(0, 6px); } 75% { transform: translate(-5px, 3px); } }
+/* Bakgrunden glider i samma takt, så att ledlinjerna alltid träffar rutorna. */
+.v3 #home, .v3 #sky { -webkit-animation: holodrift 3600s linear infinite; animation: holodrift 3600s linear infinite; }
+
+/* Klockan i kärnan */
+.v3.ios.no-picks #clock { top: 300px; left: 660px; right: 660px; font-size: 128px; }
+.v3.ios.no-picks #clock .time, .v3 #clock .time { font-weight: 200; color: #E9FDFF; text-shadow: 0 0 22px rgba(95, 230, 235, 0.45); letter-spacing: 2px;
+  -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
+.v3.ios.no-picks #clock .date, .v3 #clock .date { font-size: 17px; font-weight: 600; letter-spacing: 5px; color: rgba(95, 230, 235, 0.85);
+  text-transform: uppercase; margin: 0 0 4px; text-shadow: none; }
+.v3 #clock.red .date { color: #FF8A80; }
+
+/* Rutorna: inga glaskort, en mörk tunn yta med rak ram och ett fyllt etikettband överst */
+.v3 .glass, .v3.night .glass, .v3.ios .glass, .v3.ios.night .glass {
+  border-radius: 2px; background: rgba(4, 14, 17, 0.72);
+  box-shadow: 0 0 0 1px rgba(95, 230, 235, 0.28); color: #DDF8FA;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+.v3 #barca .head, .v3 #trafik .head {
+  margin: -20px -28px 12px; padding: 0 16px; height: 34px; line-height: 34px; background: #5FE6EB; color: #031012;
+  font-size: 14px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; white-space: nowrap;
+}
+.v3 #barca .head .name, .v3 #trafik .head .name { color: #031012; }
+.v3 #barca .stamp, .v3 #trafik .stamp { float: right; margin-top: 0; color: rgba(3, 16, 18, 0.7); opacity: 1; font-size: 12px; letter-spacing: 2px; }
+.v3 #barca .crest { width: 22px; height: 22px; margin-right: 10px; vertical-align: -5px; }
+.v3 #trafik .dot { display: none; }
+.v3 #barca .when, .v3.night #barca .when { color: #FFC448; font-size: 15px; letter-spacing: 2px; text-transform: uppercase; }
+.v3 #barca .title { font-size: 24px; font-weight: 400; color: #EAFDFF; }
+.v3 #barca .channels, .v3 #barca .none { color: rgba(95, 230, 235, 0.6); font-style: normal; font-size: 16px; letter-spacing: 0.5px; }
+.v3 #barca .match { border-top: 1px dashed rgba(95, 230, 235, 0.2); }
+.v3 #barca .dots span { background: rgba(95, 230, 235, 0.35); } .v3 #barca .dots span.on { background: #5FE6EB; }
+
+/* Platser runt kärnan */
+.v3.ios.no-picks #barca { top: 160px; left: 70px; width: 470px; }
+.v3 #trafik { top: 160px !important; right: 70px; width: 470px; }
+.v3.ios.no-picks #wxtop, .v3 #wxtop { top: 384px; left: auto; right: 70px; -webkit-transform: none; transform: none; width: 470px; height: auto;
+  box-sizing: border-box; padding: 46px 20px 12px; white-space: normal; }
+.v3.ios.night #wxtop::before, .v3 #wxtop::before { content: 'ATMOSFÄR  ::  UPPSALA'; display: block !important; position: absolute; left: 0; right: 0; top: 0;
+  height: 34px; line-height: 34px; padding: 0 16px; border-radius: 0; background: #5FE6EB !important; color: #031012; font-size: 14px; font-weight: 800;
+  letter-spacing: 3px; white-space: nowrap; }
+.v3 #wxtop .sym { width: 48px; height: 48px; margin-right: 14px; }
+.v3 #wxtop .temp { font-size: 64px; line-height: 80px; margin-right: 20px; }
+.v3 #wxtop .cond { font-size: 20px; line-height: 28px; font-weight: 600; }
+.v3 #wxtop .meta { font-size: 15px; line-height: 24px; }
+.v3 #wxtop .split { display: none; }
+.v3 #wxtop .hours { display: block; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(95, 230, 235, 0.25); white-space: nowrap; }
+.v3 #wxtop .hour, .v3 #wxtop .hour.day { width: 86px; }
+.v3 #wxtop .hour .t { font-size: 14px; line-height: 20px; letter-spacing: 2px; }
+.v3 #wxtop .hour .sym { width: 24px; height: 24px; margin: 6px auto 4px; }
+.v3 #wxtop .hour .d { font-size: 18px; line-height: 24px; color: #DDF8FA; }
+.v3 #wxtop .hour .low { font-size: 15px; }
+.v3 #countdown, .v3.ios.no-picks #countdown { top: 738px; left: 50%; right: auto; -webkit-transform: translateX(-50%); transform: translateX(-50%);
+  height: 30px; line-height: 30px; padding: 0 16px; border-radius: 0; font-size: 14px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;
+  background: #FFC448; color: #1A1000; box-shadow: none; }
+
+/* Trafikrutan: stort tunt värde, läget i en tunn ram */
+.v3 #trafik .time { font-size: 60px; font-weight: 200; color: #9BF3F6; text-shadow: 0 0 16px rgba(95, 230, 235, 0.45); }
+.v3 #trafik.yellow .time { color: #FFC448; } .v3 #trafik.red .time { color: #FF7A70; }
+.v3 #trafik .state { background: none !important; color: #5AE68C; border-radius: 0; font-size: 14px; letter-spacing: 3px; line-height: 30px;
+  text-transform: uppercase; box-shadow: inset 0 0 0 1.5px currentColor; }
+.v3 #trafik .state.yellow { color: #FFC448; } .v3 #trafik .state.red { color: #FF7A70; }
+.v3 #trafik .line, .v3 #trafik .none { color: rgba(95, 230, 235, 0.7); font-size: 16px; letter-spacing: 2px; text-transform: uppercase; }
+
+/* Vädret */
+.v3 #wxtop .temp { font-weight: 200; color: #9BF3F6; text-shadow: 0 0 16px rgba(95, 230, 235, 0.4); }
+.v3 #wxtop .cond, .v3 #wxtop .meta, .v3 #wxtop .hour .t, .v3 #wxtop .hour .low { color: rgba(95, 230, 235, 0.75); text-transform: uppercase; letter-spacing: 1.5px; }
+.v3 #wxtop .split { background: rgba(95, 230, 235, 0.2); }
+
+/* Matchpillret och statusraden */
+.v3 #barcapill, .v3.night #barcapill { border-radius: 0; height: 32px; line-height: 32px; font-size: 14px; letter-spacing: 2px; text-transform: uppercase;
+  background: rgba(255, 196, 72, 0.12); color: #FFC448; box-shadow: inset 0 0 0 1.5px rgba(255, 196, 72, 0.7); }
+.v3 #hudbar { color: rgba(95, 230, 235, 0.7); border-bottom-color: rgba(95, 230, 235, 0.25); }
+.v3 #hudbar .r { color: #9BF3F6; }
+
+/* Knapparna: kvadratiska med rak ram; fokus fylld */
+.v3 .round, .v3.night .round, .v3.ios .round, .v3.ios.night .round { top: 64px; border-radius: 3px; background: rgba(4, 14, 17, 0.7);
+  box-shadow: 0 0 0 1.5px rgba(95, 230, 235, 0.5); color: #9BF3F6; }
+.v3 .round.focus, .v3.night .round.focus, .v3.ios .round.focus { background: #5FE6EB; color: #031012; box-shadow: 0 0 0 1.5px #CFFBFC, 0 0 24px rgba(95, 230, 235, 0.5); }
+.v3 .round .tip { color: #9BF3F6; text-transform: uppercase; letter-spacing: 2px; font-size: 14px; }
+
+/* Apparna: mindre, längst ner under kärnan, tunn ram */
+.v3 #tiles { -webkit-transform: scale(0.74); transform: scale(0.74); -webkit-transform-origin: 960px 1040px; transform-origin: 960px 1040px; }
+.v3 .tile, .v3.night .tile { box-shadow: 0 0 0 1.5px rgba(95, 230, 235, 0.3); }
+.v3 .tile.focus, .v3.night .tile.focus { box-shadow: 0 0 0 3px #5FE6EB, 0 0 30px rgba(95, 230, 235, 0.45); }
+.v3 .tile .label { color: rgba(205, 248, 250, 0.85); text-transform: uppercase; letter-spacing: 1.5px; }
+
+/* Systempanelen (holo.js) */
+#holosys { display: none; }
+.v3 #holosys { display: block; position: absolute; left: 70px; top: 556px; width: 470px; box-sizing: border-box; padding: 0 0 6px;
+  background: rgba(4, 14, 17, 0.6); box-shadow: 0 0 0 1px rgba(95, 230, 235, 0.22); }
+.v3 #holosys .head { height: 34px; line-height: 34px; padding: 0 16px; margin-bottom: 6px; background: rgba(95, 230, 235, 0.16);
+  color: #5FE6EB; font-size: 14px; font-weight: 800; letter-spacing: 3px; box-shadow: inset 3px 0 0 #5FE6EB; }
+.v3 #holosys .row { padding: 0 16px; font-size: 16px; line-height: 30px; letter-spacing: 1.5px; white-space: nowrap;
+  -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
+.v3 #holosys .k { display: inline-block; width: 130px; color: rgba(95, 230, 235, 0.6); font-weight: 600; }
+.v3 #holosys .sep { margin-right: 12px; color: rgba(95, 230, 235, 0.4); }
+.v3 #holosys .v { color: #DDF8FA; font-weight: 500; }
+
+/* En ruta med nya värden blinkar till */
+@-webkit-keyframes holoping { 0% { box-shadow: 0 0 0 1px rgba(95, 230, 235, 0.28); } 30% { box-shadow: 0 0 0 2px #CFFBFC, 0 0 34px rgba(95, 230, 235, 0.6); } 100% { box-shadow: 0 0 0 1px rgba(95, 230, 235, 0.28); } }
+@keyframes holoping { 0% { box-shadow: 0 0 0 1px rgba(95, 230, 235, 0.28); } 30% { box-shadow: 0 0 0 2px #CFFBFC, 0 0 34px rgba(95, 230, 235, 0.6); } 100% { box-shadow: 0 0 0 1px rgba(95, 230, 235, 0.28); } }
+.v3 .holo-ping { -webkit-animation: holoping 1.2s ease-out; animation: holoping 1.2s ease-out; }
+
+/* Raka hörn även där ios.css och hudtheme.css rundar rutorna med id-regler. */
+.v3 #barca, .v3.ios #barca, .v3 #trafik, .v3 #wxtop, .v3.ios #wxtop { border-radius: 2px; }

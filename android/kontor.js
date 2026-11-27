@@ -10,7 +10,8 @@
   c.defaultShelf = ['YouTube', 'Spotify', 'SVT Play', 'Netflix', 'Prime Video', 'Disney+', 'HBO Max', 'TV4 Play', 'Plex', 'Stremio'];
   c.picksOn = false;
   c.theme = 'dark';          // Kontrollrum-stilen är mörk dygnet runt
-  c.saver = 'hud';           // skärmsläckaren Kontrollrum (kontor/hud.js); byts under Hemskärm → Skärmsläckare         // filmtipsen kräver en TMDB-nyckel; slås på under Hemskärm om den läggs in
+  c.saver = 'hud';
+  c.look = 'v3';             // Kontrollrum v3 – Holographic Interface (kontor/holo.js); v2 finns kvar under Hemskärm → Utseende           // skärmsläckaren Kontrollrum (kontor/hud.js); byts under Hemskärm → Skärmsläckare         // filmtipsen kräver en TMDB-nyckel; slås på under Hemskärm om den läggs in
   c.ownInputs = {};          // PS5 på HDMI 4 gäller The Frame
   // Mobilen (koppla.js: mobilen som fjärrkontroll och tangentbord, bra för nyckeln), Sök, Ingångar, Genvägar; inga spel.
   // Hem först: tar dig till den vanliga Free My TV-startsidan (den som Hem-knappen på fjärrkontrollen öppnar).
@@ -44,5 +45,7 @@
     css('hud.css');
     css('hudtheme.css');
     add('hud.js', function () { if (window.Hud) Hud.decorate(); });
+    css('holo.css');
+    add('holo.js', function () { if (window.Holo) Holo.apply(); });
   });
 })(window.CONFIG);

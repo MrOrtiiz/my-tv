@@ -1078,6 +1078,13 @@
     var iptvLink = Prefs.iptv(), iptvHost = /^https?:\/\/([^\/:?#]+)/i.exec(iptvLink);
     rows.push({label: 'IPTV-länk', value: iptvLink ? (iptvHost ? iptvHost[1] : '••••') : tr('Not set'), opens: true, iptvRow: true,
       step: function (d) { if (d >= 0) openKey('iptv'); }});
+    if (window.Holo) {   // kontorets TV: Kontrollrum v2 eller v3 (holo.js), och v3:s grafiknivå
+      rows.push({label: 'Utseende', value: Prefs.look() === 'v3' ? 'Kontrollrum v3 – Holographic' : 'Kontrollrum v2',
+        step: function (d) { cycle('look', ['v2', 'v3'], Prefs.look(), d); Holo.apply(); }});
+      var ql = {auto: 'Auto', high: 'Hög', medium: 'Mellan', low: 'Låg'};
+      rows.push({label: 'Grafik (v3)', value: ql[Prefs.holoQuality()], dim: Prefs.look() !== 'v3',
+        step: function (d) { cycle('holoQuality', ['auto', 'high', 'medium', 'low'], Prefs.holoQuality(), d); Holo.apply(); }});
+    }
     if (window.Trafik) {   // kontorets TV (android/kontor.js): trafikrutan och dess TomTom-nyckel
       rows.push({label: 'Trafikruta', toggle: Prefs.traffic(),
         step: function () { Prefs.set('traffic', !Prefs.traffic()); Trafik.refresh(); }});
@@ -2074,6 +2081,7 @@
 
   function poke(ok) {
     idleAt = Date.now();
+    if (window.Holo) Holo.pause(false);
     if (window.Hud && Hud.isOn()) { Hud.hide(); return true; }
     if (ambientOn) { hideAmbient(); return true; }
     if (!saverOn) return false;
@@ -2214,6 +2222,7 @@
     if ((window.IPTV && IPTV.playing()) || (window.Search && Search.isOpen()) || (window.Dance && Dance.isOpen()) || (window.Rush && Rush.isOpen()) || (window.Marvel && Marvel.isOpen()) || (window.Koppla && Koppla.isOpen()) || (window.Kanaler && Kanaler.isOpen())) idleAt = Date.now();   // no screensaver over a match, a search or a game
     if (!document.hidden && !saverOn && !ambientOn && !(window.Hud && Hud.isOn()) && !sheetOpen() && Date.now() - idleAt > SAVER_AFTER) {
       if (saverMode() === 'hud') Hud.show(); else if (saverMode() === 'clock') showAmbient(); else showSaver();
+      if (window.Holo) Holo.pause(true);
     }
     if (saverOn) tickSaverClock($('saver').querySelector('.clock'));
     if (ambientOn) tickAmbient();

@@ -111,6 +111,10 @@ var Prefs = (function () {
     iptv: function () { return String(pick('iptv', '') || '').trim(); },
     /** TomTom-nyckeln för trafikrutan (trafik.js), inskriven på TV:n (Hemskärm → Trafiknyckel); bara här. */
     tomtomKey: function () { return String(pick('tomtomKey', '') || '').trim(); },
+    /** Utseendet på jobbets TV (Hemskärm → Utseende): 'v2' (Kontrollrum v2) eller 'v3' (Holographic Interface, holo.js). */
+    look: function () { return pick('look', CONFIG.look || 'v2') === 'v3' && window.Holo ? 'v3' : 'v2'; },
+    /** v3:s grafik (Hemskärm → Grafik): 'auto', 'high', 'medium' eller 'low'. */
+    holoQuality: function () { var v = pick('holoQuality', 'auto'); return /^(auto|high|medium|low)$/.test(v) ? v : 'auto'; },
     /** Trafikrutan (Hemskärm → Trafikruta), där CONFIG.traffic finns. */
     traffic: function () { return pick('traffic', true) !== false; },
     setCity: function (name, lat, lon) { v.city = name; v.latitude = lat; v.longitude = lon; save(); this.version++; },

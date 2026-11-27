@@ -225,7 +225,7 @@ var Hud = (function () {
       if (!isNaN(w.max)) rows.push(['MAX / MIN', Data.degrees(w.max) + ' / ' + Data.degrees(w.min)]);
       if (w.sunrise) rows.push(['SOL UPP', clock(w.sunrise)]);
       if (w.sunset) rows.push(['SOL NED', clock(w.sunset)]);
-      for (var i = 1; w.days && i < w.days.length && i <= 3; i++) {
+      for (var i = 0; w.days && i < w.days.length && i < 3; i++) {
         rows.push([short(w.days[i].at), Data.degrees(w.days[i].max) + ' / ' + Data.degrees(w.days[i].min)]);
       }
     }
