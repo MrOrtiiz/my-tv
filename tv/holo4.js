@@ -957,20 +957,7 @@ var Holo4 = (function () {
 
   // MARK: - Skärmsläckarna i samma stil (home.js anropar saver när en visas)
 
-  var SX = 960, SY = 520, saverTimer = 0, saverSpin = 0;
-
-  function ringAt(parent, cls, size, cx, cy, draw) {
-    var c = el('canvas', 'h4-ring ' + cls, null);
-    c.width = c.height = size;
-    c.style.width = c.style.height = size + 'px';
-    c.style.left = (cx - size / 2) + 'px';
-    c.style.top = (cy - size / 2) + 'px';
-    var g = c.getContext('2d');
-    g.translate(size / 2 - cx, size / 2 - cy);
-    draw(g);
-    parent.insertBefore(c, parent.firstChild);
-    return c;
-  }
+  var saverTimer = 0, saverSpin = 0;
 
   /** Ramen runt skärmen: hörn, en linje under rubriken, taggen och vädret till höger (bara riktiga värden). */
   function saverFrame(g, label) {
@@ -988,59 +975,269 @@ var Holo4 = (function () {
     if (w && !isNaN(w.temp)) text(g, 'UTE ' + deg(w.temp) + '  ::  ' + String(Data.condition ? Data.condition(w.code, w.isDay) : '').toUpperCase(), x1, 43, 15, rgba(ICE, 0.85), 'right', 500, 3);
   }
 
-  /** Viloläget (klockan): kärnan stor i mitten med dygns- och veckoringen, ringar som långsamt vrider sig. */
-  function drawStandby(g) {
-    var m = readModel(), i, p;
-    g.clearRect(0, 0, W, H);
-    saverFrame(g, 'KONTROLLRUM  ::  VILOLÄGE');
-    for (i = 0; i < 7; i++) {
-      var wd = (i + 1) % 7, from = i * (360 / 7) + 1.4, to = (i + 1) * (360 / 7) - 1.4, now = wd === m.day;
-      arcAt(g, SX, SY, 300, from, to, now ? 7 : 3, rgba(now ? TEAL : DIM, now ? 0.95 : 0.7));
-      p = [SX + Math.cos(rad((from + to) / 2)) * 318, SY + Math.sin(rad((from + to) / 2)) * 318];
-      text(g, DAYS[wd], p[0], p[1], 13, rgba(TEAL, now ? 1 : 0.5), 'center', 600, 1.5);
+  // MARK: - Viloläget O.R.T.I. (klockskärmsläckaren i v4; efter Yuris bilder 2026-11-28)
+  //
+  // En reaktor av skivor som staplas snett uppåt höger från en plattform, O.R.T.I. stort uppe till vänster med klockan
+  // under, och paneler med riktiga värden runt om (inga påhittade CPU-siffror). Skivorna ritas en gång och vrids sedan
+  // tio gånger i sekunden; panelerna ritas om var 30:e sekund.
+
+  /** Skivorna nerifrån och upp: [x, y, radie, höjd (scaleY), sort, ett varv (s), riktning]. */
+  var STACK = [
+    [905, 890, 300, 0.22, 'base', 220, 1],
+    [935, 798, 150, 0.27, 'ring', 50, -1],
+    [968, 716, 200, 0.31, 'amber', 95, 1],
+    [1004, 628, 172, 0.37, 'grid', 70, -1],
+    [1040, 542, 150, 0.44, 'dots', 60, 1],
+    [1078, 456, 192, 0.54, 'amber', 120, -1],
+    [1118, 360, 208, 0.66, 'core', 85, 1],
+    [1158, 252, 226, 0.78, 'top', 150, -1]
+  ];
+  var TILT = -16;
+
+  /** En skiva på en egen canvas (c = mitten, r = radien), i reaktorns färger. */
+  function drawDisc(g, c, r, kind) {
+    var i, warm = kind === 'amber' || kind === 'base', bright = kind === 'core' || kind === 'top' || kind === 'base';
+    g.globalCompositeOperation = 'lighter';
+    var grad = g.createRadialGradient(c, c, 0, c, c, r);
+    grad.addColorStop(0, rgba(kind === 'amber' ? AMBER : TEAL, bright ? 0.34 : 0.14));
+    grad.addColorStop(0.45, rgba(TEAL, bright ? 0.1 : 0.05));
+    grad.addColorStop(1, rgba(TEAL, 0));
+    g.fillStyle = grad;
+    g.beginPath(); g.arc(c, c, r, 0, Math.PI * 2); g.fill();
+    g.shadowColor = rgba(TEAL, 0.9);
+    g.shadowBlur = 7;
+    arcAt(g, c, c, r - 3, 0, 360, 1.5, rgba(TEAL, 0.6));
+    for (i = 0; i < 120; i++) tickAt(g, c, c, r - 16, r - (i % 5 === 0 ? 5 : 10), i * 3, 1, rgba(TEAL, i % 5 === 0 ? 0.6 : 0.28));
+    if (kind === 'base') {
+      for (i = 0; i < 36; i++) arcAt(g, c, c, r * 0.86, i * 10 + 1, i * 10 + 7, 12, rgba(i % 6 === 0 ? AMBER : TEAL, i % 6 === 0 ? 0.85 : 0.4));
+      arcAt(g, c, c, r * 0.7, 0, 360, 3, rgba(TEAL, 0.7));
+      for (i = 0; i < 72; i++) arcAt(g, c, c, r * 0.62, i * 5, i * 5 + 2.5, 6, rgba(TEAL, 0.35));
+      arcAt(g, c, c, r * 0.42, 0, 360, 8, rgba(ICE, 0.55));
+      arcAt(g, c, c, r * 0.3, 0, 360, 2, rgba(TEAL, 0.8));
+      for (i = 0; i < 8; i++) arcAt(g, c, c, r * 0.95, i * 45 + 10, i * 45 + 30, 4, rgba(AMBER, 0.75));
+    } else if (kind === 'ring') {
+      for (i = 0; i < 60; i++) arcAt(g, c, c, r * 0.72, i * 6, i * 6 + 3, 3, rgba(TEAL, 0.45));
+      arcAt(g, c, c, r * 0.5, 0, 360, 1.5, rgba(TEAL, 0.5));
+      for (i = 0; i < 12; i++) { g.fillStyle = rgba(ICE, 0.7); g.beginPath(); g.arc(c + Math.cos(rad(i * 30)) * r * 0.5, c + Math.sin(rad(i * 30)) * r * 0.5, 4, 0, Math.PI * 2); g.fill(); }
+    } else if (kind === 'amber') {
+      g.shadowColor = rgba(AMBER, 0.9);
+      for (i = 0; i < 30; i++) arcAt(g, c, c, r * 0.8, i * 12 + 1, i * 12 + 9, 10, rgba(AMBER, i % 5 === 0 ? 0.95 : 0.55));
+      g.shadowColor = rgba(TEAL, 0.9);
+      arcAt(g, c, c, r * 0.64, 0, 360, 1.5, rgba(TEAL, 0.55));
+      for (i = 0; i < 90; i++) tickAt(g, c, c, r * 0.5, r * 0.58, i * 4, 1, rgba(TEAL, 0.4));
+      arcAt(g, c, c, r * 0.32, 20, 160, 3, rgba(AMBER, 0.7));
+      arcAt(g, c, c, r * 0.32, 200, 340, 3, rgba(TEAL, 0.6));
+    } else if (kind === 'grid') {
+      for (i = 1; i <= 5; i++) arcAt(g, c, c, r * (0.16 * i), 0, 360, 1, rgba(TEAL, 0.32 + i * 0.05));
+      for (i = 0; i < 24; i++) tickAt(g, c, c, r * 0.16, r * 0.82, i * 15, 1, rgba(TEAL, 0.3));
+      for (i = 0; i < 8; i++) arcAt(g, c, c, r * 0.88, i * 45 + 5, i * 45 + 25, 4, rgba(TEAL, 0.6));
+    } else if (kind === 'dots') {
+      for (i = 0; i < 28; i++) { g.lineWidth = 1.5; g.strokeStyle = rgba(TEAL, 0.65); g.beginPath(); g.arc(c + Math.cos(rad(i * 360 / 28)) * r * 0.74, c + Math.sin(rad(i * 360 / 28)) * r * 0.74, 7, 0, Math.PI * 2); g.stroke(); }
+      for (i = 0; i < 16; i++) { g.fillStyle = rgba(i % 4 === 0 ? AMBER : ICE, 0.75); g.beginPath(); g.arc(c + Math.cos(rad(i * 22.5)) * r * 0.48, c + Math.sin(rad(i * 22.5)) * r * 0.48, 3.5, 0, Math.PI * 2); g.fill(); }
+      arcAt(g, c, c, r * 0.3, 0, 360, 2, rgba(TEAL, 0.6));
+    } else if (kind === 'core') {
+      for (i = 0; i < 4; i++) arcAt(g, c, c, r * (0.82 - i * 0.14), i * 40, i * 40 + 250, 2 + i, rgba(i === 1 ? AMBER : TEAL, 0.6));
+      for (i = 0; i < 48; i++) arcAt(g, c, c, r * 0.24, i * 7.5, i * 7.5 + 4, 5, rgba(TEAL, 0.55));
+      var cg = g.createRadialGradient(c, c, 0, c, c, r * 0.2);
+      cg.addColorStop(0, rgba(ICE, 0.95)); cg.addColorStop(0.5, rgba(TEAL, 0.6)); cg.addColorStop(1, rgba(TEAL, 0));
+      g.fillStyle = cg; g.beginPath(); g.arc(c, c, r * 0.2, 0, Math.PI * 2); g.fill();
+    } else {
+      for (i = 0; i < 36; i++) { g.lineWidth = 1.5; g.strokeStyle = rgba(TEAL, 0.6); g.beginPath(); g.arc(c + Math.cos(rad(i * 10)) * r * 0.8, c + Math.sin(rad(i * 10)) * r * 0.8, 5, 0, Math.PI * 2); g.stroke(); }
+      for (i = 0; i < 4; i++) arcAt(g, c, c, r * (0.66 - i * 0.12), i * 70, i * 70 + 290, 1.5 + (i === 2 ? 2 : 0), rgba(i === 2 ? AMBER : TEAL, 0.6));
+      for (i = 0; i < 60; i++) tickAt(g, c, c, r * 0.2, r * 0.26, i * 6, 1.5, rgba(ICE, 0.5));
+      var tg = g.createRadialGradient(c, c, 0, c, c, r * 0.18);
+      tg.addColorStop(0, rgba(ICE, 1)); tg.addColorStop(0.6, rgba(TEAL, 0.7)); tg.addColorStop(1, rgba(TEAL, 0));
+      g.fillStyle = tg; g.beginPath(); g.arc(c, c, r * 0.18, 0, Math.PI * 2); g.fill();
     }
-    arcAt(g, SX, SY, 344, 0, 360, 1, rgba(DIM, 0.8));
-    for (i = 0; i < 96; i++) tickAt(g, SX, SY, 344 - (i % 24 === 0 ? 14 : i % 4 === 0 ? 8 : 3), 344, i * 3.75, i % 4 === 0 ? 1.5 : 1, rgba(TEAL, i % 24 === 0 ? 0.8 : i % 4 === 0 ? 0.45 : 0.2));
-    for (i = 0; i < 4; i++) { var a = rad(i * 90); text(g, two(i * 6), SX + Math.cos(a) * 364, SY + Math.sin(a) * 364, 13, rgba(TEAL, 0.75), 'center', 600, 1); }
-    if (m.rise !== undefined) arcAt(g, SX, SY, 349, m.rise * 360, m.set * 360, 4, rgba(AMBER, 0.6));
-    arcAt(g, SX, SY, 339, 0, m.dayFrac * 360, 2, rgba(TEAL, 0.8));
-    var na = rad(m.dayFrac * 360);
-    g.fillStyle = rgba(ICE, 1);
-    g.beginPath(); g.arc(SX + Math.cos(na) * 344, SY + Math.sin(na) * 344, 5, 0, Math.PI * 2); g.fill();
+    g.shadowBlur = 0;
+    g.globalCompositeOperation = 'source-over';
   }
 
-  function standbyRings(parent) {
-    var list = [];
-    ringAt(parent, 's4-back', 1060, SX, SY, function (g) {
-      var grad = g.createRadialGradient(SX, SY, 60, SX, SY, 300);
-      grad.addColorStop(0, 'rgba(2, 8, 10, 0.85)');
-      grad.addColorStop(1, 'rgba(2, 8, 10, 0)');
-      g.fillStyle = grad;
-      g.beginPath(); g.arc(SX, SY, 300, 0, Math.PI * 2); g.fill();
-      arcAt(g, SX, SY, 510, 0, 360, 1, rgba(DIM, 0.35));
-      for (var k = 0; k < 120; k++) tickAt(g, SX, SY, 516, 522, k * 3, 1, rgba(TEAL, k % 10 === 0 ? 0.4 : 0.15));
-    });
-    list.push([ringAt(parent, 's4-brackets', 960, SX, SY, function (g) {
-      for (var i = 0; i < 4; i++) {
-        var c0 = 45 + i * 90;
-        arcAt(g, SX, SY, 452, c0 - 20, c0 + 20, 2, rgba(TEAL, 0.5));
-        tickAt(g, SX, SY, 444, 460, c0 - 20, 2, rgba(TEAL, 0.5));
-        tickAt(g, SX, SY, 444, 460, c0 + 20, 2, rgba(TEAL, 0.5));
-      }
-    }), 300, -1]);
-    list.push([ringAt(parent, 's4-outer', 880, SX, SY, function (g) {
-      var parts = [[6, 52], [64, 70], [82, 168], [186, 232], [244, 250], [262, 352]];
-      for (var i = 0; i < parts.length; i++) arcAt(g, SX, SY, 418, parts[i][0], parts[i][1], 1.5, rgba(TEAL, 0.5));
-      for (var j = 0; j < 16; j++) arcAt(g, SX, SY, 408, 10 + j * 22.5, 13 + j * 22.5, 8, rgba(TEAL, 0.35));
-    }), 200, 1]);
-    list.push([ringAt(parent, 's4-scale', 800, SX, SY, function (g) {
-      for (var i = 0; i < 180; i++) tickAt(g, SX, SY, 380, i % 5 === 0 ? 392 : 386, i * 2, 1, rgba(TEAL, i % 5 === 0 ? 0.4 : 0.18));
-    }), 360, -1]);
-    list.push([ringAt(parent, 's4-inner', 600, SX, SY, function (g) {
-      for (var i = 0; i < 90; i++) arcAt(g, SX, SY, 272, i * 4, i * 4 + 2, 1.5, rgba(TEAL, 0.3));
-      for (var k = 0; k < 4; k++) arcAt(g, SX, SY, 262, k * 90 + 20, k * 90 + 70, 2, rgba(TEAL, 0.35));
-    }), 120, 1]);
+  /** Reaktorn: en hållare per skiva (lutad och plattad), med skivans canvas i som vrids. Ger [canvas, varv, riktning]. */
+  function buildStack(host) {
+    var list = [], i;
+    for (i = 0; i < STACK.length; i++) {
+      var d = STACK[i], size = Math.ceil(d[2] * 2 + 24);
+      var hold = el('div', 'o4-disc', host);
+      hold.style.left = (d[0] - size / 2) + 'px'; hold.style.top = (d[1] - size / 2) + 'px';
+      hold.style.width = hold.style.height = size + 'px';
+      hold.style.webkitTransform = hold.style.transform = 'rotate(' + TILT + 'deg) scaleY(' + d[3] + ')';
+      var c = el('canvas', '', hold);
+      c.width = c.height = size;
+      c.style.width = c.style.height = size + 'px';
+      drawDisc(c.getContext('2d'), size / 2, d[2], d[4]);
+      list.push([c, d[5], d[6]]);
+    }
     return list;
+  }
+
+  /** Det som står still: ryggraden genom skivorna, ljuspelaren och partiklarna. */
+  function drawSpine(g) {
+    var i;
+    g.clearRect(0, 0, W, H);
+    for (i = 1; i < STACK.length; i++) line(g, STACK[i - 1][0], STACK[i - 1][1], STACK[i][0], STACK[i][1], 1, rgba(TEAL, 0.25));
+    var b = STACK[0], pg = g.createLinearGradient(0, b[1], 0, b[1] - 200);
+    pg.addColorStop(0, rgba(ICE, 0.7)); pg.addColorStop(1, rgba(TEAL, 0));
+    g.fillStyle = pg; g.fillRect(b[0] - 3, b[1] - 200, 6, 200);
+    var hg = g.createLinearGradient(0, b[1], 0, b[1] - 200);
+    hg.addColorStop(0, rgba(TEAL, 0.25)); hg.addColorStop(1, rgba(TEAL, 0));
+    g.fillStyle = hg; g.fillRect(b[0] - 30, b[1] - 200, 60, 200);
+    var seed = 7;
+    function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    for (i = 0; i < 260; i++) {
+      var t = rnd(), sx = 905 + t * 253 + (rnd() - 0.5) * 520, sy = 890 - t * 640 + (rnd() - 0.5) * 160;
+      g.fillStyle = rgba(rnd() < 0.15 ? AMBER : TEAL, 0.2 + rnd() * 0.5);
+      g.fillRect(sx, sy, rnd() < 0.2 ? 2.5 : 1.5, rnd() < 0.2 ? 2.5 : 1.5);
+    }
+  }
+
+  /** En panel med fasade hörn och rubrik (som i bilderna). */
+  function panel(g, x, y, w, h, title) {
+    var k = 14;
+    g.fillStyle = 'rgba(3, 14, 18, 0.55)';
+    g.beginPath();
+    g.moveTo(x + k, y); g.lineTo(x + w - k, y); g.lineTo(x + w, y + k); g.lineTo(x + w, y + h - k);
+    g.lineTo(x + w - k, y + h); g.lineTo(x + k, y + h); g.lineTo(x, y + h - k); g.lineTo(x, y + k); g.closePath();
+    g.fill();
+    g.lineWidth = 1.5; g.strokeStyle = rgba(TEAL, 0.55); g.stroke();
+    g.fillStyle = rgba(TEAL, 0.9);
+    g.fillRect(x + k + 6, y - 2, 46, 4);
+    if (title) {
+      text(g, title, x + 22, y + 26, 17, rgba(TEAL, 1), 'left', 600, 2);
+      line(g, x + 22, y + 44, x + w - 22, y + 44, 1, rgba(TEAL, 0.3));
+    }
+  }
+
+  /** Ramen: hörn med fasning, linjalen överst, gula markeringar och raden längst ner. */
+  function drawOrtiFrame(g) {
+    var x0 = 52, y0 = 40, x1 = W - 52, y1 = H - 40, i;
+    g.clearRect(0, 0, W, H);
+    g.lineWidth = 2; g.strokeStyle = rgba(TEAL, 0.75);
+    g.beginPath();
+    g.moveTo(x0, y0 + 90); g.lineTo(x0, y0 + 18); g.lineTo(x0 + 18, y0); g.lineTo(x0 + 120, y0);
+    g.moveTo(x1 - 120, y0); g.lineTo(x1 - 18, y0); g.lineTo(x1, y0 + 18); g.lineTo(x1, y0 + 90);
+    g.moveTo(x0, y1 - 90); g.lineTo(x0, y1 - 18); g.lineTo(x0 + 18, y1); g.lineTo(x0 + 120, y1);
+    g.moveTo(x1 - 120, y1); g.lineTo(x1 - 18, y1); g.lineTo(x1, y1 - 18); g.lineTo(x1, y1 - 90);
+    g.stroke();
+    line(g, x0, y0 + 140, x0, y1 - 140, 1, rgba(TEAL, 0.25));
+    line(g, x1, y0 + 140, x1, y1 - 140, 1, rgba(TEAL, 0.25));
+    g.fillStyle = rgba(AMBER, 0.85);
+    g.fillRect(x0 + 140, y0 - 2, 70, 4); g.fillRect(x1 - 210, y0 - 2, 70, 4);
+    g.fillRect(x0 + 140, y1 - 2, 50, 4); g.fillRect(x1 - 190, y1 - 2, 50, 4);
+    // Linjalen överst
+    line(g, 420, y0 + 2, W - 420, y0 + 2, 1, rgba(TEAL, 0.5));
+    for (i = 0; i <= 135; i++) {
+      var tx = 420 + i * 8, big = i % 10 === 0;
+      line(g, tx, y0 + 2, tx, y0 + (big ? 22 : i % 5 === 0 ? 14 : 8), 1, rgba(TEAL, big ? 0.8 : 0.4));
+    }
+    // Sidornas markeringar
+    for (i = 0; i < 6; i++) { g.fillStyle = rgba(TEAL, 0.5); g.fillRect(x0 - 6, 470 + i * 14, 4, 8); g.fillRect(x1 + 2, 470 + i * 14, 4, 8); }
+    // Raden längst ner
+    line(g, x0 + 140, y1 - 60, x1 - 140, y1 - 60, 1, rgba(TEAL, 0.35));
+    var groups = [[120, 330], [600, 760], [1160, 1320], [1590, 1800]];
+    for (i = 0; i < groups.length; i++) {
+      for (var r = 0; r < 4; r++) for (var x = groups[i][0]; x < groups[i][1]; x += 12) {
+        if ((x * 7 + r * 13) % 5 === 0) continue;
+        g.fillStyle = rgba(TEAL, 0.18 + ((x + r * 31) % 7) / 20);
+        g.fillRect(x, y1 - 46 + r * 8, 8, 3);
+      }
+    }
+    for (i = 0; i < 2; i++) {
+      var rx = 900 + i * 120;
+      arcAt(g, rx, y1 - 30, 18, 0, 360, 3, rgba(TEAL, 0.75));
+      arcAt(g, rx, y1 - 30, 24, 200, 340, 1, rgba(TEAL, 0.45));
+    }
+    // Titeln
+    g.fillStyle = rgba(ICE, 0.95);
+    g.shadowColor = rgba(TEAL, 0.9); g.shadowBlur = 14;
+    g.fillRect(98, 76, 6, 112);
+    text(g, 'O.R.T.I.', 132, 134, 104, rgba(ICE, 1), 'left', 300, 12);
+    g.shadowBlur = 0;
+    text(g, "ORTIZ'S RESPONSIVE TACTICAL INTELLIGENCE", 136, 206, 13, rgba(TEAL, 0.95), 'left', 600, 3);
+  }
+
+  function ring(g, x, y, r, frac, color) {
+    arcAt(g, x, y, r, 0, 360, 3, rgba(DIM, 0.7));
+    arcAt(g, x, y, r, -90, -90 + 360 * Math.max(0, Math.min(1, frac)), 3, color);
+  }
+
+  /**
+   * Panelerna: samma innehåll som viloläget hade förut (Yuri 2026-11-28: ingen systemdata), alltså veckodagarna med i
+   * dag markerad, dygnet med solen och var vi är nu, och vädret ute. Klockan och datumet ritar home.js.
+   */
+  function drawOrtiData(g) {
+    var m = readModel(), i, w = typeof Data !== 'undefined' && Prefs.weather() ? Data.weather : null;
+    g.clearRect(0, 0, W, H);
+    // Veckan: måndag till söndag, i dag fylld
+    panel(g, 70, 470, 470, 150, 'VECKAN');
+    for (i = 0; i < 7; i++) {
+      var wd = (i + 1) % 7, now = wd === m.day, x = 92 + i * 63;
+      g.fillStyle = now ? rgba(TEAL, 0.95) : 'rgba(3, 14, 18, 0.6)';
+      g.fillRect(x, 540, 54, 50);
+      g.lineWidth = 1; g.strokeStyle = rgba(TEAL, now ? 1 : 0.45); g.strokeRect(x + 0.5, 540.5, 53, 49);
+      text(g, DAYS[wd], x + 27, 565, 15, now ? 'rgb(3, 16, 18)' : rgba(TEAL, 0.75), 'center', 600, 1.5);
+    }
+    // Dygnet: 00–24 med solens timmar och var vi är nu
+    panel(g, 70, 650, 470, 250, 'DYGNET');
+    var x0 = 96, x1 = 514, ty = 748;
+    if (m.rise !== undefined) {
+      g.fillStyle = rgba(AMBER, 0.28); g.fillRect(x0 + (x1 - x0) * m.rise, ty - 26, (x1 - x0) * (m.set - m.rise), 52);
+      line(g, x0 + (x1 - x0) * m.rise, ty - 26, x0 + (x1 - x0) * m.rise, ty + 26, 1.5, rgba(AMBER, 0.9));
+      line(g, x0 + (x1 - x0) * m.set, ty - 26, x0 + (x1 - x0) * m.set, ty + 26, 1.5, rgba(AMBER, 0.9));
+    }
+    line(g, x0, ty, x1, ty, 1, rgba(TEAL, 0.5));
+    g.fillStyle = rgba(TEAL, 0.9); g.fillRect(x0, ty - 2, (x1 - x0) * m.dayFrac, 4);
+    for (i = 0; i <= 24; i++) {
+      var tx = x0 + (x1 - x0) * i / 24;
+      line(g, tx, ty + 8, tx, ty + (i % 6 === 0 ? 22 : 14), 1, rgba(TEAL, i % 6 === 0 ? 0.8 : 0.35));
+      if (i % 6 === 0) text(g, two(i), tx, ty + 40, 14, rgba(TEAL, 0.8), 'center', 600, 1);
+    }
+    var nx = x0 + (x1 - x0) * m.dayFrac;
+    g.shadowColor = rgba(TEAL, 0.9); g.shadowBlur = 10;
+    g.fillStyle = rgba(ICE, 1); g.beginPath(); g.arc(nx, ty, 7, 0, Math.PI * 2); g.fill();
+    g.shadowBlur = 0;
+    if (m.riseAt) {
+      text(g, 'SOLEN', 96, 858, 15, rgba(ICE, 0.85), 'left', 500, 2);
+      text(g, hm(m.riseAt) + ' – ' + hm(m.setAt), 516, 858, 19, rgba(ICE, 1), 'right', 500, 1);
+    }
+    // Ute: temperaturen och vädret
+    panel(g, 1430, 470, 420, 300, 'UTE');
+    if (w && !isNaN(w.temp)) {
+      ring(g, 1540, 625, 78, (w.temp + 20) / 50, rgba(TEAL, 0.95));
+      g.shadowColor = rgba(TEAL, 0.8); g.shadowBlur = 12;
+      text(g, deg(w.temp), 1540, 625, 52, rgba(ICE, 1), 'center', 300, 0);
+      g.shadowBlur = 0;
+      var cond = String(Data.condition ? Data.condition(w.code, w.isDay) : '').toUpperCase();
+      g.font = '600 18px Inter, Helvetica Neue, Arial, sans-serif';
+      var words = cond.split(' '), l1 = '', l2 = '';
+      for (i = 0; i < words.length; i++) { if (!l2 && g.measureText((l1 ? l1 + ' ' : '') + words[i]).width < 200) l1 = (l1 ? l1 + ' ' : '') + words[i]; else l2 = (l2 ? l2 + ' ' : '') + words[i]; }
+      text(g, l1, 1640, l2 ? 612 : 625, 18, rgba(ICE, 0.95), 'left', 600, 2);
+      if (l2) text(g, l2, 1640, 640, 18, rgba(ICE, 0.95), 'left', 600, 2);
+    } else text(g, 'INGET VÄDER', 1640, 625, 15, rgba(DIM, 1), 'center', 600, 2);
+  }
+
+  /** Text i flera rader inom bredden w (högst tre). */
+  function wrap(g, s, x, y, w, size) {
+    g.font = '500 ' + size + 'px Inter, Helvetica Neue, Arial, sans-serif';
+    var words = String(s).split(' '), lineS = '', n = 0;
+    for (var i = 0; i < words.length && n < 3; i++) {
+      var t = lineS ? lineS + ' ' + words[i] : words[i];
+      if (g.measureText(t).width > w && lineS) { text(g, lineS, x, y + n * (size + 7), size, rgba(ICE, 0.95), 'left', 500, 0); n++; lineS = words[i]; }
+      else lineS = t;
+    }
+    if (lineS && n < 3) text(g, lineS, x, y + n * (size + 7), size, rgba(ICE, 0.95), 'left', 500, 0);
+  }
+
+  /** Vågformen under vädret (bara utsmyckning): ritad dubbelt så bred och skjuten i sidled av CSS (glider av sig själv). */
+  function buildWave(host) {
+    var box = el('div', 'o4-wave', host), c = el('canvas', '', box), g = c.getContext('2d'), i;
+    c.width = 760; c.height = 110;
+    for (i = 0; i < 380; i++) {
+      var k = i % 190, a = Math.abs(Math.sin(k * 0.37) * Math.sin(k * 0.11 + 1) * Math.cos(k * 0.73)) * 44 * (0.3 + 0.7 * Math.pow(Math.abs(Math.sin(k / 190 * Math.PI)), 2));
+      g.fillStyle = rgba(TEAL, 0.5 + a / 90);
+      g.fillRect(i * 2, 55 - a, 1.2, a * 2 + 1);
+    }
+    line(g, 0, 55, 760, 55, 1, rgba(TEAL, 0.5));
   }
 
   /** En skärmsläckare visas (home.js): i v4 klädd som kontrollrummet. Bilderna och klockan är desamma. */
@@ -1051,22 +1248,36 @@ var Holo4 = (function () {
     setClass(layer, 'h4-saver', on);
     if (!on) return;
     var host = kind === 'clock' ? layer.querySelector('.shift') || layer : layer;
+    // Visas (on) eller förbereds (prep, home.js tonar in den två bildrutor senare).
+    function shown() { return hasClass(layer, 'on') || hasClass(layer, 'prep'); }
     var c = el('canvas', 'h4-saverframe', null);
     c.width = W; c.height = H;
     clearInterval(saverSpin); saverSpin = 0;
     if (kind === 'clock') {
-      var rings = standbyRings(host);
-      // Ringarna vrids tio gånger i sekunden (inte i skärmens 60): skärmsläckaren kan stå på i timmar.
+      // Viloläget O.R.T.I.: ramen, reaktorn, panelerna och vågformen; klockan och datumet (home.js) ligger överst.
+      var spine = el('canvas', 'h4-saverframe', null);
+      spine.width = W; spine.height = H;
+      host.insertBefore(spine, host.querySelector('.clock'));
+      drawSpine(spine.getContext('2d'));
+      var stack = el('div', 'o4-stack', null);
+      host.insertBefore(stack, host.querySelector('.clock'));
+      var discs = buildStack(stack);
+      var fr = el('canvas', 'h4-saverframe', null);
+      fr.width = W; fr.height = H;
+      host.insertBefore(fr, host.querySelector('.clock'));
+      drawOrtiFrame(fr.getContext('2d'));
+      host.insertBefore(c, host.querySelector('.clock'));
+      buildWave(host);
+      drawOrtiData(c.getContext('2d'));
+      // Skivorna vrids tio gånger i sekunden (inte i skärmens 60): skärmsläckaren kan stå på i timmar.
       if (!hasClass(document.body, 'h4-low')) saverSpin = setInterval(function () {
-        if (!hasClass(layer, 'on')) { clearInterval(saverSpin); saverSpin = 0; return; }
+        if (!shown()) { clearInterval(saverSpin); saverSpin = 0; return; }
         var t = Date.now() / 1000;
-        for (var i = 0; i < rings.length; i++) {
-          var v = 'rotate(' + ((t / rings[i][1] % 1) * 360 * rings[i][2]).toFixed(2) + 'deg)';
-          rings[i][0].style.webkitTransform = rings[i][0].style.transform = v;
+        for (var i = 0; i < discs.length; i++) {
+          var v = 'rotate(' + ((t / discs[i][1] % 1) * 360 * discs[i][2]).toFixed(2) + 'deg)';
+          discs[i][0].style.webkitTransform = discs[i][0].style.transform = v;
         }
       }, 100);
-      host.insertBefore(c, host.querySelector('.clock'));   // över ringarna, under klockan
-      drawStandby(c.getContext('2d'));
     } else {
       layer.appendChild(c);
       var g = c.getContext('2d');
@@ -1075,10 +1286,10 @@ var Holo4 = (function () {
     }
     // Dygnsringen och vädret följer med medan skärmsläckaren visas.
     saverTimer = setInterval(function () {
-      if (!hasClass(layer, 'on') || !c.parentNode) { clearInterval(saverTimer); saverTimer = 0; return; }
+      if (!shown() || !c.parentNode) { clearInterval(saverTimer); saverTimer = 0; return; }
       var g2 = c.getContext('2d');
-      if (kind === 'clock') drawStandby(g2); else { g2.clearRect(0, 0, W, H); saverFrame(g2, 'KONTROLLRUM  ::  VILOLÄGE'); }
-    }, 60000);
+      if (kind === 'clock') drawOrtiData(g2); else { g2.clearRect(0, 0, W, H); saverFrame(g2, 'KONTROLLRUM  ::  VILOLÄGE'); }
+    }, kind === 'clock' ? 30000 : 60000);
   }
 
   // MARK: - Start och stopp

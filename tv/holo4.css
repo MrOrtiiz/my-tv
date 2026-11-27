@@ -230,17 +230,24 @@ body.v4 #ambient.h4-saver, body.v4.fest #ambient.h4-saver { background: #03080B;
 body.v4 .h4-saver .h4-saverframe { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
 body.v4 .h4-saver .h4-ring { position: absolute; }
 
+/* Viloläget O.R.T.I. (holo4.js): O.R.T.I. och klockan uppe till vänster, reaktorn i mitten, panelerna runt om. */
+body.v4 #ambient.h4-saver, body.v4.fest #ambient.h4-saver { background: #010406; background: radial-gradient(ellipse at 55% 50%, #07161C 0%, #03090C 45%, #010305 100%); }
+body.v4 #ambient.h4-saver .o4-stack { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+body.v4 #ambient.h4-saver .o4-disc { position: absolute; }
+body.v4 #ambient.h4-saver .o4-disc canvas { position: absolute; left: 0; top: 0; }
+body.v4 #ambient.h4-saver .o4-wave { position: absolute; left: 1450px; top: 800px; width: 380px; height: 120px; overflow: hidden; }
+body.v4 #ambient.h4-saver .o4-wave canvas { position: absolute; left: 0; top: 5px; width: 760px; height: 110px;
+  -webkit-animation: o4wave 12s linear infinite; animation: o4wave 12s linear infinite; }
+@-webkit-keyframes o4wave { from { -webkit-transform: translateX(0); } to { -webkit-transform: translateX(-380px); } }
+@keyframes o4wave { from { transform: translateX(0); } to { transform: translateX(-380px); } }
+body.h4-low #ambient.h4-saver .o4-wave canvas { -webkit-animation: none; animation: none; }
 body.v4 #ambient.h4-saver .clock, body.v4.fest #ambient.h4-saver .clock {
-  left: 460px; right: 460px; top: 422px; text-align: center; font-size: 180px; line-height: 196px; font-weight: 200; letter-spacing: 2px;
-  color: #EFFEFF; background: none; -webkit-background-clip: border-box; background-clip: border-box; text-shadow: 0 0 22px rgba(95, 230, 235, 0.2); }
+  left: 96px; right: auto; width: 460px; top: 238px; text-align: left; font-size: 140px; line-height: 150px; font-weight: 200; letter-spacing: 2px;
+  color: #EFFEFF; background: none; -webkit-background-clip: border-box; background-clip: border-box; text-shadow: 0 0 22px rgba(95, 230, 235, 0.35); }
 body.v4 #ambient.h4-saver .date, body.v4.fest #ambient.h4-saver .date {
-  left: 560px; right: 560px; top: 362px; text-align: center; font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: 6px;
-  text-transform: uppercase; color: rgba(95, 230, 235, 0.9); }
-body.v4 #ambient.h4-saver .side { left: 560px; right: 560px; top: 648px; width: auto; text-align: center; color: #EFFEFF; }
-body.v4 #ambient.h4-saver .temp { display: inline-block; vertical-align: middle; font-size: 44px; font-weight: 300; margin-right: 18px; }
-body.v4 #ambient.h4-saver .cond { display: inline-block; vertical-align: middle; margin: 0; font-size: 17px; font-weight: 600; letter-spacing: 4px;
-  text-transform: uppercase; color: rgba(95, 230, 235, 0.85); }
-
+  left: 100px; right: auto; width: 460px; top: 398px; text-align: left; font-size: 18px; line-height: 26px; font-weight: 600; letter-spacing: 5px;
+  text-transform: uppercase; color: rgba(95, 230, 235, 0.95); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.v4 #ambient.h4-saver .side { display: none; }
 body.v4 #saver.h4-saver .shade { height: 620px; background: -webkit-linear-gradient(top, rgba(2, 6, 8, 0), rgba(2, 6, 8, 0.8)); background: linear-gradient(rgba(2, 6, 8, 0), rgba(2, 6, 8, 0.8)); }
 body.v4 #saver.h4-saver::after { content: ''; position: absolute; left: 0; top: 0; right: 0; height: 120px; pointer-events: none;
   background: -webkit-linear-gradient(top, rgba(2, 6, 8, 0.7), rgba(2, 6, 8, 0)); background: linear-gradient(rgba(2, 6, 8, 0.7), rgba(2, 6, 8, 0)); }
