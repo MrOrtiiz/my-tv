@@ -8,7 +8,9 @@
 (function (c) {
   if (!c) return;
   c.defaultShelf = ['YouTube', 'Spotify', 'SVT Play', 'Netflix', 'Prime Video', 'Disney+', 'HBO Max', 'TV4 Play', 'Plex', 'Stremio'];
-  c.picksOn = false;         // filmtipsen kräver en TMDB-nyckel; slås på under Hemskärm om den läggs in
+  c.picksOn = false;
+  c.theme = 'dark';          // Kontrollrum-stilen är mörk dygnet runt
+  c.saver = 'hud';           // skärmsläckaren Kontrollrum (kontor/hud.js); byts under Hemskärm → Skärmsläckare         // filmtipsen kräver en TMDB-nyckel; slås på under Hemskärm om den läggs in
   c.ownInputs = {};          // PS5 på HDMI 4 gäller The Frame
   // Mobilen (koppla.js: mobilen som fjärrkontroll och tangentbord, bra för nyckeln), Sök, Ingångar, Genvägar; inga spel.
   // Hem först: tar dig till den vanliga Free My TV-startsidan (den som Hem-knappen på fjärrkontrollen öppnar).
@@ -27,7 +29,7 @@
 
   // Tilläggen som bara laddas här, efter de andra skripten (samma ordning som kompis.js).
   document.addEventListener('DOMContentLoaded', function () {
-    function add(src) { var s = document.createElement('script'); s.src = src; document.body.appendChild(s); }
+    function add(src, done) { var s = document.createElement('script'); s.src = src; if (done) s.onload = done; document.body.appendChild(s); }
     function css(href) { var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = href; document.head.appendChild(l); }
     if (!window.BarcaBox) add('barca.js');
     if (!window.Search) { css('search.css'); add('search.js'); }
@@ -36,5 +38,10 @@
     add('koppla.js');
     css('trafik.css');
     add('trafik.js');
+    // Kontrollrum: skärmsläckaren och samma stil på hela startsidan (kontor/hudtheme.css, ringarna bakom).
+    document.body.className += ' hud';
+    css('hud.css');
+    css('hudtheme.css');
+    add('hud.js', function () { if (window.Hud) Hud.decorate(); });
   });
 })(window.CONFIG);

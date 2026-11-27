@@ -368,5 +368,12 @@ var BarcaBox = (function () {
   /** OK on the box: the match on your IPTV (iptv.js). */
   function play(say) { if (window.IPTV && typeof Prefs !== 'undefined' && Prefs.iptv && Prefs.iptv()) IPTV.barca(data, say); }
 
-  return {refresh: load, matchToday: matchToday, live: pollLive, play: play};
+  /** Nästa match som inte är slut (för skärmsläckaren Kontrollrum, hud.js), eller null. */
+  function next() {
+    if (!on() || !data || !data.matches) return null;
+    for (var i = 0; i < data.matches.length; i++) if (data.matches[i].stop > Date.now()) return data.matches[i];
+    return null;
+  }
+
+  return {refresh: load, matchToday: matchToday, live: pollLive, play: play, next: next};
 })();

@@ -1033,8 +1033,8 @@
         step: function (d) { cycle('theme', ['auto', 'light', 'dark'], theme, d); checkNight(); }},
       {label: tr('Dim'), value: dimName(),
         step: function (d) { cycle('dim', ['off', 'low', 'medium', 'high', 'auto'], Prefs.dim(), d); applyDim(); }},
-      {label: tr('Screensaver'), value: saverMode() === 'clock' ? tr('Clock') : tr('Photos'),
-        step: function (d) { cycle('saver', ['photos', 'clock'], saverMode(), d); }},
+      {label: tr('Screensaver'), value: saverMode() === 'clock' ? tr('Clock') : saverMode() === 'hud' ? 'Kontrollrum' : tr('Photos'),
+        step: function (d) { cycle('saver', window.Hud ? ['photos', 'clock', 'hud'] : ['photos', 'clock'], saverMode(), d); }},
       {label: tr('Holidays'), toggle: Prefs.holidays(),
         step: function () { Prefs.set('holidays', !Prefs.holidays()); if (window.Festive) Festive.update(); renderClock(); }},
       {label: tr('iOS look'), toggle: Prefs.ios(),
@@ -2071,6 +2071,7 @@
 
   function poke(ok) {
     idleAt = Date.now();
+    if (window.Hud && Hud.isOn()) { Hud.hide(); return true; }
     if (ambientOn) { hideAmbient(); return true; }
     if (!saverOn) return false;
     var target = ok && Prefs.saverWatch() ? pickTarget(saverPick) : null;
@@ -2208,8 +2209,8 @@
     Data.refresh();
     applyDim();   // automatic: medium from 22:00, off again at 07:00
     if ((window.IPTV && IPTV.playing()) || (window.Search && Search.isOpen()) || (window.Dance && Dance.isOpen()) || (window.Rush && Rush.isOpen()) || (window.Marvel && Marvel.isOpen()) || (window.Koppla && Koppla.isOpen()) || (window.Kanaler && Kanaler.isOpen())) idleAt = Date.now();   // no screensaver over a match, a search or a game
-    if (!document.hidden && !saverOn && !ambientOn && !sheetOpen() && Date.now() - idleAt > SAVER_AFTER) {
-      if (saverMode() === 'clock') showAmbient(); else showSaver();
+    if (!document.hidden && !saverOn && !ambientOn && !(window.Hud && Hud.isOn()) && !sheetOpen() && Date.now() - idleAt > SAVER_AFTER) {
+      if (saverMode() === 'hud') Hud.show(); else if (saverMode() === 'clock') showAmbient(); else showSaver();
     }
     if (saverOn) tickSaverClock($('saver').querySelector('.clock'));
     if (ambientOn) tickAmbient();
@@ -2218,5 +2219,6 @@
   // For the browser preview and tests.
   window.FreeMyTV = {state: st, move: move, activate: activate, back: back, showSaver: showSaver, hideSaver: hideSaver, toast: toast,
     trailer: playTrailer, poke: function () { poke(false); },
-    showAmbient: showAmbient, hideAmbient: hideAmbient, applyDim: applyDim};
+    showAmbient: showAmbient, hideAmbient: hideAmbient, applyDim: applyDim,
+    showHud: function () { if (window.Hud) Hud.show(); }};
 })();

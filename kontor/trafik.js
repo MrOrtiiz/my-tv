@@ -126,6 +126,13 @@ var Trafik = (function () {
 
   return {
     refresh: load,
+    /** Läget nu för skärmsläckaren (hud.js): {min, delay, level, arrive}, eller null utan svar från TomTom. */
+    state: function () {
+      if (!on() || !key() || !data) return null;
+      var s = data.s, delay = Math.round((s.trafficDelayInSeconds || 0) / 60);
+      return {min: Math.max(1, Math.round(s.travelTimeInSeconds / 60)), delay: delay, level: level(delay),
+        arrive: hm(new Date(Date.now() + s.travelTimeInSeconds * 1000))};
+    },
     /** Provar en nyckel innan den sparas: done(error), med error.rejected när TomTom sa nej. */
     check: function (k, done) { ask(k, function (e) { done(e); }); }
   };

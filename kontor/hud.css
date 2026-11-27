@@ -1,0 +1,39 @@
+/* Kontrollrum (hud.js): skärmsläckaren på jobbets TV. Under #dim, så att Dämpa fungerar även här. */
+#hud { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 5; overflow: hidden; color: #EAF6FF;
+  background: #0A1220; background: radial-gradient(ellipse at center, #13233A 0%, #0B1424 55%, #060B14 100%);
+  opacity: 0; visibility: hidden; -webkit-transition: opacity 1.2s, visibility 0s 1.2s; transition: opacity 1.2s, visibility 0s 1.2s; }
+#hud.on { opacity: 1; visibility: visible; -webkit-transition-delay: 0s; transition-delay: 0s; }
+#hud .shift { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+  -webkit-transition: -webkit-transform 14s linear; transition: transform 14s linear; }
+#hud .ring { position: absolute; left: 960px; top: 540px; }
+
+/* Ringarna roterar i olika takt och åt olika håll. Bara när skärmsläckaren syns. */
+@-webkit-keyframes hudspin { from { -webkit-transform: rotate(0deg); } to { -webkit-transform: rotate(360deg); } }
+@keyframes hudspin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@-webkit-keyframes hudback { from { -webkit-transform: rotate(360deg); } to { -webkit-transform: rotate(0deg); } }
+@keyframes hudback { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+#hud.on .stars { -webkit-animation: hudspin 600s linear infinite; animation: hudspin 600s linear infinite; }
+#hud.on .outer { -webkit-animation: hudspin 140s linear infinite; animation: hudspin 140s linear infinite; }
+#hud.on .ticks { -webkit-animation: hudback 220s linear infinite; animation: hudback 220s linear infinite; }
+#hud.on .band { -webkit-animation: hudspin 90s linear infinite; animation: hudspin 90s linear infinite; }
+#hud.on .accent { -webkit-animation: hudback 60s linear infinite; animation: hudback 60s linear infinite; }
+#hud.on .inner { -webkit-animation: hudback 300s linear infinite; animation: hudback 300s linear infinite; }
+
+#hud .mid { position: absolute; left: 960px; top: 540px; width: 520px; margin-left: -260px; margin-top: -120px; text-align: center; }
+#hud .hello { font-size: 21px; font-weight: 600; letter-spacing: 2.5px; color: rgba(150, 220, 255, 0.85); white-space: nowrap; text-transform: uppercase; }
+#hud .time { font-size: 150px; font-weight: 300; line-height: 170px; letter-spacing: 2px; color: #F2FAFF;
+  text-shadow: 0 0 28px rgba(120, 214, 255, 0.55); -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
+#hud .date { font-size: 28px; font-weight: 500; color: rgba(190, 225, 255, 0.75); }
+
+/* Rutorna runt ringarna: en etikett, ett stort värde och en rad under. */
+#hud .info { position: absolute; width: 330px; padding: 18px 0 18px 24px; border-left: 3px solid rgba(120, 214, 255, 0.7); }
+#hud .info.left { left: 110px; top: 420px; }
+#hud .info.right { left: 1480px; top: 420px; }
+#hud .info.bottom { left: 110px; top: 860px; width: 470px; }
+#hud .label { font-size: 18px; font-weight: 700; letter-spacing: 4px; color: rgba(150, 220, 255, 0.8); }
+#hud .big { font-size: 56px; font-weight: 600; line-height: 70px; color: #F2FAFF; white-space: nowrap; text-shadow: 0 0 18px rgba(120, 214, 255, 0.4); }
+#hud .info.bottom .big { font-size: 38px; line-height: 52px; overflow: hidden; text-overflow: ellipsis; }
+#hud .big.green { color: #7CF29A; text-shadow: 0 0 18px rgba(52, 199, 89, 0.5); }
+#hud .big.yellow { color: #FFD36B; text-shadow: 0 0 18px rgba(255, 201, 64, 0.5); }
+#hud .big.red { color: #FF7A70; text-shadow: 0 0 18px rgba(255, 69, 58, 0.5); }
+#hud .small { font-size: 22px; font-weight: 500; color: rgba(190, 225, 255, 0.75); white-space: nowrap; }
