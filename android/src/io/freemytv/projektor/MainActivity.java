@@ -65,6 +65,19 @@ public class MainActivity extends Activity {
     private FrameLayout root;
     private WebView web;
     private SharedPreferences prefs;
+    private OrtiVoice orti;
+
+    /** O.R.T.I.:s röst (OrtiVoice): skapas första gången sidan ber om den; händelserna går till window.Orti._native. */
+    private synchronized OrtiVoice orti() {
+        if (orti == null) orti = new OrtiVoice(this, new OrtiVoice.Sink() {
+            public void send(final String json) {
+                runOnUiThread(new Runnable() { public void run() {
+                    if (web != null) web.evaluateJavascript("window.Orti&&Orti._native(" + json + ")", null);
+                } });
+            }
+        });
+        return orti;
+    }
 
     @Override
     protected void onCreate(Bundle state) {
@@ -169,6 +182,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        if (orti != null) orti.shutdown();
         if (web != null) { root.removeView(web); web.destroy(); web = null; }
         super.onDestroy();
     }
@@ -441,6 +455,19 @@ public class MainActivity extends Activity {
             runOnUiThread(new Runnable() { public void run() { askHome(); } });
             return true;
         }
+
+        // MARK: O.R.T.I.:s röst (kontor/orti.js)
+
+        /** De svenska rösterna på enheten (JSON); {ready: false} medan talsyntesen startar. */
+        @JavascriptInterface
+        public String ortiVoices() { return orti().voices(); }
+
+        /** Läser upp: {id, text eller ssml, engine, voice, rate, pitch, volume, key, region}; svaret kommer som händelser. */
+        @JavascriptInterface
+        public boolean ortiSpeak(String json) { orti().speak(json); return true; }
+
+        @JavascriptInterface
+        public void ortiStop() { orti().stop(); }
 
         /** Tillbaka på hemskärmens första sida: inget när Free My TV är startskärmen, annars dit man kom ifrån. */
         @JavascriptInterface
