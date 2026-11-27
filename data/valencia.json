@@ -1,5 +1,5 @@
 {
- "updated": 1795731055281,
+ "updated": 1795743513493,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
  "matches": [
@@ -52,11 +52,12 @@
  ],
  "guide": {
   "channels": 5638,
-  "programmes": 289761,
-  "barca_listings": 7,
-  "until": "2026-11-27T21:00:00+01:00"
+  "programmes": 307338,
+  "barca_listings": 10,
+  "until": "2026-11-28T02:00:00+01:00"
  },
  "barca_titles_seen": [
+  "11-28 01:20 | Moto GP Valencia: Trening 1  | 55 min",
   "11-27 21:30 | Moto GP Valencia: Trening 1  | 55 min",
   "11-27 09:00 | LIVE: Moto 3 Valencia: Trening 1  | 45 min",
   "11-27 09:45 | LIVE: Moto 2 Valencia: Trening 1  | 55 min",
@@ -75,13 +76,12 @@
   "11-27 19:00 | MotoGP '26: Valencia Moto3 Practice  | 55 min",
   "11-27 19:55 | MotoGP '26: Valencia Moto2 Practice  | 55 min",
   "11-27 20:50 | MotoGP '26: Valencia MotoGP Practice  | 60 min",
+  "11-27 02:55 | MotoGP '26: Valencia Moto3 Practice 1  | 50 min",
+  "11-27 03:45 | MotoGP '26: Valencia Moto2 Practice 1  | 55 min",
+  "11-27 04:40 | MotoGP '26: Valencia MotoGP Practice 1  | 75 min",
+  "11-28 01:20 | Moto GP Valencia: Trening 1  | 55 min",
   "11-27 21:30 | Moto GP Valencia: Trening 1  | 55 min",
-  "11-27 09:00 | LIVE: Moto 3 Valencia: Trening 1  | 45 min",
-  "11-27 09:45 | LIVE: Moto 2 Valencia: Trening 1  | 55 min",
-  "11-27 10:40 | LIVE: Moto GP Valencia: Trening 1  | 55 min",
-  "11-27 12:35 | Pit Box: Valencia  | 40 min",
-  "11-27 13:15 | LIVE: Moto 3 Valencia: Trening 2  | 45 min",
-  "11-27 14:00 | LIVE: Moto 2 Valencia: Trening 2  | 55 min"
+  "11-27 09:00 | LIVE: Moto 3 Valencia: Trening 1  | 45 min"
  ],
  "table": {
   "league": "LaLiga",

@@ -1,5 +1,5 @@
 {
- "updated": 1795731039254,
+ "updated": 1795743493132,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -64,9 +64,9 @@
  ],
  "guide": {
   "channels": 5638,
-  "programmes": 289761,
-  "barca_listings": 26,
-  "until": "2026-11-27T22:30:00+01:00"
+  "programmes": 307338,
+  "barca_listings": 40,
+  "until": "2026-11-28T03:30:00+01:00"
  },
  "barca_titles_seen": [
   "11-27 04:00 | Tennis: ATP Barcelona Open 2026  | 60 min",
@@ -80,17 +80,17 @@
   "11-27 15:05 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 125 min",
   "11-27 21:45 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 125 min",
   "11-27 22:25 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 140 min",
+  "11-28 02:20 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 130 min",
   "11-27 05:20 | Fussball: Sabah FC - FC Barcelona  | 115 min",
   "11-27 05:30 | Fussball: Sabah FC - FC Barcelona  | 120 min",
   "11-27 12:10 | Košarka - Euroleague: Barcelona - Fenerbahce  | 95 min",
-  "11-27 00:30 | UEFA Champions League 26/27 - Sabah x Barcelona  | 110 min",
-  "11-27 00:30 | UEFA Champions League 26/27 - Sabah x Barcelona  | 110 min",
-  "11-27 00:30 | UEFA Champions League 26/27 - Sabah x Barcelona  | 110 min",
+  "11-28 00:30 | Barcelona Marathon  | 170 min",
   "11-27 14:50 | Barcelona vs Athletic  | 109 min",
   "11-27 04:50 | Fussball: Sabah FC - FC Barcelona  | 115 min",
   "11-27 04:00 | Tennis: ATP Barcelona Open 2026  | 60 min",
   "11-27 05:00 | Lenovo Tenerife vs. Barcelona  | 120 min",
   "11-27 21:30 | Liga ACB Endesa: Tenerife vs. Barcelona  | 30 min",
+  "11-28 01:30 | Lenovo Tenerife vs. Barcelona  | 120 min",
   "11-27 04:00 | Barcelona - Villarreal  | 120 min",
   "11-27 12:00 | Barcelona - Villarreal  | 120 min",
   "11-27 04:00 | Tennis: ATP Barcelona Open 2026  | 60 min"
