@@ -1038,8 +1038,10 @@
         step: function (d) { cycle('theme', ['auto', 'light', 'dark'], theme, d); checkNight(); }},
       {label: tr('Dim'), value: dimName(),
         step: function (d) { cycle('dim', ['off', 'low', 'medium', 'high', 'auto'], Prefs.dim(), d); applyDim(); }},
-      {label: tr('Screensaver'), value: saverMode() === 'clock' ? tr('Clock') : tr('Photos'),
-        step: function (d) { cycle('saver', ['photos', 'clock'], saverMode(), d); }},
+      {label: tr('Screensaver'), value: saverMode() === 'clock' ? tr('Clock') : saverMode() === 'orti' ? 'O.R.T.I.' : tr('Photos'),
+        step: function (d) { cycle('saver', window.OrtiSaver && OrtiSaver.supported() ? ['photos', 'clock', 'orti'] : ['photos', 'clock'], saverMode(), d); }},
+      {label: 'Skärmsläckare efter', value: Prefs.saverAfter() + ' min',
+        step: function (d) { cycle('saverAfter', [2, 5, 10, 15, 30], Prefs.saverAfter(), d); }},
       {label: tr('Holidays'), toggle: Prefs.holidays(),
         step: function () { Prefs.set('holidays', !Prefs.holidays()); if (window.Festive) Festive.update(); renderClock(); }},
       {label: tr('iOS look'), toggle: Prefs.ios(),
@@ -1105,6 +1107,25 @@
         step: function () { Prefs.set('weather', !Prefs.weather()); renderPanels(); Holo4.relayout(); }});
       rows.push({label: 'Nattläge', value: Prefs.h4night() === 'auto' ? 'Auto 22–07' : 'Av', dim: notV4,
         step: function (d) { cycle('h4night', ['auto', 'off'], Prefs.h4night(), d); Holo4.relayout(); }});
+    }
+    if (window.OrtiSaver && OrtiSaver.supported()) {   // O.R.T.I.-skärmsläckaren (orti3d.js, ortihud.js)
+      var notOrti = saverMode() !== 'orti', o3 = function (k, d) { return Prefs.o3(k, d); };
+      var o3set = function (k, v) { Prefs.set('o3.' + k, v); OrtiSaver.settingsChanged(); };
+      var o3cycle = function (k, list, d0, d) { var i = list.indexOf(o3(k, d0)); o3set(k, list[(i + (d || 1) + list.length) % list.length]); };
+      var qn = {auto: 'Auto', low: 'Låg', medium: 'Mellan', ultra: 'Ultra'};
+      rows.push({label: 'O.R.T.I. kvalitet', value: qn[o3('quality', 'auto')] || 'Auto', dim: notOrti,
+        step: function (d) { o3cycle('quality', ['auto', 'low', 'medium', 'ultra'], 'auto', d); }});
+      rows.push({label: 'O.R.T.I. informationspaneler', toggle: o3('panels', true) !== false, dim: notOrti,
+        step: function () { o3set('panels', o3('panels', true) === false); }});
+      var sn = {'0.6': 'Långsam', '1': 'Normal', '1.5': 'Snabb'};
+      rows.push({label: 'O.R.T.I. animationshastighet', value: sn[String(o3('speed', 1))] || 'Normal', dim: notOrti,
+        step: function (d) { o3cycle('speed', [0.6, 1, 1.5], 1, d); }});
+      rows.push({label: 'O.R.T.I. ljusstyrka', value: Math.round(o3('bright', 1) * 100) + ' %', dim: notOrti,
+        step: function (d) { o3cycle('bright', [0.6, 0.8, 1, 1.2], 1, d); }});
+      rows.push({label: 'O.R.T.I. nattläge', value: o3('night', 'auto') === 'auto' ? 'Auto 22–07' : 'Av', dim: notOrti,
+        step: function (d) { o3cycle('night', ['auto', 'off'], 'auto', d); }});
+      rows.push({label: 'Visa O.R.T.I. nu', value: '', opens: true,
+        step: function (d) { if (d >= 0) { closeSheets(); setTimeout(showOrti, 400); } }});
     }
     var sv = Data.services();
     if (sv.length) {
@@ -1937,7 +1958,9 @@
     try { localStorage.setItem('fmtv.night', night ? 'true' : 'false'); } catch (e) {}   // for index.html, next start
   }
 
-  var saverOn = false, idleAt = Date.now(), saverIndex = 0, saverTimer = 0, saverPick = null, SAVER_AFTER = 5 * 60000;
+  var saverOn = false, idleAt = Date.now(), saverIndex = 0, saverTimer = 0, saverPick = null, ortiOn = false;
+  /** Hur länge utan knapptryck innan skärmsläckaren visas (Hemskärm → Skärmsläckare efter; 5 min som standard). */
+  function saverAfter() { return Prefs.saverAfter() * 60000; }
 
   /** "photos" (the picks' photos, as it always was) or "clock": what the screen shows when nobody touches it. */
   function saverMode() { return Prefs.saver(); }
@@ -1990,7 +2013,7 @@
   function restLater() {
     clearTimeout(restTimer);
     restTimer = setTimeout(function () {
-      if (!saverOn && !ambientOn) return;
+      if (!saverOn && !ambientOn && !ortiOn) return;
       if (window.Holo) Holo.pause(true);
       if (window.Holo4) Holo4.pause(true);
     }, 1500);
@@ -2130,8 +2153,22 @@
     if (window.Festive && Festive.into) Festive.into(null);   // tillbaka på startsidan, under skärmsläckaren som tonar ut
   }
 
+  /** O.R.T.I.-skärmsläckaren (ortihud.js); utan WebGL blir det klockan i stället. */
+  function showOrti() {
+    if (ortiOn || saverOn || ambientOn) return;
+    if (!window.OrtiSaver || !OrtiSaver.show()) { showAmbient(); return; }
+    ortiOn = true;
+    restLater();
+  }
+  function hideOrti() {
+    if (!ortiOn) return;
+    ortiOn = false;
+    OrtiSaver.hide();
+  }
+
   function poke(ok) {
     idleAt = Date.now();
+    if (ortiOn) { hideOrti(); wakeEngines(); return true; }
     if (ambientOn) { hideAmbient(); wakeEngines(); return true; }
     if (!saverOn) { wakeEngines(true); return false; }
     var target = ok && Prefs.saverWatch() ? pickTarget(saverPick) : null;
@@ -2210,6 +2247,7 @@
   function reset() {
     hideSaver();
     hideAmbient();
+    hideOrti();
     closeSheets();
     st.zone = Z.SHELF;
     st.shelf = 0;
@@ -2246,7 +2284,7 @@
   window.addEventListener('appcontrol', reopened);        // Samsung: the same
   document.addEventListener('visibilitychange', function () {
     // Free My TV now keeps running behind the apps it opens (to come back when they close): nothing plays back there.
-    if (document.hidden) { hideSaver(); hideAmbient(); if (window.IPTV && IPTV.close) IPTV.close(); if (trailerOpen()) closeTrailer(); return; }
+    if (document.hidden) { hideSaver(); hideAmbient(); hideOrti(); if (window.IPTV && IPTV.close) IPTV.close(); if (trailerOpen()) closeTrailer(); return; }
     idleAt = Date.now();
     loadApps(function () { renderShelf(); renderDrawer(); updateFocus(); Data.refresh(); });
   });
@@ -2254,7 +2292,7 @@
   I18N.set(Prefs.language());
   checkNight();   // now, from the last forecast: not after the TV lists its apps, with the day look until then
   // LG's screensaver waits only when ours will show: not under a sheet (ours waits there), and not without photos.
-  TV.holdScreenSaver(function () { return (window.Dance && Dance.isOpen()) || (window.Rush && Rush.isOpen()) || (!sheetOpen() && (saverMode() === 'clock' || saverPhotos().length > 0)); });
+  TV.holdScreenSaver(function () { return (window.Dance && Dance.isOpen()) || (window.Rush && Rush.isOpen()) || (!sheetOpen() && (saverMode() !== 'photos' || saverPhotos().length > 0)); });
   fit();
   renderTop();
   applyDim();
@@ -2270,8 +2308,9 @@
     Data.refresh();
     applyDim();   // automatic: medium from 22:00, off again at 07:00
     if ((window.IPTV && IPTV.playing()) || (window.Search && Search.isOpen()) || (window.Dance && Dance.isOpen()) || (window.Rush && Rush.isOpen()) || (window.Marvel && Marvel.isOpen()) || (window.Koppla && Koppla.isOpen()) || (window.Kanaler && Kanaler.isOpen())) idleAt = Date.now();   // no screensaver over a match, a search or a game
-    if (!document.hidden && !saverOn && !ambientOn && !sheetOpen() && Date.now() - idleAt > SAVER_AFTER) {
-      if (saverMode() === 'clock') showAmbient(); else showSaver();   // kontrollrummet vilar när toningen är klar
+    if (!document.hidden && !saverOn && !ambientOn && !ortiOn && !sheetOpen() && Date.now() - idleAt > saverAfter()) {
+      // kontrollrummet vilar när toningen är klar
+      if (saverMode() === 'orti') showOrti(); else if (saverMode() === 'clock') showAmbient(); else showSaver();
     }
     if (saverOn) tickSaverClock($('saver').querySelector('.clock'));
     if (ambientOn) tickAmbient();
@@ -2279,8 +2318,8 @@
 
   // For the browser preview and tests.
   window.FreeMyTV = {state: st, move: move, activate: activate, back: back, showSaver: showSaver, hideSaver: hideSaver, toast: toast,
-    trailer: playTrailer, poke: function () { poke(false); },
-    showAmbient: showAmbient, hideAmbient: hideAmbient, applyDim: applyDim,
+    trailer: playTrailer, poke: function () { poke(false); }, openSettings: function () { openSettings(); },
+    showAmbient: showAmbient, hideAmbient: hideAmbient, showOrti: showOrti, hideOrti: hideOrti, applyDim: applyDim,
     /** Ett annat utseende (holo4.js): favoriterna läggs om (dockan i v4) och fokus ritas om. */
     relayout: function () { if (shelf.length) renderShelf(); updateFocus(); }};
 })();

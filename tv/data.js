@@ -82,7 +82,14 @@ var Prefs = (function () {
     /** OK on the screensaver opens the title it shows, in its app; any other key only closes it (off by default). */
     saverWatch: function () { return pick('saverWatch', false) === true; },
     /** What the screensaver shows: 'photos' (the picks' photos, as it always has) or 'clock' (a clock and the weather). */
-    saver: function () { return pick('saver', 'photos') === 'clock' ? 'clock' : 'photos'; },
+    saver: function () {
+      var v = pick('saver', 'photos');
+      return v === 'clock' ? 'clock' : v === 'orti' && window.OrtiSaver && OrtiSaver.supported() ? 'orti' : 'photos';
+    },
+    /** Minuter utan knapptryck innan skärmsläckaren visas (Hemskärm → Skärmsläckare efter). */
+    saverAfter: function () { var v = +pick('saverAfter', 5); return v > 0 ? v : 5; },
+    /** O.R.T.I.-skärmsläckarens val (ortihud.js): quality, panels, speed, bright, night. */
+    o3: function (k, d) { var x = pick('o3.' + k, d); return x === undefined || x === null ? d : x; },
     /** Dimming over the picture, for a dark room: 'off', 'low', 'medium', 'high' or 'auto' (medium at night). */
     dim: function () { return pick('dim', 'off'); },
     /** The weather card's forecast: 'hours' (the next 6 hours) or 'days' (the next 5 days). */
@@ -206,13 +213,16 @@ var Data = (function () {
     var w = {
       temp: o.current.temperature_2m, code: o.current.weather_code, isDay: o.current.is_day !== 0,
       max: dl.temperature_2m_max[0], min: dl.temperature_2m_min[0],
-      sunrise: localTime(dl.sunrise[0], off), sunset: localTime(dl.sunset[0], off), hours: [], days: []
+      sunrise: localTime(dl.sunrise[0], off), sunset: localTime(dl.sunset[0], off), hours: [], hours12: [], days: []
     };
     var hr = o.hourly;
-    for (var i = 0; hr && i < hr.time.length && w.hours.length < 6; i++) {
+    // De närmaste 6 timmarna (vädret), och 12 för O.R.T.I.-skärmsläckaren (ortihud.js)
+    for (var i = 0; hr && i < hr.time.length && w.hours12.length < 12; i++) {
       var at = localTime(hr.time[i], off);
       if (at <= now) continue;
-      w.hours.push({at: at, temp: hr.temperature_2m[i], code: hr.weather_code[i], day: !hr.is_day || hr.is_day[i] !== 0});
+      var h = {at: at, temp: hr.temperature_2m[i], code: hr.weather_code[i], day: !hr.is_day || hr.is_day[i] !== 0};
+      if (w.hours.length < 6) w.hours.push(h);
+      w.hours12.push(h);
     }
     // The next 5 days, from tomorrow (none in a forecast cached before the days). Only days that haven't started at
     // the city: today, and past days in a forecast cached offline, are left out.

@@ -1,0 +1,83 @@
+/* O.R.T.I.-skärmsläckaren (ortihud.js, orti3d.js): 3D-kärnan på svart, tunn teknisk information ovanpå. */
+
+#ortisaver { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 6; background: #000; overflow: hidden;
+  opacity: 0; visibility: hidden; cursor: none; color: #DCEAF2;
+  font-family: Inter, 'SamsungOne', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-transition: opacity 0.9s cubic-bezier(0.4, 0, 1, 1), visibility 0s 0.9s; transition: opacity 0.9s cubic-bezier(0.4, 0, 1, 1), visibility 0s 0.9s; }
+#ortisaver.prep { visibility: visible; -webkit-transition: none; transition: none; }
+#ortisaver.on { opacity: 1; visibility: visible;
+  -webkit-transition: opacity 1.6s cubic-bezier(0.25, 0.1, 0.25, 1), visibility 0s; transition: opacity 1.6s cubic-bezier(0.25, 0.1, 0.25, 1), visibility 0s; }
+#ortisaver.o3-night .o3-hud, #ortisaver.o3-night .o3-frame { opacity: 0.6; }
+
+#ortisaver .o3-gl { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#ortisaver .o3-frame { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+#ortisaver .o3-hud { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; will-change: transform; }
+
+/* Namnet och läget: diskret, överst i mitten */
+#ortisaver .o3-name { position: absolute; left: 0; right: 0; top: 4px; text-align: center; font-size: 19px; font-weight: 200; letter-spacing: 14px;
+  padding-left: 14px; color: rgba(220, 234, 242, 0.85); }
+#ortisaver .o3-state { position: absolute; left: 0; right: 0; top: 50px; text-align: center; font-size: 11px; font-weight: 600; letter-spacing: 6px;
+  padding-left: 6px; color: rgba(0, 207, 255, 0.75); }
+#ortisaver[data-state="alert"] .o3-state { color: #FF4141; }
+#ortisaver[data-state="success"] .o3-state { color: #B9F5FF; }
+
+/* Övre vänstra hörnet: tiden med stora, tunna siffror */
+#ortisaver .o3-time { position: absolute; left: 92px; top: 66px; font-size: 156px; line-height: 156px; font-weight: 100; letter-spacing: 1px;
+  color: #EAF6FF; text-shadow: 0 0 24px rgba(0, 157, 255, 0.45); }
+#ortisaver .o3-date { position: absolute; left: 100px; top: 236px; font-size: 21px; font-weight: 500; letter-spacing: 7px; color: #00CFFF; white-space: nowrap; }
+#ortisaver .o3-weekno { position: absolute; left: 100px; top: 272px; font-size: 15px; font-weight: 600; letter-spacing: 5px; color: #607B8A; }
+
+/* Blocken: rubrik, hårfin linje, innehåll. Inga ogenomskinliga kort. */
+#ortisaver .o3-block { position: absolute; }
+#ortisaver .o3-title { font-size: 15px; font-weight: 700; letter-spacing: 3px; color: #F2F8FF; }
+#ortisaver .o3-rule { height: 1px; margin: 7px 0 10px; background: -webkit-linear-gradient(left, rgba(0, 157, 255, 0.8), rgba(0, 157, 255, 0.05));
+  background: linear-gradient(to right, rgba(0, 157, 255, 0.8), rgba(0, 157, 255, 0.05)); }
+#ortisaver .o3-body { font-size: 15px; letter-spacing: 1px; color: rgba(160, 200, 225, 0.85); }
+#ortisaver .o3-muted { color: #607B8A; letter-spacing: 3px; font-size: 14px; }
+#ortisaver .o3-small { margin-top: 6px; font-size: 13px; letter-spacing: 2px; color: #607B8A; }
+#ortisaver .o3-small.right { text-align: right; }
+#ortisaver .o3-temp { font-size: 56px; line-height: 60px; font-weight: 200; color: #EAF6FF; text-shadow: 0 0 16px rgba(0, 157, 255, 0.4); }
+#ortisaver .o3-cond { margin-top: 2px; font-size: 15px; font-weight: 600; letter-spacing: 3px; color: #00CFFF; }
+#ortisaver .o3-table { border-collapse: collapse; }
+#ortisaver .o3-table td { padding: 2px 18px 3px 0; white-space: nowrap; font-size: 15px; }
+#ortisaver .o3-table td.k { color: #607B8A; font-weight: 600; letter-spacing: 2px; font-size: 13px; }
+#ortisaver .o3-table td.v { color: #EAF6FF; font-size: 18px; font-weight: 300; }
+#ortisaver .o3-table td.c { color: rgba(0, 207, 255, 0.8); font-size: 12px; letter-spacing: 1.5px; }
+#ortisaver .o3-table.rows td { padding: 3px 14px 4px 0; }
+#ortisaver .o3-table.rows td.v { font-size: 16px; text-align: right; padding-right: 0; }
+#ortisaver .o3-kv span { display: inline-block; margin-right: 22px; font-size: 13px; font-weight: 600; letter-spacing: 2px; color: #607B8A; }
+#ortisaver .o3-kv b { font-weight: 300; font-size: 17px; letter-spacing: 1px; color: #EAF6FF; margin-left: 6px; }
+#ortisaver .o3-kv.col span { display: block; margin: 0 0 9px; }
+
+/* Veckan: sju linjer, hur mycket av varje dag som har gått */
+#ortisaver .o3-wrow { position: relative; height: 18px; margin-bottom: 4px; }
+#ortisaver .o3-wrow span { position: absolute; left: 0; top: 0; font-size: 12px; font-weight: 600; letter-spacing: 2px; color: #607B8A; }
+#ortisaver .o3-wrow i { position: absolute; left: 52px; right: 54px; top: 8px; height: 2px; background: rgba(22, 119, 210, 0.25); }
+#ortisaver .o3-wrow b { position: absolute; left: 0; top: 0; bottom: 0; background: #009DFF; box-shadow: 0 0 6px rgba(0, 157, 255, 0.8); }
+#ortisaver .o3-wrow em { position: absolute; right: 0; top: 0; font-style: normal; font-size: 12px; color: #607B8A; }
+#ortisaver .o3-wrow.now span, #ortisaver .o3-wrow.now em { color: #EAF6FF; }
+#ortisaver .o3-wrow.now b { background: #E8B94E; box-shadow: 0 0 6px rgba(232, 185, 78, 0.8); }
+
+/* Dygnet: 00–24, dagsljuset, nu */
+#ortisaver .o3-line { position: relative; height: 70px; margin: 6px 0 4px; }
+#ortisaver .o3-daylight { position: absolute; top: 6px; height: 34px; background: rgba(232, 185, 78, 0.1); border-left: 1px solid rgba(232, 185, 78, 0.8); border-right: 1px solid rgba(232, 185, 78, 0.8); }
+#ortisaver .o3-tick { position: absolute; top: 30px; width: 1px; height: 8px; background: rgba(0, 207, 255, 0.35); }
+#ortisaver .o3-tick.big { top: 24px; height: 16px; background: rgba(0, 207, 255, 0.8); }
+#ortisaver .o3-tlab { position: absolute; top: 46px; margin-left: -9px; font-size: 12px; letter-spacing: 1px; color: #607B8A; }
+#ortisaver .o3-past { position: absolute; left: 0; top: 22px; height: 2px; background: #00CFFF; box-shadow: 0 0 6px rgba(0, 207, 255, 0.8); }
+#ortisaver .o3-nowdot { position: absolute; top: 17px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: #EAF6FF; box-shadow: 0 0 10px #009DFF; }
+
+/* Temperaturen 12 timmar: tunna staplar */
+#ortisaver .o3-bars { position: relative; height: 128px; }
+#ortisaver .o3-bar { position: absolute; bottom: 0; width: 40px; height: 128px; text-align: left; }
+#ortisaver .o3-bar i { position: absolute; left: 0; bottom: 22px; width: 2px; background: #009DFF; box-shadow: 0 0 6px rgba(0, 157, 255, 0.9); }
+#ortisaver .o3-bar.first i { background: #E8B94E; box-shadow: 0 0 6px rgba(232, 185, 78, 0.9); }
+#ortisaver .o3-bar span { position: absolute; left: -6px; bottom: 0; font-size: 12px; color: #607B8A; }
+#ortisaver .o3-bar em { position: absolute; left: -6px; font-style: normal; font-size: 14px; color: #EAF6FF; }
+
+/* Kanterna */
+#ortisaver .o3-edge { position: absolute; font-size: 11px; font-weight: 600; letter-spacing: 3px; color: rgba(96, 123, 138, 0.9); }
+#ortisaver .o3-coord { left: 96px; bottom: 6px; }
+#ortisaver .o3-ref { right: 96px; bottom: 6px; }
+
+#ortisaver.o3-nopanels .o3-panels { display: none; }
