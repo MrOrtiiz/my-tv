@@ -199,6 +199,23 @@ var Holo4 = (function () {
     }
     var bx = document.getElementById('barca');
     setClass(document.body, 'h4-nobarca', !bx || bx.style.display === 'none' || !bx.offsetWidth);
+    watchBarca();
+  }
+
+  /**
+   * Barça-rutan läggs in i #top först när matchdatan har kommit (barca.js), en stund efter start, och tas bort när
+   * den stängs av. Rummet lägger om sig direkt då, i stället för vid nästa kontroll (var 5:e s), så att vädret inte
+   * ligger på rutans plats under tiden.
+   */
+  var barcaWatched = false;
+  function watchBarca() {
+    var top = document.getElementById('top');
+    if (barcaWatched || !top || !window.MutationObserver) return;
+    barcaWatched = true;
+    new MutationObserver(function () {
+      var bx = document.getElementById('barca'), none = !bx || bx.style.display === 'none' || !bx.offsetWidth;
+      if (none !== hasClass(document.body, 'h4-nobarca') && running) { modelKey = ''; refresh(); }
+    }).observe(top, {childList: true});
   }
 
   // MARK: - Automatiska lägen: matchdag, match pågår (och mål), natt

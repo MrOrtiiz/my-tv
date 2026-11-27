@@ -56,11 +56,11 @@ body.v4.h4-boot #holo4 { -webkit-animation: h4in 1.5s cubic-bezier(0.2, 0.8, 0.2
 body.v4-pre #stage { background: #020507; }
 body.v4-pre #sky, body.v4-pre #home, body.v4-pre #drawer { visibility: hidden; }
 /* Startsekvensen: vädrets himmel tonar in tillsammans med rummet, så att den inte lyser upp innan rummets mörka yta finns.
-   Bara "from": varje del tonar till sitt eget vanliga värde (dagens eller nattens), inte till ett fast. */
-@-webkit-keyframes h4skyfade { from { opacity: 0; } }
-@keyframes h4skyfade { from { opacity: 0; } }
-@-webkit-keyframes h4skybg { from { background-color: #020507; } }
-@keyframes h4skybg { from { background-color: #020507; } }
+   Mörkt tills rummet har vuxit till full storlek (90 %), sedan till sitt eget vanliga värde (dag eller natt). */
+@-webkit-keyframes h4skyfade { 0%, 90% { opacity: 0; } }
+@keyframes h4skyfade { 0%, 90% { opacity: 0; } }
+@-webkit-keyframes h4skybg { 0%, 90% { background-color: #020507; } }
+@keyframes h4skybg { 0%, 90% { background-color: #020507; } }
 body.v4.h4-boot #sky { -webkit-animation: h4skybg 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation: h4skybg 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 body.v4.h4-boot #sky .grad, body.v4.h4-boot #sky .wx, body.v4.h4-boot #sky #bgA, body.v4.h4-boot #sky #bgB, body.v4.h4-boot #sky .veil {
   -webkit-animation: h4skyfade 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation: h4skyfade 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
