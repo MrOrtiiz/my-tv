@@ -110,6 +110,7 @@ var Holo4 = (function () {
     g.fillStyle = rgba(TEAL, 0.92);
     g.fillRect(x, y, tw, 26);
     text(g, label, x + 12, y + 13.5, 14, 'rgb(3, 16, 18)', 'left', 600, 2.5);
+    if (w <= tw) return;
     line(g, x + tw, y + 25.5, x + w, y + 25.5, 1, rgba(TEAL, 0.35));
     g.fillStyle = rgba(TEAL, 0.8);
     g.fillRect(x + w - 6, y + 22, 6, 4);
@@ -733,6 +734,120 @@ var Holo4 = (function () {
     }
   }
 
+  // MARK: - Skärmsläckarna i samma stil (home.js anropar saver när en visas)
+
+  var SX = 960, SY = 520, saverTimer = 0;
+
+  function ringAt(parent, cls, size, cx, cy, draw) {
+    var c = el('canvas', 'h4-ring ' + cls, null);
+    c.width = c.height = size;
+    c.style.width = c.style.height = size + 'px';
+    c.style.left = (cx - size / 2) + 'px';
+    c.style.top = (cy - size / 2) + 'px';
+    var g = c.getContext('2d');
+    g.translate(size / 2 - cx, size / 2 - cy);
+    draw(g);
+    parent.insertBefore(c, parent.firstChild);
+    return c;
+  }
+
+  /** Ramen runt skärmen: hörn, en linje under rubriken, taggen och vädret till höger (bara riktiga värden). */
+  function saverFrame(g, label) {
+    var x0 = 36, x1 = W - 36, y0 = 78, y1 = H - 20;
+    g.strokeStyle = rgba(TEAL, 0.7); g.lineWidth = 2;
+    g.beginPath();
+    g.moveTo(x0, y0 + 40); g.lineTo(x0, y0); g.lineTo(x0 + 40, y0);
+    g.moveTo(x1 - 40, y0); g.lineTo(x1, y0); g.lineTo(x1, y0 + 40);
+    g.moveTo(x0, y1 - 40); g.lineTo(x0, y1); g.lineTo(x0 + 40, y1);
+    g.moveTo(x1 - 40, y1); g.lineTo(x1, y1); g.lineTo(x1, y1 - 40);
+    g.stroke();
+    line(g, x0 + 40, y0, x1 - 40, y0, 1, rgba(TEAL, 0.22));
+    tag(g, label, x0, 30, 0);
+    var w = typeof Data !== 'undefined' && Prefs.weather() ? Data.weather : null;
+    if (w && !isNaN(w.temp)) text(g, 'UTE ' + deg(w.temp) + '  ::  ' + String(Data.condition ? Data.condition(w.code, w.isDay) : '').toUpperCase(), x1, 43, 15, rgba(ICE, 0.85), 'right', 500, 3);
+  }
+
+  /** Viloläget (klockan): kärnan stor i mitten med dygns- och veckoringen, ringar som långsamt vrider sig. */
+  function drawStandby(g) {
+    var m = readModel(), i, p;
+    g.clearRect(0, 0, W, H);
+    saverFrame(g, 'KONTROLLRUM  ::  VILOLÄGE');
+    for (i = 0; i < 7; i++) {
+      var wd = (i + 1) % 7, from = i * (360 / 7) + 1.4, to = (i + 1) * (360 / 7) - 1.4, now = wd === m.day;
+      arcAt(g, SX, SY, 300, from, to, now ? 7 : 3, rgba(now ? TEAL : DIM, now ? 0.95 : 0.7));
+      p = [SX + Math.cos(rad((from + to) / 2)) * 318, SY + Math.sin(rad((from + to) / 2)) * 318];
+      text(g, DAYS[wd], p[0], p[1], 13, rgba(TEAL, now ? 1 : 0.5), 'center', 600, 1.5);
+    }
+    arcAt(g, SX, SY, 344, 0, 360, 1, rgba(DIM, 0.8));
+    for (i = 0; i < 96; i++) tickAt(g, SX, SY, 344 - (i % 24 === 0 ? 14 : i % 4 === 0 ? 8 : 3), 344, i * 3.75, i % 4 === 0 ? 1.5 : 1, rgba(TEAL, i % 24 === 0 ? 0.8 : i % 4 === 0 ? 0.45 : 0.2));
+    for (i = 0; i < 4; i++) { var a = rad(i * 90); text(g, two(i * 6), SX + Math.cos(a) * 364, SY + Math.sin(a) * 364, 13, rgba(TEAL, 0.75), 'center', 600, 1); }
+    if (m.rise !== undefined) arcAt(g, SX, SY, 349, m.rise * 360, m.set * 360, 4, rgba(AMBER, 0.6));
+    arcAt(g, SX, SY, 339, 0, m.dayFrac * 360, 2, rgba(TEAL, 0.8));
+    var na = rad(m.dayFrac * 360);
+    g.fillStyle = rgba(ICE, 1);
+    g.beginPath(); g.arc(SX + Math.cos(na) * 344, SY + Math.sin(na) * 344, 5, 0, Math.PI * 2); g.fill();
+  }
+
+  function standbyRings(parent) {
+    ringAt(parent, 's4-back', 1060, SX, SY, function (g) {
+      var grad = g.createRadialGradient(SX, SY, 60, SX, SY, 300);
+      grad.addColorStop(0, 'rgba(2, 8, 10, 0.85)');
+      grad.addColorStop(1, 'rgba(2, 8, 10, 0)');
+      g.fillStyle = grad;
+      g.beginPath(); g.arc(SX, SY, 300, 0, Math.PI * 2); g.fill();
+      arcAt(g, SX, SY, 510, 0, 360, 1, rgba(DIM, 0.35));
+      for (var k = 0; k < 120; k++) tickAt(g, SX, SY, 516, 522, k * 3, 1, rgba(TEAL, k % 10 === 0 ? 0.4 : 0.15));
+    });
+    ringAt(parent, 's4-brackets', 960, SX, SY, function (g) {
+      for (var i = 0; i < 4; i++) {
+        var c0 = 45 + i * 90;
+        arcAt(g, SX, SY, 452, c0 - 20, c0 + 20, 2, rgba(TEAL, 0.5));
+        tickAt(g, SX, SY, 444, 460, c0 - 20, 2, rgba(TEAL, 0.5));
+        tickAt(g, SX, SY, 444, 460, c0 + 20, 2, rgba(TEAL, 0.5));
+      }
+    });
+    ringAt(parent, 's4-outer', 880, SX, SY, function (g) {
+      var parts = [[6, 52], [64, 70], [82, 168], [186, 232], [244, 250], [262, 352]];
+      for (var i = 0; i < parts.length; i++) arcAt(g, SX, SY, 418, parts[i][0], parts[i][1], 1.5, rgba(TEAL, 0.5));
+      for (var j = 0; j < 16; j++) arcAt(g, SX, SY, 408, 10 + j * 22.5, 13 + j * 22.5, 8, rgba(TEAL, 0.35));
+    });
+    ringAt(parent, 's4-scale', 800, SX, SY, function (g) {
+      for (var i = 0; i < 180; i++) tickAt(g, SX, SY, 380, i % 5 === 0 ? 392 : 386, i * 2, 1, rgba(TEAL, i % 5 === 0 ? 0.4 : 0.18));
+    });
+    ringAt(parent, 's4-inner', 600, SX, SY, function (g) {
+      for (var i = 0; i < 90; i++) arcAt(g, SX, SY, 272, i * 4, i * 4 + 2, 1.5, rgba(TEAL, 0.3));
+      for (var k = 0; k < 4; k++) arcAt(g, SX, SY, 262, k * 90 + 20, k * 90 + 70, 2, rgba(TEAL, 0.35));
+    });
+  }
+
+  /** En skärmsläckare visas (home.js): i v4 klädd som kontrollrummet. Bilderna och klockan är desamma. */
+  function saver(layer, kind) {
+    clearInterval(saverTimer);
+    saverTimer = 0;
+    var on = enabled();
+    setClass(layer, 'h4-saver', on);
+    if (!on) return;
+    var host = kind === 'clock' ? layer.querySelector('.shift') || layer : layer;
+    var c = el('canvas', 'h4-saverframe', null);
+    c.width = W; c.height = H;
+    if (kind === 'clock') {
+      standbyRings(host);
+      host.insertBefore(c, host.querySelector('.clock'));   // över ringarna, under klockan
+      drawStandby(c.getContext('2d'));
+    } else {
+      layer.appendChild(c);
+      var g = c.getContext('2d');
+      g.clearRect(0, 0, W, H);
+      saverFrame(g, 'KONTROLLRUM  ::  VILOLÄGE');
+    }
+    // Dygnsringen och vädret följer med medan skärmsläckaren visas.
+    saverTimer = setInterval(function () {
+      if (!hasClass(layer, 'on') || !c.parentNode) { clearInterval(saverTimer); saverTimer = 0; return; }
+      var g2 = c.getContext('2d');
+      if (kind === 'clock') drawStandby(g2); else { g2.clearRect(0, 0, W, H); saverFrame(g2, 'KONTROLLRUM  ::  VILOLÄGE'); }
+    }, 60000);
+  }
+
   // MARK: - Start och stopp
 
   function build() {
@@ -799,7 +914,7 @@ var Holo4 = (function () {
   setInterval(function () { if (running) { modelKey = ''; refresh(); } }, 60000);
   setTimeout(apply, 600);
 
-  return {apply: apply, refresh: refresh, setQuality: setQuality, isRunning: function () { return running; },
+  return {apply: apply, refresh: refresh, setQuality: setQuality, saver: saver, isRunning: function () { return running; },
     /** Skärmsläckarna (home.js): motorn vilar medan en av dem täcker startsidan. */
     pause: function (on) { if (paused !== !!on) { paused = !!on; apply(); } },
     /** För tester: läget just nu. */

@@ -199,3 +199,39 @@ body.v4.ios .tile.circ.focus::before { color: #EFFEFF; font-weight: 600; }
 
 /* Barça-noden vald (OK spelar matchen i IPTV): siktet (holo4.js) och en svag yta, ingen gul ram. */
 body.v4 #barca.focus { box-shadow: none; background: rgba(95, 230, 235, 0.06); }
+
+/* MARK: - Skärmsläckarna i v4 (holo4.js saver): viloläget som en stor kärna, bilderna med kontrollrummets ram */
+
+body.v4 #ambient.h4-saver, body.v4.fest #ambient.h4-saver { background: #03080B; background: radial-gradient(ellipse at 50% 48%, #0B1E24 0%, #061217 40%, #020507 100%); }
+body.v4 .h4-saver .h4-saverframe { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+body.v4 .h4-saver .h4-ring { position: absolute; }
+body.v4 .s4-back { -webkit-animation: h4spin 900s linear infinite; animation: h4spin 900s linear infinite; }
+body.v4 .s4-brackets { -webkit-animation: h4back 300s linear infinite; animation: h4back 300s linear infinite; }
+body.v4 .s4-outer { -webkit-animation: h4spin 200s linear infinite; animation: h4spin 200s linear infinite; }
+body.v4 .s4-scale { -webkit-animation: h4back 360s linear infinite; animation: h4back 360s linear infinite; }
+body.v4 .s4-inner { -webkit-animation: h4spin 120s linear infinite, h4breath 10s ease-in-out infinite; animation: h4spin 120s linear infinite, h4breath 10s ease-in-out infinite; }
+body.v4.h4-low .h4-saver .h4-ring { -webkit-animation: none; animation: none; }
+
+body.v4 #ambient.h4-saver .clock, body.v4.fest #ambient.h4-saver .clock {
+  left: 460px; right: 460px; top: 422px; text-align: center; font-size: 180px; line-height: 196px; font-weight: 200; letter-spacing: 2px;
+  color: #EFFEFF; background: none; -webkit-background-clip: border-box; background-clip: border-box; text-shadow: 0 0 22px rgba(95, 230, 235, 0.2); }
+body.v4 #ambient.h4-saver .date, body.v4.fest #ambient.h4-saver .date {
+  left: 560px; right: 560px; top: 362px; text-align: center; font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: 6px;
+  text-transform: uppercase; color: rgba(95, 230, 235, 0.9); }
+body.v4 #ambient.h4-saver .side { left: 560px; right: 560px; top: 648px; width: auto; text-align: center; color: #EFFEFF; }
+body.v4 #ambient.h4-saver .temp { display: inline-block; vertical-align: middle; font-size: 44px; font-weight: 300; margin-right: 18px; }
+body.v4 #ambient.h4-saver .cond { display: inline-block; vertical-align: middle; margin: 0; font-size: 17px; font-weight: 600; letter-spacing: 4px;
+  text-transform: uppercase; color: rgba(95, 230, 235, 0.85); }
+
+body.v4 #saver.h4-saver .shade { height: 620px; background: -webkit-linear-gradient(top, rgba(2, 6, 8, 0), rgba(2, 6, 8, 0.8)); background: linear-gradient(rgba(2, 6, 8, 0), rgba(2, 6, 8, 0.8)); }
+body.v4 #saver.h4-saver::after { content: ''; position: absolute; left: 0; top: 0; right: 0; height: 120px; pointer-events: none;
+  background: -webkit-linear-gradient(top, rgba(2, 6, 8, 0.7), rgba(2, 6, 8, 0)); background: linear-gradient(rgba(2, 6, 8, 0.7), rgba(2, 6, 8, 0)); }
+body.v4 #saver.h4-saver .h4-saverframe { z-index: 2; }
+body.v4 #saver.h4-saver .clock, body.v4.fest #saver.h4-saver .clock {
+  left: 64px; bottom: 64px; padding: 4px 0 6px 26px; border-radius: 0; background: none; box-shadow: inset 2px 0 0 #5FE6EB; color: #EFFEFF; }
+body.v4 #saver.h4-saver .clock .time, body.v4.fest #saver.h4-saver .clock .time {
+  font-size: 140px; font-weight: 200; letter-spacing: 1px; color: #EFFEFF; background: none; -webkit-background-clip: border-box; background-clip: border-box; }
+body.v4 #saver.h4-saver .clock .date, body.v4.fest #saver.h4-saver .clock .date { margin-top: 6px; font-size: 18px; font-weight: 600; letter-spacing: 5px;
+  text-transform: uppercase; color: rgba(95, 230, 235, 0.95); }
+body.v4 #saver.h4-saver .clock .title { margin-top: 16px; font-size: 24px; font-weight: 400; letter-spacing: 1px; color: #EFFEFF; }
+body.v4 #saver.h4-saver .clock .hint { margin-top: 6px; font-size: 14px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: rgba(95, 230, 235, 0.75); }

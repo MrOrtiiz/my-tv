@@ -1990,6 +1990,7 @@
       saverTimer = setTimeout(next, 12000);
     }
     setClass(s, 'on', true);
+    if (window.Holo4 && Holo4.saver) Holo4.saver(s, 'photos');   // Kontrollrum v4: skärmsläckaren i samma stil
     next();
   }
 
@@ -2028,6 +2029,7 @@
     el('div', 'temp', side);
     el('div', 'cond', side);
     ambientOn = true;
+    if (window.Holo4 && Holo4.saver) Holo4.saver(a, 'clock');   // Kontrollrum v4: viloläget i samma stil
     setClass(a, 'on', true);
     ambientTimer = setInterval(tickAmbient, 30000);
     tickAmbient();
