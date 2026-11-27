@@ -1,5 +1,5 @@
 {
- "updated": 1795765114489,
+ "updated": 1795774926334,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -64,8 +64,8 @@
  ],
  "guide": {
   "channels": 5638,
-  "programmes": 297939,
-  "barca_listings": 42,
+  "programmes": 294158,
+  "barca_listings": 37,
   "until": "2026-11-28T08:59:59+01:00"
  },
  "barca_titles_seen": [
@@ -79,6 +79,9 @@
   "11-28 02:20 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 130 min",
   "11-28 03:15 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 165 min",
   "11-27 12:10 | Košarka - Euroleague: Barcelona - Fenerbahce  | 95 min",
+  "11-28 09:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 120 min",
+  "11-28 09:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 120 min",
+  "11-28 09:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 120 min",
   "11-28 00:30 | Barcelona Marathon  | 170 min",
   "11-27 14:50 | Barcelona vs Athletic  | 109 min",
   "11-28 07:00 | Barcelona vs Athletic  | 119 min",
@@ -90,10 +93,7 @@
   "11-27 19:00 | Lenovo Tenerife vs. Barcelona  | 120 min",
   "11-27 23:00 | Sabah vs Barcelona - UEFA Champions League MD5  | 100 min",
   "11-27 23:15 | Sabah vs Barcelona - UEFA Champions League MD5  | 120 min",
-  "11-28 02:45 | Sabah vs Barcelona - UEFA Champions League MD5  | 105 min",
-  "11-27 19:00 | Sabah vs Barcelona - UEFA Champions League MD5  | 30 min",
-  "11-28 03:30 | Sabah vs Barcelona - UEFA Champions League MD5  | 30 min",
-  "11-27 06:45 | Sabah vs Barcelona - UEFA Champions League MD5  | 120 min"
+  "11-28 02:45 | Sabah vs Barcelona - UEFA Champions League MD5  | 105 min"
  ],
  "table": {
   "league": "LaLiga",
