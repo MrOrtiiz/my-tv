@@ -577,13 +577,17 @@
     var n = gridCount(), rows = Math.max(1, Math.ceil(n / GRID_COLS));
     if (n > 3 && rows < 2) rows = 2;   // rows, not one long line
     var k = Math.min(1, GRID_ROOM / (rows * 168)), d = Math.round(104 * k), cell = Math.round(176 * Math.max(k, 0.85)), rowH = Math.round(168 * k);
+    var top0 = 1040 - rows * rowH + 6;
+    // Kontrollrum v4 (holo4.js): alla favoriter i en rad, i dockan längst ner (upp/ner går då direkt till raden ovanför).
+    if (Prefs.look && Prefs.look() === 'v4') {
+      rows = 1; cell = Math.min(116, Math.floor(1460 / Math.max(1, n))); d = Math.min(78, cell - 26); rowH = 0; top0 = 936;
+    }
     setClass(body, 'grid-dense', k < 1);
     gridCols = Math.max(1, Math.ceil(n / rows));
     $('platter').style.display = 'none';
     var tiles = $('tiles');
     tiles.innerHTML = '';
     tiles.style.webkitTransform = tiles.style.transform = '';
-    var top0 = 1040 - rows * rowH + 6;
     for (var i = 0; i < shelf.length; i++) {
       var t = el('div', 'tile circ', tiles), r = Math.floor(i / gridCols), c = i % gridCols;
       var inRow = Math.min(gridCols, n - r * gridCols), left = (1920 - inRow * cell) / 2 + c * cell + (cell - d) / 2;
@@ -1077,12 +1081,16 @@
     var iptvLink = Prefs.iptv(), iptvHost = /^https?:\/\/([^\/:?#]+)/i.exec(iptvLink);
     rows.push({label: 'IPTV-länk', value: iptvLink ? (iptvHost ? iptvHost[1] : '••••') : tr('Not set'), opens: true, iptvRow: true,
       step: function (d) { if (d >= 0) openKey('iptv'); }});
-    if (window.Holo) {   // Kontrollrum v3 (holo.js): bara utan filmtips; av som standard
-      rows.push({label: 'Utseende', value: Prefs.look() === 'v3' ? 'Kontrollrum v3' : 'Standard',
-        step: function (d) { cycle('look', ['standard', 'v3'], Prefs.look(), d); Holo.apply(); }});
+    if (window.Holo || window.Holo4) {   // Kontrollrum v3 (holo.js) och v4 (holo4.js): bara utan filmtips; av som standard
+      var looks = ['standard'], lookName = {standard: 'Standard', v3: 'Kontrollrum v3', v4: 'Kontrollrum v4'};
+      if (window.Holo) looks.push('v3');
+      if (window.Holo4) looks.push('v4');
+      var lookApply = function () { if (window.Holo) Holo.apply(); if (window.Holo4) Holo4.apply(); };
+      rows.push({label: 'Utseende', value: lookName[Prefs.look()],
+        step: function (d) { cycle('look', looks, Prefs.look(), d); lookApply(); }});
       var ql = {auto: 'Auto', high: 'Hög', medium: 'Mellan', low: 'Låg'};
-      rows.push({label: 'Grafik (v3)', value: ql[Prefs.holoQuality()], dim: Prefs.look() !== 'v3',
-        step: function (d) { cycle('holoQuality', ['auto', 'high', 'medium', 'low'], Prefs.holoQuality(), d); Holo.apply(); }});
+      rows.push({label: 'Grafik (kontrollrum)', value: ql[Prefs.holoQuality()], dim: Prefs.look() === 'standard',
+        step: function (d) { cycle('holoQuality', ['auto', 'high', 'medium', 'low'], Prefs.holoQuality(), d); lookApply(); }});
     }
     var sv = Data.services();
     if (sv.length) {
@@ -2049,6 +2057,7 @@
   function poke(ok) {
     idleAt = Date.now();
     if (window.Holo) Holo.pause(false);
+    if (window.Holo4) Holo4.pause(false);
     if (ambientOn) { hideAmbient(); return true; }
     if (!saverOn) return false;
     var target = ok && Prefs.saverWatch() ? pickTarget(saverPick) : null;
@@ -2189,6 +2198,7 @@
     if (!document.hidden && !saverOn && !ambientOn && !sheetOpen() && Date.now() - idleAt > SAVER_AFTER) {
       if (saverMode() === 'clock') showAmbient(); else showSaver();
       if (window.Holo) Holo.pause(true);
+      if (window.Holo4) Holo4.pause(true);
     }
     if (saverOn) tickSaverClock($('saver').querySelector('.clock'));
     if (ambientOn) tickAmbient();
@@ -2197,5 +2207,7 @@
   // For the browser preview and tests.
   window.FreeMyTV = {state: st, move: move, activate: activate, back: back, showSaver: showSaver, hideSaver: hideSaver, toast: toast,
     trailer: playTrailer, poke: function () { poke(false); },
-    showAmbient: showAmbient, hideAmbient: hideAmbient, applyDim: applyDim};
+    showAmbient: showAmbient, hideAmbient: hideAmbient, applyDim: applyDim,
+    /** Ett annat utseende (holo4.js): favoriterna läggs om (dockan i v4) och fokus ritas om. */
+    relayout: function () { if (shelf.length) renderShelf(); updateFocus(); }};
 })();

@@ -1,0 +1,201 @@
+/*
+ * Kontrollrum v4 hemma (holo4.js): body.v4. Samma rutor som annars, flyttade till ett kontrollrum och klädda som
+ * datanoder: inga kort, en tagg (fyllt band) med en tunn linje som rubrik, ljusa värden, turkosa etiketter, raka
+ * kanter. Kärnan i mitten, systemet till vänster, Barça och vädret till höger, apparna i en docka längst ner.
+ * Gäller i dag- och nattläget; v3 (holo.css) och standardutseendet ligger orörda under.
+ */
+
+/* MARK: - Bakgrund och lager */
+
+/* Mörkt rum dag som natt: en nästan svart yta över himlen. Vädrets bakgrund lyser svagt igenom och ger djup. */
+#holo4, .h4-dyn { display: none; }
+body.v4 #holo4 { display: block; position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+  background: rgba(3, 9, 12, 0.9); background: radial-gradient(ellipse at 50% 43%, rgba(11, 30, 36, 0.86) 0%, rgba(6, 18, 23, 0.9) 38%, rgba(3, 8, 11, 0.95) 78%, rgba(2, 5, 7, 0.97) 100%); }
+body.v4 #sky #holo4 canvas { opacity: 1; -webkit-transition: none; transition: none; }
+body.v4 #sky #holo4 .h4-static { left: 0; top: 0; width: 1920px; height: 1080px; }
+body.v4 .h4-ring { position: absolute; }
+body.v4 .h4-dyn { display: block; position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; z-index: 5; }
+body.v4 #hudbg, body.v4 #platter { display: none; }
+
+/* Ringarna roterar i olika fart och riktning; Låg grafik: stilla. */
+@-webkit-keyframes h4spin { from { -webkit-transform: rotate(0deg); } to { -webkit-transform: rotate(360deg); } }
+@keyframes h4spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@-webkit-keyframes h4back { from { -webkit-transform: rotate(360deg); } to { -webkit-transform: rotate(0deg); } }
+@keyframes h4back { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+@-webkit-keyframes h4breath { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+@keyframes h4breath { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+body.v4 .r4-back { -webkit-animation: h4spin 600s linear infinite; animation: h4spin 600s linear infinite; }
+body.v4 .r4-brackets { -webkit-animation: h4back 240s linear infinite; animation: h4back 240s linear infinite; }
+body.v4 .r4-outer { -webkit-animation: h4spin 160s linear infinite; animation: h4spin 160s linear infinite; }
+body.v4 .r4-fins { -webkit-animation: h4breath 6s ease-in-out infinite; animation: h4breath 6s ease-in-out infinite; }
+body.v4 .r4-scale { -webkit-animation: h4back 300s linear infinite; animation: h4back 300s linear infinite; }
+body.v4 .r4-inner { -webkit-animation: h4spin 80s linear infinite, h4breath 8s ease-in-out infinite; animation: h4spin 80s linear infinite, h4breath 8s ease-in-out infinite; }
+body.v4 .r4-spokes { -webkit-animation: h4back 120s linear infinite; animation: h4back 120s linear infinite; }
+body.v4.h4-low .h4-ring { -webkit-animation: none; animation: none; }
+
+/* Uppstart: kärnan växer fram, noderna tänds efter varandra. */
+@-webkit-keyframes h4in { from { opacity: 0; -webkit-transform: scale(0.7); } to { opacity: 1; -webkit-transform: none; } }
+@keyframes h4in { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: none; } }
+@-webkit-keyframes h4fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes h4fade { from { opacity: 0; } to { opacity: 1; } }
+@-webkit-keyframes h4slide { from { opacity: 0; -webkit-transform: translateY(10px); } to { opacity: 1; -webkit-transform: none; } }
+@keyframes h4slide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+body.v4.h4-boot #holo4 { -webkit-animation: h4in 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation: h4in 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  -webkit-transform-origin: 960px 468px; transform-origin: 960px 468px; }
+body.v4.h4-boot #holo4 .h4-static { -webkit-animation: h4fade 0.8s 1.6s both; animation: h4fade 0.8s 1.6s both; }
+body.v4.h4-boot #clock { -webkit-animation: h4fade 0.9s 0.4s both; animation: h4fade 0.9s 0.4s both; }
+body.v4.h4-boot #h4sys { -webkit-animation: h4slide 0.6s 0.9s both; animation: h4slide 0.6s 0.9s both; }
+body.v4.h4-boot #barca { -webkit-animation: h4slide 0.6s 1.05s both; animation: h4slide 0.6s 1.05s both; }
+body.v4.h4-boot #wxtop { -webkit-animation: h4slide 0.6s 1.2s both; animation: h4slide 0.6s 1.2s both; }
+body.v4.h4-boot #barcapill, body.v4.h4-boot #countdown { -webkit-animation: h4slide 0.6s 1.4s both; animation: h4slide 0.6s 1.4s both; }
+body.v4.h4-boot #tiles, body.v4.h4-boot #buttons, body.v4.h4-boot #h4bar { -webkit-animation: h4fade 0.8s 1.6s both; animation: h4fade 0.8s 1.6s both; }
+
+/* Inbränning: allt glider några pixlar fram och tillbaka på en timme, bakgrunden i samma takt. */
+@-webkit-keyframes h4drift { 0%, 100% { -webkit-transform: translate(0, 0); } 25% { -webkit-transform: translate(4px, 3px); } 50% { -webkit-transform: translate(0, 5px); } 75% { -webkit-transform: translate(-4px, 3px); } }
+@keyframes h4drift { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(4px, 3px); } 50% { transform: translate(0, 5px); } 75% { transform: translate(-4px, 3px); } }
+body.v4 #home, body.v4 #sky { -webkit-animation: h4drift 3600s linear infinite; animation: h4drift 3600s linear infinite; }
+
+/* MARK: - Gemensamt: taggar och text */
+
+body.v4 #top, body.v4 #home { color: #DFFBFF; }
+body.v4 .glass, body.v4.night .glass, body.v4.ios .glass, body.v4.ios.night .glass {
+  border-radius: 0; background: none; box-shadow: none; color: #DFFBFF; -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+body.v4.ios #barca::before, body.v4.ios.night #barca::before { display: none; }
+
+/* MARK: - Statusraden överst och knapparna i den */
+
+#h4bar, #h4sys { display: none; }
+body.v4 #h4bar { display: block; position: absolute; left: 36px; right: 420px; top: 26px; height: 28px; line-height: 28px; white-space: nowrap;
+  font-size: 15px; font-weight: 500; letter-spacing: 3px; color: rgba(95, 230, 235, 0.8); pointer-events: none; }
+body.v4 #h4bar .tag { display: inline-block; padding: 0 12px; margin-right: 18px; background: rgba(95, 230, 235, 0.92); color: #031012; font-weight: 600; letter-spacing: 3px; font-size: 14px; }
+body.v4 #h4bar .r { position: absolute; right: 0; top: 0; color: #DFFBFF; }
+
+body.v4 #buttons { -webkit-transform: scale(0.76); transform: scale(0.76); -webkit-transform-origin: 1884px 0; transform-origin: 1884px 0; }
+body.v4 .round, body.v4.night .round, body.v4.ios .round, body.v4.ios.night .round {
+  top: 18px; border-radius: 0; background: rgba(3, 12, 15, 0.6); box-shadow: inset 0 0 0 1.5px rgba(95, 230, 235, 0.55); color: #9BF3F6;
+}
+body.v4 .round.focus, body.v4.night .round.focus, body.v4.ios .round.focus, body.v4.ios.night .round.focus {
+  -webkit-transform: none; transform: none; background: #5FE6EB; color: #031012; box-shadow: inset 0 0 0 1.5px #CFFBFC;
+}
+body.v4 .round .tip, body.v4.night .round .tip { top: 84px; color: #DFFBFF; text-transform: uppercase; letter-spacing: 3px; font-size: 18px; font-weight: 600; }
+
+/* MARK: - Klockan i kärnan */
+
+body.v4.ios.no-picks #clock { top: 382px; left: 700px; right: 700px; font-size: 112px; }
+body.v4.ios.no-picks #clock .time, body.v4.ios.no-picks.night #clock .time, body.v4.ios.no-picks.fest #clock .time {
+  font-weight: 200; color: #EFFEFF; text-shadow: 0 0 18px rgba(95, 230, 235, 0.25); letter-spacing: 1px;
+  -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum';
+}
+body.v4.ios.no-picks #clock .date, body.v4.ios.no-picks.night #clock .date {
+  font-size: 16px; line-height: 24px; font-weight: 600; letter-spacing: 5px; color: rgba(95, 230, 235, 0.9); text-transform: uppercase;
+  margin: 0 0 8px; text-shadow: none; max-width: 460px;
+}
+body.v4 #clock.red .date { color: #FF8A80; }
+
+/* MARK: - Systemnoden (vänster, holo4.js) */
+
+body.v4 #h4sys { display: block; position: absolute; left: 64px; top: 112px; width: 430px; }
+body.v4 #h4sys .head, body.v4 #barca .head { position: relative; height: 26px; line-height: 26px; margin-bottom: 10px; white-space: nowrap;
+  border-bottom: 1px solid rgba(95, 230, 235, 0.35); }
+body.v4 #h4sys .tag, body.v4 #barca .head .name { display: inline-block; vertical-align: top; height: 26px; padding: 0 12px; background: rgba(95, 230, 235, 0.92);
+  color: #031012; font-size: 14px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; }
+body.v4 #h4sys .row { height: 34px; line-height: 34px; padding-left: 14px; white-space: nowrap; border-left: 1px solid rgba(95, 230, 235, 0.22);
+  -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
+body.v4 #h4sys .k { display: inline-block; width: 150px; font-size: 14px; font-weight: 600; letter-spacing: 2.5px; color: rgba(95, 230, 235, 0.75); }
+body.v4 #h4sys .v { font-size: 20px; font-weight: 400; letter-spacing: 1px; color: #DFFBFF; }
+
+/* MARK: - Barça-noden (höger) */
+
+body.v4.ios.no-picks #barca, body.v4 #barca { top: 112px; left: 1426px; right: auto; width: 430px; padding: 0; color: #DFFBFF; }
+body.v4 #barca .head, body.v4.night #barca .head { color: rgba(95, 230, 235, 0.7); font-size: 13px; letter-spacing: 2px; }
+body.v4 #barca .crest, body.v4 #barca .stripe { display: none !important; }
+body.v4 #barca .stamp, body.v4.ios #barca .stamp { float: none; position: absolute; right: 0; top: 0; margin: 0; opacity: 1; font-size: 13px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase; color: rgba(95, 230, 235, 0.65); }
+body.v4 #barca .page { min-height: 0; padding-left: 14px; border-left: 1px solid rgba(95, 230, 235, 0.22); }
+body.v4 #barca .match, body.v4.night #barca .match, body.v4.ios #barca .match { padding: 8px 0 10px; border-top: 1px solid rgba(95, 230, 235, 0.14); }
+body.v4 #barca .match:first-of-type { border-top: 0; padding-top: 2px; }
+body.v4 #barca .when, body.v4.night #barca .when, body.v4.ios #barca .when, body.v4.ios.night #barca .when {
+  color: #FFC448; font-size: 14px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; }
+body.v4 #barca .when.now { color: #FF7A70; }
+body.v4 #barca .title { font-size: 24px; font-weight: 400; line-height: 32px; color: #EFFEFF; }
+body.v4 #barca .title .rival { width: 24px; height: 24px; vertical-align: -4px; }
+body.v4 #barca .channels, body.v4.night #barca .channels, body.v4 #barca .none, body.v4.night #barca .none, body.v4 #barca .goals, body.v4.night #barca .goals {
+  color: rgba(95, 230, 235, 0.65); font-style: normal; font-size: 15px; letter-spacing: 0.5px; }
+body.v4 #barca .channels.soon { opacity: 1; }
+body.v4 #barca .playhint { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: rgba(95, 230, 235, 0.65); margin: -4px 0 6px; }
+body.v4 #barca .live, body.v4.ios #barca .live { border-radius: 0; background: none; color: #FF7A70; box-shadow: inset 0 0 0 1.5px currentColor; }
+body.v4 #barca .score .nums { font-weight: 300; color: #EFFEFF; }
+body.v4 #barca.goal { box-shadow: none; }
+body.v4 #barca .goalflash { color: #FFC448; text-shadow: none; font-weight: 600; letter-spacing: 6px; }
+/* Tabellsidan: platsen stort och tunt, formen som rutor, tabellen som en datatabell. */
+body.v4 #barca .standing { margin: 2px 0 6px; font-size: 16px; font-weight: 500; letter-spacing: 1px; opacity: 1; color: rgba(95, 230, 235, 0.85); text-transform: uppercase; }
+body.v4 #barca .standing .place { font-size: 38px; font-weight: 200; color: #EFFEFF; letter-spacing: 0; text-transform: none; }
+body.v4 #barca .standing .league { font-size: 13px; letter-spacing: 2px; opacity: 1; margin-top: 14px; }
+body.v4 #barca .form .label { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; opacity: 1; color: rgba(95, 230, 235, 0.75); }
+body.v4 #barca .chip { border-radius: 0; width: 26px; height: 22px; line-height: 22px; font-size: 13px; font-weight: 600; background: none; }
+body.v4 #barca .chip-V { color: #5AE68C; box-shadow: inset 0 0 0 1.5px #5AE68C; }
+body.v4 #barca .chip-O { color: #9FB6BA; box-shadow: inset 0 0 0 1.5px #9FB6BA; }
+body.v4 #barca .chip-F { color: #FF7A70; box-shadow: inset 0 0 0 1.5px #FF7A70; }
+body.v4 #barca .lastgame { font-size: 14px; letter-spacing: 0.5px; opacity: 1; color: rgba(95, 230, 235, 0.65); }
+body.v4 #barca .table { font-size: 18px; }
+body.v4 #barca .table .tr { height: 30px; line-height: 30px; border-radius: 0; padding: 0 6px; border-bottom: 1px solid rgba(95, 230, 235, 0.1); }
+body.v4 #barca .table .tr.us { background: rgba(95, 230, 235, 0.14); box-shadow: inset 3px 0 0 #5FE6EB; font-weight: 600; color: #EFFEFF; }
+body.v4 #barca .table .rk { color: rgba(95, 230, 235, 0.75); }
+body.v4 #barca .gap { color: rgba(95, 230, 235, 0.5); }
+body.v4 #barca .dots { position: absolute; left: 14px; right: auto; top: auto; bottom: -20px; text-align: left; padding: 0; }
+body.v4 #barca .dots span { width: 16px; height: 3px; border-radius: 0; margin: 0 6px 0 0; background: rgba(95, 230, 235, 0.25); }
+body.v4 #barca .dots span.on { background: #5FE6EB; }
+
+/* MARK: - Atmosfären (höger, under Barça): nuläget stort, timmarna (holo4.js ritar), fem dagar som tabell */
+
+body.v4.ios.no-picks #wxtop, body.v4 #wxtop {
+  top: 498px; left: 1426px; right: auto; width: 430px; height: auto; padding: 36px 0 0 14px; box-sizing: border-box;
+  -webkit-transform: none; transform: none; border-radius: 0; white-space: normal; color: #DFFBFF;
+  background: none; box-shadow: inset 1px 0 0 rgba(95, 230, 235, 0.22);
+}
+body.v4.ios #wxtop::before, body.v4.ios.night #wxtop::before, body.v4 #wxtop::before {
+  content: 'ATMOSFÄR  ::  NU'; display: block !important; position: absolute; left: 0; top: 0; right: auto; width: auto; height: 26px; line-height: 26px;
+  padding: 0 12px; border-radius: 0; background: rgba(95, 230, 235, 0.92) !important; color: #031012; font-size: 14px; font-weight: 600; letter-spacing: 2.5px;
+  white-space: nowrap; }
+body.v4 #wxtop::after { content: ''; position: absolute; left: 0; right: 0; top: 25px; height: 1px; background: rgba(95, 230, 235, 0.35); }
+body.v4 #wxtop .sym { width: 42px; height: 42px; margin-right: 12px; color: #9BF3F6; }
+body.v4 #wxtop .temp, body.v4.night #wxtop .temp { font-size: 76px; line-height: 92px; font-weight: 200; margin-right: 18px; color: #EFFEFF; letter-spacing: -1px; }
+body.v4 #wxtop .cond, body.v4.night #wxtop .cond { font-size: 18px; line-height: 26px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: #9BF3F6; }
+body.v4 #wxtop .meta, body.v4.night #wxtop .meta { font-size: 15px; line-height: 22px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: rgba(95, 230, 235, 0.7); }
+body.v4 #wxtop .split { display: none; }
+body.v4 #wxtop .hours { display: block; margin-top: 126px; padding-top: 8px; border-top: 1px solid rgba(95, 230, 235, 0.25); white-space: nowrap; }
+body.v4 #wxtop .hour, body.v4 #wxtop .hour.day { width: 82px; }
+body.v4 #wxtop .hour .t, body.v4.night #wxtop .hour .t { font-size: 13px; line-height: 20px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(95, 230, 235, 0.75); }
+body.v4 #wxtop .hour .sym { width: 24px; height: 24px; margin: 6px auto 4px; color: #9BF3F6; }
+body.v4 #wxtop .hour .d, body.v4.night #wxtop .hour .d { font-size: 19px; line-height: 26px; font-weight: 400; color: #EFFEFF; }
+body.v4 #wxtop .hour .low, body.v4.night #wxtop .hour .low { font-size: 15px; color: rgba(95, 230, 235, 0.65); }
+body.v4 #wxtop.h4-ping .temp { color: #FFFFFF; }
+
+/* MARK: - Datanoderna vid kärnan: nästa match (vänster) och nedräkningen (höger), en tagg och texten under */
+
+body.v4 #barcapill, body.v4.night #barcapill, body.v4.ios #barcapill,
+body.v4 #countdown, body.v4.ios.no-picks #countdown, body.v4.fest.ios.no-picks #countdown, body.v4.ios.no-picks:not(.night) #countdown {
+  top: 744px !important; width: 250px; height: auto; padding: 34px 0 6px; box-sizing: border-box; border-radius: 0; white-space: normal;
+  -webkit-transform: none; transform: none; background: rgba(3, 9, 12, 0.82); box-shadow: none;
+  font-size: 17px; line-height: 23px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: #EFFEFF; }
+body.v4 #barcapill, body.v4.night #barcapill, body.v4.ios #barcapill { left: auto !important; right: 1140px; text-align: right; }
+body.v4 #countdown, body.v4.ios.no-picks #countdown, body.v4.fest.ios.no-picks #countdown, body.v4.ios.no-picks:not(.night) #countdown { left: 1140px; right: auto; text-align: left; }
+body.v4 #barcapill::before, body.v4 #countdown::before {
+  position: absolute; top: 0; height: 24px; line-height: 24px; padding: 0 10px; font-size: 13px; font-weight: 600; letter-spacing: 2.5px; }
+body.v4 #barcapill::before { content: 'NÄSTA MATCH'; right: 0; color: #FFC448; box-shadow: inset 0 0 0 1.5px rgba(255, 196, 72, 0.8); }
+body.v4 #countdown::before { content: 'NEDRÄKNING'; left: 0; background: #FFC448; color: #1A1000; }
+
+/* MARK: - Dockan: apparna i en rad (home.js), med namnen under och siktet runt den valda */
+
+body.v4 .tile, body.v4.night .tile, body.v4.ios .tile.circ { border-radius: 14px; box-shadow: inset 0 0 0 1px rgba(95, 230, 235, 0.25); }
+body.v4.ios .tile.circ.bleed img.full { border-radius: 15px; }
+body.v4.ios .tile.circ::before, body.v4.ios.grid-dense .tile.circ::before {
+  left: -14px; right: -14px; margin-top: 10px; font-size: 14px; line-height: 18px; font-weight: 500; letter-spacing: 0.5px;
+  color: rgba(205, 248, 250, 0.75); text-shadow: none; }
+body.v4.ios .tile.circ.focus, body.v4 .tile.focus { -webkit-transform: translateY(-8px); transform: translateY(-8px);
+  box-shadow: 0 0 0 2px #5FE6EB, 0 10px 26px rgba(0, 0, 0, 0.5); }
+body.v4.ios .tile.circ.focus::before { color: #EFFEFF; font-weight: 600; }
+
+/* Barça-noden vald (OK spelar matchen i IPTV): siktet (holo4.js) och en svag yta, ingen gul ram. */
+body.v4 #barca.focus { box-shadow: none; background: rgba(95, 230, 235, 0.06); }
