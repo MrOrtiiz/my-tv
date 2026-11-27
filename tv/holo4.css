@@ -10,28 +10,38 @@
 /* Mörkt rum dag som natt: en nästan svart yta över himlen. Vädrets bakgrund lyser svagt igenom och ger djup. */
 #holo4, .h4-dyn { display: none; }
 body.v4 #holo4 { display: block; position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
-  background: rgba(3, 9, 12, 0.9); background: radial-gradient(ellipse at 50% 43%, rgba(11, 30, 36, 0.86) 0%, rgba(6, 18, 23, 0.9) 38%, rgba(3, 8, 11, 0.95) 78%, rgba(2, 5, 7, 0.97) 100%); }
+  background: rgba(3, 9, 12, 0.9);
+  background: radial-gradient(circle at 960px 468px, rgba(2, 8, 10, 0.97) 0, rgba(2, 8, 10, 0.9) 120px, rgba(2, 8, 10, 0) 230px),
+    radial-gradient(ellipse at 50% 43%, rgba(11, 30, 36, 0.86) 0%, rgba(6, 18, 23, 0.9) 38%, rgba(3, 8, 11, 0.95) 78%, rgba(2, 5, 7, 0.97) 100%); }
 body.v4 #sky #holo4 canvas { opacity: 1; -webkit-transition: none; transition: none; }
 body.v4 #sky #holo4 .h4-static { left: 0; top: 0; width: 1920px; height: 1080px; }
 body.v4 .h4-ring { position: absolute; }
 body.v4 .h4-dyn { display: block; position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; z-index: 5; }
 body.v4 #hudbg, body.v4 #platter { display: none; }
 
-/* Ringarna roterar i olika fart och riktning; Låg grafik: stilla. */
+/* Det som rör sig (holo4.js): förritade lager som motorn vrider och flyttar med transform, i sin egen takt. */
 @-webkit-keyframes h4spin { from { -webkit-transform: rotate(0deg); } to { -webkit-transform: rotate(360deg); } }
 @keyframes h4spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @-webkit-keyframes h4back { from { -webkit-transform: rotate(360deg); } to { -webkit-transform: rotate(0deg); } }
 @keyframes h4back { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
 @-webkit-keyframes h4breath { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 @keyframes h4breath { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-body.v4 .r4-back { -webkit-animation: h4spin 600s linear infinite; animation: h4spin 600s linear infinite; }
-body.v4 .r4-brackets { -webkit-animation: h4back 240s linear infinite; animation: h4back 240s linear infinite; }
-body.v4 .r4-outer { -webkit-animation: h4spin 160s linear infinite; animation: h4spin 160s linear infinite; }
-body.v4 .r4-fins { -webkit-animation: h4breath 6s ease-in-out infinite; animation: h4breath 6s ease-in-out infinite; }
-body.v4 .r4-scale { -webkit-animation: h4back 300s linear infinite; animation: h4back 300s linear infinite; }
-body.v4 .r4-inner { -webkit-animation: h4spin 80s linear infinite, h4breath 8s ease-in-out infinite; animation: h4spin 80s linear infinite, h4breath 8s ease-in-out infinite; }
-body.v4 .r4-spokes { -webkit-animation: h4back 120s linear infinite; animation: h4back 120s linear infinite; }
-body.v4.h4-low .h4-ring { -webkit-animation: none; animation: none; }
+body.v4 .h4-ring { will-change: transform; }
+body.v4 .h4-orbit { position: absolute; -webkit-transform-origin: 50% 50%; transform-origin: 50% 50%; }
+body.v4 .h4-orbit .h4-ring { position: absolute; }
+body.v4 #sky #holo4 .h4-core, body.v4 #sky #holo4 .h4-bootlines { position: absolute; }
+body.v4 #sky #holo4 .h4-bootlines { left: 0; top: 0; width: 1920px; height: 1080px; }
+body.v4 .h4-pulse { position: absolute; left: -2px; top: -2px; width: 4px; height: 4px; background: rgba(223, 251, 255, 0.85); will-change: transform; }
+body.v4 .h4-pulse.strong { left: -3.5px; top: -3.5px; width: 7px; height: 7px; background: #DFFBFF; }
+body.v4 .h4-docksweep { position: absolute; left: 0; top: 0; width: 60px; height: 2px; will-change: transform;
+  background: -webkit-linear-gradient(left, rgba(95, 230, 235, 0), rgba(95, 230, 235, 0.3)); background: linear-gradient(to right, rgba(95, 230, 235, 0), rgba(95, 230, 235, 0.3)); }
+#h4ret { display: none; }
+body.v4 #h4ret { position: absolute; z-index: 6; pointer-events: none; }
+body.v4 #h4ret span { position: absolute; width: 14px; height: 14px; border: 0 solid #DFFBFF; will-change: transform; }
+body.v4 #h4ret .c0 { left: 0; top: 0; border-left-width: 2px; border-top-width: 2px; }
+body.v4 #h4ret .c1 { right: 0; top: 0; border-right-width: 2px; border-top-width: 2px; }
+body.v4 #h4ret .c2 { right: 0; bottom: 0; border-right-width: 2px; border-bottom-width: 2px; }
+body.v4 #h4ret .c3 { left: 0; bottom: 0; border-left-width: 2px; border-bottom-width: 2px; }
 
 /* Uppstart: kärnan växer fram, noderna tänds efter varandra. */
 @-webkit-keyframes h4in { from { opacity: 0; -webkit-transform: scale(0.7); } to { opacity: 1; -webkit-transform: none; } }
@@ -50,10 +60,7 @@ body.v4.h4-boot #wxtop { -webkit-animation: h4slide 0.6s 1.2s both; animation: h
 body.v4.h4-boot #barcapill, body.v4.h4-boot #countdown { -webkit-animation: h4slide 0.6s 1.4s both; animation: h4slide 0.6s 1.4s both; }
 body.v4.h4-boot #tiles, body.v4.h4-boot #buttons, body.v4.h4-boot #h4bar { -webkit-animation: h4fade 0.8s 1.6s both; animation: h4fade 0.8s 1.6s both; }
 
-/* Inbränning: allt glider några pixlar fram och tillbaka på en timme, bakgrunden i samma takt. */
-@-webkit-keyframes h4drift { 0%, 100% { -webkit-transform: translate(0, 0); } 25% { -webkit-transform: translate(4px, 3px); } 50% { -webkit-transform: translate(0, 5px); } 75% { -webkit-transform: translate(-4px, 3px); } }
-@keyframes h4drift { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(4px, 3px); } 50% { transform: translate(0, 5px); } 75% { transform: translate(-4px, 3px); } }
-body.v4 #home, body.v4 #sky { -webkit-animation: h4drift 3600s linear infinite; animation: h4drift 3600s linear infinite; }
+/* Inbränning: holo4.js flyttar startsidan en pixel i taget (left/top), inte med en animation som går hela tiden. */
 
 /* MARK: - Gemensamt: taggar och text */
 
@@ -205,12 +212,6 @@ body.v4 #barca.focus { box-shadow: none; background: rgba(95, 230, 235, 0.06); }
 body.v4 #ambient.h4-saver, body.v4.fest #ambient.h4-saver { background: #03080B; background: radial-gradient(ellipse at 50% 48%, #0B1E24 0%, #061217 40%, #020507 100%); }
 body.v4 .h4-saver .h4-saverframe { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
 body.v4 .h4-saver .h4-ring { position: absolute; }
-body.v4 .s4-back { -webkit-animation: h4spin 900s linear infinite; animation: h4spin 900s linear infinite; }
-body.v4 .s4-brackets { -webkit-animation: h4back 300s linear infinite; animation: h4back 300s linear infinite; }
-body.v4 .s4-outer { -webkit-animation: h4spin 200s linear infinite; animation: h4spin 200s linear infinite; }
-body.v4 .s4-scale { -webkit-animation: h4back 360s linear infinite; animation: h4back 360s linear infinite; }
-body.v4 .s4-inner { -webkit-animation: h4spin 120s linear infinite, h4breath 10s ease-in-out infinite; animation: h4spin 120s linear infinite, h4breath 10s ease-in-out infinite; }
-body.v4.h4-low .h4-saver .h4-ring { -webkit-animation: none; animation: none; }
 
 body.v4 #ambient.h4-saver .clock, body.v4.fest #ambient.h4-saver .clock {
   left: 460px; right: 460px; top: 422px; text-align: center; font-size: 180px; line-height: 196px; font-weight: 200; letter-spacing: 2px;
@@ -235,3 +236,7 @@ body.v4 #saver.h4-saver .clock .date, body.v4.fest #saver.h4-saver .clock .date 
   text-transform: uppercase; color: rgba(95, 230, 235, 0.95); }
 body.v4 #saver.h4-saver .clock .title { margin-top: 16px; font-size: 24px; font-weight: 400; letter-spacing: 1px; color: #EFFEFF; }
 body.v4 #saver.h4-saver .clock .hint { margin-top: 6px; font-size: 14px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: rgba(95, 230, 235, 0.75); }
+
+/* Startsidan flyttas några pixlar mot inbränning (holo4.js): kanten som då syns är lika mörk som rummet. */
+body.v4 #stage { background: #020507; }
+body.v4.h4-boot #h4ret { opacity: 0; }

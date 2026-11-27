@@ -26,11 +26,11 @@ var Holo4 = (function () {
   var GAUGE_Y = 548, GAUGE_R = 54, WEEK_Y = 742;
   var TEMP_LO = -20, TEMP_HI = 30;       // utemätarens skala, °C
 
-  var root = null, stat = null, sctx = null, dyn = null, dctx = null, sys = null, bar = null, wasOn = null;
+  var root = null, stat = null, sctx = null, sys = null, bar = null, sysFps = null, wasOn = null;
   var running = false, paused = false, raf = 0, lastFrame = 0, bootAt = 0, startedAt = Date.now();
-  var model = {}, modelKey = '', links = [], particles = [], pulses = [], slots = [];
+  var model = {}, modelKey = '', links = [], pulses = [], slots = [];
   var needle = {temp: null, match: null};
-  var q = {fps: 30, particles: 60, sweep: true, level: 'auto'}, slow = 0, fast = 0, scale = 1;
+  var q = {fps: 30, orbits: -1, sweep: true, level: 'auto'}, slow = 0, fast = 0, scale = 1;
 
   // MARK: - Hjälp
 
@@ -260,6 +260,7 @@ var Holo4 = (function () {
   function drawStatic() {
     var g = sctx;
     g.clearRect(0, 0, W, H);
+    drawBackDecor(g);
     drawFrame(g);
     drawCore(g);
     for (var i = 0; i < links.length; i++) {
@@ -459,10 +460,23 @@ var Holo4 = (function () {
     }
   }
 
-  // MARK: - Ringarna (förritade, roteras av CSS)
+  // MARK: - Lagren som rör sig: förritade en gång, sedan bara vridna och flyttade (grafikkretsen gör jobbet)
+  //
+  // Inget ritas om per bildruta. Ringarna, partiklarna, svepet och snurrorna är färdiga canvas som motorn vrider med
+  // transform; pulserna, dockans svep och siktet är små element som flyttas. Bara kärnans lilla canvas (sekundringen
+  // och visarna) ritas om, en gång i sekunden eller medan en visare glider. Allt uppdateras i motorns takt (Auto:
+  // 30 bilder/s, 15 om TV:n inte hinner med), inte i skärmens 60.
 
-  function ringLayer(cls, size, draw) {
-    var c = el('canvas', 'h4-ring ' + cls, root);
+  var movers = [], lastTurn = 0;   // {e, period (s), dir, breath (s)}: vrids i frame()
+
+  function spin(e, periodS, dir, breathS) {
+    e.style.webkitTransformOrigin = e.style.transformOrigin = '50% 50%';
+    movers.push({e: e, period: periodS, dir: dir, breath: breathS || 0, last: ''});
+    return e;
+  }
+
+  function ringLayer(cls, size, draw, parent) {
+    var c = el('canvas', 'h4-ring ' + cls, parent || root);
     c.width = c.height = size;
     c.style.width = c.style.height = size + 'px';
     c.style.left = (CX - size / 2) + 'px';
@@ -473,22 +487,25 @@ var Holo4 = (function () {
     return c;
   }
 
+  /** Dekor som inte rör sig (bakersta ringen, fenorna): ritas i det statiska lagret. */
+  function drawBackDecor(g) {
+    var i, c0;
+    arc(g, 480, 0, 360, 1, rgba(DIM, 0.35));
+    var parts = [[10, 64], [118, 150], [196, 262], [300, 336]];
+    for (i = 0; i < parts.length; i++) arc(g, 462, parts[i][0], parts[i][1], 1.5, rgba(TEAL, 0.22));
+    for (i = 0; i < 120; i++) tick(g, 488, 494, i * 3, 1, rgba(TEAL, i % 10 === 0 ? 0.4 : 0.15));
+    for (var side = 0; side < 2; side++) {
+      c0 = side * 180;
+      for (i = -8; i <= 8; i++) tick(g, 328, i % 4 === 0 ? 356 : 344, c0 + i * 1.6, 1, rgba(TEAL, i % 4 === 0 ? 0.45 : 0.24));
+      arc(g, 362, c0 - 16, c0 + 16, 1, rgba(TEAL, 0.38));
+      arc(g, 322, c0 - 22, c0 - 14, 5, rgba(TEAL, 0.25));
+      arc(g, 322, c0 + 14, c0 + 22, 5, rgba(TEAL, 0.25));
+    }
+  }
+
   function buildRings() {
-    // Längst bak: stora svaga ringar med långa bågar (djup).
-    ringLayer('r4-back', 1000, function (g) {
-      // Mörkare bakom klockan, så att siffrorna läses mot ringarna (rund, så rotationen syns inte).
-      var grad = g.createRadialGradient(CX, CY, 40, CX, CY, 230);
-      grad.addColorStop(0, 'rgba(2, 8, 10, 0.8)');
-      grad.addColorStop(1, 'rgba(2, 8, 10, 0)');
-      g.fillStyle = grad;
-      g.beginPath(); g.arc(CX, CY, 230, 0, Math.PI * 2); g.fill();
-      arc(g, 480, 0, 360, 1, rgba(DIM, 0.35));
-      var parts = [[10, 64], [118, 150], [196, 262], [300, 336]];
-      for (var i = 0; i < parts.length; i++) arc(g, 462, parts[i][0], parts[i][1], 1.5, rgba(TEAL, 0.22));
-      for (var k = 0; k < 120; k++) tick(g, 488, 494, k * 3, 1, rgba(TEAL, k % 10 === 0 ? 0.4 : 0.15));
-    });
-    // Konsoler: böjda klamrar på diagonalerna och små trianglar som pekar in mot kärnan.
-    ringLayer('r4-brackets', 860, function (g) {
+    // Konsoler och fin skala (moturs): böjda klamrar, trianglar mot kärnan, skalstreck mellan dygnsringen och mätarna.
+    spin(ringLayer('r4-a', 860, function (g) {
       for (var i = 0; i < 4; i++) {
         var c0 = 45 + i * 90;
         arc(g, 404, c0 - 22, c0 + 22, 2, rgba(TEAL, 0.5));
@@ -505,90 +522,100 @@ var Holo4 = (function () {
         g.lineTo(CX + Math.cos(cc) * 398, CY + Math.sin(cc) * 398);
         g.closePath(); g.fill();
       }
-    });
-    // Yttre segmentringen: långa bågar med luckor, block, och en tät skala.
-    ringLayer('r4-outer', 790, function (g) {
+      for (var k = 0; k < 180; k++) tick(g, 280, k % 5 === 0 ? 292 : 286, k * 2, 1, rgba(TEAL, k % 5 === 0 ? 0.45 : 0.2));
+      arc(g, 296, 0, 360, 1, rgba(DIM, 0.5));
+    }), 270, -1);
+    // Yttre segmentringen (medurs): långa bågar med luckor, block och en tät skala.
+    spin(ringLayer('r4-outer', 790, function (g) {
       var parts = [[6, 52], [64, 70], [82, 168], [186, 232], [244, 250], [262, 352]];
       for (var i = 0; i < parts.length; i++) arc(g, R.outer, parts[i][0], parts[i][1], 1.5, rgba(TEAL, 0.55));
       for (var j = 0; j < 16; j++) arc(g, R.outer - 9, 10 + j * 22.5, 13 + j * 22.5, 8, rgba(TEAL, 0.4));
       for (var k = 0; k < 10; k++) arc(g, R.outer + 9, 172 + k * 1.4, 172.7 + k * 1.4, 8, rgba(TEAL, 0.45));
       for (var m = 0; m < 10; m++) arc(g, R.outer + 9, 352 - m * 1.4, 352.7 - m * 1.4, 8, rgba(TEAL, 0.45));
-    });
-    // Fin skala mellan dygnsringen och mätarna.
-    ringLayer('r4-scale', 600, function (g) {
-      for (var i = 0; i < 180; i++) tick(g, 280, i % 5 === 0 ? 292 : 286, i * 2, 1, rgba(TEAL, i % 5 === 0 ? 0.45 : 0.2));
-      arc(g, 296, 0, 360, 1, rgba(DIM, 0.5));
-    });
-    // Fenor uppe och nere: täta streck och block mellan dygnsringen och den yttre ringen (dekor, som i en ritning).
-    ringLayer('r4-fins', 740, function (g) {
-      for (var side = 0; side < 2; side++) {
-        var c0 = side * 180;
-        for (var i = -8; i <= 8; i++) tick(g, 328, i % 4 === 0 ? 356 : 344, c0 + i * 1.6, 1, rgba(TEAL, i % 4 === 0 ? 0.55 : 0.3));
-        arc(g, 362, c0 - 16, c0 + 16, 1, rgba(TEAL, 0.45));
-        arc(g, 322, c0 - 22, c0 - 14, 5, rgba(TEAL, 0.3));
-        arc(g, 322, c0 + 14, c0 + 22, 5, rgba(TEAL, 0.3));
-      }
-    });
-    // Inre: streckad ring och små punkter innanför sekundringen.
-    ringLayer('r4-inner', 360, function (g) {
+    }), 160, 1);
+    // Inre: streckad ring och små punkter innanför sekundringen; andas.
+    spin(ringLayer('r4-inner', 360, function (g) {
       for (var i = 0; i < 72; i++) arc(g, 160, i * 5, i * 5 + 2.5, 1.5, rgba(TEAL, 0.35));
       for (var k = 0; k < 4; k++) arc(g, 152, k * 90 + 20, k * 90 + 70, 2, rgba(TEAL, 0.4));
       for (var j = 0; j < 24; j++) { var p = at(144, j * 15); g.fillStyle = rgba(TEAL, j % 6 ? 0.3 : 0.8); g.fillRect(p[0] - 1, p[1] - 1, 2.5, 2.5); }
-    });
-    // Bakom klockan: svaga ekrar som långsamt vrider sig.
-    ringLayer('r4-spokes', 300, function (g) {
+    }), 80, 1, 8);
+    // Bakom klockan: svaga ekrar.
+    spin(ringLayer('r4-spokes', 300, function (g) {
       for (var i = 0; i < 12; i++) tick(g, 70, i % 3 === 0 ? 136 : 118, i * 30 + 15, 1, rgba(TEAL, 0.12));
       arc(g, 64, 0, 360, 1, rgba(TEAL, 0.1));
       for (var k = 0; k < 4; k++) arc(g, 100, k * 90 + 30, k * 90 + 60, 3, rgba(TEAL, 0.1));
-    });
+    }), 120, -1);
   }
 
-  // MARK: - Dynamiska lagret (per bildruta)
-
-  function makeParticles(n) {
-    particles = [];
-    for (var i = 0; i < n; i++) {
-      particles.push({r: 410 + Math.random() * 110, tilt: 0.5 + Math.random() * 0.35, a: Math.random() * Math.PI * 2,
-        v: (Math.random() < 0.5 ? -1 : 1) * (0.015 + Math.random() * 0.04), s: 1 + Math.random() * 1.4, o: 0.15 + Math.random() * 0.4});
+  /** Partiklar i en lutande bana: en ring med prickar, hoptryckt på höjden av sitt hölje och vriden inuti det. */
+  var orbits = [];
+  function buildOrbits(n) {
+    for (var o = 0; o < orbits.length; o++) if (orbits[o].parentNode) orbits[o].parentNode.removeChild(orbits[o]);
+    orbits = [];
+    var keep = [];
+    for (var m = 0; m < movers.length; m++) if (!movers[m].orbit) keep.push(movers[m]);
+    movers = keep;
+    if (!root) return;
+    var specs = [[0.62, 230, 1, 40], [0.8, 330, -1, 30]];
+    for (var i = 0; i < n && i < specs.length; i++) {
+      var size = 1060, holder = el('div', 'h4-orbit', null);
+      holder.style.left = (CX - size / 2) + 'px';
+      holder.style.top = (CY - size / 2) + 'px';
+      holder.style.width = holder.style.height = size + 'px';
+      holder.style.webkitTransform = holder.style.transform = 'scaleY(' + specs[i][0] + ')';
+      root.insertBefore(holder, stat);
+      var c = el('canvas', 'h4-ring', holder);
+      c.width = c.height = size;
+      c.style.left = c.style.top = '0px';
+      c.style.width = c.style.height = size + 'px';
+      var g = c.getContext('2d');
+      for (var k = 0; k < specs[i][3]; k++) {
+        var r = 410 + Math.random() * 110, a = Math.random() * Math.PI * 2, sz = 1 + Math.random() * 1.6;
+        g.fillStyle = rgba(TEAL, 0.15 + Math.random() * 0.45);
+        g.fillRect(size / 2 + Math.cos(a) * r - sz / 2, size / 2 + Math.sin(a) * r - sz / 2, sz, sz);
+      }
+      spin(c, specs[i][1], specs[i][2]);
+      movers[movers.length - 1].orbit = true;
+      orbits.push(holder);
     }
   }
 
-  function frame(now) {
-    raf = 0;
-    if (!running) return;
-    raf = requestAnimationFrame(frame);
-    var minGap = 1000 / q.fps;
-    if (now - lastFrame < minGap - 2) return;
-    var dt = lastFrame ? Math.min(0.25, (now - lastFrame) / 1000) : 0;
-    adapt(now - lastFrame);
-    lastFrame = now;
-
-    var g = dctx, t = Date.now(), boot = Math.min(1, (t - bootAt) / 2600), i;
-    g.clearRect(0, 0, W, H);
-
-    // Uppstart: ledlinjerna ritas ut från kärnan, en ring växer ut.
-    if (boot < 1) {
-      for (i = 0; i < links.length; i++) drawLink(g, links[i], Math.max(0, Math.min(1, boot * 1.6 - i * 0.1)), 0.9);
-      arc(g, 100 + boot * 330, 0, 360, 2, rgba(TEAL, (1 - boot) * 0.8));
+  /** Svepet runt kärnan och snurrorna på cykelmätarna: små förritade canvas. */
+  var sweepEl = null;
+  function buildSweep() {
+    sweepEl = spin(ringLayer('r4-sweep', 440, function (g) {
+      for (var k = 0; k < 5; k++) arc(g, 186 + k * 4, -30 + k * 4, 0, 4, rgba(TEAL, 0.03 + k * 0.02));
+    }), 10, 1);
+    for (var i = 0; i < 3; i++) {
+      var x = LX + 72 + i * 143, size = 140, c = el('canvas', 'h4-ring', root);
+      c.width = c.height = size;
+      c.style.left = (x - size / 2) + 'px';
+      c.style.top = (GAUGE_Y - size / 2) + 'px';
+      c.style.width = c.style.height = size + 'px';
+      arcAt(c.getContext('2d'), size / 2, size / 2, GAUGE_R + 8, 0, 14, 3, rgba(TEAL, 0.55));
+      spin(c, 6 + i * 2.5, 1);
     }
+  }
 
-    // Sekundringen: 60 fält, sekunderna som gått lyser, den aktuella starkast.
-    var d = new Date(t), sec = d.getSeconds() + d.getMilliseconds() / 1000;
+  // MARK: - Kärnans lilla canvas: sekundringen och mätarnas visare
+
+  var CORE_W = 900, CORE_H = 760, core = null, cctx = null, lastSec = -1;
+
+  function drawCoreDyn(t, dt) {
+    var g = cctx, moving = false;
+    g.save();
+    g.setTransform(scale, 0, 0, scale, 0, 0);
+    g.clearRect(0, 0, CORE_W, CORE_H);
+    g.translate(CORE_W / 2 - CX, CORE_H / 2 - CY);
+    var d = new Date(t), sec = d.getSeconds();
     for (var s = 0; s < 60; s++) {
-      var on = s < sec, cur = s === Math.floor(sec);
-      arc(g, R.sec, s * 6 + 0.9, s * 6 + 5.1, cur ? 8 : 4, rgba(cur ? ICE : TEAL, cur ? 1 : on ? 0.5 : 0.1));
+      var cur = s === sec;
+      arc(g, R.sec, s * 6 + 0.9, s * 6 + 5.1, cur ? 8 : 4, rgba(cur ? ICE : TEAL, cur ? 1 : s < sec ? 0.5 : 0.1));
     }
-
-    // Svepet: en svag ljuskil runt kärnan (dekor).
-    if (q.sweep) {
-      var sw = (t / 10000 % 1) * 360;
-      for (var k = 0; k < 5; k++) arc(g, 186 + k * 4, sw - 30 + k * 4, sw, 4, rgba(TEAL, 0.03 + k * 0.02));
-    }
-
-    // Mätarnas visare glider mot sina värden.
     if (model.temp !== undefined) {
       var tt = clampT(model.temp);
       needle.temp = needle.temp === null ? TEMP_LO : needle.temp + (tt - needle.temp) * Math.min(1, dt * 2.2);
+      if (Math.abs(tt - needle.temp) < 0.02) needle.temp = tt; else moving = true;
       var td = tempDeg(needle.temp);
       arc(g, R.gauge, td, 130, 4, rgba(TEAL, 0.8));
       tick(g, R.gauge - 16, R.gauge + 18, td, 2.5, rgba(ICE, 1));
@@ -597,54 +624,130 @@ var Holo4 = (function () {
     if (model.match) {
       var days = Math.max(0, Math.min(14, (model.match.start - t) / 86400000));
       needle.match = needle.match === null ? 14 : needle.match + (days - needle.match) * Math.min(1, dt * 2.2);
+      if (Math.abs(days - needle.match) < 0.005) needle.match = days; else moving = true;
       var md = matchDeg(needle.match);
       arc(g, R.gauge, 230, md, 4, rgba(AMBER, 0.85));
       tick(g, R.gauge - 16, R.gauge + 18, md, 2.5, rgba(AMBER, 1));
       var left = Math.max(0, model.match.start - t), dl = Math.floor(left / 86400000), hl = Math.floor(left / 3600000) % 24;
       needleLabel(g, md, (dl ? dl + ' D ' : '') + hl + ' H', AMBER, -1);
     }
+    g.restore();
+    lastSec = sec;
+    return moving;
+  }
 
-    // Cykelmätarna: en liten markör som snurrar längs varje skala (dekor).
-    for (i = 0; i < 3; i++) {
-      var gx = LX + 72 + i * 143, ga = (t / (6000 + i * 2500) % 1) * 360;
-      arcAt(g, gx, GAUGE_Y, GAUGE_R + 8, ga, ga + 14, 3, rgba(TEAL, 0.55));
+  // MARK: - Pulser, dockans svep och siktet: små element som flyttas
+
+  var pulseEls = [], dockSweep = null, ret = null, retCorners = [], retFor = null, retAt = 0, retBox = null, needleMoving = true;
+  var bootCanvas = null, bootCtx = null;
+
+  function buildMovers() {
+    for (var i = 0; i < 6; i++) { var p = el('div', 'h4-pulse', root); p.style.display = 'none'; pulseEls.push(p); }
+    dockSweep = el('div', 'h4-docksweep', root);
+    ret = el('div', '', document.getElementById('home'));
+    ret.id = 'h4ret';
+    for (var k = 0; k < 4; k++) retCorners.push(el('span', 'c' + k, ret));
+  }
+
+  function place(e, x, y) {
+    var v = 'translate(' + Math.round(x) + 'px,' + Math.round(y) + 'px)';
+    e.style.webkitTransform = e.style.transform = v;
+  }
+
+  /** Siktet: läget läses när fokus flyttar (och en stund efter, medan rutan glider), annars en gång i sekunden. */
+  function updateReticle(t) {
+    var f = document.querySelector('#top .focus, #tiles .focus, #home .focus');
+    if (!f) { ret.style.display = 'none'; retFor = null; return; }
+    if (f !== retFor) { retFor = f; retAt = t; }
+    if (!retBox || t - retAt < 600 || t % 1000 < 40) {
+      var b = rect(f);
+      if (b) {
+        retBox = b;
+        ret.style.display = 'block';
+        ret.style.left = Math.round(b.x) + 'px'; ret.style.top = Math.round(b.y) + 'px';
+        ret.style.width = Math.round(b.w) + 'px'; ret.style.height = Math.round(b.h) + 'px';
+      }
+    }
+    var pad = 9 + Math.sin(t / 280) * 3;
+    place(retCorners[0], -pad, -pad); place(retCorners[1], pad, -pad);
+    place(retCorners[2], pad, pad); place(retCorners[3], -pad, pad);
+  }
+
+  function frame(now) {
+    raf = 0;
+    if (!running) return;
+    raf = requestAnimationFrame(frame);
+    var minGap = 1000 / q.fps;
+    if (now - lastFrame < minGap - 2) return;
+    var dt = lastFrame ? Math.min(0.25, (now - lastFrame) / 1000) : 0, t0 = Date.now();
+    adapt(now - lastFrame);
+    lastFrame = now;
+    var t = t0, i;
+
+    // Uppstart: ledlinjerna ritas ut från kärnan (bara de första sekunderna, på ett eget canvas som sedan göms).
+    var boot = Math.min(1, (t - bootAt) / 2600);
+    if (bootCanvas) {
+      if (boot < 1) {
+        bootCtx.clearRect(0, 0, W, H);
+        for (i = 0; i < links.length; i++) drawLink(bootCtx, links[i], Math.max(0, Math.min(1, boot * 1.6 - i * 0.1)), 0.9);
+        arc(bootCtx, 100 + boot * 330, 0, 360, 2, rgba(TEAL, (1 - boot) * 0.8));
+      } else if (bootCanvas.style.display !== 'none') { bootCtx.clearRect(0, 0, W, H); bootCanvas.style.display = 'none'; }
     }
 
-    // Partiklar i lutande banor runt kärnan.
-    for (var p = 0; p < particles.length; p++) {
-      var pt = particles[p];
-      pt.a += pt.v * dt;
-      g.fillStyle = rgba(TEAL, pt.o);
-      g.fillRect(CX + Math.cos(pt.a) * pt.r - pt.s / 2, CY + Math.sin(pt.a) * pt.r * pt.tilt - pt.s / 2, pt.s, pt.s);
+    // Ringarna, partiklarna, svepet och snurrorna vrids: tio gånger i sekunden räcker för så långsamma varv
+    // (svepet, det snabbaste, följer bildfrekvensen).
+    var still = q.level === 'low' || q.fps <= 15 && q.level === 'auto', turn = t - lastTurn >= 95;
+    if (turn) lastTurn = t;
+    for (i = 0; i < movers.length; i++) {
+      var mv = movers[i];
+      if (still && !mv.orbit && mv.e !== sweepEl) continue;
+      if (!turn && mv.e !== sweepEl) continue;
+      var ang = (t / 1000 / mv.period % 1) * 360 * mv.dir, v = 'rotate(' + ang.toFixed(2) + 'deg)';
+      if (v !== mv.last) { mv.e.style.webkitTransform = mv.e.style.transform = v; mv.last = v; }
+      if (mv.breath) mv.e.style.opacity = (0.75 + 0.25 * Math.sin(t / 1000 / mv.breath * Math.PI * 2)).toFixed(2);
     }
 
-    // Ljuspulser längs ledlinjerna: ut till noderna, och tillbaka när en nod fått nya värden.
-    if (boot >= 1 && links.length && Math.random() < dt * 0.8) pulses.push({link: Math.floor(Math.random() * links.length), t: 0});
+    // Kärnan: en gång i sekunden, och varje bildruta medan en visare glider.
+    var sec = new Date(t).getSeconds();
+    if (sec !== lastSec || needleMoving) needleMoving = drawCoreDyn(t, dt || 0.03);
+
+    // Pulser längs ledlinjerna: ut till noderna, och tillbaka när en nod fått nya värden.
+    if (boot >= 1 && links.length && pulses.length < pulseEls.length && Math.random() < dt * 0.8) pulses.push({link: Math.floor(Math.random() * links.length), t: 0});
     for (var u = pulses.length - 1; u >= 0; u--) {
       var pu = pulses[u], ln = links[pu.link];
       pu.t += dt / (pu.strong ? 0.9 : 1.8);
       if (!ln || pu.t >= 1) { pulses.splice(u, 1); continue; }
-      var pos = pointOn(ln, pu.back ? 1 - pu.t : pu.t);
-      g.fillStyle = rgba(ICE, pu.strong ? 1 : 0.8);
-      g.fillRect(pos[0] - (pu.strong ? 3.5 : 2), pos[1] - (pu.strong ? 3.5 : 2), pu.strong ? 7 : 4, pu.strong ? 7 : 4);
+    }
+    for (i = 0; i < pulseEls.length; i++) {
+      var pe = pulseEls[i], pp = pulses[i];
+      if (!pp) { if (pe.style.display !== 'none') pe.style.display = 'none'; continue; }
+      var pos = pointOn(links[pp.link], pp.back ? 1 - pp.t : pp.t);
+      if (pe.style.display !== 'block') pe.style.display = 'block';
+      pe.className = 'h4-pulse' + (pp.strong ? ' strong' : '');
+      place(pe, pos[0], pos[1]);
     }
 
-    // Dockan: ett svagt svep längs basen.
+    // Dockans svep längs basen.
     if (q.sweep && slots.length) {
-      var dx0 = slots[0].x - 40, dx1 = slots[slots.length - 1].x + slots[slots.length - 1].w + 40, sx = dx0 + (t / 7000 % 1) * (dx1 - dx0);
-      for (var z = 0; z < 6; z++) { g.fillStyle = rgba(TEAL, 0.05 + z * 0.05); g.fillRect(sx - 60 + z * 10, 1049, 10, 2); }
-    }
+      var dx0 = slots[0].x - 40, dx1 = slots[slots.length - 1].x + slots[slots.length - 1].w + 40;
+      dockSweep.style.display = 'block';
+      place(dockSweep, dx0 + (t / 7000 % 1) * (dx1 - dx0) - 60, 1049);
+    } else dockSweep.style.display = 'none';
+    sweepEl.style.display = q.sweep ? '' : 'none';
 
-    // Siktet runt det som har fokus: hörnmarkeringar som andas.
-    var f = document.querySelector('#top .focus, #tiles .focus, #home .focus');
-    if (f) {
-      var fb = rect(f);
-      if (fb) {
-        var pad = 9 + Math.sin(t / 280) * 3;
-        g.strokeStyle = rgba(ICE, 0.95);
-        g.lineWidth = 2;
-        corners(g, fb.x - pad, fb.y - pad, fb.w + pad * 2, fb.h + pad * 2, 14);
-      }
+    updateReticle(t);
+    perfNote(Date.now() - t0, now);
+  }
+
+  // Mätning: motorns verkliga bildfrekvens och tiden den tar per bildruta (för Systemnoden och tester).
+  var perf = {frames: 0, ms: 0, since: 0, fps: 0, msPer: 0};
+  function perfNote(ms, now) {
+    if (!perf.since) perf.since = now;
+    perf.frames++; perf.ms += ms;
+    if (now - perf.since >= 3000) {
+      perf.fps = Math.round(perf.frames * 1000 / (now - perf.since));
+      perf.msPer = Math.round(perf.ms / perf.frames * 10) / 10;
+      perf.frames = 0; perf.ms = 0; perf.since = now;
     }
   }
 
@@ -654,27 +757,32 @@ var Holo4 = (function () {
     return {x: (r.left - s.left) / k, y: (r.top - s.top) / k, w: r.width / k, h: r.height / k};
   }
 
-  function corners(g, x, y, w, h, L) {
-    g.beginPath();
-    g.moveTo(x, y + L); g.lineTo(x, y); g.lineTo(x + L, y);
-    g.moveTo(x + w - L, y); g.lineTo(x + w, y); g.lineTo(x + w, y + L);
-    g.moveTo(x + w, y + h - L); g.lineTo(x + w, y + h); g.lineTo(x + w - L, y + h);
-    g.moveTo(x + L, y + h); g.lineTo(x, y + h); g.lineTo(x, y + h - L);
-    g.stroke();
+  // MARK: - Inbränning: hela startsidan flyttas en pixel i taget, sakta, i stället för en animation som går hela tiden
+
+  var driftTimer = 0;
+  function drift() {
+    var pts = [[0, 0], [4, 3], [0, 5], [-4, 3], [0, 0]], f = (Date.now() / 1000 % 3600) / 900, k = Math.floor(f), u = f - k;
+    var x = Math.round(pts[k][0] + (pts[k + 1][0] - pts[k][0]) * u), y = Math.round(pts[k][1] + (pts[k + 1][1] - pts[k][1]) * u);
+    var ids = ['home', 'sky'];
+    for (var i = 0; i < ids.length; i++) {
+      var e = document.getElementById(ids[i]);
+      if (e) { e.style.left = running ? x + 'px' : ''; e.style.top = running ? y + 'px' : ''; }
+    }
   }
 
   // MARK: - Kvalitet: Auto sänker när TV:n inte hinner med, och höjer igen när den gör det
 
-  var LEVELS = {high: {fps: 60, particles: 90, sweep: true}, medium: {fps: 30, particles: 60, sweep: true}, low: {fps: 15, particles: 24, sweep: false}};
+  var LEVELS = {high: {fps: 60, orbits: 2, sweep: true}, medium: {fps: 30, orbits: 1, sweep: true}, low: {fps: 15, orbits: 0, sweep: false}};
 
   function resize() {
     var s = q.level === 'high' ? Math.min(2, window.devicePixelRatio || 1) : 1;
     if (!stat || s === scale && stat.width === W * s) return;
     scale = s;
-    stat.width = dyn.width = W * s;
-    stat.height = dyn.height = H * s;
+    stat.width = W * s;
+    stat.height = H * s;
     sctx.setTransform(s, 0, 0, s, 0, 0);
-    dctx.setTransform(s, 0, 0, s, 0, 0);
+    core.width = CORE_W * s; core.height = CORE_H * s;
+    lastSec = -1; needleMoving = true;
     if (running) drawStatic();
   }
 
@@ -683,7 +791,8 @@ var Holo4 = (function () {
     resize();
     var l = LEVELS[q.level === 'auto' ? 'medium' : q.level] || LEVELS.medium;
     q.fps = l.fps; q.sweep = l.sweep;
-    makeParticles(l.particles);
+    if (root) buildOrbits(l.orbits);
+    q.orbits = l.orbits;
     slow = fast = 0;
     setClass(document.body, 'h4-low', q.level === 'low');
   }
@@ -693,10 +802,10 @@ var Holo4 = (function () {
     var budget = 1000 / q.fps;
     if (gap > budget * 1.6) slow++; else slow = Math.max(0, slow - 1);
     if (gap < budget * 1.1) fast++; else fast = 0;
-    if (slow > 45 && q.fps > 15) {
-      q.fps = q.fps > 30 ? 30 : 15; q.sweep = q.fps > 15; makeParticles(q.fps > 15 ? 60 : 24); slow = 0;
-      setClass(document.body, 'h4-low', q.fps <= 15);
-    } else if (fast > 900 && q.fps < 30) { q.fps = 30; q.sweep = true; makeParticles(60); fast = 0; setClass(document.body, 'h4-low', false); }
+    if (slow > 45 && q.fps > 15) {   // flera sekunder för långsamt: 15 bilder/s, inga partiklar eller svep, stilla ringar
+      q.fps = 15; q.sweep = false; buildOrbits(0); slow = 0;
+      setClass(document.body, 'h4-low', true);
+    } else if (fast > 900 && q.fps < 30) { q.fps = 30; q.sweep = true; buildOrbits(1); fast = 0; setClass(document.body, 'h4-low', false); }
   }
 
   // MARK: - Systemnoden och statusraden (riktiga värden från appen och vädret)
@@ -721,7 +830,8 @@ var Holo4 = (function () {
       model.riseAt ? ['SOL', hm(model.riseAt) + ' – ' + hm(model.setAt)] : null,
       ['FAVORITER', model.apps + ' APPAR'],
       ['UPPTID', Math.floor(up / 60) + ' H ' + two(up % 60) + ' MIN'],
-      window.FMTV_LOADER ? ['VERSION', FMTV_LOADER.version + '  ·  ' + FMTV_LOADER.commit] : null
+      window.FMTV_LOADER ? ['VERSION', FMTV_LOADER.version + '  ·  ' + FMTV_LOADER.commit] : null,
+      ['GRAFIK', fpsText()]
     ];
     sys.innerHTML = '';
     var head = el('div', 'head', sys);
@@ -730,13 +840,20 @@ var Holo4 = (function () {
       if (!rows[i]) continue;
       var r = el('div', 'row', sys);
       el('span', 'k', r, rows[i][0]);
-      el('span', 'v', r, rows[i][1]);
+      var v = el('span', 'v', r, rows[i][1]);
+      if (rows[i][0] === 'GRAFIK') sysFps = v;
     }
+  }
+
+  /** Grafikläget och motorns uppmätta bildfrekvens, t.ex. "AUTO  ·  30 BILDER/S". */
+  function fpsText() {
+    var names = {auto: 'AUTO', high: 'HÖG', medium: 'MELLAN', low: 'LÅG'};
+    return (names[q.level] || 'AUTO') + (perf.fps ? '  ·  ' + perf.fps + ' BILDER/S' : '');
   }
 
   // MARK: - Skärmsläckarna i samma stil (home.js anropar saver när en visas)
 
-  var SX = 960, SY = 520, saverTimer = 0;
+  var SX = 960, SY = 520, saverTimer = 0, saverSpin = 0;
 
   function ringAt(parent, cls, size, cx, cy, draw) {
     var c = el('canvas', 'h4-ring ' + cls, null);
@@ -789,6 +906,7 @@ var Holo4 = (function () {
   }
 
   function standbyRings(parent) {
+    var list = [];
     ringAt(parent, 's4-back', 1060, SX, SY, function (g) {
       var grad = g.createRadialGradient(SX, SY, 60, SX, SY, 300);
       grad.addColorStop(0, 'rgba(2, 8, 10, 0.85)');
@@ -798,26 +916,27 @@ var Holo4 = (function () {
       arcAt(g, SX, SY, 510, 0, 360, 1, rgba(DIM, 0.35));
       for (var k = 0; k < 120; k++) tickAt(g, SX, SY, 516, 522, k * 3, 1, rgba(TEAL, k % 10 === 0 ? 0.4 : 0.15));
     });
-    ringAt(parent, 's4-brackets', 960, SX, SY, function (g) {
+    list.push([ringAt(parent, 's4-brackets', 960, SX, SY, function (g) {
       for (var i = 0; i < 4; i++) {
         var c0 = 45 + i * 90;
         arcAt(g, SX, SY, 452, c0 - 20, c0 + 20, 2, rgba(TEAL, 0.5));
         tickAt(g, SX, SY, 444, 460, c0 - 20, 2, rgba(TEAL, 0.5));
         tickAt(g, SX, SY, 444, 460, c0 + 20, 2, rgba(TEAL, 0.5));
       }
-    });
-    ringAt(parent, 's4-outer', 880, SX, SY, function (g) {
+    }), 300, -1]);
+    list.push([ringAt(parent, 's4-outer', 880, SX, SY, function (g) {
       var parts = [[6, 52], [64, 70], [82, 168], [186, 232], [244, 250], [262, 352]];
       for (var i = 0; i < parts.length; i++) arcAt(g, SX, SY, 418, parts[i][0], parts[i][1], 1.5, rgba(TEAL, 0.5));
       for (var j = 0; j < 16; j++) arcAt(g, SX, SY, 408, 10 + j * 22.5, 13 + j * 22.5, 8, rgba(TEAL, 0.35));
-    });
-    ringAt(parent, 's4-scale', 800, SX, SY, function (g) {
+    }), 200, 1]);
+    list.push([ringAt(parent, 's4-scale', 800, SX, SY, function (g) {
       for (var i = 0; i < 180; i++) tickAt(g, SX, SY, 380, i % 5 === 0 ? 392 : 386, i * 2, 1, rgba(TEAL, i % 5 === 0 ? 0.4 : 0.18));
-    });
-    ringAt(parent, 's4-inner', 600, SX, SY, function (g) {
+    }), 360, -1]);
+    list.push([ringAt(parent, 's4-inner', 600, SX, SY, function (g) {
       for (var i = 0; i < 90; i++) arcAt(g, SX, SY, 272, i * 4, i * 4 + 2, 1.5, rgba(TEAL, 0.3));
       for (var k = 0; k < 4; k++) arcAt(g, SX, SY, 262, k * 90 + 20, k * 90 + 70, 2, rgba(TEAL, 0.35));
-    });
+    }), 120, 1]);
+    return list;
   }
 
   /** En skärmsläckare visas (home.js): i v4 klädd som kontrollrummet. Bilderna och klockan är desamma. */
@@ -830,8 +949,18 @@ var Holo4 = (function () {
     var host = kind === 'clock' ? layer.querySelector('.shift') || layer : layer;
     var c = el('canvas', 'h4-saverframe', null);
     c.width = W; c.height = H;
+    clearInterval(saverSpin); saverSpin = 0;
     if (kind === 'clock') {
-      standbyRings(host);
+      var rings = standbyRings(host);
+      // Ringarna vrids tio gånger i sekunden (inte i skärmens 60): skärmsläckaren kan stå på i timmar.
+      if (!hasClass(document.body, 'h4-low')) saverSpin = setInterval(function () {
+        if (!hasClass(layer, 'on')) { clearInterval(saverSpin); saverSpin = 0; return; }
+        var t = Date.now() / 1000;
+        for (var i = 0; i < rings.length; i++) {
+          var v = 'rotate(' + ((t / rings[i][1] % 1) * 360 * rings[i][2]).toFixed(2) + 'deg)';
+          rings[i][0].style.webkitTransform = rings[i][0].style.transform = v;
+        }
+      }, 100);
       host.insertBefore(c, host.querySelector('.clock'));   // över ringarna, under klockan
       drawStandby(c.getContext('2d'));
     } else {
@@ -856,12 +985,20 @@ var Holo4 = (function () {
     root = el('div', '', sky);
     root.id = 'holo4';
     buildRings();
+    buildSweep();
     stat = el('canvas', 'h4-static', root);   // över ringarna: mätvärden och etiketter ligger överst
     stat.width = W; stat.height = H;
     sctx = stat.getContext('2d');
-    dyn = el('canvas', 'h4-dyn', document.getElementById('home'));
-    dyn.width = W; dyn.height = H;
-    dctx = dyn.getContext('2d');
+    core = el('canvas', 'h4-core', root);
+    core.width = CORE_W; core.height = CORE_H;
+    core.style.left = (CX - CORE_W / 2) + 'px'; core.style.top = (CY - CORE_H / 2) + 'px';
+    core.style.width = CORE_W + 'px'; core.style.height = CORE_H + 'px';
+    cctx = core.getContext('2d');
+    bootCanvas = el('canvas', 'h4-bootlines', root);
+    bootCanvas.width = W; bootCanvas.height = H;
+    bootCtx = bootCanvas.getContext('2d');
+    buildMovers();
+    buildOrbits(q.orbits < 0 ? 1 : q.orbits);
     sys = el('div', '', top);
     sys.id = 'h4sys';
     bar = el('div', '', top);
@@ -878,12 +1015,18 @@ var Holo4 = (function () {
     resize();
     running = true;
     bootAt = Date.now();
+    bootCanvas.style.display = '';
     setClass(document.body, 'h4-boot', true);
     setTimeout(function () { setClass(document.body, 'h4-boot', false); }, 2800);
     needle.temp = needle.match = null;
+    needleMoving = true;
     modelKey = '';
     refresh();
+    drift();
+    if (!driftTimer) driftTimer = setInterval(drift, 30000);
+    if (window.WeatherBg && WeatherBg.hold) WeatherBg.hold(true);   // himlen bakom rummet behöver inte röra sig
     lastFrame = 0;
+    perf.since = 0; perf.frames = 0; perf.ms = 0;
     if (!raf) raf = requestAnimationFrame(frame);
   }
 
@@ -891,7 +1034,10 @@ var Holo4 = (function () {
     running = false;
     if (raf) cancelAnimationFrame(raf);
     raf = 0;
-    if (dctx) dctx.clearRect(0, 0, W, H);
+    clearInterval(driftTimer); driftTimer = 0;
+    drift();   // tillbaka på plats
+    if (window.WeatherBg && WeatherBg.hold) WeatherBg.hold(false);
+    if (ret) ret.style.display = 'none';
   }
 
   /** Följer inställningen och läget: på i v4 när startsidan syns, av annars. Byte av utseende lägger om dockan. */
@@ -903,14 +1049,17 @@ var Holo4 = (function () {
       wasOn = on;
       if (!(first && !on) && window.FreeMyTV && FreeMyTV.relayout) FreeMyTV.relayout();
     }
-    if (typeof Prefs !== 'undefined' && Prefs.holoQuality && (Prefs.holoQuality() !== q.level || !particles.length)) setQuality(Prefs.holoQuality());
+    if (typeof Prefs !== 'undefined' && Prefs.holoQuality && (Prefs.holoQuality() !== q.level || q.orbits < 0)) setQuality(Prefs.holoQuality());
     var hidden = paused || document.hidden || (window.Hud && Hud.isOn && Hud.isOn());
     if (on && !hidden) start(); else stop();
   }
 
   document.addEventListener('visibilitychange', apply);
   // Var 5:e sekund: datan och rutornas lägen (Barça byter sida var 12:e sekund), och om v4 har slagits på.
-  setInterval(function () { if (running) refresh(); else if (enabled() && !paused && !document.hidden) apply(); }, 5000);
+  setInterval(function () {
+    if (running) { refresh(); if (sysFps) sysFps.textContent = fpsText(); }
+    else if (enabled() && !paused && !document.hidden) apply();
+  }, 5000);
   setInterval(function () { if (running) { modelKey = ''; refresh(); } }, 60000);
   setTimeout(apply, 600);
 
@@ -918,5 +1067,5 @@ var Holo4 = (function () {
     /** Skärmsläckarna (home.js): motorn vilar medan en av dem täcker startsidan. */
     pause: function (on) { if (paused !== !!on) { paused = !!on; apply(); } },
     /** För tester: läget just nu. */
-    debug: function () { return {model: model, links: links.length, slots: slots.length, fps: q.fps, particles: particles.length}; }};
+    debug: function () { return {model: model, links: links.length, slots: slots.length, fps: q.fps, orbits: orbits.length, perf: {fps: perf.fps, msPerFrame: perf.msPer}}; }};
 })();

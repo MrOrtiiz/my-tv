@@ -238,8 +238,9 @@ var WeatherBg = (function () {
     raf = window.requestAnimationFrame(loop);
   }
 
+  var held = false;   // Kontrollrum v4 (holo4.js): himlen står still, den syns bara svagt bakom rummet
   function run() {
-    if (raf || !state.on || document.hidden || !moving()) return;
+    if (raf || held || !state.on || document.hidden || !moving()) return;
     last = 0; acc = FRAME;
     raf = window.requestAnimationFrame(loop);
   }
@@ -275,6 +276,8 @@ var WeatherBg = (function () {
       run();
     },
     /** Paused (a sheet or the screensaver covers it) or running again. */
-    pause: function (paused) { if (paused) stop(); else run(); }
+    pause: function (paused) { if (paused) stop(); else run(); },
+    /** Står still tills hold(false), också när vädret uppdateras (holo4.js i v4). */
+    hold: function (on) { held = !!on; if (held) stop(); else run(); }
   };
 })();
