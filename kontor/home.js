@@ -334,7 +334,8 @@
    * (android/kompis.js: no search or games on the friend's projector); Inputs only where the TV has inputs to show.
    */
   // [kind, symbol, tip, tip to translate, only where CONFIG.buttons names it]. Marvel: marvel.js (the friend's projector).
-  var ALL_BUTTONS = [['marvel', 'play', 'Marvel', false, true], ['phone', 'cast', 'Mobilen', false, true],
+  // Hem: den vanliga Free My TV-startsidan på jobbets sticka (TV.stockHome), bara där CONFIG.buttons tar med 'home'.
+  var ALL_BUTTONS = [['home', 'home', 'Vanliga startsidan', false, true], ['marvel', 'play', 'Marvel', false, true], ['phone', 'cast', 'Mobilen', false, true],
     ['channels', 'live_tv', 'TV-kanaler', false, true], ['search', 'search', 'Sök'], ['games', 'gamepad', 'Spel'],
     ['inputs', 'hdmi', 'Inputs', true], ['shortcuts', 'apps', 'Shortcuts', true]];
   var BUTTONS = ALL_BUTTONS.filter(function (b) {
@@ -1726,6 +1727,7 @@
         if (kind === 'search') { if (window.Search) Search.open(); }
         else if (kind === 'marvel') { if (window.Marvel) Marvel.open(); }
         else if (kind === 'phone') { if (window.Koppla) Koppla.open(); }
+        else if (kind === 'home') { TV.stockHome(function (ok) { if (ok === false) toast('Kunde inte öppna den vanliga startsidan.'); }); }
         else if (kind === 'channels') { if (window.Kanaler) Kanaler.open(); }
         else openPicker(kind);
         return;
