@@ -27,7 +27,7 @@ var Holo = (function () {
   var DAYS = ['SÖN', 'MÅN', 'TIS', 'ONS', 'TOR', 'FRE', 'LÖR'];
 
   var bar = null, root = null, stat = null, sctx = null, dyn = null, dctx = null, sys = null;
-  var running = false, paused = false, raf = 0, lastFrame = 0, bootAt = 0, startedAt = Date.now();
+  var running = false, paused = false, raf = 0, lastFrame = 0, bootAt = 0, startedAt = Date.now(), wakeNext = false, wakeTimer = 0;
   var model = {}, modelKey = '', links = [], particles = [], pulses = [];
   var needle = {traffic: -1, match: -1};
   var q = {fps: 30, particles: 70, sweep: true, level: 'auto'}, slow = 0, fast = 0, scale = 1;
@@ -567,10 +567,20 @@ var Holo = (function () {
     if (!root && !build()) return;
     resize();
     running = true;
-    bootAt = Date.now();
-    setClass(document.body, 'holo-boot', true);
-    setTimeout(function () { setClass(document.body, 'holo-boot', false); }, 2800);
-    needle.traffic = needle.match = -1;
+    if (wakeNext) {
+      // Tillbaka från skärmsläckaren: ingen startsekvens, bara en mjuk inzoomning medan skärmsläckaren tonar ut.
+      wakeNext = false;
+      bootAt = Date.now() - 5000;
+      setClass(document.body, 'holo-boot', false);
+      setClass(document.body, 'holo-wake', true);
+      clearTimeout(wakeTimer);
+      wakeTimer = setTimeout(function () { setClass(document.body, 'holo-wake', false); }, 1300);
+    } else {
+      bootAt = Date.now();
+      setClass(document.body, 'holo-boot', true);
+      setTimeout(function () { setClass(document.body, 'holo-boot', false); }, 2800);
+      needle.traffic = needle.match = -1;
+    }
     modelKey = '';
     refresh();
     lastFrame = 0;
@@ -600,7 +610,7 @@ var Holo = (function () {
 
   return {apply: apply, refresh: refresh, setQuality: setQuality, isRunning: function () { return running; },
     /** Skärmsläckarna (home.js): motorn vilar medan en av dem täcker startsidan. */
-    pause: function (on) { if (paused !== !!on) { paused = !!on; apply(); } },
+    pause: function (on) { if (paused !== !!on) { paused = !!on; if (!paused && !running) wakeNext = true; apply(); } },
     /** För tester: läget just nu. */
     debug: function () { return {model: model, links: links.length, fps: q.fps, particles: particles.length}; }};
 })();

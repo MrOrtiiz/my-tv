@@ -27,7 +27,7 @@ var Holo4 = (function () {
   var TEMP_LO = -20, TEMP_HI = 30;       // utemätarens skala, °C
 
   var root = null, stat = null, sctx = null, sys = null, bar = null, sysFps = null, wasOn = null;
-  var running = false, paused = false, raf = 0, lastFrame = 0, bootAt = 0, startedAt = Date.now();
+  var running = false, paused = false, raf = 0, lastFrame = 0, bootAt = 0, startedAt = Date.now(), wakeNext = false, wakeTimer = 0;
   var model = {}, modelKey = '', links = [], pulses = [], slots = [];
   var needle = {temp: null, match: null};
   var q = {fps: 30, orbits: -1, sweep: true, level: 'auto'}, slow = 0, fast = 0, scale = 1;
@@ -1110,11 +1110,23 @@ var Holo4 = (function () {
     if (!root && !build()) return;
     resize();
     running = true;
-    bootAt = Date.now();
-    bootCanvas.style.display = '';
-    setClass(document.body, 'h4-boot', true);
-    setTimeout(function () { setClass(document.body, 'h4-boot', false); }, 2800);
-    needle.temp = needle.match = null;
+    if (wakeNext) {
+      // Tillbaka från skärmsläckaren: allt står redan på plats under den. Ingen startsekvens, bara en mjuk inzoomning
+      // samtidigt som skärmsläckaren tonar ut, och visarna där de var.
+      wakeNext = false;
+      bootAt = Date.now() - 5000;
+      bootCanvas.style.display = 'none';
+      setClass(document.body, 'h4-boot', false);
+      setClass(document.body, 'h4-wake', true);
+      clearTimeout(wakeTimer);
+      wakeTimer = setTimeout(function () { setClass(document.body, 'h4-wake', false); }, 1300);
+    } else {
+      bootAt = Date.now();
+      bootCanvas.style.display = '';
+      setClass(document.body, 'h4-boot', true);
+      setTimeout(function () { setClass(document.body, 'h4-boot', false); }, 2800);
+      needle.temp = needle.match = null;
+    }
     needleMoving = true;
     modelKey = '';
     refresh();
@@ -1163,7 +1175,7 @@ var Holo4 = (function () {
     /** En nod slogs av eller på, eller nattläget ändrades (Hemskärm): allt läses och ritas om. */
     relayout: function () { modelKey = ''; if (running) refresh(); else apply(); },
     /** Skärmsläckarna (home.js): motorn vilar medan en av dem täcker startsidan. */
-    pause: function (on) { if (paused !== !!on) { paused = !!on; apply(); } },
+    pause: function (on) { if (paused !== !!on) { paused = !!on; if (!paused && !running) wakeNext = true; apply(); } },
     /** För tester: läget just nu. */
     debug: function () { return {model: model, links: links.length, slots: slots.length, fps: q.fps, orbits: orbits.length, perf: {fps: perf.fps, msPerFrame: perf.msPer}}; }};
 })();

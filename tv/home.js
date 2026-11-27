@@ -1966,6 +1966,43 @@
     return Data.showcase().filter(function (p) { return p.backdrop && Data.usable(p.app); });
   }
 
+  // MARK: - Övergångarna: skärmsläckaren tonar in och ut över en startsida som står still under den
+
+  var restTimer = 0, revealSeq = 0;
+
+  /**
+   * Visar lagret när det är byggt. Först ritas det osynligt (prep: synligt men genomskinligt, så att bilden packas upp och
+   * texten ritas i förväg), och två bildrutor senare börjar toningen, som då inte har något kvar att vänta på.
+   */
+  function reveal(layer) {
+    var mine = ++revealSeq;
+    setClass(layer, 'prep', true);
+    function go() { if (mine === revealSeq) setClass(layer, 'on', true); }
+    if (window.requestAnimationFrame) requestAnimationFrame(function () { requestAnimationFrame(go); }); else setTimeout(go, 40);
+  }
+  function conceal(layer) {
+    revealSeq++;
+    setClass(layer, 'on', false);
+    setClass(layer, 'prep', false);
+  }
+
+  /** Kontrollrummet vilar först när skärmsläckaren täcker hela startsidan (då syns inte att ringarna stannar). */
+  function restLater() {
+    clearTimeout(restTimer);
+    restTimer = setTimeout(function () {
+      if (!saverOn && !ambientOn) return;
+      if (window.Holo) Holo.pause(true);
+      if (window.Holo4) Holo4.pause(true);
+    }, 1500);
+  }
+
+  /** Igång igen direkt när toningen ut har börjat; utan kontrollrummets startsekvens (holo4.js vaknar mjukt). */
+  function wakeEngines(now) {
+    clearTimeout(restTimer);
+    function go() { if (window.Holo) Holo.pause(false); if (window.Holo4) Holo4.pause(false); }
+    if (now) go(); else setTimeout(go, 34);
+  }
+
   function showSaver() {
     var photos = saverPhotos();
     saverOn = true;
@@ -1980,32 +2017,54 @@
     el('div', 'date', clock);
     el('div', 'title', clock);
     var hint = el('div', 'hint', clock);
-    var front = a;
+    var front = a, first = true;
     function next() {
       if (!saverOn) return;
       var p = photos.length ? photos[saverIndex++ % photos.length] : null;
       var back = front === a ? b : a;
       if (p) {
-        back.style.backgroundImage = 'url(' + Data.image(p.backdrop, 'original') + ')';
+        var url = Data.image(p.backdrop, 'original');
+        back.style.backgroundImage = 'url(' + url + ')';
         back.style.webkitTransform = back.style.transform = 'scale(1.0)';
         clock.children[2].textContent = p.title;
         saverPick = p;
         // With Watch from the screensaver on, OK opens this title's app (any other key only closes).
         var target = Prefs.saverWatch() ? pickTarget(p) : null;
         hint.textContent = target ? trf('Press OK to watch on {app} · any other button to close', {app: target.app.title}) : '';
-        setTimeout(function () {
+        if (first) {
+          // Den första bilden finns redan när skärmsläckaren tonar in: startsidan glider direkt över i bilden,
+          // inte via svart. Den laddas först, så att TV:n inte packar upp en stor bild mitt i toningen.
+          first = false;
+          back.style.webkitTransition = back.style.transition = 'none';
           setClass(back, 'on', true);
-          setClass(front, 'on', false);
-          back.style.webkitTransform = back.style.transform = 'scale(1.08) translateX(-1.5%)';
+          back.offsetWidth;   // läget sätts innan toningen slås på igen
+          back.style.webkitTransition = back.style.transition = '';
           front = back;
-        }, 60);
-      }
+          var shown = false, img = new Image();
+          var show = function () {
+            if (shown || !saverOn) return;
+            shown = true;
+            reveal(s);
+            setTimeout(function () { back.style.webkitTransform = back.style.transform = 'scale(1.08) translateX(-1.5%)'; }, 80);
+          };
+          img.onload = img.onerror = show;
+          img.src = url;
+          setTimeout(show, 1500);
+        } else {
+          setTimeout(function () {
+            setClass(back, 'on', true);
+            setClass(front, 'on', false);
+            back.style.webkitTransform = back.style.transform = 'scale(1.08) translateX(-1.5%)';
+            front = back;
+          }, 60);
+        }
+      } else if (first) { first = false; reveal(s); }
       tickSaverClock(clock);
       saverTimer = setTimeout(next, 12000);
     }
-    setClass(s, 'on', true);
     if (window.Holo4 && Holo4.saver) Holo4.saver(s, 'photos');   // Kontrollrum v4: skärmsläckaren i samma stil
     next();
+    restLater();
   }
 
   function tickSaverClock(clock) {
@@ -2023,8 +2082,8 @@
   function hideSaver() {
     saverOn = false;
     clearTimeout(saverTimer);
-    setClass($('saver'), 'on', false);
-    if (window.Festive && Festive.into) Festive.into(null);
+    conceal($('saver'));
+    if (window.Festive && Festive.into) Festive.into(null);   // tillbaka på startsidan, under skärmsläckaren som tonar ut
   }
 
   // MARK: - The clock screensaver: a clock, the date and the weather, drifting slowly for OLED panels
@@ -2044,9 +2103,10 @@
     el('div', 'cond', side);
     ambientOn = true;
     if (window.Holo4 && Holo4.saver) Holo4.saver(a, 'clock');   // Kontrollrum v4: viloläget i samma stil
-    setClass(a, 'on', true);
     ambientTimer = setInterval(tickAmbient, 30000);
     tickAmbient();
+    reveal(a);
+    restLater();
   }
 
   function tickAmbient() {
@@ -2066,18 +2126,17 @@
   function hideAmbient() {
     ambientOn = false;
     clearInterval(ambientTimer);
-    setClass($('ambient'), 'on', false);
-    if (window.Festive && Festive.into) Festive.into(null);
+    conceal($('ambient'));
+    if (window.Festive && Festive.into) Festive.into(null);   // tillbaka på startsidan, under skärmsläckaren som tonar ut
   }
 
   function poke(ok) {
     idleAt = Date.now();
-    if (window.Holo) Holo.pause(false);
-    if (window.Holo4) Holo4.pause(false);
-    if (ambientOn) { hideAmbient(); return true; }
-    if (!saverOn) return false;
+    if (ambientOn) { hideAmbient(); wakeEngines(); return true; }
+    if (!saverOn) { wakeEngines(true); return false; }
     var target = ok && Prefs.saverWatch() ? pickTarget(saverPick) : null;
     hideSaver();
+    wakeEngines();
     if (target) launcher(target.app.id, target.app.title, target.params)();
     return true;
   }
@@ -2212,9 +2271,7 @@
     applyDim();   // automatic: medium from 22:00, off again at 07:00
     if ((window.IPTV && IPTV.playing()) || (window.Search && Search.isOpen()) || (window.Dance && Dance.isOpen()) || (window.Rush && Rush.isOpen()) || (window.Marvel && Marvel.isOpen()) || (window.Koppla && Koppla.isOpen()) || (window.Kanaler && Kanaler.isOpen())) idleAt = Date.now();   // no screensaver over a match, a search or a game
     if (!document.hidden && !saverOn && !ambientOn && !sheetOpen() && Date.now() - idleAt > SAVER_AFTER) {
-      if (saverMode() === 'clock') showAmbient(); else showSaver();
-      if (window.Holo) Holo.pause(true);
-      if (window.Holo4) Holo4.pause(true);
+      if (saverMode() === 'clock') showAmbient(); else showSaver();   // kontrollrummet vilar när toningen är klar
     }
     if (saverOn) tickSaverClock($('saver').querySelector('.clock'));
     if (ambientOn) tickAmbient();
