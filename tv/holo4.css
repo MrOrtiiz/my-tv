@@ -52,6 +52,18 @@ body.v4 #h4ret .c3 { left: 0; bottom: 0; border-left-width: 2px; border-bottom-w
 @keyframes h4slide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 body.v4.h4-boot #holo4 { -webkit-animation: h4in 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation: h4in 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   -webkit-transform-origin: 960px 468px; transform-origin: 960px 468px; }
+/* Appen startar med v4 vald (index.html): bara den mörka bakgrunden tills rummet startar, inget standardutseende först. */
+body.v4-pre #stage { background: #020507; }
+body.v4-pre #sky, body.v4-pre #home, body.v4-pre #drawer { visibility: hidden; }
+/* Startsekvensen: vädrets himmel tonar in tillsammans med rummet, så att den inte lyser upp innan rummets mörka yta finns.
+   Bara "from": varje del tonar till sitt eget vanliga värde (dagens eller nattens), inte till ett fast. */
+@-webkit-keyframes h4skyfade { from { opacity: 0; } }
+@keyframes h4skyfade { from { opacity: 0; } }
+@-webkit-keyframes h4skybg { from { background-color: #020507; } }
+@keyframes h4skybg { from { background-color: #020507; } }
+body.v4.h4-boot #sky { -webkit-animation: h4skybg 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation: h4skybg 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+body.v4.h4-boot #sky .grad, body.v4.h4-boot #sky .wx, body.v4.h4-boot #sky #bgA, body.v4.h4-boot #sky #bgB, body.v4.h4-boot #sky .veil {
+  -webkit-animation: h4skyfade 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation: h4skyfade 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 /* Tillbaka från skärmsläckaren (holo4.js): rummet zoomar in lite och tonar upp samtidigt som skärmsläckaren tonar ut. */
 @-webkit-keyframes h4wake { from { opacity: 0.4; -webkit-transform: scale(0.985); } to { opacity: 1; -webkit-transform: none; } }
 @keyframes h4wake { from { opacity: 0.4; transform: scale(0.985); } to { opacity: 1; transform: none; } }

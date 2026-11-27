@@ -1160,6 +1160,8 @@ var Holo4 = (function () {
     if (typeof Prefs !== 'undefined' && Prefs.holoQuality && (Prefs.holoQuality() !== q.level || q.orbits < 0)) setQuality(Prefs.holoQuality());
     var hidden = paused || document.hidden || (window.Hud && Hud.isOn && Hud.isOn());
     if (on && !hidden) start(); else stop();
+    // Startsidan döljs vid start när v4 är valt (index.html): fram nu, i v4 med startsekvensen, annars som vanligt.
+    if (hasClass(document.body, 'v4-pre') && (running || !on)) setClass(document.body, 'v4-pre', false);
   }
 
   document.addEventListener('visibilitychange', apply);
@@ -1169,7 +1171,7 @@ var Holo4 = (function () {
     else if (enabled() && !paused && !document.hidden) apply();
   }, 5000);
   setInterval(function () { if (running) { modelKey = ''; refresh(); } }, 60000);
-  setTimeout(apply, 600);
+  setTimeout(apply, hasClass(document.body, 'v4-pre') ? 150 : 600);
 
   return {apply: apply, refresh: refresh, setQuality: setQuality, saver: saver, isRunning: function () { return running; },
     /** En nod slogs av eller på, eller nattläget ändrades (Hemskärm): allt läses och ritas om. */

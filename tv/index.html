@@ -23,6 +23,16 @@
       document.body.className = 'night';
     }
   } catch (e) {}
+  // Kontrollrum v4 valt (utan filmtips): bara rummets mörka bakgrund tills holo4.js startar med sin startsekvens, så att
+  // standardutseendet inte syns först. Kommer v4 inte igång (fil som inte laddas) visas startsidan ändå efter 8 s.
+  try {
+    var fmtvPrefs = JSON.parse(localStorage.getItem('fmtv.prefs') || '{}') || {};
+    if (fmtvPrefs.look === 'v4' && fmtvPrefs.picksOn !== true) {
+      document.documentElement.style.background = '#020507';
+      document.body.className += (document.body.className ? ' ' : '') + 'v4-pre';
+      setTimeout(function () { document.body.className = document.body.className.replace(/(^|\s)v4-pre(\s|$)/g, ' '); }, 8000);
+    }
+  } catch (e) {}
 </script>
 <div id="stage">
   <div id="sky" class="layer">
