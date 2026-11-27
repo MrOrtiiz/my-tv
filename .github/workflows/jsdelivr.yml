@@ -1,0 +1,48 @@
+# Förvärmer jsDelivr efter varje ändring av TV-koden.
+#
+# TV:arnas laddare (The Frame, projektorerna, barnens LG, jobbstickan) hämtar koden från jsDelivr, låst till senaste
+# commit. Första gången någon frågar efter en ny commit måste jsDelivr hämta hela repot från GitHub (~25 MB), och det
+# kan ta längre än de 5 s som laddaren väntar. Då startar TV:n med den förra versionen. Det här jobbet frågar efter
+# alla TV-filer direkt efter pushen, så att den nya versionen redan ligger klar när en TV startar.
+name: jsDelivr
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tv/**'
+      - 'kontor/**'
+      - 'kompis/**'
+      - 'iptv/**'
+      - 'lg/**'
+  workflow_dispatch:
+
+concurrency:
+  group: jsdelivr
+  cancel-in-progress: true
+
+jobs:
+  warm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hämta TV-filerna en gång från jsDelivr
+        env:
+          BASE: https://cdn.jsdelivr.net/gh/${{ github.repository }}@${{ github.sha }}
+        run: |
+          # Först en fil per mapp, tills jsDelivr har hämtat commiten (index.html svarar 200).
+          for d in tv kontor kompis iptv; do
+            for i in $(seq 1 24); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 60 "$BASE/$d/index.html" || echo 000)
+              echo "$d/index.html: $code (försök $i)"
+              [ "$code" = "200" ] && break
+              sleep 5
+            done
+          done
+          # Sedan alla filer i mapparna, 16 åt gången.
+          git ls-files tv kontor kompis iptv lg \
+            | grep -E '\.(html|js|css|json|png|svg|jpg|webp|woff2?)$' \
+            | sed "s#^#$BASE/#" \
+            | xargs -P 16 -n 1 curl -s -o /dev/null --max-time 60 -w '%{http_code}\n' \
+            | sort | uniq -c
