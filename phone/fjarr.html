@@ -42,6 +42,19 @@
   .note { margin-top: 8px; min-height: 22px; font-size: 15px; color: #30D158; }
   .note.bad { color: #FF453A; }
   .none { text-align: center; color: var(--dim); margin-top: 60px; }
+  /* O.R.T.I. (bara TV:ar som har honom, kontor/orti.js): prata eller skriv, svaret syns här och hörs på TV:n. */
+  .orti { margin-top: 30px; padding: 18px; border-radius: 20px; background: #06161A; box-shadow: inset 0 0 0 1px rgba(95,230,235,0.35); }
+  .orti h2 { margin: 0 0 4px; color: #5FE6EB; letter-spacing: 0.12em; font-size: 15px; }
+  .mic { display: block; width: 100%; margin: 12px 0 10px; border: 0; border-radius: 16px; padding: 18px; font-size: 18px; font-weight: 700;
+    background: #5FE6EB; color: #031012; }
+  .mic.on { background: #FFC448; }
+  .heard { min-height: 22px; font-size: 15px; color: rgba(235,235,245,0.75); font-style: italic; }
+  .log { margin-top: 10px; }
+  .log div { margin: 6px 0; font-size: 16px; } .log .q { color: rgba(235,235,245,0.6); } .log .a { color: #DFFBFF; }
+  .log .a.bad { color: #FF8A80; }
+  details { margin-top: 14px; color: var(--dim); font-size: 15px; } details form { margin-top: 8px; }
+  select { border: 0; border-radius: 14px; padding: 0 10px; background: var(--card); color: #fff; font-size: 15px; }
+  #azureForm { flex-wrap: wrap; } #azureForm select { order: -1; flex: 1 0 100%; height: 44px; }
 </style>
 </head>
 <body>
@@ -58,6 +71,23 @@
   </div>
   <div class="row"><button data-k="back">↩ Tillbaka</button></div>
 
+  <div class="orti" id="orti" hidden>
+    <h2>O.R.T.I.</h2>
+    <p>Fråga om tid, väder, trafiken hem, Barça, premiärer eller status, eller be honom öppna en app. Svaret hörs på TV:n.</p>
+    <button class="mic" id="mic">🎙 Prata med O.R.T.I.</button>
+    <div class="heard" id="heard"></div>
+    <form id="askForm"><input id="ask" autocomplete="off" placeholder="…eller skriv en fråga"><button>Fråga</button></form>
+    <div class="log" id="log"></div>
+    <details>
+      <summary>Rösten Mattias (Azure)</summary>
+      <p>Valfritt: med en nyckel till Microsoft Azure (Speech, gratisnivån räcker) talar O.R.T.I. med rösten Mattias. Nyckeln sparas bara på TV:n.</p>
+      <form id="azureForm"><input id="azure" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Azure-nyckel">
+        <select id="region"><option value="swedencentral">Sweden Central</option><option value="northeurope">North Europe</option><option value="westeurope">West Europe</option></select>
+        <button>Spara</button></form>
+      <div class="note" id="azureNote"></div>
+    </details>
+  </div>
+
   <h2>Skriv på TV:n</h2>
   <p>Öppna textfältet på TV:n med OK, skriv här och tryck Skicka. Tryck sedan OK för att spara.</p>
   <form id="textForm"><input id="text" autocomplete="off" autocapitalize="off" placeholder="Text till TV:n"><button>Skicka</button></form>
@@ -67,6 +97,7 @@
   <p>Klistra in nyckeln (API Key) så sparas den direkt på TV:n. Den ger filmtipsen och Marvel-affischerna.</p>
   <form id="tmdbForm"><input id="tmdb" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="t.ex. 8f9a…"><button>Spara</button></form>
   <div class="note" id="tmdbNote"></div>
+
 </div>
 <div class="none" id="none" hidden>Skanna QR-koden på TV:n (knappen Mobilen uppe till höger) för att koppla mobilen.</div>
 
@@ -101,9 +132,11 @@
     var m, o;
     try { m = JSON.parse(e.data); o = JSON.parse(m.message); } catch (x) { return; }
     if (!o) return;
-    if (o.t === 'hi') { answered = true; setState(true, 'Ansluten till ' + (o.tv || 'TV:n') + (o.tmdb ? ' · TMDB-nyckeln finns' : '')); }
+    if (o.t === 'hi') { answered = true; setState(true, 'Ansluten till ' + (o.tv || 'TV:n') + (o.tmdb ? ' · TMDB-nyckeln finns' : '')); document.getElementById('orti').hidden = !o.orti; }
+    if (o.t === 'orti') { addLog('a', o.a, o.bad); return; }
     if (o.t === 'note') {
-      var target = /TMDB|nyckel/i.test(o.say) ? 'tmdbNote' : 'textNote', n = document.getElementById(target);
+      var target = o.azure ? 'azureNote' : /TMDB|nyckel/i.test(o.say) ? 'tmdbNote' : 'textNote', n = document.getElementById(target);
+      if (o.azure && o.ok) document.getElementById('azure').value = '';
       n.className = 'note' + (o.bad ? ' bad' : '');
       n.textContent = o.say;
       if (o.tmdb) document.getElementById('tmdb').value = '';
@@ -138,6 +171,59 @@
     if (!v) return;
     send({t: 'text', v: v});
   });
+  // O.R.T.I.: frågan går till TV:n, svaret kommer tillbaka som {t: 'orti', a}.
+  var log = document.getElementById('log');
+  function addLog(cls, text, bad) {
+    var d = document.createElement('div');
+    d.className = cls + (bad ? ' bad' : '');
+    d.textContent = (cls === 'q' ? 'Du: ' : 'O.R.T.I.: ') + text;
+    log.insertBefore(d, log.firstChild);
+    while (log.children.length > 8) log.removeChild(log.lastChild);
+  }
+  function ask(q) { q = String(q || '').trim(); if (!q) return; addLog('q', q); send({t: 'orti', q: q}); }
+  document.getElementById('askForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    ask(document.getElementById('ask').value);
+    document.getElementById('ask').value = '';
+  });
+  // Taligenkänningen i mobilens webbläsare (Chrome, Safari), på svenska; utan den: tangentbordets mikrofon i fältet.
+  var Rec = window.SpeechRecognition || window.webkitSpeechRecognition, mic = document.getElementById('mic'), heard = document.getElementById('heard');
+  if (!Rec) { mic.textContent = '🎙 Använd mikrofonen på tangentbordet'; mic.onclick = function () { document.getElementById('ask').focus(); }; }
+  else {
+    var rec = null, listening = false;
+    mic.addEventListener('click', function () {
+      if (listening && rec) { rec.stop(); return; }
+      rec = new Rec();
+      rec.lang = 'sv-SE';
+      rec.interimResults = true;
+      rec.maxAlternatives = 1;
+      var finalText = '';
+      rec.onresult = function (ev) {
+        var interim = '';
+        for (var i = ev.resultIndex; i < ev.results.length; i++) {
+          if (ev.results[i].isFinal) finalText += ev.results[i][0].transcript; else interim += ev.results[i][0].transcript;
+        }
+        heard.textContent = finalText + interim;
+      };
+      rec.onerror = function (ev) { heard.textContent = ev.error === 'not-allowed' ? 'Mikrofonen är inte tillåten för sidan.' : 'Hörde inget.'; };
+      rec.onend = function () {
+        listening = false; mic.className = 'mic'; mic.textContent = '🎙 Prata med O.R.T.I.';
+        if (finalText) { ask(finalText); heard.textContent = ''; }
+      };
+      listening = true; mic.className = 'mic on'; mic.textContent = '● Lyssnar… tryck för att sluta';
+      heard.textContent = '';
+      try { rec.start(); } catch (x) { listening = false; }
+    });
+  }
+  document.getElementById('azureForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = document.getElementById('azure').value.replace(/\s+/g, '');
+    if (!v) return;
+    var n = document.getElementById('azureNote');
+    n.className = 'note'; n.textContent = 'Skickar till TV:n…';
+    send({t: 'azure', v: v, r: document.getElementById('region').value});
+  });
+
   document.getElementById('tmdbForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var v = document.getElementById('tmdb').value.replace(/\s+/g, '');

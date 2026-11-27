@@ -117,6 +117,8 @@ var Prefs = (function () {
     holoQuality: function () { var v = pick('holoQuality', 'auto'); return /^(auto|high|medium|low)$/.test(v) ? v : 'auto'; },
     /** Trafikrutan (Hemskärm → Trafikruta), där CONFIG.traffic finns. */
     traffic: function () { return pick('traffic', true) !== false; },
+    /** O.R.T.I. (orti.js): en inställning ('orti.' + namnet), d när den inte är satt. */
+    orti: function (k, d) { var x = pick('orti.' + k, d); return x === undefined || x === null ? d : x; },
     setCity: function (name, lat, lon) { v.city = name; v.latitude = lat; v.longitude = lon; save(); this.version++; },
     /** Streaming services (keys like "netflix") whose titles are left out of the picks. */
     serviceOff: function (key) { return pick('servicesOff', []).indexOf(key) >= 0; },

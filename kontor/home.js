@@ -1085,6 +1085,10 @@
       rows.push({label: 'Grafik (v3)', value: ql[Prefs.holoQuality()], dim: Prefs.look() !== 'v3',
         step: function (d) { cycle('holoQuality', ['auto', 'high', 'medium', 'low'], Prefs.holoQuality(), d); Holo.apply(); }});
     }
+    if (window.Orti) {   // O.R.T.I. (orti.js): rösten, vad den säger av sig själv, tysta timmar, Azure-nyckeln från mobilen
+      var ortiRows = Orti.settingRows(cycle, function () { closeSheets(); if (window.Koppla) Koppla.open(); });
+      for (var oi = 0; oi < ortiRows.length; oi++) rows.push(ortiRows[oi]);
+    }
     if (window.Trafik) {   // kontorets TV (android/kontor.js): trafikrutan och dess TomTom-nyckel
       rows.push({label: 'Trafikruta', toggle: Prefs.traffic(),
         step: function () { Prefs.set('traffic', !Prefs.traffic()); Trafik.refresh(); }});
@@ -1666,6 +1670,7 @@
       if (window.IPTV && id === IPTV.APP_ID && Prefs.iptv()) { IPTV.launchApp(null, function (ok) { if (!ok) TV.launch(id, null, function () {}); }); return; }
       // The games app (games/ in the repo) gets the Google Drive script's address, sent once from the phone page.
       if (id === GAMES_ID && gamesLink()) { launchGames(function (ok) { if (!ok) TV.launch(id, null, function () {}); }); return; }
+      if (window.Orti) Orti.opening(name);   // O.R.T.I.: "Öppnar Netflix."
       TV.launch(id, params || null, function (ok) {
         if (!ok) toast(trf("Couldn't open {app}.", {app: name || id}));
       });

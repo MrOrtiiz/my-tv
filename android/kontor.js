@@ -18,6 +18,9 @@
   // Starta om: laddar om appen med den senaste koden (efter en ändring i kontor/).
   c.buttons = ['home', 'restart', 'phone', 'search', 'inputs', 'shortcuts'];
 
+  // O.R.T.I. (kontor/orti.js): rösten i kontrollrummet. Rösten kräver jobbappen 1.5.0 (android/OrtiVoice.java).
+  c.orti = {name: 'Yuri'};
+
   // Trafikrutan: bil från jobbet (Palmbladsgatan 8) hem (Ritargatan 4B), koordinater från TomTom.
   c.traffic = {label: 'hem',
     from: [59.8600155, 17.7018762], to: [59.8731401, 17.6755244],
@@ -47,5 +50,7 @@
     add('hud.js', function () { if (window.Hud) Hud.decorate(); });
     css('holo.css');
     add('holo.js', function () { if (window.Holo) Holo.apply(); });
+    css('orti.css');
+    add('orti.js');
   });
 })(window.CONFIG);

@@ -79,7 +79,7 @@ var Koppla = (function () {
     if (o.t === 'hello') {
       var was = connected;
       connected = true;
-      post({t: 'hi', tv: tvName(), tmdb: !!(window.Data && Data.hasKey())});
+      post({t: 'hi', tv: tvName(), tmdb: !!(window.Data && Data.hasKey()), orti: !!window.Orti});
       if (!was) toast('Mobilen är ansluten.');
       if (opened) draw();
       return;
@@ -98,6 +98,21 @@ var Koppla = (function () {
       } else {
         post({t: 'note', say: 'Inget textfält är öppet på ' + tvName() + '. Öppna fältet med OK först.', bad: true});
       }
+      return;
+    }
+    // O.R.T.I. (orti.js): en fråga från mobilen (talad eller skriven); svaret sägs på TV:n och går tillbaka som text.
+    if (o.t === 'orti') {
+      if (!window.Orti) { post({t: 'orti', a: 'O.R.T.I. finns inte på ' + tvName() + '.', bad: true}); return; }
+      Orti.ask(String(o.q || '').slice(0, 300), function (text) { post({t: 'orti', a: text}); });
+      return;
+    }
+    // Azure-nyckeln för rösten Mattias: provas med en kort mening och sparas bara på TV:n.
+    if (o.t === 'azure') {
+      if (!window.Orti) { post({t: 'note', say: 'O.R.T.I. finns inte på ' + tvName() + '.', bad: true, azure: true}); return; }
+      var ak = String(o.v || '').replace(/\s+/g, ''), region = /^[a-z0-9]{3,30}$/.test(o.r || '') ? o.r : 'swedencentral';
+      if (!ak) return;
+      post({t: 'note', say: 'Provar nyckeln hos Azure…', azure: true});
+      Orti.tryAzure(ak, region, function (say, bad) { post({t: 'note', say: say, bad: !!bad, azure: true, ok: !bad}); });
       return;
     }
     if (o.t === 'tmdb') {

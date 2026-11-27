@@ -1,0 +1,31 @@
+/*
+ * O.R.T.I. (orti.js): vågformen och ljuset runt klockan medan han talar, texten under, statusen uppe i mitten.
+ * Över startsidan och skärmsläckaren, men under rutorna som öppnas. Rör inget annat.
+ */
+#orti { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 7; pointer-events: none; }
+#orti .orti-wave { position: absolute; left: 600px; top: 110px; width: 720px; height: 720px; }
+#orti .orti-glow { position: absolute; left: 660px; top: 170px; width: 600px; height: 600px; border-radius: 50%; opacity: 0;
+  background: -webkit-radial-gradient(center, circle, rgba(155, 243, 246, 0.22) 0%, rgba(95, 230, 235, 0.08) 38%, rgba(95, 230, 235, 0) 70%);
+  background: radial-gradient(circle at center, rgba(155, 243, 246, 0.22) 0%, rgba(95, 230, 235, 0.08) 38%, rgba(95, 230, 235, 0) 70%); }
+#orti .orti-cap { position: absolute; left: 50%; top: 650px; max-width: 1100px; -webkit-transform: translateX(-50%); transform: translateX(-50%);
+  padding: 6px 22px; text-align: center; font-size: 24px; line-height: 34px; font-weight: 400; letter-spacing: 0.5px; color: #EFFEFF;
+  background: rgba(3, 12, 15, 0.82); box-shadow: inset 2px 0 0 #5FE6EB; opacity: 0; -webkit-transition: opacity 0.6s; transition: opacity 0.6s; }
+#orti .orti-cap.on { opacity: 1; }
+#orti .orti-tag { position: absolute; left: 50%; top: 52px; -webkit-transform: translateX(-50%); transform: translateX(-50%);
+  height: 26px; line-height: 26px; padding: 0 14px; white-space: nowrap; font-size: 13px; font-weight: 600; letter-spacing: 3px;
+  color: rgba(95, 230, 235, 0.85); background: rgba(3, 12, 15, 0.72); box-shadow: inset 0 0 0 1px rgba(95, 230, 235, 0.35); }
+#orti .orti-tag .dot { display: inline-block; width: 8px; height: 8px; border-radius: 4px; margin-right: 10px; vertical-align: 1px;
+  background: rgba(95, 230, 235, 0.6); }
+#orti .orti-tag.talar { color: #031012; background: #5FE6EB; box-shadow: none; }
+#orti .orti-tag.talar .dot { background: #031012; -webkit-animation: ortiblink 0.8s ease-in-out infinite; animation: ortiblink 0.8s ease-in-out infinite; }
+#orti .orti-tag.lyssnar .dot { background: #FFC448; }
+#orti .orti-tag.fel { color: #FF8A80; box-shadow: inset 0 0 0 1px rgba(255, 138, 128, 0.6); }
+#orti .orti-tag.fel .dot { background: #FF8A80; }
+#orti .orti-tag.av { opacity: 0.45; }
+#orti .orti-tag.av .dot { background: rgba(95, 230, 235, 0.25); }
+@-webkit-keyframes ortiblink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+@keyframes ortiblink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+/* Medan han talar lyser klockan lite starkare. */
+.orti-talk #clock .time { text-shadow: 0 0 28px rgba(95, 230, 235, 0.6); }
+/* Rutorna som öppnas (inställningar m.fl.) ligger över O.R.T.I. */
+.sheet.open ~ #orti, body.sheet-open #orti { display: none; }

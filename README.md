@@ -23,4 +23,8 @@ säger Yuri det, och då görs det i alla tre mapparna (se CLAUDE.md).
   Kompisens projektor läser `kompis/` först när den har fått APK 1.4.0 eller senare (äldre läser `tv/`).
 - `source/web/` är källkoden för de filerna (från [simbasjungles/free-my-tv](https://github.com/simbasjungles/free-my-tv), MIT).
 
+- O.R.T.I. (`kontor/orti.js`, bara jobbet): rösten i kontrollrummet. Läser upp korta meddelanden (hälsning, trafiken
+  hem, Barça, väder, status) och svarar på frågor från mobilen (Prata med O.R.T.I. i `phone/fjarr.html`). Rösten kräver
+  jobbappen 1.5.0 (`android/OrtiVoice.java`: Androids talsyntes eller Azure-rösten Mattias med nyckel från mobilen).
+
 Inga nycklar finns här: TMDB-nyckeln och TomTom-nyckeln (trafikrutan på jobbet) skrivs in på TV:n och stannar där.
