@@ -1,5 +1,5 @@
 {
- "updated": 1795806892616,
+ "updated": 1795817478053,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
  "matches": [
@@ -52,16 +52,16 @@
  ],
  "guide": {
   "channels": 5638,
-  "programmes": 280763,
-  "barca_listings": 23,
+  "programmes": 276052,
+  "barca_listings": 21,
   "until": "2026-11-28T17:40:00+01:00"
  },
  "barca_titles_seen": [
   "11-28 09:35 | Košarka - Euroleague: Valencia - Panathinaikos  | 105 min",
   "11-28 01:20 | Moto GP Valencia: Trening 1  | 55 min",
   "11-28 07:00 | Košarka - Euroleague: Valencia - Panathinaikos  | 100 min",
-  "11-27 21:30 | Moto GP Valencia: Trening 1  | 55 min",
   "11-28 19:00 | Moto GP Valencia: Kvalifikacije  | 45 min",
+  "11-28 22:30 | Moto GP Valencia: Sprint utrka  | 50 min",
   "11-28 08:40 | LIVE: Moto 3 Valencia: Trening 3  | 40 min",
   "11-28 09:20 | LIVE: Moto 2 Valencia: Trening 3  | 45 min",
   "11-28 10:05 | LIVE: Moto GP Valencia: Trening 3  | 45 min",
@@ -74,14 +74,14 @@
   "11-28 13:50 | Moto2: GP Valencia: Qualifiche  | 40 min",
   "11-28 14:55 | MotoGP: GP Valencia: Sprint Race  | 35 min",
   "11-28 16:30 | Moto3: GP Valencia: Qualifiche  | 35 min",
-  "11-27 19:55 | MotoGP '26: Valencia Moto2 Practice  | 55 min",
-  "11-27 20:50 | MotoGP '26: Valencia MotoGP Practice  | 60 min",
   "11-28 02:35 | MotoGP '26: Valencia Moto3 Practice 2  | 45 min",
   "11-28 03:20 | MotoGP '26: Valencia Moto2 Practice 2  | 40 min",
   "11-28 04:00 | MotoGP '26: Valencia MotoGP Practice 2  | 40 min",
   "11-28 04:40 | MotoGP '26: Valencia MotoGP Qualifying  | 80 min",
   "11-28 15:30 | MotoGP '26: Valencia MotoGP Qualifying  | 60 min",
-  "11-28 16:30 | MotoGP '26: Valencia MotoGP Sprint  | 60 min"
+  "11-28 16:30 | MotoGP '26: Valencia MotoGP Sprint  | 60 min",
+  "11-28 23:00 | MotoGP HL '26: Valencia MotoGP Sprint  | 5 min",
+  "11-28 02:35 | MotoGP '26: Valencia Moto3 Practice 2  | 45 min"
  ],
  "table": {
   "league": "LaLiga",
@@ -138,22 +138,22 @@
    },
    {
     "rank": 6,
+    "team": "Racing Santander",
+    "short": "Racing",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/87.png",
+    "points": 20,
+    "played": 14,
+    "gd": -10,
+    "barca": false
+   },
+   {
+    "rank": 7,
     "team": "Sevilla",
     "short": "Sevilla",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/243.png",
     "points": 19,
     "played": 13,
     "gd": -2,
-    "barca": false
-   },
-   {
-    "rank": 7,
-    "team": "Racing Santander",
-    "short": "Racing",
-    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/87.png",
-    "points": 17,
-    "played": 13,
-    "gd": -12,
     "barca": false
    },
    {
@@ -232,8 +232,8 @@
     "short": "Levante",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1538.png",
     "points": 12,
-    "played": 13,
-    "gd": -5,
+    "played": 14,
+    "gd": -7,
     "barca": false
    },
    {
