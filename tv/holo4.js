@@ -130,7 +130,8 @@ var Holo4 = (function () {
     m.doy = Math.floor((d - start) / 86400000) + 1;
     m.yearLen = leap ? 366 : 365;
     m.yearFrac = (m.doy - 1 + m.dayFrac) / m.yearLen;
-    var w = typeof Data !== 'undefined' && Prefs.weather() ? Data.weather : null;
+    // Vädret läses också med Atmosfär-noden av: utemätaren och statusraden hör till kärnan.
+    var w = typeof Data !== 'undefined' ? Data.weather : null;
     if (w && !isNaN(w.temp)) {
       m.temp = w.temp;
       if (!isNaN(w.max) && !isNaN(w.min)) { m.max = w.max; m.min = w.min; }
@@ -154,21 +155,103 @@ var Holo4 = (function () {
     return m;
   }
 
-  /** Läser datan; ritar om det statiska lagret när något har ändrats (eller rutorna har flyttat). */
+  /** Läser datan och lägena; ritar om det statiska lagret när något har ändrats (eller noderna har flyttat). */
   function refresh() {
     if (!root) return;
-    var m = readModel(), lay = layoutKey();
+    var m = readModel();
+    var modeKey = modes();
+    layoutNodes();
+    var lay = layoutKey();
     var key = JSON.stringify([m.temp, m.max, m.min, m.rise, m.set, m.match && m.match.start, m.countdown && m.countdown.days,
-      m.day, Math.floor(m.dayFrac * 288), m.apps, m.hours && m.hours.length && m.hours[0].at, lay]);
+      m.day, Math.floor(m.dayFrac * 288), m.apps, m.hours && m.hours.length && m.hours[0].at, lay, modeKey, nodes.sys, nodes.cycles, nodes.week]);
     var old = model;
     model = m;
     if (key === modelKey) return;
     modelKey = key;
     if (old.temp !== undefined && m.temp !== old.temp) ping('wxtop');
+    renderSys();
+    layoutNodes();
     findLinks();
     findSlots();
     drawStatic();
-    renderSys();
+    lastSec = -1;   // kärnans canvas i lägets färger
+  }
+
+  // MARK: - Noderna av och på (Hemskärm: System, Cykler, Vecka, Atmosfär): de som syns flyttar upp
+
+  var nodes = {sys: true, cycles: true, week: true}, spinEls = [];
+
+  function layoutNodes() {
+    var pr = typeof Prefs !== 'undefined' && Prefs.h4node;
+    nodes.sys = pr ? Prefs.h4node('sys') : true;
+    nodes.cycles = pr ? Prefs.h4node('cycles') : true;
+    nodes.week = pr ? Prefs.h4node('week') : true;
+    var y = 112, i;
+    if (sys) {
+      sys.style.display = nodes.sys ? '' : 'none';
+      if (nodes.sys) { sys.style.top = y + 'px'; y += (sys.offsetHeight || 300) + 44; }
+    }
+    if (nodes.cycles) { GAUGE_Y = y + 96; y = GAUGE_Y + GAUGE_R + 50 + 44; }
+    if (nodes.week) WEEK_Y = y + 70;
+    for (i = 0; i < spinEls.length; i++) {
+      spinEls[i].style.top = (GAUGE_Y - 70) + 'px';
+      spinEls[i].style.display = nodes.cycles ? '' : 'none';
+    }
+    var bx = document.getElementById('barca');
+    setClass(document.body, 'h4-nobarca', !bx || bx.style.display === 'none' || !bx.offsetWidth);
+  }
+
+  // MARK: - Automatiska lägen: matchdag, match pågår (och mål), natt
+
+  var mode = {match: false, live: false, post: false, goal: false, night: false}, matchEl = null, goalEl = null, nightEl = null;
+
+  /** Läser lägena ur det som redan finns (Barças matcher och ställning, klockan) och sätter dem på sidan. */
+  function modes() {
+    var today = window.BarcaBox && BarcaBox.matchToday ? BarcaBox.matchToday() : null;
+    var ls = today && BarcaBox.liveState ? BarcaBox.liveState() : null;
+    if (ls && ls.start !== today.start) ls = null;
+    var now = Date.now(), h = new Date(now).getHours();
+    mode.today = today; mode.ls = ls;
+    mode.match = !!today;
+    mode.live = !!(ls && ls.state === 'in');
+    mode.post = !!(ls && ls.state === 'post');
+    mode.goal = !!(ls && now < ls.goalUntil);
+    // Natt 22–07, men inte medan en match pågår eller strax före avspark: matchen går före.
+    var soon = today && today.start - now < 2 * 3600000 && now < today.stop;
+    mode.night = typeof Prefs !== 'undefined' && Prefs.h4night && Prefs.h4night() === 'auto' && (h >= 22 || h < 7) && !mode.live && !soon;
+    var b = document.body;
+    setClass(b, 'h4-match', mode.match);
+    setClass(b, 'h4-live', mode.live);
+    setClass(b, 'h4-goal', mode.goal);
+    setClass(b, 'h4-night', mode.night);
+    renderMatch(now);
+    return [mode.match, mode.live, mode.post, mode.night].join();
+  }
+
+  function short(t) { return String(t || '').replace(/^FC /, ''); }
+
+  /** Matchdagen i kärnan, under klockan: avsparken och tiden kvar, eller ställningen medan matchen pågår. */
+  function renderMatch(now) {
+    if (!matchEl) return;
+    var m = mode.today, ls = mode.ls;
+    if (!m) { matchEl.style.display = 'none'; goalEl.style.display = 'none'; return; }
+    matchEl.style.display = 'block';
+    var tagText, main, sub = '';
+    if (ls && (mode.live || mode.post)) {
+      tagText = mode.live ? (/half|HT/i.test(ls.detail) ? 'HALVTID' : 'LIVE  ' + (ls.clock || '')) : 'SLUT';
+      main = short(ls.home.name) + '  ' + ls.home.score + ' – ' + ls.away.score + '  ' + short(ls.away.name);
+      if (ls.goals.length) { var g = ls.goals[ls.goals.length - 1]; sub = 'SENASTE MÅL  ' + g.min + '  ' + g.who; }
+    } else {
+      tagText = 'MATCHDAG';
+      main = m.title;
+      var left = Math.max(0, m.start - now), hh = Math.floor(left / 3600000), mm = Math.floor(left / 60000) % 60;
+      sub = 'AVSPARK ' + hm(m.start) + (left > 0 ? '  ·  OM ' + (hh ? hh + ' H ' : '') + two(mm) + ' MIN' : '');
+    }
+    matchEl.firstChild.textContent = tagText;
+    matchEl.childNodes[1].textContent = main;
+    matchEl.childNodes[2].textContent = sub;
+    setClass(matchEl, 'score', !!(ls && (mode.live || mode.post)));
+    goalEl.style.display = mode.goal ? 'block' : 'none';
   }
 
   /** Rutornas lägen och storlekar: ändras de (Barça byter sida) ritas ledlinjerna om. */
@@ -210,7 +293,7 @@ var Holo4 = (function () {
     if ((b = box('wxtop'))) { s = at(R.outer, 96); addLink('wxtop', 96, [s, [b.x - 70, s[1]], [b.x - 70, b.y + 26], [b.x - 8, b.y + 26]]); }
     // Vänster: systemnoden och cykelmätarna.
     if ((b = box('h4sys'))) { s = at(R.outer, 302); addLink('h4sys', 302, [s, [s[0] - 60, b.y + 26], [b.x + b.w + 8, b.y + 26]]); }
-    s = at(R.outer, 264); addLink('cycles', 264, [s, [LX + LW + 70, s[1]], [LX + LW + 70, GAUGE_Y - 82], [LX + LW + 8, GAUGE_Y - 82]]);
+    if (nodes.cycles) { s = at(R.outer, 264); addLink('cycles', 264, [s, [LX + LW + 70, s[1]], [LX + LW + 70, GAUGE_Y - 82], [LX + LW + 8, GAUGE_Y - 82]]); }
     // Nere: datataggarna för nästa match och nedräkningen.
     if ((b = box('barcapill'))) { s = at(R.gauge, 214); addLink('barcapill', 214, [s, [s[0], b.y + b.h / 2], [b.x + b.w + 8, b.y + b.h / 2]]); }
     if ((b = box('countdown'))) { s = at(R.gauge, 146); addLink('countdown', 146, [s, [s[0], b.y + b.h / 2], [b.x - 8, b.y + b.h / 2]]); }
@@ -270,8 +353,12 @@ var Holo4 = (function () {
       g.fillRect(e[0] - 3, e[1] - 3, 6, 6);
       g.beginPath(); g.arc(s[0], s[1], 3.5, 0, Math.PI * 2); g.fill();
     }
-    drawCycles(g);
-    drawWeek(g);
+    if (nodes.cycles) drawCycles(g);
+    if (nodes.week) drawWeek(g);
+    if (mode.match) {   // matchdag: en bärnstensring runt kärnan och en etikett överst
+      arc(g, R.outer + 22, 0, 360, 1.5, rgba(AMBER, 0.45));
+      for (var mi = 0; mi < 72; mi++) tick(g, R.outer + 22, R.outer + (mi % 6 === 0 ? 34 : 28), mi * 5, 1, rgba(AMBER, mi % 6 === 0 ? 0.7 : 0.35));
+    }
     drawWeatherBars(g);
     drawTags(g);
     drawDock(g);
@@ -594,6 +681,7 @@ var Holo4 = (function () {
       c.style.width = c.style.height = size + 'px';
       arcAt(c.getContext('2d'), size / 2, size / 2, GAUGE_R + 8, 0, 14, 3, rgba(TEAL, 0.55));
       spin(c, 6 + i * 2.5, 1);
+      spinEls.push(c);
     }
   }
 
@@ -610,7 +698,7 @@ var Holo4 = (function () {
     var d = new Date(t), sec = d.getSeconds();
     for (var s = 0; s < 60; s++) {
       var cur = s === sec;
-      arc(g, R.sec, s * 6 + 0.9, s * 6 + 5.1, cur ? 8 : 4, rgba(cur ? ICE : TEAL, cur ? 1 : s < sec ? 0.5 : 0.1));
+      arc(g, R.sec, s * 6 + 0.9, s * 6 + 5.1, cur ? 8 : 4, rgba(cur ? ICE : mode.match ? AMBER : TEAL, cur ? 1 : s < sec ? 0.5 : 0.1));
     }
     if (model.temp !== undefined) {
       var tt = clampT(model.temp);
@@ -677,7 +765,7 @@ var Holo4 = (function () {
     raf = 0;
     if (!running) return;
     raf = requestAnimationFrame(frame);
-    var minGap = 1000 / q.fps;
+    var minGap = 1000 / (mode.night ? Math.min(15, q.fps) : q.fps);   // natt: lugnare, 15 bilder/s
     if (now - lastFrame < minGap - 2) return;
     var dt = lastFrame ? Math.min(0.25, (now - lastFrame) / 1000) : 0, t0 = Date.now();
     adapt(now - lastFrame);
@@ -698,11 +786,12 @@ var Holo4 = (function () {
     // (svepet, det snabbaste, följer bildfrekvensen).
     var still = q.level === 'low' || q.fps <= 15 && q.level === 'auto', turn = t - lastTurn >= 95;
     if (turn) lastTurn = t;
+    var slowBy = mode.night ? 2 : 1;
     for (i = 0; i < movers.length; i++) {
       var mv = movers[i];
       if (still && !mv.orbit && mv.e !== sweepEl) continue;
       if (!turn && mv.e !== sweepEl) continue;
-      var ang = (t / 1000 / mv.period % 1) * 360 * mv.dir, v = 'rotate(' + ang.toFixed(2) + 'deg)';
+      var ang = (t / 1000 / (mv.period * slowBy) % 1) * 360 * mv.dir, v = 'rotate(' + ang.toFixed(2) + 'deg)';
       if (v !== mv.last) { mv.e.style.webkitTransform = mv.e.style.transform = v; mv.last = v; }
       if (mv.breath) mv.e.style.opacity = (0.75 + 0.25 * Math.sin(t / 1000 / mv.breath * Math.PI * 2)).toFixed(2);
     }
@@ -712,7 +801,7 @@ var Holo4 = (function () {
     if (sec !== lastSec || needleMoving) needleMoving = drawCoreDyn(t, dt || 0.03);
 
     // Pulser längs ledlinjerna: ut till noderna, och tillbaka när en nod fått nya värden.
-    if (boot >= 1 && links.length && pulses.length < pulseEls.length && Math.random() < dt * 0.8) pulses.push({link: Math.floor(Math.random() * links.length), t: 0});
+    if (boot >= 1 && links.length && pulses.length < pulseEls.length && Math.random() < dt * (mode.night ? 0.25 : 0.8)) pulses.push({link: Math.floor(Math.random() * links.length), t: 0});
     for (var u = pulses.length - 1; u >= 0; u--) {
       var pu = pulses[u], ln = links[pu.link];
       pu.t += dt / (pu.strong ? 0.9 : 1.8);
@@ -728,7 +817,7 @@ var Holo4 = (function () {
     }
 
     // Dockans svep längs basen.
-    if (q.sweep && slots.length) {
+    if (q.sweep && !mode.night && slots.length) {
       var dx0 = slots[0].x - 40, dx1 = slots[slots.length - 1].x + slots[slots.length - 1].w + 40;
       dockSweep.style.display = 'block';
       place(dockSweep, dx0 + (t / 7000 % 1) * (dx1 - dx0) - 60, 1049);
@@ -798,7 +887,7 @@ var Holo4 = (function () {
   }
 
   function adapt(gap) {
-    if (q.level !== 'auto' || !gap || gap > 1000) return;
+    if (q.level !== 'auto' || !gap || gap > 1000 || mode.night) return;
     var budget = 1000 / q.fps;
     if (gap > budget * 1.6) slow++; else slow = Math.max(0, slow - 1);
     if (gap < budget * 1.1) fast++; else fast = 0;
@@ -1001,6 +1090,13 @@ var Holo4 = (function () {
     buildOrbits(q.orbits < 0 ? 1 : q.orbits);
     sys = el('div', '', top);
     sys.id = 'h4sys';
+    matchEl = el('div', '', top);
+    matchEl.id = 'h4match';
+    el('span', 'tag', matchEl); el('div', 'main', matchEl); el('div', 'sub', matchEl);
+    goalEl = el('div', '', top, 'MÅL');
+    goalEl.id = 'h4goal';
+    nightEl = el('div', 'layer', document.getElementById('stage'));
+    nightEl.id = 'h4night';
     bar = el('div', '', top);
     bar.id = 'h4bar';
     el('span', 'tag', bar, 'KONTROLLRUM');
@@ -1064,6 +1160,8 @@ var Holo4 = (function () {
   setTimeout(apply, 600);
 
   return {apply: apply, refresh: refresh, setQuality: setQuality, saver: saver, isRunning: function () { return running; },
+    /** En nod slogs av eller på, eller nattläget ändrades (Hemskärm): allt läses och ritas om. */
+    relayout: function () { modelKey = ''; if (running) refresh(); else apply(); },
     /** Skärmsläckarna (home.js): motorn vilar medan en av dem täcker startsidan. */
     pause: function (on) { if (paused !== !!on) { paused = !!on; apply(); } },
     /** För tester: läget just nu. */

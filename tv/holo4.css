@@ -240,3 +240,60 @@ body.v4 #saver.h4-saver .clock .hint { margin-top: 6px; font-size: 14px; font-we
 /* Startsidan flyttas några pixlar mot inbränning (holo4.js): kanten som då syns är lika mörk som rummet. */
 body.v4 #stage { background: #020507; }
 body.v4.h4-boot #h4ret { opacity: 0; }
+
+/* MARK: - Noderna av och på (holo4.js): utan Barça flyttar atmosfären upp */
+
+body.v4.h4-nobarca #wxtop, body.v4.ios.no-picks.h4-nobarca #wxtop { top: 112px; }
+
+/* MARK: - Matchdag (holo4.js): matchen i kärnan under klockan, rummets accenter i bärnsten */
+
+#h4match, #h4goal, #h4night { display: none; }
+body.v4 #h4match { position: absolute; left: 700px; width: 520px; top: 546px; text-align: center; pointer-events: none; white-space: nowrap; }
+body.v4 #h4match .tag { display: inline-block; height: 24px; line-height: 24px; padding: 0 12px; background: #FFC448; color: #1A1000;
+  font-size: 13px; font-weight: 600; letter-spacing: 2.5px; }
+body.v4 #h4match .main { margin-top: 8px; font-size: 21px; line-height: 28px; font-weight: 400; color: #EFFEFF; overflow: hidden; text-overflow: ellipsis; }
+body.v4 #h4match .sub { margin-top: 2px; font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: 2.5px; color: #FFC448; }
+body.v4 #h4match.score .main { font-size: 28px; line-height: 36px; font-weight: 300; letter-spacing: 1px; -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum'; }
+body.v4.h4-live #h4match .tag { background: #FF7A70; color: #1A0300; }
+body.v4.h4-match #clock .date, body.v4.ios.no-picks.h4-match #clock .date { color: #FFC448; }
+body.v4.h4-match #barca .head .name { background: #FFC448; color: #1A1000; }
+body.v4.h4-match #barca .head { border-bottom-color: rgba(255, 196, 72, 0.5); }
+/* Mål: klockan viker undan, MÅL blinkar i kärnan medan rutan firar (barca.js, 25 sekunder). */
+@-webkit-keyframes h4goal { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@keyframes h4goal { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+body.v4 #h4goal { position: absolute; left: 700px; width: 520px; top: 380px; text-align: center; font-size: 150px; line-height: 160px;
+  font-weight: 200; letter-spacing: 18px; color: #FFC448; pointer-events: none; -webkit-animation: h4goal 0.9s ease-in-out infinite; animation: h4goal 0.9s ease-in-out infinite; }
+body.v4.h4-goal #clock { opacity: 0; }
+
+/* MARK: - Nattläge (holo4.js, 22–07): ett svagt varmt lager över rummet; motorn går lugnare */
+
+body.v4.h4-night #h4night { display: block; z-index: 2; pointer-events: none; background: rgba(20, 8, 0, 0.42); }
+body.v4.h4-night .h4-orbit, body.v4.h4-night .r4-sweep, body.v4.h4-night .h4-docksweep { display: none; }
+
+/* MARK: - Rutorna som öppnas (inställningar, genvägar, ingångar, språk, stad, nycklar, om): samma stil som rummet */
+
+body.v4 .sheet { background: rgba(2, 6, 8, 0.8); }
+body.v4 #settings .box, body.v4 #shelfedit .box, body.v4 #langpick .box, body.v4 #citypick .box, body.v4 #keypick .box, body.v4 #about .box, body.v4 #picker .box,
+body.v4.ios #settings .box, body.v4.ios #shelfedit .box, body.v4.ios #langpick .box, body.v4.ios #citypick .box, body.v4.ios #keypick .box, body.v4.ios #about .box, body.v4.ios #picker .box {
+  border-radius: 0; background: rgba(3, 11, 14, 0.97); -webkit-backdrop-filter: none; backdrop-filter: none;
+  box-shadow: inset 0 0 0 1px rgba(95, 230, 235, 0.45), 0 30px 80px rgba(0, 0, 0, 0.6); color: #DFFBFF; }
+body.v4 .box .title { display: inline-block; margin: 0 0 18px 18px; padding: 0 16px; height: 34px; line-height: 34px; font-size: 18px; font-weight: 600;
+  letter-spacing: 4px; text-transform: uppercase; background: rgba(95, 230, 235, 0.92); color: #031012; }
+body.v4 .box .title .sym { width: 20px; height: 20px; margin-right: 10px; vertical-align: -3px; color: #031012; }
+body.v4 .box .row, body.v4.ios .box .row { border-radius: 0; font-size: 26px; font-weight: 500;
+  letter-spacing: 0.5px; color: #DFFBFF; box-shadow: inset 0 -1px 0 rgba(95, 230, 235, 0.1); }
+body.v4 .box .row.focus, body.v4.ios .box .row.focus { background: rgba(95, 230, 235, 0.16); box-shadow: inset 3px 0 0 #5FE6EB; }
+body.v4 .box .row .value { color: #9BF3F6; }
+body.v4 .box .row .value .chev { color: rgba(95, 230, 235, 0.5); }
+body.v4 .box .row.dim { color: rgba(95, 230, 235, 0.35); }
+body.v4 .box .hint { color: rgba(95, 230, 235, 0.7); }
+body.v4 .toggle, body.v4.ios .toggle { border-radius: 0; background: rgba(95, 230, 235, 0.08); box-shadow: inset 0 0 0 1.5px rgba(95, 230, 235, 0.45); }
+body.v4 .toggle::after { border-radius: 0; background: #6F8F94; box-shadow: none; }
+body.v4 .toggle.on, body.v4.ios .toggle.on { background: rgba(95, 230, 235, 0.85); }
+body.v4 .toggle.on::after { background: #031012; }
+body.v4 .sheet h2 { font-size: 20px; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; color: #5FE6EB; }
+body.v4 .cell .face { border-radius: 14px; }
+body.v4 .cell.focus .face { box-shadow: 0 0 0 2px #5FE6EB, 0 14px 30px rgba(0, 0, 0, 0.5); }
+body.v4 .cell .label { color: rgba(205, 248, 250, 0.7); }
+/* Datumraden i kärnan på en rad också med högtid eller matchdag i den (festive.js), så att klockan står still. */
+body.v4.ios.no-picks #clock .date, body.v4.ios.no-picks.night #clock .date { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 520px; line-height: 24px; }

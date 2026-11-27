@@ -1092,6 +1092,20 @@
       rows.push({label: 'Grafik (kontrollrum)', value: ql[Prefs.holoQuality()], dim: Prefs.look() === 'standard',
         step: function (d) { cycle('holoQuality', ['auto', 'high', 'medium', 'low'], Prefs.holoQuality(), d); lookApply(); }});
     }
+    if (window.Holo4) {   // Kontrollrum v4: noderna av och på som Barça-rutan, och nattläget
+      var notV4 = Prefs.look() !== 'v4';
+      var nodeRow = function (label, key) {
+        rows.push({label: label, toggle: Prefs.h4node(key), dim: notV4,
+          step: function () { Prefs.set('h4' + key, !Prefs.h4node(key)); Holo4.relayout(); }});
+      };
+      nodeRow('System', 'sys');
+      nodeRow('Cykler', 'cycles');
+      nodeRow('Vecka', 'week');
+      rows.push({label: 'Atmosfär', toggle: Prefs.weather(), dim: notV4,
+        step: function () { Prefs.set('weather', !Prefs.weather()); renderPanels(); Holo4.relayout(); }});
+      rows.push({label: 'Nattläge', value: Prefs.h4night() === 'auto' ? 'Auto 22–07' : 'Av', dim: notV4,
+        step: function (d) { cycle('h4night', ['auto', 'off'], Prefs.h4night(), d); Holo4.relayout(); }});
+    }
     var sv = Data.services();
     if (sv.length) {
       var someOff = false;   // only the services this TV has count

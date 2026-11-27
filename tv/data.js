@@ -111,6 +111,10 @@ var Prefs = (function () {
       var v = pick('look', CONFIG.look || 'standard');
       return v === 'v3' && window.Holo ? 'v3' : v === 'v4' && window.Holo4 ? 'v4' : 'standard';
     },
+    /** Kontrollrum v4: noderna System ('sys'), Cykler ('cycles') och Vecka ('week'), på som standard. */
+    h4node: function (k) { return pick('h4' + k, true) !== false; },
+    /** Kontrollrum v4: nattläget, 'auto' (22–07, svagare, varmare, lugnare) eller 'off'. */
+    h4night: function () { return pick('h4night', 'auto') === 'off' ? 'off' : 'auto'; },
     /** v3:s grafik (Hemskärm → Grafik): 'auto', 'high', 'medium' eller 'low'. */
     holoQuality: function () { var v = pick('holoQuality', 'auto'); return /^(auto|high|medium|low)$/.test(v) ? v : 'auto'; },
     setCity: function (name, lat, lon) { v.city = name; v.latitude = lat; v.longitude = lon; save(); this.version++; },

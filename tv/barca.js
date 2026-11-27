@@ -375,5 +375,13 @@ var BarcaBox = (function () {
     return null;
   }
 
-  return {refresh: load, matchToday: matchToday, live: pollLive, play: play, next: next};
+  /** Matchen som spelas (eller nyss spelats) för Kontrollrum v4 (holo4.js): {state, clock, detail, home, away, goals,
+   *  goalUntil}, eller null. Samma ställning som rutan visar, ingen egen hämtning. */
+  function liveState() {
+    if (!live || !data || !data.matches) return null;
+    return {state: live.state, clock: live.clock, detail: live.detail, home: live.home, away: live.away, goals: live.goals || [],
+      goalUntil: goalUntil, start: liveFor};
+  }
+
+  return {refresh: load, matchToday: matchToday, live: pollLive, play: play, next: next, liveState: liveState};
 })();
