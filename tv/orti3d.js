@@ -74,17 +74,16 @@ var OrtiScene = (function () {
     'uniform vec3 uTint; uniform float uTintAmt;',
     'varying vec3 vCol; varying float vA;',
     'void main() {',
-    '  vec3 p = aPos;',
-    '  float a = uTime * aSpin;',
-    '  float c = cos(a); float s = sin(a);',
-    '  p = vec3(c * p.x - s * p.z, p.y, s * p.x + c * p.z);',
+    '  vec3 p = aPos; float fu = 1.0;',
+    '  if (aSpin > 50.0) { float u = fract(uTime * (aSpin - 50.0) + fract(aPhase * 0.371)); p = aPos * (0.3 + u * 0.95); fu = sin(u * 3.14159); }',
+    '  else { float a = uTime * aSpin; float c = cos(a); float s = sin(a); p = vec3(c * p.x - s * p.z, p.y, s * p.x + c * p.z); }',
     '  vec4 mv = uView * uModel * vec4(p, 1.0);',
     '  gl_Position = uProj * mv;',
     '  float ph = mod(aPhase, 10.0);',
     '  float tw = 0.62 + 0.38 * sin(uTime * (0.6 + fract(ph * 7.31) * 1.8) + ph * 6.2832);',
     '  float fl = aPhase >= 10.0 ? step(0.55, sin(uTime * (0.35 + fract(ph * 3.7) * 0.6) + ph * 9.0)) : 1.0;',
     '  gl_PointSize = max(1.0, aSize * uScale * (1.0 + uPulse * 0.35) / -mv.z);',
-    '  vA = uBright * mix(1.0, tw, uTwinkle) * fl;',
+    '  vA = uBright * mix(1.0, tw, uTwinkle) * fl * fu;',
     '  vCol = mix(aCol, uTint, uTintAmt);',
     '}'
   ].join('\n');
@@ -106,15 +105,14 @@ var OrtiScene = (function () {
     'uniform vec3 uTint; uniform float uTintAmt;',
     'varying vec3 vCol; varying float vA;',
     'void main() {',
-    '  vec3 p = aPos;',
-    '  float a = uTime * aSpin;',
-    '  float c = cos(a); float s = sin(a);',
-    '  p = vec3(c * p.x - s * p.z, p.y, s * p.x + c * p.z);',
+    '  vec3 p = aPos; float fu = 1.0;',
+    '  if (aSpin > 50.0) { float u = fract(uTime * (aSpin - 50.0) + fract(aPhase * 0.371)); p = aPos * (0.3 + u * 0.95); fu = sin(u * 3.14159); }',
+    '  else { float a = uTime * aSpin; float c = cos(a); float s = sin(a); p = vec3(c * p.x - s * p.z, p.y, s * p.x + c * p.z); }',
     '  gl_Position = uProj * uView * uModel * vec4(p, 1.0);',
     '  float ph = mod(aPhase, 10.0);',
     '  float tw = 0.6 + 0.4 * sin(uTime * (0.4 + fract(ph * 5.13) * 1.2) + ph * 6.2832);',
     '  float fl = aPhase >= 10.0 ? step(0.4, sin(uTime * (0.3 + fract(ph * 2.9) * 0.5) + ph * 7.0)) : 1.0;',
-    '  vA = uBright * aSize * mix(1.0, tw, uTwinkle) * fl;',
+    '  vA = uBright * aSize * mix(1.0, tw, uTwinkle) * fl * fu;',
     '  vCol = mix(aCol, uTint, uTintAmt);',
     '}'
   ].join('\n');
@@ -387,6 +385,88 @@ var OrtiScene = (function () {
     return {points: P, lines: L};
   }
 
+  // MARK: - Hjärnan (Yuris bild 2026-11-28): vänster halva vit och teknisk, höger i färg, med ett färgstänk åt höger
+
+  // Stänkets huvudriktningar (x, y, z, färg)
+  var SPLASH_DIRS = [[1, 0.55, 0.1, 0], [1, 0.1, 0.3, 3], [1, -0.4, 0, 2], [0.8, 0.9, -0.2, 4], [1, -0.8, 0.2, 6], [1, 0.25, -0.3, 5], [0.6, -0.1, 0.5, 1], [0.9, 0.6, 0.4, 7]];
+  var SPLASH = [[1, 0.2, 0.6], [1, 0.4, 0.78], [0, 0.85, 1], [1, 0.86, 0.12], [1, 0.5, 0.1], [0.45, 1, 0.3], [0.58, 0.32, 1], [0.1, 0.55, 1]];
+
+  /** Vecken: sinusvågor som vrids in i varandra ger slingrande åsar och fåror (-1–1, fåran vid 0). */
+  function fold(x, y, z) {
+    var a = Math.sin(6.8 * x + 2.6 * Math.sin(4.3 * z + 1.3) + 1.7 * Math.sin(4.6 * y));
+    var b = Math.sin(6.2 * z + 2.4 * Math.sin(4.7 * x + 0.7) + 1.5 * Math.sin(3.9 * y + 2.0));
+    var c = Math.sin(5.6 * y + 2.2 * Math.sin(4.4 * z) + 1.9 * Math.sin(3.6 * x + 1.1));
+    return (a + b + c) / 3;
+  }
+  /** Färgen på höger halva: mjuka fält av stänkets färger. */
+  function paint(x, y, z) {
+    var h = (0.5 + 0.35 * Math.sin(2.1 * x + 1) + 0.3 * Math.sin(1.7 * z) + 0.25 * Math.sin(2.3 * y + 2) + 1.5) % 1;
+    var f = h * SPLASH.length, i = Math.floor(f) % SPLASH.length;
+    return mix3(SPLASH[i], SPLASH[(i + 1) % SPLASH.length], f - Math.floor(f));
+  }
+
+  /** En hjärnhalva (side -1 vänster, 1 höger) kring origo: ytan med veck, lite fyllnad inuti, linjer längs vecken. */
+  function buildHemisphere(q, side) {
+    reseed(side < 0 ? 901 : 902);
+    var P = new Builder(), L = new Builder(), i, cx = side * 0.66, e = 0.01;
+    function surf(d) {
+      var px = d[0], py = d[1], pz = d[2];
+      if (px * side < 0) px = -side * Math.pow(Math.abs(px), 0.3);   // platt mot mittlinjen, halvorna möts där
+      if (py < -0.25) py = -0.25 + (py + 0.25) * 0.55;  // plattare undersida
+      return [cx + px * 0.62, py * 0.74, pz * 1.02];
+    }
+    for (i = 0; i < q.brain; i++) {
+      var d = onSphere(), b = surf(d), g = fold(b[0], b[1], b[2]), ridge = Math.min(1, Math.abs(g) * 2.6);
+      var k = 1 + 0.05 * (ridge - 0.5), p = [cx + (b[0] - cx) * k, b[1] * k, b[2] * k];
+      var col = side < 0 ? mix3(C.white, C.cyan, rnd() * 0.3) : paint(p[0], p[1], p[2]);
+      P.v(p, dim(col, (0.25 + 0.75 * ridge) * (side < 0 ? 0.55 : 1.15)), (side < 0 ? 7 : 9) + rnd() * 6 + ridge * 3, rnd() * 10 + (rnd() < 0.05 ? 10 : 0), 0);
+    }
+    for (i = 0; i < q.brain * 0.12; i++) {           // fyllnad inuti (djup)
+      var dd = onSphere(), rr = Math.pow(rnd(), 0.5) * 0.85, bb = surf(dd), pp = [cx + (bb[0] - cx) * rr, bb[1] * rr, bb[2] * rr];
+      P.v(pp, dim(side < 0 ? C.holo : paint(pp[0], pp[1], pp[2]), 0.18 + rnd() * 0.2), 7 + rnd() * 8, rnd() * 10, 0);
+    }
+    // Vecken: slingrande kurvor över ytan (mjukt vindlande, som i en linjeteckning av en hjärna). Vänster: vita;
+    // höger: i färg, svagare, mellan de färgade fälten. Inte på den platta insidan (den syns inte ovanifrån).
+    var strokes = Math.round(q.brain * (side < 0 ? 0.012 : 0.011)), steps = 34, stepLen = 0.035;
+    for (i = 0; i < strokes; i++) {
+      var u = onSphere();
+      if (u[0] * side < -0.2) { u[0] = -u[0]; }
+      var h = norm(cross(u, onSphere())), k = (rnd() - 0.5) * 2, prev = surf(u);
+      var col = side < 0 ? C.white : paint(prev[0], prev[1], prev[2]), al = side < 0 ? 0.35 + rnd() * 0.35 : 0.4 + rnd() * 0.3;
+      for (var st = 0; st < steps; st++) {
+        k = Math.max(-2.2, Math.min(2.2, k + (rnd() - 0.5) * 1.6));
+        var side2 = cross(u, h), turn = k * stepLen * 4;
+        h = norm([h[0] + side2[0] * turn, h[1] + side2[1] * turn, h[2] + side2[2] * turn]);
+        u = norm([u[0] + h[0] * stepLen, u[1] + h[1] * stepLen, u[2] + h[2] * stepLen]);
+        var hd = dot(h, u);
+        h = norm([h[0] - u[0] * hd, h[1] - u[1] * hd, h[2] - u[2] * hd]);
+        if (u[0] * side < -0.25) break;
+        var nx = surf(u);
+        L.l([cx + (prev[0] - cx) * 1.01, prev[1] * 1.01, prev[2] * 1.01], [cx + (nx[0] - cx) * 1.01, nx[1] * 1.01, nx[2] * 1.01], col, al * Math.sin((st + 1) / (steps + 1) * Math.PI), rnd() * 10, 0);
+        prev = nx;
+      }
+    }
+    return {points: P, lines: L};
+  }
+
+  /** Färgstänket: droppar och streck som flyger utåt åt höger från höger halva och börjar om (flöde i shadern). */
+  function buildSplash(q) {
+    reseed(77);
+    var P = new Builder(), L = new Builder(), i;
+    for (i = 0; i < q.splash; i++) {
+      var back = rnd() < 0.12;
+      // klickar: dropparna samlas kring några riktningar (som stänk), och blir större närmare hjärnan
+      var lobe = SPLASH_DIRS[Math.floor(rnd() * SPLASH_DIRS.length)], j = 0.35;
+      var dir = back ? norm([-0.2 + rnd() * 0.6, (rnd() - 0.5) * 2.2, (rnd() - 0.5) * 1.1]) : norm([lobe[0] + (rnd() - 0.5) * j, lobe[1] + (rnd() - 0.5) * j, lobe[2] + (rnd() - 0.5) * j]);
+      var dist = 0.3 + Math.pow(rnd(), 1.4) * (back ? 1.2 : 2.6), p = [dir[0] * dist, dir[1] * dist, dir[2] * dist];
+      var col = lobe[3] !== undefined && rnd() < 0.7 ? SPLASH[lobe[3]] : SPLASH[Math.floor(rnd() * SPLASH.length)];
+      var big = rnd() < 0.1 * (1.6 - dist / 2.6);
+      P.v(p, dim(col, 0.5 + rnd() * 0.5), big ? 30 + rnd() * 34 : 7 + rnd() * 12, rnd() * 10, 50 + 0.02 + rnd() * 0.05);
+      if (rnd() < 0.06) L.l([p[0] * 0.9, p[1] * 0.9, p[2] * 0.9], p, col, 0.45, rnd() * 10, 50 + 0.02 + rnd() * 0.05);
+    }
+    return {points: P, lines: L};
+  }
+
   /** Lösa partiklar i rymden mellan delarna (djup och parallax). */
   function buildDust(q) {
     reseed(5);
@@ -401,9 +481,9 @@ var OrtiScene = (function () {
   // MARK: - Kvalitetsnivåer
 
   var QUALITY = {
-    low: {res: 0.6, fps: 30, sphere: 9000, segs: 1800, radial: 120, coreRings: 5, rings: 6, tubeRings: 100, tubeCloud: 2400, tubeGlyphs: 60, goldGlyphs: 260, goldOuter: 700, disc1: 3800, disc2: 3400, rim: 700, dust: 250},
-    medium: {res: 0.85, fps: 30, sphere: 22000, segs: 4200, radial: 220, coreRings: 6, rings: 9, tubeRings: 170, tubeCloud: 5500, tubeGlyphs: 120, goldGlyphs: 520, goldOuter: 1600, disc1: 9000, disc2: 8000, rim: 1400, dust: 600},
-    ultra: {res: 1, fps: 60, sphere: 44000, segs: 8000, radial: 320, coreRings: 7, rings: 12, tubeRings: 240, tubeCloud: 10000, tubeGlyphs: 200, goldGlyphs: 900, goldOuter: 3000, disc1: 18000, disc2: 16000, rim: 2600, dust: 1100}
+    low: {res: 0.6, fps: 30, brain: 9000, splash: 2500, sphere: 9000, segs: 1800, radial: 120, coreRings: 5, rings: 6, tubeRings: 100, tubeCloud: 2400, tubeGlyphs: 60, goldGlyphs: 260, goldOuter: 700, disc1: 3800, disc2: 3400, rim: 700, dust: 250},
+    medium: {res: 0.85, fps: 30, brain: 20000, splash: 6000, sphere: 22000, segs: 4200, radial: 220, coreRings: 6, rings: 9, tubeRings: 170, tubeCloud: 5500, tubeGlyphs: 120, goldGlyphs: 520, goldOuter: 1600, disc1: 9000, disc2: 8000, rim: 1400, dust: 600},
+    ultra: {res: 1, fps: 60, brain: 38000, splash: 12000, sphere: 44000, segs: 8000, radial: 320, coreRings: 7, rings: 12, tubeRings: 240, tubeCloud: 10000, tubeGlyphs: 200, goldGlyphs: 900, goldOuter: 3000, disc1: 18000, disc2: 16000, rim: 2600, dust: 1100}
   };
 
   // MARK: - Lägen (IDLE, LISTENING, THINKING, SPEAKING, SUCCESS, ALERT): mjuka övergångar
@@ -424,6 +504,7 @@ var OrtiScene = (function () {
     var gl = null, progP = null, progL = null, progH = null, quad = null, halos = [], objs = [], pulseBuf = null, pulseData = null, raf = 0, running = false;
     var level = opts.quality === 'low' || opts.quality === 'ultra' ? opts.quality : 'medium';
     var auto = !opts.quality || opts.quality === 'auto';
+    var figure = opts.figure === 'reactor' ? 'reactor' : 'brain';
     var q = QUALITY[level], t0 = Date.now(), simT = 0, lastNow = 0, lastDraw = 0, lost = false;
     var cur = {bright: 0.8, speed: 1, tint: C.deep.slice(), tintAmt: 0, pulse: 0, ring: 0}, target = STATES.idle, stateName = 'idle';
     var audio = 0, userBright = opts.brightness || 1, userSpeed = opts.speed || 1, night = 1;
@@ -485,6 +566,40 @@ var OrtiScene = (function () {
       gl.bindBuffer(gl.ARRAY_BUFFER, quad);
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]), gl.STATIC_DRAW);
       objs = [];
+      if (figure === 'reactor') reactorScene(); else brainScene();
+      // Informationspulserna: åtta punkter som vandrar längs kedjan (uppdateras varje bildruta)
+      pulseData = new Float32Array(8 * 2 * STRIDE);
+      pulseBuf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, pulseBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, pulseData, gl.DYNAMIC_DRAW);
+      gl.disable(gl.DEPTH_TEST);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE);
+      gl.clearColor(0, 0, 0, 1);
+      return true;
+    }
+
+    /** Hjärnan: två halvor i mitten-vänster, stänket åt höger, pulser över mittlinjen. */
+    function brainScene() {
+      var BR = [-0.75, -0.3, 0], tiltX = 1.12;
+      function model(t) { return Mat.mul(Mat.trans(BR), Mat.mul(Mat.rot([0, 1, 0], 0.22 * Math.sin(t * 0.045) - 0.12), Mat.mul(Mat.rot([1, 0, 0], tiltX + 0.06 * Math.sin(t * 0.031)), Mat.scale(1.45)))); }
+      obj(buildHemisphere(q, -1), model, {twinkle: 0.45});
+      obj(buildHemisphere(q, 1), model, {twinkle: 0.45, layer: 'core'});
+      var SO = add(BR, [1.35, -0.05, 0.25]);
+      obj(buildSplash(q), function (t) { return Mat.mul(Mat.trans(SO), Mat.rot([0, 0, 1], 0.08 * Math.sin(t * 0.04))); }, {twinkle: 0.3});
+      obj(buildDust(q), function () { return Mat.ident(); }, {twinkle: 1});
+      chainPts = [];
+      for (var i = 0; i < 12; i++) {
+        var u = i / 11;
+        chainPts.push([BR[0] - 0.85 + u * 1.7, BR[1] + 0.35 + Math.sin(u * Math.PI) * 0.5, BR[2] + 0.55]);
+      }
+      halos = [[add(BR, [-0.85, 0.1, 0.2]), 1.3, C.holo, 0.16, 0], [add(BR, [-0.85, 0.15, 0.3]), 0.5, C.white, 0.12, 1],
+        [add(BR, [0.85, 0.1, 0.2]), 1.3, [0.75, 0.2, 0.7], 0.14, 1], [add(BR, [0.85, 0.15, 0.3]), 0.5, [1, 0.6, 0.3], 0.1, 1],
+        [add(SO, [1.2, 0, 0]), 1.6, [0.9, 0.3, 0.6], 0.07, 0], [add(SO, [2.2, 0.2, 0]), 1.4, [0.1, 0.6, 1], 0.06, 0]];
+    }
+
+    /** Reaktorn (sfären, kärnorna, röret, guldkärnan, skivorna); kvar som val i koden. */
+    function reactorScene() {
       var sph = buildSphere(q), tilt = norm([0.25, 1, 0.12]);
       obj(sph, function (t) { return Mat.mul(Mat.trans(S), Mat.mul(Mat.rot(tilt, t * 0.035), Mat.scale(SR))); }, {twinkle: 0.55});
       // Två energikärnor inne i sfären, var sin vridning och lutning, och en vitgul punkt bredvid
@@ -524,16 +639,6 @@ var OrtiScene = (function () {
       // Skenen: [plats, radie (världsenheter), färg, styrka, pulserar med ljudet/lägena]
       halos = [[S, 2.2, C.holo, 0.16, 0], [c1, 0.75, C.blue, 0.55, 1], [c1, 0.22, C.core, 0.7, 1], [c2, 0.65, C.cyan, 0.45, 1], [c2, 0.2, C.core, 0.65, 1],
         [c3, 0.2, C.warm, 0.5, 1], [GOLD, 0.4, C.gold, 0.16, 0], [GOLD, 0.1, C.warm, 0.55, 0], [DISC1, 1.5, C.blue, 0.1, 0], [DISC2, 1.6, C.blue, 0.09, 0]];
-      // Informationspulserna: åtta punkter som vandrar längs kedjan (uppdateras varje bildruta)
-      pulseData = new Float32Array(8 * 2 * STRIDE);
-      pulseBuf = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, pulseBuf);
-      gl.bufferData(gl.ARRAY_BUFFER, pulseData, gl.DYNAMIC_DRAW);
-      gl.disable(gl.DEPTH_TEST);
-      gl.enable(gl.BLEND);
-      gl.blendFunc(gl.ONE, gl.ONE);
-      gl.clearColor(0, 0, 0, 1);
-      return true;
     }
 
     function freeGL() {

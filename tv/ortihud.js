@@ -102,7 +102,7 @@ var OrtiSaver = (function () {
     els.temps = block(1220, 836, 620, 'TEMPERATUR 12 H', els.panels);
     // Kanternas tekniska detaljer (koordinaterna är riktiga, referensnumren utsmyckning)
     els.coord = el('div', 'o3-edge o3-coord', hud);
-    els.ref = el('div', 'o3-edge o3-ref', hud, 'REF 0721-48 · HOLO-STRUKTUR A–F');
+    els.ref = el('div', 'o3-edge o3-ref', hud, 'REF 0721-48 · NEURAL STRUKTUR');
   }
 
   // MARK: - Data
