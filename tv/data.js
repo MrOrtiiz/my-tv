@@ -81,10 +81,11 @@ var Prefs = (function () {
     holidays: function () { return pick('holidays', true) !== false; },
     /** OK on the screensaver opens the title it shows, in its app; any other key only closes it (off by default). */
     saverWatch: function () { return pick('saverWatch', false) === true; },
-    /** What the screensaver shows: 'photos' (the picks' photos, as it always has) or 'clock' (a clock and the weather). */
+    /** What the screensaver shows: 'photos' (the picks' photos), 'clock' (a clock and the weather), 'orti' or 'neural' (ortihud.js). */
     saver: function () {
       var v = pick('saver', 'photos');
-      return v === 'clock' ? 'clock' : v === 'orti' && window.OrtiSaver && OrtiSaver.supported() ? 'orti' : 'photos';
+      if (v === 'clock') return 'clock';
+      return (v === 'orti' || v === 'neural') && window.OrtiSaver && OrtiSaver.supported() ? v : 'photos';
     },
     /** Minuter utan knapptryck innan skärmsläckaren visas (Hemskärm → Skärmsläckare efter). */
     saverAfter: function () { var v = +pick('saverAfter', 5); return v > 0 ? v : 5; },

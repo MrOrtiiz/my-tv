@@ -1,5 +1,7 @@
 /*
  * O.R.T.I. – skärmsläckaren hemma: lagret med 3D-kärnan (orti3d.js) och informationen ovanpå (orti3d.css).
+ * Två varianter: 'orti' (reaktorn) och 'neural' (O.R.T.I. – Neural Intelligence: hjärnan i mitten, analytiska
+ * paneler till vänster, färgstänket till höger). Mätarna visar riktiga värden; nätverket och signalen är utsmyckning.
  *
  * home.js visar den efter vald tid utan knapptryck (Inställningar → Hemskärm → Skärmsläckare: O.R.T.I.), eller direkt
  * med "Visa O.R.T.I. nu". Allt som visas är riktiga värden från appen: tiden, vädret (nu, timmar, dagar, solen),
@@ -16,9 +18,11 @@ var OrtiSaver = (function () {
   var DAY3 = ['SÖN', 'MÅN', 'TIS', 'ONS', 'TOR', 'FRE', 'LÖR'];
   var MONTHS = ['JANUARI', 'FEBRUARI', 'MARS', 'APRIL', 'MAJ', 'JUNI', 'JULI', 'AUGUSTI', 'SEPTEMBER', 'OKTOBER', 'NOVEMBER', 'DECEMBER'];
   var STATE_NAME = {idle: 'VILOLÄGE', listening: 'LYSSNAR', thinking: 'BEARBETAR', speaking: 'TALAR', success: 'KLART', alert: 'VARNING'};
+  // Neural Intelligence: briefens fyra lägen (standby är idle), plus de två som appen redan använder
+  var NEURAL_NAME = {idle: 'STANDBY MODE', listening: 'LISTENING', thinking: 'THINKING', speaking: 'SPEAKING', success: 'DATA UPDATED', alert: 'OFFLINE'};
 
   var layer = null, canvas = null, hud = null, scene = null, on = false, timer = 0, dataTimer = 0, killTimer = 0;
-  var supportedCache = null, els = {}, stateNow = 'idle';
+  var supportedCache = null, els = {}, stateNow = 'idle', mode = 'orti', built = '', ana = null, anaTimer = 0, anaT = 0, speakLevel = 0;
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, parent, text) {
@@ -43,18 +47,21 @@ var OrtiSaver = (function () {
 
   function build() {
     var stage = $('stage') || document.body;
-    layer = el('div', '', stage);
+    if (layer && layer.parentNode) layer.parentNode.removeChild(layer);
+    els = {}; ana = null;
+    layer = el('div', mode === 'neural' ? 'o3-neural' : '', stage);
     layer.id = 'ortisaver';
     canvas = el('canvas', 'o3-gl', layer);
     var frame = el('canvas', 'o3-frame', layer);
     frame.width = 1920; frame.height = 1080;
     hud = el('div', 'o3-hud', layer);
-    drawFrame(frame.getContext('2d'));
-    buildHud();
+    drawFrame(frame.getContext('2d'), mode === 'neural');
+    if (mode === 'neural') buildNeural(); else buildHud();
+    built = mode;
   }
 
   /** Ramen: hårfina linjer, notchar, skalor och små cirklar (utsmyckning). */
-  function drawFrame(g) {
+  function drawFrame(g, neural) {
     var W = 1920, H = 1080, i;
     function ln(x1, y1, x2, y2, a) { g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.lineWidth = 1; g.strokeStyle = 'rgba(0, 207, 255, ' + a + ')'; g.stroke(); }
     ln(48, 40, 820, 40, 0.45); ln(820, 40, 838, 30, 0.45); ln(838, 30, 1082, 30, 0.45); ln(1082, 30, 1100, 40, 0.45); ln(1100, 40, W - 48, 40, 0.45);
@@ -67,7 +74,7 @@ var OrtiSaver = (function () {
       ln(W - 48, y, W - 48 - (big ? 12 : 6), y, big ? 0.55 : 0.25);
     }
     for (i = 0; i < 64; i++) { g.fillStyle = 'rgba(0, 207, 255, ' + (0.12 + (i % 4) * 0.06) + ')'; g.fillRect(120 + i * 10, H - 31, 6, 2); g.fillRect(1180 + i * 10, H - 31, 6, 2); }
-    var rings = [[W - 120, 540], [120, 540]];
+    var rings = neural ? [] : [[W - 120, 540], [120, 540]];
     for (i = 0; i < rings.length; i++) {
       g.beginPath(); g.arc(rings[i][0], rings[i][1], 16, 0, Math.PI * 2); g.lineWidth = 1.5; g.strokeStyle = 'rgba(0, 207, 255, 0.4)'; g.stroke();
       g.beginPath(); g.arc(rings[i][0], rings[i][1], 22, -0.6, 1.4); g.lineWidth = 1; g.strokeStyle = 'rgba(220, 234, 242, 0.35)'; g.stroke();
@@ -105,6 +112,149 @@ var OrtiSaver = (function () {
     els.ref = el('div', 'o3-edge o3-ref', hud, 'REF 0721-48 · NEURAL STRUKTUR');
   }
 
+  // MARK: - Neural Intelligence: vänster analytisk, höger kreativ, hjärnan i mitten
+
+  function buildNeural() {
+    // Överst i mitten: namnet, systemet och läget
+    els.name = el('div', 'o3-name', hud, 'O.R.T.I.');
+    els.sys = el('div', 'n3-sys', hud, 'NEURAL INTELLIGENCE SYSTEM');
+    els.state = el('div', 'o3-state n3-state', hud, 'STANDBY MODE');
+    // Under hjärnan: de två halvornas namn, med en tunn linje upp mot dem
+    el('div', 'n3-core left', hud, 'ANALYTICAL CORE');
+    el('div', 'n3-core right', hud, 'CREATIVE CORE');
+    // Vänster: tiden och de analytiska panelerna (riktiga värden i text, animationerna är utsmyckning)
+    els.time = el('div', 'o3-time', hud);
+    els.date = el('div', 'o3-date', hud);
+    els.week = el('div', 'o3-weekno', hud);
+    els.panels = el('div', 'o3-panels', hud);
+    var c = el('canvas', 'n3-ana', els.panels);
+    var dpr = stageScale();
+    c.width = Math.round(470 * dpr); c.height = Math.round(640 * dpr);
+    ana = {c: c, g: c.getContext('2d'), dpr: dpr, nodes: netNodes()};
+    els.now = block(92, 322, 200, 'UTE', els.panels);
+    els.gDay = el('div', 'n3-gauge', els.panels); els.gDay.style.left = '92px'; els.gDay.style.top = '470px';
+    els.gWeek = el('div', 'n3-gauge', els.panels); els.gWeek.style.left = '252px'; els.gWeek.style.top = '470px';
+    els.gSun = el('div', 'n3-gauge', els.panels); els.gSun.style.left = '412px'; els.gSun.style.top = '470px';
+    block(92, 660, 470, 'NEURALT NÄT', els.panels);
+    block(92, 846, 470, 'SIGNAL', els.panels);
+    // Höger: få, lugna rader (stänket får ytan)
+    els.days = block(1530, 322, 300, 'KOMMANDE DAGAR', els.panels);
+    els.sun = block(1530, 846, 300, 'SOLEN', els.panels);
+    els.days.parentNode.className += ' n3-right';
+    els.sun.parentNode.className += ' n3-right';
+    els.coord = el('div', 'o3-edge o3-coord', hud);
+    els.ref = el('div', 'o3-edge o3-ref', hud, 'ANALYTICAL · CREATIVE · SYNC');
+  }
+
+  function stageScale() {
+    var st = $('stage');
+    var w = st && st.getBoundingClientRect ? st.getBoundingClientRect().width : 1920;
+    return Math.max(1, Math.min(2, w / 1920));
+  }
+
+  /** Nätverkets noder (utsmyckning): fast mönster, så att det inte hoppar mellan visningarna. */
+  function netNodes() {
+    var n = [], s = 41;
+    function r() { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }
+    var cols = [3, 5, 6, 5, 3];
+    for (var i = 0; i < cols.length; i++) {
+      for (var j = 0; j < cols[i]; j++) n.push({x: 12 + i * 108, y: 22 + (j + 0.5) * (120 / cols[i]), l: i, ph: r() * 6.28});
+    }
+    return n;
+  }
+
+  /** Mätarna (riktiga värden): dygnet, veckan och dagsljuset som har gått. */
+  function renderGauges(d) {
+    if (!els.gDay) return;
+    var mins = d.getHours() * 60 + d.getMinutes(), wd = (d.getDay() + 6) % 7;
+    var day = mins / 1440, wk = (wd + day) / 7, w = Prefs.weather() ? Data.weather : null, sun = null;
+    if (w && w.sunrise && w.sunset) sun = Math.max(0, Math.min(1, (d.getTime() - w.sunrise) / (w.sunset - w.sunrise)));
+    els.gDay.innerHTML = '<b>' + Math.round(day * 100) + '<i>%</i></b><span>DYGNET</span>';
+    els.gWeek.innerHTML = '<b>' + Math.round(wk * 100) + '<i>%</i></b><span>VECKAN</span>';
+    els.gSun.innerHTML = sun === null ? '<b>–</b><span>DAGSLJUS</span>' : '<b>' + Math.round(sun * 100) + '<i>%</i></b><span>DAGSLJUS</span>';
+    ana.vals = [day, wk, sun === null ? 0 : sun];
+  }
+
+  /** De animerade panelerna till vänster: mätarnas ringar, nätverket, signalen och en svepande linje. */
+  function drawAna() {
+    if (!ana || !on) return;
+    var g = ana.g, k = ana.dpr, t = anaT, i, j, vals = ana.vals || [0, 0, 0];
+    var sp = stateNow === 'thinking' ? 2.4 : stateNow === 'listening' ? 1.5 : 1;
+    g.setTransform(k, 0, 0, k, 0, 0);
+    g.clearRect(0, 0, 470, 640);
+    // Canvasens origo är (92, 450) på skärmen
+    // Mätarna: ring med värdet, roterande skala utanför
+    for (i = 0; i < 3; i++) {
+      var cx = 64 + i * 160, cy = 84, R = 54;
+      g.lineWidth = 1; g.strokeStyle = 'rgba(0, 157, 255, 0.18)';
+      g.beginPath(); g.arc(cx, cy, R, 0, Math.PI * 2); g.stroke();
+      g.lineWidth = 3; g.strokeStyle = i === 2 ? 'rgba(232, 185, 78, 0.95)' : 'rgba(0, 207, 255, 0.95)';
+      g.beginPath(); g.arc(cx, cy, R, -Math.PI / 2, -Math.PI / 2 + vals[i] * Math.PI * 2); g.stroke();
+      var rot = t * 0.25 * (i % 2 ? -1 : 1) * sp;
+      g.lineWidth = 1;
+      for (j = 0; j < 48; j++) {
+        var a = rot + j / 48 * Math.PI * 2, big = j % 6 === 0, r1 = R + 7, r2 = R + (big ? 14 : 10);
+        g.strokeStyle = 'rgba(220, 234, 242, ' + (big ? 0.4 : 0.14) + ')';
+        g.beginPath(); g.moveTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); g.lineTo(cx + Math.cos(a) * r2, cy + Math.sin(a) * r2); g.stroke();
+      }
+      g.strokeStyle = 'rgba(0, 207, 255, 0.35)';
+      g.beginPath(); g.arc(cx, cy, R - 9, rot * 1.7, rot * 1.7 + 0.9); g.stroke();
+    }
+    // Nätverket (y 250–380): noder i lager, kanter mellan lagren, pulser som vandrar åt höger
+    var N = ana.nodes, oy = 250;
+    for (i = 0; i < N.length; i++) for (j = 0; j < N.length; j++) {
+      if (N[j].l !== N[i].l + 1) continue;
+      var w = 0.5 + 0.5 * Math.sin(t * 0.6 * sp + N[i].ph + N[j].ph);
+      g.strokeStyle = 'rgba(0, 207, 255, ' + (0.05 + w * 0.14) + ')'; g.lineWidth = 1;
+      g.beginPath(); g.moveTo(N[i].x, oy + N[i].y); g.lineTo(N[j].x, oy + N[j].y); g.stroke();
+      var u = (t * 0.35 * sp + N[i].ph * 0.3 + N[j].ph * 0.2) % 1;
+      if (w > 0.82) {
+        g.fillStyle = 'rgba(220, 245, 255, ' + (0.9 * Math.sin(u * Math.PI)) + ')';
+        g.fillRect(N[i].x + (N[j].x - N[i].x) * u - 1.5, oy + N[i].y + (N[j].y - N[i].y) * u - 1.5, 3, 3);
+      }
+    }
+    for (i = 0; i < N.length; i++) {
+      var on2 = 0.5 + 0.5 * Math.sin(t * 0.9 * sp + N[i].ph);
+      g.fillStyle = 'rgba(0, 0, 0, 1)'; g.strokeStyle = 'rgba(0, 207, 255, ' + (0.45 + on2 * 0.5) + ')'; g.lineWidth = 1.5;
+      g.beginPath(); g.arc(N[i].x, oy + N[i].y, 4, 0, Math.PI * 2); g.fill(); g.stroke();
+      if (on2 > 0.85) { g.fillStyle = 'rgba(220, 245, 255, 0.9)'; g.beginPath(); g.arc(N[i].x, oy + N[i].y, 1.8, 0, Math.PI * 2); g.fill(); }
+    }
+    // Signalen (y 440–540): tre vågor som rullar, och ett rutnät
+    oy = 490;
+    g.strokeStyle = 'rgba(0, 157, 255, 0.12)'; g.lineWidth = 1;
+    for (i = 0; i <= 10; i++) { g.beginPath(); g.moveTo(i * 47, oy - 40); g.lineTo(i * 47, oy + 40); g.stroke(); }
+    g.beginPath(); g.moveTo(0, oy); g.lineTo(470, oy); g.stroke();
+    var amp = 1 + (stateNow === 'speaking' ? speakLevel * 2.5 : 0);
+    var waves = [[0.045, 1.3, 22, 'rgba(0, 207, 255, 0.9)'], [0.021, -0.8, 14, 'rgba(220, 234, 242, 0.45)'], [0.09, 2.1, 7, 'rgba(0, 157, 255, 0.55)']];
+    for (j = 0; j < waves.length; j++) {
+      g.strokeStyle = waves[j][3]; g.lineWidth = j ? 1 : 1.5; g.beginPath();
+      for (i = 0; i <= 470; i += 4) {
+        var env = Math.sin(i / 470 * Math.PI);
+        var y = oy + Math.sin(i * waves[j][0] + t * waves[j][1] * sp) * waves[j][2] * env * amp * (0.75 + 0.25 * Math.sin(t * 0.4 + j));
+        if (i) g.lineTo(i, y); else g.moveTo(i, y);
+      }
+      g.stroke();
+    }
+    // Den svepande linjen över hela kolumnen
+    var sy = (t * 40 * sp) % 760 - 60;
+    var gr = g.createLinearGradient(0, sy - 30, 0, sy);
+    gr.addColorStop(0, 'rgba(0, 207, 255, 0)'); gr.addColorStop(1, 'rgba(0, 207, 255, 0.035)');
+    g.fillStyle = gr; g.fillRect(0, sy - 30, 470, 30);
+    g.fillStyle = 'rgba(0, 207, 255, 0.18)'; g.fillRect(0, sy, 470, 1);
+  }
+
+  function anaLoop() {
+    clearInterval(anaTimer);
+    var last = Date.now();
+    anaTimer = setInterval(function () {
+      if (!on || document.hidden) return;
+      var now = Date.now();
+      anaT += Math.min(0.2, (now - last) / 1000) * pref('speed', 1) * (isNight() ? 0.6 : 1);
+      last = now;
+      drawAna();
+    }, 1000 / 15);
+  }
+
   // MARK: - Data
 
   function renderClock() {
@@ -112,6 +262,7 @@ var OrtiSaver = (function () {
     els.time.textContent = two(d.getHours()) + ':' + two(d.getMinutes());
     els.date.textContent = DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()];
     els.week.textContent = 'VECKA ' + week(d);
+    if (mode === 'neural') { renderGauges(d); return; }
     renderWeek(d);
     renderDay(d);
   }
@@ -146,11 +297,13 @@ var OrtiSaver = (function () {
     var w = Prefs.weather() ? Data.weather : null, i, html;
     if (!w || isNaN(w.temp)) {
       els.now.innerHTML = '<div class="o3-muted">INGET VÄDER ÄN</div>';
-      els.hours.innerHTML = els.days.innerHTML = els.sun.innerHTML = els.temps.innerHTML = '';
+      els.days.innerHTML = els.sun.innerHTML = '';
+      if (els.hours) els.hours.innerHTML = els.temps.innerHTML = '';
       return;
     }
     els.now.innerHTML = '<div class="o3-temp">' + deg(w.temp) + '</div><div class="o3-cond">' + cond(w.code, w.isDay) + '</div>' +
       (!isNaN(w.max) ? '<div class="o3-small">MAX ' + deg(w.max) + ' · MIN ' + deg(w.min) + '</div>' : '');
+    if (mode === 'neural') { renderDays(w); renderSun(w); return; }
     html = '<table class="o3-table"><tr>';
     var hs = (w.hours || []).slice(0, 6);
     for (i = 0; i < hs.length; i++) html += '<td class="k">' + hm(hs[i].at) + '</td>';
@@ -159,18 +312,8 @@ var OrtiSaver = (function () {
     html += '</tr><tr>';
     for (i = 0; i < hs.length; i++) html += '<td class="c">' + cond(hs[i].code, hs[i].day).split(' ')[0] + '</td>';
     els.hours.innerHTML = html + '</tr></table>';
-    html = '<table class="o3-table rows">';
-    var ds = (w.days || []).slice(0, 5);
-    for (i = 0; i < ds.length; i++) {
-      var dd = new Date(ds[i].at);
-      html += '<tr><td class="k">' + DAY3[dd.getDay()] + ' ' + dd.getDate() + '</td><td class="c">' + cond(ds[i].code, true) + '</td><td class="v">' + deg(ds[i].max) + ' / ' + deg(ds[i].min) + '</td></tr>';
-    }
-    els.days.innerHTML = html + '</table>';
-    if (w.sunrise && w.sunset) {
-      var len = Math.round((w.sunset - w.sunrise) / 60000);
-      els.sun.innerHTML = '<div class="o3-kv col"><span>UPP <b>' + hm(w.sunrise) + '</b></span><span>NER <b>' + hm(w.sunset) + '</b></span>' +
-        '<span>DAGSLJUS <b>' + Math.floor(len / 60) + ' H ' + two(len % 60) + ' MIN</b></span></div>';
-    } else els.sun.innerHTML = '';
+    renderDays(w);
+    renderSun(w);
     // Temperaturen de kommande 12 timmarna: tunna staplar
     var t12 = (w.hours12 || w.hours || []).slice(0, 12), lo = 99, hi = -99;
     for (i = 0; i < t12.length; i++) { lo = Math.min(lo, t12[i].temp); hi = Math.max(hi, t12[i].temp); }
@@ -180,6 +323,24 @@ var OrtiSaver = (function () {
       html += '<div class="o3-bar' + (i === 0 ? ' first' : '') + '" style="left:' + (i * 50) + 'px"><em style="bottom:' + Math.round(h + 28) + 'px">' + deg(t12[i].temp) + '</em><i style="height:' + h + 'px"></i><span>' + two(new Date(t12[i].at).getHours()) + '</span></div>';
     }
     els.temps.innerHTML = html + '</div>' + (t12.length ? '<div class="o3-small right">LÄGST ' + deg(lo) + ' · HÖGST ' + deg(hi) + '</div>' : '');
+  }
+
+  function renderDays(w) {
+    var html = '<table class="o3-table rows">', i;
+    var ds = (w.days || []).slice(0, 5);
+    for (i = 0; i < ds.length; i++) {
+      var dd = new Date(ds[i].at);
+      html += '<tr><td class="k">' + DAY3[dd.getDay()] + ' ' + dd.getDate() + '</td><td class="c">' + cond(ds[i].code, true) + '</td><td class="v">' + deg(ds[i].max) + ' / ' + deg(ds[i].min) + '</td></tr>';
+    }
+    els.days.innerHTML = html + '</table>';
+  }
+
+  function renderSun(w) {
+    if (w.sunrise && w.sunset) {
+      var len = Math.round((w.sunset - w.sunrise) / 60000);
+      els.sun.innerHTML = '<div class="o3-kv col"><span>UPP <b>' + hm(w.sunrise) + '</b></span><span>NER <b>' + hm(w.sunset) + '</b></span>' +
+        '<span>DAGSLJUS <b>' + Math.floor(len / 60) + ' H ' + two(len % 60) + ' MIN</b></span></div>';
+    } else els.sun.innerHTML = '';
   }
 
   function renderEdges() {
@@ -197,10 +358,11 @@ var OrtiSaver = (function () {
   // MARK: - Lägen, natt och förflyttning
 
   function setState(name) {
+    if (name === 'standby') name = 'idle';
     if (!STATE_NAME[name]) return;
     stateNow = name;
     if (scene) scene.setState(name);
-    if (els.state) els.state.textContent = STATE_NAME[name];
+    if (els.state) els.state.textContent = (mode === 'neural' ? NEURAL_NAME : STATE_NAME)[name];
     if (layer) layer.setAttribute('data-state', name);
   }
 
@@ -258,14 +420,17 @@ var OrtiSaver = (function () {
   }
 
   /** Visar skärmsläckaren; false om den inte kan (ingen WebGL): då visar home.js klockan i stället. */
-  function show() {
+  function show(which) {
     if (on) return true;
     if (!supported()) return false;
     clearTimeout(killTimer);
-    if (!layer) build();
+    which = which === 'neural' ? 'neural' : 'orti';
+    if (scene && which !== mode) { scene.destroy(); scene = null; }
+    mode = which;
+    if (!layer || built !== mode) build();
     else if (!canvas.parentNode) { canvas = el('canvas', 'o3-gl', null); layer.insertBefore(canvas, layer.firstChild); }
     if (!scene) {
-      scene = OrtiScene.create(canvas, {quality: pref('quality', 'auto'), brightness: pref('bright', 1), speed: pref('speed', 1)});
+      scene = OrtiScene.create(canvas, {figure: mode === 'neural' ? 'neural' : 'reactor', quality: pref('quality', 'auto'), brightness: pref('bright', 1), speed: pref('speed', 1)});
       if (!scene.init()) { scene = null; return false; }
     }
     setClass(layer, 'o3-nopanels', pref('panels', true) === false);
@@ -283,6 +448,7 @@ var OrtiSaver = (function () {
     timer = setInterval(tick, 15000);
     clearInterval(dataTimer);
     dataTimer = setInterval(function () { if (on) { renderWeather(); renderEdges(); } }, 60000);
+    if (ana) { drawAna(); anaLoop(); }
     return true;
   }
 
@@ -290,7 +456,7 @@ var OrtiSaver = (function () {
   function hide() {
     if (!on) return;
     on = false;
-    clearInterval(timer); clearInterval(dataTimer);
+    clearInterval(timer); clearInterval(dataTimer); clearInterval(anaTimer);
     setClass(layer, 'on', false);
     setClass(layer, 'prep', false);
     clearTimeout(killTimer);
@@ -310,7 +476,9 @@ var OrtiSaver = (function () {
   return {
     show: show, hide: hide, isOn: function () { return on; }, supported: supported,
     state: setState,
-    level: function (v) { if (scene) scene.level(v); },
+    level: function (v) { speakLevel = Math.max(0, Math.min(1, v || 0)); if (scene) scene.level(v); },
+    /** Vilken som visas nu: 'orti' eller 'neural'. */
+    mode: function () { return mode; },
     /** Inställningarna ändrades (Hemskärm): gäller nästa gång, kvaliteten direkt om den visas. */
     settingsChanged: function () {
       if (!scene) return;

@@ -75,7 +75,7 @@ var OrtiScene = (function () {
     'varying vec3 vCol; varying float vA;',
     'void main() {',
     '  vec3 p = aPos; float fu = 1.0;',
-    '  if (aSpin > 50.0) { float u = fract(uTime * (aSpin - 50.0) + fract(aPhase * 0.371)); p = aPos * (0.3 + u * 0.95); fu = sin(u * 3.14159); }',
+    '  if (aSpin > 50.0) { float u = fract(uTime * (aSpin - 50.0) + fract(aPhase * 0.371)); p = aPos * (0.3 + u * (0.45 + 0.5 * u)); fu = sin(u * 3.14159) * (1.0 - u * 0.35); }',
     '  else { float a = uTime * aSpin; float c = cos(a); float s = sin(a); p = vec3(c * p.x - s * p.z, p.y, s * p.x + c * p.z); }',
     '  vec4 mv = uView * uModel * vec4(p, 1.0);',
     '  gl_Position = uProj * mv;',
@@ -106,7 +106,7 @@ var OrtiScene = (function () {
     'varying vec3 vCol; varying float vA;',
     'void main() {',
     '  vec3 p = aPos; float fu = 1.0;',
-    '  if (aSpin > 50.0) { float u = fract(uTime * (aSpin - 50.0) + fract(aPhase * 0.371)); p = aPos * (0.3 + u * 0.95); fu = sin(u * 3.14159); }',
+    '  if (aSpin > 50.0) { float u = fract(uTime * (aSpin - 50.0) + fract(aPhase * 0.371)); p = aPos * (0.3 + u * (0.45 + 0.5 * u)); fu = sin(u * 3.14159) * (1.0 - u * 0.35); }',
     '  else { float a = uTime * aSpin; float c = cos(a); float s = sin(a); p = vec3(c * p.x - s * p.z, p.y, s * p.x + c * p.z); }',
     '  gl_Position = uProj * uView * uModel * vec4(p, 1.0);',
     '  float ph = mod(aPhase, 10.0);',
@@ -467,6 +467,28 @@ var OrtiScene = (function () {
     return {points: P, lines: L};
   }
 
+  /**
+   * Dataspåren åt vänster (Neural Intelligence): raka, ordnade linjer i en solfjäder från vänster halva, med
+   * punkter som strömmar utåt och snabbar upp (flöde i shadern). Motsatsen till stänket på höger sida.
+   */
+  function buildRails(q) {
+    reseed(313);
+    var P = new Builder(), L = new Builder(), n = 9, i, r;
+    for (r = 0; r < n; r++) {
+      var dir = norm([-1, (r - (n - 1) / 2) * 0.17, (rnd() - 0.5) * 0.15]), col = r % 3 === 1 ? C.white : C.cyan;
+      var segs = 14;
+      for (i = 0; i < segs; i++) {   // linjen i bitar, en del flimrar (datatrafik)
+        var a = 0.25 + i / segs * 2.3, b = a + 2.3 / segs * 0.82;
+        L.l([dir[0] * a, dir[1] * a, dir[2] * a], [dir[0] * b, dir[1] * b, dir[2] * b], col, 0.09 + rnd() * 0.08 * (1 - i / segs), rnd() * 10 + (rnd() < 0.3 ? 10 : 0), 0);
+      }
+      for (i = 0; i < q.rail; i++) {
+        var d = 0.3 + rnd() * 2.0, p = [dir[0] * d, dir[1] * d + (rnd() - 0.5) * 0.02, dir[2] * d];
+        P.v(p, dim(rnd() < 0.2 ? C.white : C.cyan, 0.45 + rnd() * 0.45), 5 + rnd() * 6 + (rnd() < 0.04 ? 14 : 0), rnd() * 10, 50 + 0.03 + rnd() * 0.04);
+      }
+    }
+    return {points: P, lines: L};
+  }
+
   /** Lösa partiklar i rymden mellan delarna (djup och parallax). */
   function buildDust(q) {
     reseed(5);
@@ -481,9 +503,9 @@ var OrtiScene = (function () {
   // MARK: - Kvalitetsnivåer
 
   var QUALITY = {
-    low: {res: 0.6, fps: 30, brain: 9000, splash: 2500, sphere: 9000, segs: 1800, radial: 120, coreRings: 5, rings: 6, tubeRings: 100, tubeCloud: 2400, tubeGlyphs: 60, goldGlyphs: 260, goldOuter: 700, disc1: 3800, disc2: 3400, rim: 700, dust: 250},
-    medium: {res: 0.85, fps: 30, brain: 20000, splash: 6000, sphere: 22000, segs: 4200, radial: 220, coreRings: 6, rings: 9, tubeRings: 170, tubeCloud: 5500, tubeGlyphs: 120, goldGlyphs: 520, goldOuter: 1600, disc1: 9000, disc2: 8000, rim: 1400, dust: 600},
-    ultra: {res: 1, fps: 60, brain: 38000, splash: 12000, sphere: 44000, segs: 8000, radial: 320, coreRings: 7, rings: 12, tubeRings: 240, tubeCloud: 10000, tubeGlyphs: 200, goldGlyphs: 900, goldOuter: 3000, disc1: 18000, disc2: 16000, rim: 2600, dust: 1100}
+    low: {rail: 60, res: 0.6, fps: 30, brain: 9000, splash: 2500, sphere: 9000, segs: 1800, radial: 120, coreRings: 5, rings: 6, tubeRings: 100, tubeCloud: 2400, tubeGlyphs: 60, goldGlyphs: 260, goldOuter: 700, disc1: 3800, disc2: 3400, rim: 700, dust: 250},
+    medium: {rail: 130, res: 0.85, fps: 30, brain: 20000, splash: 6000, sphere: 22000, segs: 4200, radial: 220, coreRings: 6, rings: 9, tubeRings: 170, tubeCloud: 5500, tubeGlyphs: 120, goldGlyphs: 520, goldOuter: 1600, disc1: 9000, disc2: 8000, rim: 1400, dust: 600},
+    ultra: {rail: 220, res: 1, fps: 60, brain: 38000, splash: 12000, sphere: 44000, segs: 8000, radial: 320, coreRings: 7, rings: 12, tubeRings: 240, tubeCloud: 10000, tubeGlyphs: 200, goldGlyphs: 900, goldOuter: 3000, disc1: 18000, disc2: 16000, rim: 2600, dust: 1100}
   };
 
   // MARK: - Lägen (IDLE, LISTENING, THINKING, SPEAKING, SUCCESS, ALERT): mjuka övergångar
@@ -504,7 +526,7 @@ var OrtiScene = (function () {
     var gl = null, progP = null, progL = null, progH = null, quad = null, halos = [], objs = [], pulseBuf = null, pulseData = null, raf = 0, running = false;
     var level = opts.quality === 'low' || opts.quality === 'ultra' ? opts.quality : 'medium';
     var auto = !opts.quality || opts.quality === 'auto';
-    var figure = opts.figure === 'reactor' ? 'reactor' : 'brain';
+    var figure = opts.figure === 'reactor' || opts.figure === 'neural' ? opts.figure : 'brain';
     var q = QUALITY[level], t0 = Date.now(), simT = 0, lastNow = 0, lastDraw = 0, lost = false;
     var cur = {bright: 0.8, speed: 1, tint: C.deep.slice(), tintAmt: 0, pulse: 0, ring: 0}, target = STATES.idle, stateName = 'idle';
     var audio = 0, userBright = opts.brightness || 1, userSpeed = opts.speed || 1, night = 1;
@@ -566,7 +588,7 @@ var OrtiScene = (function () {
       gl.bindBuffer(gl.ARRAY_BUFFER, quad);
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]), gl.STATIC_DRAW);
       objs = [];
-      if (figure === 'reactor') reactorScene(); else brainScene();
+      if (figure === 'reactor') reactorScene(); else if (figure === 'neural') neuralScene(); else brainScene();
       // Informationspulserna: åtta punkter som vandrar längs kedjan (uppdateras varje bildruta)
       pulseData = new Float32Array(8 * 2 * STRIDE);
       pulseBuf = gl.createBuffer();
@@ -599,6 +621,33 @@ var OrtiScene = (function () {
     }
 
     /** Reaktorn (sfären, kärnorna, röret, guldkärnan, skivorna); kvar som val i koden. */
+    /**
+     * Neural Intelligence: hjärnan mitt i bilden ovanifrån, stilla (bara en svag puls). Vänster halva är den
+     * analytiska: vit och cyan, med raka dataspår ut mot panelerna. Höger halva är den kreativa: färgstänket.
+     */
+    function neuralScene() {
+      var BR = [0, -0.05, 0], tiltX = 0.98;
+      function model(t) {
+        var s = 1.42 * (1 + 0.012 * Math.sin(t * 0.7) + cur.pulse * 0.01 * Math.sin(t * 3));
+        return Mat.mul(Mat.trans(BR), Mat.mul(Mat.rot([1, 0, 0], tiltX), Mat.scale(s)));
+      }
+      obj(buildHemisphere(q, -1), model, {twinkle: 0.4});
+      obj(buildHemisphere(q, 1), model, {twinkle: 0.45, layer: 'core'});
+      var SO = [1.55, -0.02, 0.3], SL = [-1.6, -0.02, 0.3];
+      obj(buildSplash(q), function (t) { return Mat.mul(Mat.trans(SO), Mat.rot([0, 0, 1], 0.05 * Math.sin(t * 0.04))); }, {twinkle: 0.3});
+      obj(buildRails(q), function () { return Mat.trans(SL); }, {twinkle: 0.35});
+      obj(buildDust(q), function () { return Mat.ident(); }, {twinkle: 1});
+      chainPts = [];
+      for (var i = 0; i < 12; i++) {
+        var u = i / 11;
+        chainPts.push([-1.1 + u * 2.2, 0.55 + Math.sin(u * Math.PI) * 0.35, 0.9]);
+      }
+      halos = [[[-0.9, 0.05, 0.2], 1.25, C.holo, 0.15, 0], [[-0.9, 0.1, 0.3], 0.45, C.white, 0.1, 1],
+        [[0.9, 0.05, 0.2], 1.25, [0.75, 0.2, 0.7], 0.13, 1], [[0.9, 0.1, 0.3], 0.45, [1, 0.6, 0.3], 0.09, 1],
+        [add(SO, [1.4, 0.1, 0]), 1.5, [0.9, 0.3, 0.6], 0.06, 0], [add(SO, [2.4, 0.3, 0]), 1.3, [0.1, 0.6, 1], 0.05, 0],
+        [add(SL, [-1.6, 0, 0]), 1.6, C.blue, 0.05, 0]];
+    }
+
     function reactorScene() {
       var sph = buildSphere(q), tilt = norm([0.25, 1, 0.12]);
       obj(sph, function (t) { return Mat.mul(Mat.trans(S), Mat.mul(Mat.rot(tilt, t * 0.035), Mat.scale(SR))); }, {twinkle: 0.55});
@@ -719,8 +768,14 @@ var OrtiScene = (function () {
       simT += dt * cur.speed * userSpeed * (night < 1 ? 0.75 : 1);
       var t = simT;
       // Kameran: långsam, asymmetrisk rörelse (ingen snabb zoom eller rotation)
-      var cam = [-0.9 + Math.sin(t * 0.021) * 0.5, 1.25 + Math.sin(t * 0.017 + 1) * 0.2, 8.4 + Math.sin(t * 0.013) * 0.3];
-      var view = Mat.look(cam, [0.3 + Math.sin(t * 0.011) * 0.12, -0.42, 0], [0, 1, 0]);
+      var cam, view;
+      if (figure === 'neural') {   // rakt framifrån, stilla: bara en knappt märkbar glidning
+        cam = [Math.sin(t * 0.017) * 0.08, 1.1 + Math.sin(t * 0.013 + 1) * 0.04, 8.5];
+        view = Mat.look(cam, [0, -0.05, 0], [0, 1, 0]);
+      } else {
+        cam = [-0.9 + Math.sin(t * 0.021) * 0.5, 1.25 + Math.sin(t * 0.017 + 1) * 0.2, 8.4 + Math.sin(t * 0.013) * 0.3];
+        view = Mat.look(cam, [0.3 + Math.sin(t * 0.011) * 0.12, -0.42, 0], [0, 1, 0]);
+      }
       var proj = Mat.persp(36 * Math.PI / 180, canvas.width / canvas.height, 0.1, 60);
       gl.clear(gl.COLOR_BUFFER_BIT);
       var bright = cur.bright * userBright * night;

@@ -1038,8 +1038,8 @@
         step: function (d) { cycle('theme', ['auto', 'light', 'dark'], theme, d); checkNight(); }},
       {label: tr('Dim'), value: dimName(),
         step: function (d) { cycle('dim', ['off', 'low', 'medium', 'high', 'auto'], Prefs.dim(), d); applyDim(); }},
-      {label: tr('Screensaver'), value: saverMode() === 'clock' ? tr('Clock') : saverMode() === 'orti' ? 'O.R.T.I.' : tr('Photos'),
-        step: function (d) { cycle('saver', window.OrtiSaver && OrtiSaver.supported() ? ['photos', 'clock', 'orti'] : ['photos', 'clock'], saverMode(), d); }},
+      {label: tr('Screensaver'), value: saverMode() === 'clock' ? tr('Clock') : saverMode() === 'orti' ? 'O.R.T.I.' : saverMode() === 'neural' ? 'O.R.T.I. – Neural Intelligence' : tr('Photos'),
+        step: function (d) { cycle('saver', window.OrtiSaver && OrtiSaver.supported() ? ['photos', 'clock', 'orti', 'neural'] : ['photos', 'clock'], saverMode(), d); }},
       {label: 'Skärmsläckare efter', value: Prefs.saverAfter() + ' min',
         step: function (d) { cycle('saverAfter', [2, 5, 10, 15, 30], Prefs.saverAfter(), d); }},
       {label: tr('Holidays'), toggle: Prefs.holidays(),
@@ -1109,7 +1109,7 @@
         step: function (d) { cycle('h4night', ['auto', 'off'], Prefs.h4night(), d); Holo4.relayout(); }});
     }
     if (window.OrtiSaver && OrtiSaver.supported()) {   // O.R.T.I.-skärmsläckaren (orti3d.js, ortihud.js)
-      var notOrti = saverMode() !== 'orti', o3 = function (k, d) { return Prefs.o3(k, d); };
+      var notOrti = saverMode() !== 'orti' && saverMode() !== 'neural', o3 = function (k, d) { return Prefs.o3(k, d); };
       var o3set = function (k, v) { Prefs.set('o3.' + k, v); OrtiSaver.settingsChanged(); };
       var o3cycle = function (k, list, d0, d) { var i = list.indexOf(o3(k, d0)); o3set(k, list[(i + (d || 1) + list.length) % list.length]); };
       var qn = {auto: 'Auto', low: 'Låg', medium: 'Mellan', ultra: 'Ultra'};
@@ -1125,7 +1125,9 @@
       rows.push({label: 'O.R.T.I. nattläge', value: o3('night', 'auto') === 'auto' ? 'Auto 22–07' : 'Av', dim: notOrti,
         step: function (d) { o3cycle('night', ['auto', 'off'], 'auto', d); }});
       rows.push({label: 'Visa O.R.T.I. nu', value: '', opens: true,
-        step: function (d) { if (d >= 0) { closeSheets(); setTimeout(showOrti, 400); } }});
+        step: function (d) { if (d >= 0) { closeSheets(); setTimeout(function () { showOrti('orti'); }, 400); } }});
+      rows.push({label: 'Visa Neural Intelligence nu', value: '', opens: true,
+        step: function (d) { if (d >= 0) { closeSheets(); setTimeout(function () { showOrti('neural'); }, 400); } }});
     }
     var sv = Data.services();
     if (sv.length) {
@@ -2153,10 +2155,11 @@
     if (window.Festive && Festive.into) Festive.into(null);   // tillbaka på startsidan, under skärmsläckaren som tonar ut
   }
 
-  /** O.R.T.I.-skärmsläckaren (ortihud.js); utan WebGL blir det klockan i stället. */
-  function showOrti() {
+  /** O.R.T.I.-skärmsläckarna (ortihud.js): 'orti' eller 'neural' (Neural Intelligence); utan WebGL blir det klockan. */
+  function showOrti(which) {
     if (ortiOn || saverOn || ambientOn) return;
-    if (!window.OrtiSaver || !OrtiSaver.show()) { showAmbient(); return; }
+    which = which === 'neural' || which === 'orti' ? which : saverMode() === 'neural' ? 'neural' : 'orti';
+    if (!window.OrtiSaver || !OrtiSaver.show(which)) { showAmbient(); return; }
     ortiOn = true;
     restLater();
   }
@@ -2310,7 +2313,7 @@
     if ((window.IPTV && IPTV.playing()) || (window.Search && Search.isOpen()) || (window.Dance && Dance.isOpen()) || (window.Rush && Rush.isOpen()) || (window.Marvel && Marvel.isOpen()) || (window.Koppla && Koppla.isOpen()) || (window.Kanaler && Kanaler.isOpen())) idleAt = Date.now();   // no screensaver over a match, a search or a game
     if (!document.hidden && !saverOn && !ambientOn && !ortiOn && !sheetOpen() && Date.now() - idleAt > saverAfter()) {
       // kontrollrummet vilar när toningen är klar
-      if (saverMode() === 'orti') showOrti(); else if (saverMode() === 'clock') showAmbient(); else showSaver();
+      if (saverMode() === 'orti' || saverMode() === 'neural') showOrti(saverMode()); else if (saverMode() === 'clock') showAmbient(); else showSaver();
     }
     if (saverOn) tickSaverClock($('saver').querySelector('.clock'));
     if (ambientOn) tickAmbient();
