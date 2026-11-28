@@ -52,6 +52,8 @@ body.v4 #h4ret .c3 { left: 0; bottom: 0; border-left-width: 2px; border-bottom-w
 @keyframes h4slide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 body.v4.h4-boot #holo4 { -webkit-animation: h4in 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation: h4in 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   -webkit-transform-origin: 960px 468px; transform-origin: 960px 468px; }
+/* Introt när appen startar (holo4.js): ett eget lager ovanpå allt */
+.h4-intro { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 50; pointer-events: none; }
 /* Appen startar med v4 vald (index.html): bara den mörka bakgrunden tills rummet startar, inget standardutseende först. */
 body.v4-pre #stage { background: #020507; }
 body.v4-pre #sky, body.v4-pre #home, body.v4-pre #drawer { visibility: hidden; }

@@ -975,6 +975,127 @@ var Holo4 = (function () {
     if (w && !isNaN(w.temp)) text(g, 'UTE ' + deg(w.temp) + '  ::  ' + String(Data.condition ? Data.condition(w.code, w.isDay) : '').toUpperCase(), x1, 43, 15, rgba(ICE, 0.85), 'right', 500, 3);
   }
 
+  // MARK: - Introt när appen startar (efter Yuris video 2026-11-28)
+  //
+  // Ett blått nätverk av punkter och linjer som glider mot kameran, en ljusblixt i mitten, en teknisk ring som ritas
+  // upp och sedan krymper in i kärnan medan rummet tonar fram under. Ett eget lager ovanpå allt, borta efter ~3,6 s.
+
+  var introDone = false;
+
+  function bootNow() {
+    bootAt = Date.now();
+    bootCanvas.style.display = '';
+    setClass(document.body, 'h4-boot', true);
+    setTimeout(function () { setClass(document.body, 'h4-boot', false); }, 2800);
+  }
+
+  function playIntro(handOver) {
+    var stage = document.getElementById('stage') || document.body;
+    var c = el('canvas', 'h4-intro', stage), g = c.getContext('2d'), t0 = 0, handed = false, i, j;
+    c.width = W; c.height = H;
+    var nodes = [], seed = 3;
+    function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+    for (i = 0; i < 170; i++) nodes.push([(rnd() - 0.5) * 3.6, (rnd() - 0.5) * 2.2, 0.6 + rnd() * 4.2, rnd()]);
+    var BL = '63, 169, 255', LB = '150, 220, 255';
+    function ease(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+
+    function plexus(t, a) {
+      if (a <= 0) return;
+      var f = 760, pts = [], k;
+      for (k = 0; k < nodes.length; k++) {
+        var n = nodes[k], z = n[2] - t * 1.15;
+        if (z < 0.25) z += 4.2;
+        var x = CX + n[0] / z * f, y = CY + n[1] / z * f;
+        pts.push([x, y, z, n]);
+      }
+      g.lineWidth = 1;
+      for (k = 0; k < pts.length; k++) {
+        for (var m = k + 1; m < pts.length; m++) {
+          var p = pts[k], q = pts[m];
+          var dx = p[3][0] - q[3][0], dy = p[3][1] - q[3][1], dz = p[2] - q[2], d = dx * dx + dy * dy + dz * dz;
+          if (d > 0.5) continue;
+          var al = (1 - d / 0.5) * a * Math.min(1, 3.2 / (p[2] + q[2]));
+          g.strokeStyle = rgba(BL, al * 0.9);
+          g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(q[0], q[1]); g.stroke();
+        }
+      }
+      for (k = 0; k < pts.length; k++) {
+        var r = Math.max(1, 3.2 / pts[k][2]);
+        g.fillStyle = rgba(LB, a * Math.min(1, 2.4 / pts[k][2]));
+        g.beginPath(); g.arc(pts[k][0], pts[k][1], r, 0, Math.PI * 2); g.fill();
+      }
+    }
+
+    function flare(t) {
+      var x = (t - 1.0) / 0.9;   // 1,0–1,9 s, toppen vid 1,25 s
+      if (x <= 0 || x >= 1) return;
+      var a = x < 0.28 ? x / 0.28 : 1 - (x - 0.28) / 0.72, r = 120 + x * 620;
+      var gr = g.createRadialGradient(CX, CY, 0, CX, CY, r);
+      gr.addColorStop(0, 'rgba(255, 255, 255, ' + a + ')');
+      gr.addColorStop(0.08, 'rgba(200, 240, 255, ' + a * 0.9 + ')');
+      gr.addColorStop(0.3, rgba(BL, a * 0.45));
+      gr.addColorStop(1, rgba(BL, 0));
+      g.fillStyle = gr;
+      g.fillRect(CX - r, CY - r, r * 2, r * 2);
+      g.save(); g.translate(CX, CY); g.scale(1, 0.018);
+      var st = g.createRadialGradient(0, 0, 0, 0, 0, 900);
+      st.addColorStop(0, 'rgba(220, 245, 255, ' + a * 0.9 + ')'); st.addColorStop(1, 'rgba(63, 169, 255, 0)');
+      g.fillStyle = st; g.beginPath(); g.arc(0, 0, 900, 0, Math.PI * 2); g.fill();
+      g.restore();
+    }
+
+    function ring(t) {
+      var x = (t - 1.15) / 1.2;   // ritas upp 1,15–2,35 s, krymper in i kärnan 2,35–3,3 s
+      if (x <= 0) return;
+      var draw = ease(x), shrink = ease((t - 2.35) / 0.95), sc = 1 - shrink * 0.38, a = 1 - ease((t - 2.6) / 0.7);
+      if (a <= 0) return;
+      var rot = t * 0.6, radii = [62, 96, 128, 166, 208];
+      g.save(); g.translate(CX, CY); g.scale(sc, sc);
+      g.shadowColor = rgba(BL, 0.9); g.shadowBlur = 12;
+      for (j = 0; j < radii.length; j++) {
+        var from = (j % 2 ? -1 : 1) * rot * (1 + j * 0.15) + j;
+        g.lineWidth = j === 2 ? 5 : j === 4 ? 1.5 : 2.5;
+        g.strokeStyle = rgba(j === 2 ? LB : BL, a * (j === 2 ? 0.95 : 0.7));
+        g.beginPath(); g.arc(0, 0, radii[j], from, from + Math.PI * 2 * Math.min(1, draw * 1.25 - j * 0.06) * (j === 1 ? 0.8 : 1)); g.stroke();
+      }
+      // de korta strecken runt ringen, som i videon
+      var segs = 56, shown = Math.floor(segs * ease(x * 1.4 - 0.2));
+      g.lineWidth = 7;
+      for (j = 0; j < shown; j++) {
+        var b = j / segs * Math.PI * 2 - rot * 0.35;
+        g.strokeStyle = rgba(LB, a * (j % 7 === 0 ? 1 : 0.6));
+        g.beginPath(); g.arc(0, 0, 268, b, b + 0.06); g.stroke();
+      }
+      g.shadowBlur = 0;
+      for (j = 0; j < 72; j++) {
+        if (j / 72 > draw) break;
+        var c2 = j / 72 * Math.PI * 2 + rot * 0.2;
+        g.fillStyle = rgba(LB, a * 0.8);
+        g.fillRect(Math.cos(c2) * 236 - 1.5, Math.sin(c2) * 236 - 1.5, 3, 3);
+      }
+      var core = g.createRadialGradient(0, 0, 0, 0, 0, 46);
+      core.addColorStop(0, 'rgba(255, 255, 255, ' + a * draw + ')'); core.addColorStop(0.4, rgba(BL, a * draw * 0.6)); core.addColorStop(1, rgba(BL, 0));
+      g.fillStyle = core; g.beginPath(); g.arc(0, 0, 46, 0, Math.PI * 2); g.fill();
+      g.restore();
+    }
+
+    function frame(now) {
+      if (!t0) t0 = now;
+      var t = (now - t0) / 1000;
+      g.clearRect(0, 0, W, H);
+      // svart först, sedan genomskinligt så att rummet syns under (från 2,1 s)
+      var bg = 1 - ease((t - 2.1) / 0.9);
+      if (bg > 0) { g.fillStyle = 'rgba(0, 2, 5, ' + bg + ')'; g.fillRect(0, 0, W, H); }
+      plexus(t, ease(t / 0.35) * (1 - ease((t - 1.1) / 0.5)));
+      flare(t);
+      ring(t);
+      if (!handed && t >= 1.9) { handed = true; handOver(); }
+      if (t < 3.4) requestAnimationFrame(frame);
+      else if (c.parentNode) c.parentNode.removeChild(c);
+    }
+    requestAnimationFrame(frame);
+  }
+
   // MARK: - Viloläget O.R.T.I. (klockskärmsläckaren i v4; efter Yuris bilder 2026-11-28)
   //
   // En reaktor av skivor som staplas snett uppåt höger från en plattform, O.R.T.I. stort uppe till vänster med klockan
@@ -1347,11 +1468,14 @@ var Holo4 = (function () {
       setClass(document.body, 'h4-wake', true);
       clearTimeout(wakeTimer);
       wakeTimer = setTimeout(function () { setClass(document.body, 'h4-wake', false); }, 1300);
+    } else if (!introDone && Date.now() - startedAt < 20000) {
+      // Appen har just startat: introt (nätverket, blixten, ringen) först, och rummets startsekvens under det
+      introDone = true;
+      setClass(document.body, 'h4-intro', true);
+      playIntro(function () { bootNow(); setClass(document.body, 'h4-intro', false); });
+      needle.temp = needle.match = null;
     } else {
-      bootAt = Date.now();
-      bootCanvas.style.display = '';
-      setClass(document.body, 'h4-boot', true);
-      setTimeout(function () { setClass(document.body, 'h4-boot', false); }, 2800);
+      bootNow();
       needle.temp = needle.match = null;
     }
     needleMoving = true;
