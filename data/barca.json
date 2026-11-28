@@ -1,5 +1,5 @@
 {
- "updated": 1795817464881,
+ "updated": 1795829537484,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -64,17 +64,16 @@
  ],
  "guide": {
   "channels": 5638,
-  "programmes": 276052,
-  "barca_listings": 27,
+  "programmes": 308280,
+  "barca_listings": 15,
   "until": "2026-11-28T16:14:59+01:00"
  },
  "barca_titles_seen": [
-  "11-27 21:45 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 125 min",
-  "11-27 22:25 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 140 min",
   "11-28 02:20 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 130 min",
   "11-28 03:15 | Koszykówka mężczyzn: Liga hiszpańska - mecz: UCAM Murcia - Barca  | 165 min",
   "11-28 16:40 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Casademont Saragossa  | 145 min",
   "11-28 19:35 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 140 min",
+  "11-29 02:30 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 165 min",
   "11-28 09:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 120 min",
   "11-28 09:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 120 min",
   "11-28 09:00 | UEFA Champions League 26/27 - Sabah x Barcelona  | 120 min",
@@ -84,16 +83,17 @@
   "11-28 16:30 | Liga ACB Endesa: Tenerife vs. Barcelona  | 30 min",
   "11-28 21:30 | Liga ACB Endesa: Tenerife vs. Barcelona  | 30 min",
   "11-28 01:00 | Sabah FK - FC Barcelona (106)  | 120 min",
-  "11-27 23:00 | Sabah vs Barcelona - UEFA Champions League MD5  | 100 min",
-  "11-27 23:15 | Sabah vs Barcelona - UEFA Champions League MD5  | 120 min",
   "11-28 02:45 | Sabah vs Barcelona - UEFA Champions League MD5  | 105 min",
+  "11-28 03:10 | Sabah vs Barcelona - UEFA Champions League MD5  | 30 min",
   "11-28 03:30 | Sabah vs Barcelona - UEFA Champions League MD5  | 30 min",
+  "11-28 03:10 | Sabah vs Barcelona - UEFA Champions League MD5  | 30 min",
   "11-28 03:30 | Sabah vs Barcelona - UEFA Champions League MD5  | 30 min",
   "11-28 02:45 | Sabah vs Barcelona - UEFA Champions League MD5  | 105 min",
-  "11-27 23:00 | Sabah vs Barcelona - UEFA Champions League MD5  | 100 min",
-  "11-27 23:15 | Sabah vs Barcelona - UEFA Champions League MD5  | 120 min",
-  "11-27 23:00 | Sabah vs Barcelona - UEFA Champions League MD5  | 100 min",
-  "11-27 23:15 | Sabah vs Barcelona - UEFA Champions League MD5  | 120 min"
+  "11-28 02:45 | Sabah vs Barcelona - UEFA Champions League MD5  | 105 min",
+  "11-28 03:10 | Sabah vs Barcelona - UEFA Champions League MD5  | 30 min",
+  "11-28 03:30 | Sabah vs Barcelona - UEFA Champions League MD5  | 30 min",
+  "11-28 02:45 | Sabah vs Barcelona - UEFA Champions League MD5  | 105 min",
+  "11-28 03:10 | Sabah vs Barcelona - UEFA Champions League MD5  | 30 min"
  ],
  "table": {
   "league": "LaLiga",
