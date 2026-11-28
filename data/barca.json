@@ -1,5 +1,5 @@
 {
- "updated": 1795871824445,
+ "updated": 1795881654280,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -9,11 +9,50 @@
    "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/90.png",
    "start": 1795965300000,
    "stop": 1795972500000,
-   "live": false,
-   "channels": [],
-   "channel_ids": [],
-   "channel_langs": [],
-   "more": 0
+   "live": true,
+   "channels": [
+    "DAZN La Liga HD",
+    "ESPN Deportes US",
+    "Premier Sports 1 UK",
+    "Premier Sports 1 Ireland UK",
+    "VIP beIN SPORTS 2 FHD",
+    "Eleven Sports 2 FHD",
+    "Go3 Sport 2 FHD LT",
+    "Canal+ Sport FHD PL",
+    "TV2 Sport Premium 1 HD NO",
+    "Spiler 2 HD HU",
+    "Ziggo Sport 2 FHD NL",
+    "Sport Klub 1 FHD HR"
+   ],
+   "channel_ids": [
+    "daznlaliga.es",
+    "espndeportes.us",
+    "premiersports1.uk",
+    "premiersports1.ie",
+    "beinsports2.qa",
+    "elevensports2.pt",
+    "go3sport2.lt",
+    "canalplussport.pl",
+    "tv2sportpremium.no",
+    "spiler2.hu",
+    "ziggosport2.nl",
+    "sportklub1.hr"
+   ],
+   "channel_langs": [
+    "es",
+    "en",
+    "en",
+    "en",
+    "xx",
+    "xx",
+    "xx",
+    "xx",
+    "xx",
+    "xx",
+    "xx",
+    "xx"
+   ],
+   "more": 5
   },
   {
    "title": "Barcelona – Atlético Madrid",
@@ -64,31 +103,36 @@
  ],
  "guide": {
   "channels": 5638,
-  "programmes": 295494,
-  "barca_listings": 2,
-  "until": "2026-11-28T16:14:59+01:00"
+  "programmes": 292163,
+  "barca_listings": 37,
+  "until": "2026-11-29T18:45:00+01:00"
  },
  "barca_titles_seen": [
+  "11-29 16:15 | LIVE: Nogomet - Španjolska liga: La Coruna - Barcelona  | 120 min",
+  "11-29 16:10 | Piłka nożna: Liga hiszpańska - mecz: RC Deportivo La Coruna - FC Barcelona  | 135 min",
   "11-28 16:40 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Casademont Saragossa  | 145 min",
   "11-28 19:35 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 140 min",
   "11-29 02:30 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 165 min",
   "11-29 08:10 | Koszykówka mężczyzn: Superpuchar Hiszpanii - mecz półfinałowy: Valencia Basket - Barca  | 170 min",
-  "11-28 16:30 | Liga ACB Endesa: Tenerife vs. Barcelona  | 30 min",
+  "11-29 16:10 | LaLiga: Deportivo – Barcelona | 125 min",
+  "11-29 16:15 | LIVE: Nogomet - Španjolska liga: La Coruna - Barcelona  | 120 min",
+  "11-29 16:10 | LaLiga: Deportivo – Barcelona | 135 min",
+  "11-29 16:10 | LaLiga: Deportivo – Barcelona | 135 min",
+  "11-29 16:05 | La Liga EA Sports 2026-27 - Deportivo de La Coruña x Barcelona (Direto)  | 135 min",
+  "11-29 16:05 | La Liga EA Sports 2026-27 - Deportivo de La Coruña x Barcelona (Direto)  | 135 min",
+  "11-29 16:05 | La Liga EA Sports 2026-27 - Deportivo de La Coruña x Barcelona (Direto)  | 135 min",
+  "11-29 16:10 | LaLiga: Deportivo – Barcelona | 130 min",
+  "11-29 16:15 | Deportivo vs Barcelona  | 134 min",
+  "11-29 16:15 | Deportivo - Barcelona  | 120 min",
+  "11-29 16:15 | Deportivo - Barcelona  | 120 min",
   "11-28 21:30 | Liga ACB Endesa: Tenerife vs. Barcelona  | 30 min",
-  "11-28 15:55 | Purceluşa Peppa: Polly şi excursia cu barca  | 5 min",
-  "11-28 14:40 | Barca visurilor  | 94 min",
-  "11-29 02:45 | Case de vacanţă însorite: Spain - Barcelona  | 45 min",
-  "11-28 14:40 | Barca visurilor  | 94 min",
-  "11-29 02:00 | Sabah vs Barcelona - UEFA Champions League MD5  | 30 min",
-  "11-29 02:00 | Sabah vs Barcelona - UEFA Champions League MD5  | 30 min",
-  "11-28 19:35 | UCL HL 26/27: Sabah v Barcelona  | 5 min",
-  "11-28 22:30 | Ferrari Challenge: Circuit de Barcelona-Catalunya Spanje Hoogtepunten  | 50 min",
-  "11-28 23:00 | Ferrari Challenge: Circuit de Barcelona-Catalunya Spanje Hoogtepunten  | 55 min",
-  "11-29 04:55 | Ferrari Challenge: Circuit de Barcelona-Catalunya Spanje Hoogtepunten  | 50 min",
-  "11-28 22:30 | Ferrari Challenge: Circuit de Barcelona-Catalunya Spanje Hoogtepunten  | 50 min",
-  "11-28 23:00 | Ferrari Challenge: Circuit de Barcelona-Catalunya Spanje Hoogtepunten  | 55 min",
-  "11-29 04:55 | Ferrari Challenge: Circuit de Barcelona-Catalunya Spanje Hoogtepunten  | 50 min",
-  "11-29 02:00 | Sabah vs Barcelona - UEFA Champions League MD5  | 30 min"
+  "11-29 16:15 | Uživo: Deportivo – FC Barcelona  | 120 min",
+  "11-29 16:05 | LaLiga: Deportivo – Barcelona | 130 min",
+  "11-29 16:10 | LaLiga: Deportivo – Barcelona | 135 min",
+  "11-29 16:10 | LaLiga: Deportivo – Barcelona | 125 min",
+  "11-29 16:10 | LaLiga: Deportivo – Barcelona | 125 min",
+  "11-29 15:45 | Deportivo La Coruna vs Barcelona  - Spanish LaLiga 2026/2027 - Week 14  | 180 min",
+  "11-29 15:45 | Deportivo La Coruna vs Barcelona  - Spanish LaLiga 2026/2027 - Week 14  | 180 min"
  ],
  "table": {
   "league": "LaLiga",
@@ -129,8 +173,8 @@
     "short": "Betis",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/244.png",
     "points": 27,
-    "played": 13,
-    "gd": 5,
+    "played": 14,
+    "gd": 4,
     "barca": false
    },
    {
@@ -215,6 +259,16 @@
    },
    {
     "rank": 13,
+    "team": "Rayo Vallecano",
+    "short": "Rayo",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/101.png",
+    "points": 15,
+    "played": 13,
+    "gd": -6,
+    "barca": false
+   },
+   {
+    "rank": 14,
     "team": "Osasuna",
     "short": "Osasuna",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/97.png",
@@ -224,7 +278,7 @@
     "barca": false
    },
    {
-    "rank": 14,
+    "rank": 15,
     "team": "Celta Vigo",
     "short": "Celta Vigo",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
@@ -234,22 +288,12 @@
     "barca": false
    },
    {
-    "rank": 15,
+    "rank": 16,
     "team": "Levante",
     "short": "Levante",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1538.png",
     "points": 12,
     "played": 14,
-    "gd": -7,
-    "barca": false
-   },
-   {
-    "rank": 16,
-    "team": "Rayo Vallecano",
-    "short": "Rayo",
-    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/101.png",
-    "points": 12,
-    "played": 12,
     "gd": -7,
     "barca": false
    },
