@@ -1,5 +1,5 @@
 {
- "updated": 1795881654280,
+ "updated": 1795893050058,
  "status": "ok",
  "crest": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
  "matches": [
@@ -89,6 +89,18 @@
    "channel_ids": [],
    "channel_langs": [],
    "more": 0
+  },
+  {
+   "title": "Málaga – Barcelona",
+   "competition": "LaLiga",
+   "rival_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
+   "start": 1797096600000,
+   "stop": 1797103800000,
+   "live": false,
+   "channels": [],
+   "channel_ids": [],
+   "channel_langs": [],
+   "more": 0
   }
  ],
  "source": [
@@ -103,14 +115,13 @@
  ],
  "guide": {
   "channels": 5638,
-  "programmes": 292163,
+  "programmes": 288682,
   "barca_listings": 37,
   "until": "2026-11-29T18:45:00+01:00"
  },
  "barca_titles_seen": [
   "11-29 16:15 | LIVE: Nogomet - Španjolska liga: La Coruna - Barcelona  | 120 min",
   "11-29 16:10 | Piłka nożna: Liga hiszpańska - mecz: RC Deportivo La Coruna - FC Barcelona  | 135 min",
-  "11-28 16:40 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Casademont Saragossa  | 145 min",
   "11-28 19:35 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Joventut Badalona - Barca  | 140 min",
   "11-29 02:30 | Koszykówka mężczyzn: Liga hiszpańska - mecz: Barca - Valencia Basket  | 165 min",
   "11-29 08:10 | Koszykówka mężczyzn: Superpuchar Hiszpanii - mecz półfinałowy: Valencia Basket - Barca  | 170 min",
@@ -125,6 +136,7 @@
   "11-29 16:15 | Deportivo vs Barcelona  | 134 min",
   "11-29 16:15 | Deportivo - Barcelona  | 120 min",
   "11-29 16:15 | Deportivo - Barcelona  | 120 min",
+  "11-29 19:33 | Euroleague Turkish Airlines Basketbal Barcelona vs Alba-Berlin_B  | 30 min",
   "11-28 21:30 | Liga ACB Endesa: Tenerife vs. Barcelona  | 30 min",
   "11-29 16:15 | Uživo: Deportivo – FC Barcelona  | 120 min",
   "11-29 16:05 | LaLiga: Deportivo – Barcelona | 130 min",
@@ -199,22 +211,22 @@
    },
    {
     "rank": 7,
+    "team": "Athletic Club",
+    "short": "Athletic",
+    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/93.png",
+    "points": 19,
+    "played": 13,
+    "gd": 4,
+    "barca": false
+   },
+   {
+    "rank": 8,
     "team": "Sevilla",
     "short": "Sevilla",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/243.png",
     "points": 19,
     "played": 13,
     "gd": -2,
-    "barca": false
-   },
-   {
-    "rank": 8,
-    "team": "Athletic Club",
-    "short": "Athletic",
-    "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/93.png",
-    "points": 16,
-    "played": 12,
-    "gd": 3,
     "barca": false
    },
    {
@@ -333,8 +345,8 @@
     "short": "Málaga",
     "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
     "points": 5,
-    "played": 13,
-    "gd": -15,
+    "played": 14,
+    "gd": -16,
     "barca": false
    }
   ]
