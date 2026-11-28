@@ -249,47 +249,101 @@ var OrtiScene = (function () {
     return {points: P, lines: L};
   }
 
-  /** Lager C: en liten ring i kedjan (en sluten linje), med prickar. */
-  function buildRing(r, s) {
-    reseed(s);
-    var P = new Builder(), L = new Builder(), segs = 40, i;
-    for (i = 0; i < segs; i++) {
-      var a0 = i / segs * Math.PI * 2, a1 = (i + 1) / segs * Math.PI * 2;
-      L.l([Math.cos(a0) * r, 0, Math.sin(a0) * r], [Math.cos(a1) * r, 0, Math.sin(a1) * r], rnd() < 0.15 ? C.gold : C.cyan, 0.55, rnd() * 10, 0);
+  /** En ring (sluten linje) runt lokala y-axeln i punkten c, med radien r och lutningen ax; tjock = flera varv bredvid varandra. */
+  function loop(L, c, r, ax, col, alpha, thick, phase) {
+    var m = Mat.alignY(ax), segs = r > 0.05 ? 28 : 18, w, i;
+    for (w = 0; w < thick; w++) {
+      var rr = r * (1 + w * 0.06);
+      for (i = 0; i < segs; i++) {
+        var a0 = i / segs * Math.PI * 2, a1 = (i + 1) / segs * Math.PI * 2;
+        var p0 = [Math.cos(a0) * rr, 0, Math.sin(a0) * rr], p1 = [Math.cos(a1) * rr, 0, Math.sin(a1) * rr];
+        L.l(add(c, tx(m, p0)), add(c, tx(m, p1)), col, alpha * (1 - w * 0.2), phase, 0);
+      }
     }
-    for (i = 0; i < 10; i++) { var a = rnd() * Math.PI * 2; P.v([Math.cos(a) * r, 0, Math.sin(a) * r], C.white, 9, rnd() * 10, 0); }
+  }
+  function tx(m, p) { return [m[0] * p[0] + m[4] * p[1] + m[8] * p[2], m[1] * p[0] + m[5] * p[1] + m[9] * p[2], m[2] * p[0] + m[6] * p[1] + m[10] * p[2]]; }
+
+  /** Ett litet "tecken": två eller tre korta streck bredvid varandra (de digitala markeringarna). */
+  function glyph(L, c, size, dir, col, alpha, phase) {
+    var n = 1 + Math.floor(rnd() * 3), side = norm(cross(dir, [0, 1, 0.3]));
+    for (var k = 0; k < n; k++) {
+      var o = (k - (n - 1) / 2) * size * 0.45, len = size * (0.5 + rnd() * 0.7);
+      var p0 = [c[0] + side[0] * o, c[1] + side[1] * o, c[2] + side[2] * o];
+      L.l(p0, [p0[0] + dir[0] * len, p0[1] + dir[1] * len, p0[2] + dir[2] * len], col, alpha, phase, 0);
+    }
+  }
+
+  /**
+   * Lager C: röret mellan sfären och den gyllene kärnan (lokalt längs y, längden 1): ett blått partikelmoln fyllt
+   * med många små vita och silverfärgade ringar i olika storlek och lutning, och små tecken som tänds och släcks.
+   */
+  function buildTube(q, len) {
+    reseed(404);
+    var P = new Builder(), L = new Builder(), i;
+    function rad(u) { return 1.6 * (0.16 + 0.1 * Math.sin((u + 0.5) * Math.PI) + 0.05 * Math.sin(u * 9)); }
+    function inside() {
+      var u = rnd() - 0.5, y = u * len, a = rnd() * Math.PI * 2, r = rad(u) * Math.sqrt(rnd());
+      return [Math.cos(a) * r, y, Math.sin(a) * r];
+    }
+    for (i = 0; i < q.tubeCloud; i++) {
+      var p = inside(), k = rnd();
+      P.v(p, dim(k < 0.15 ? C.cyan : k < 0.65 ? C.blue : C.holo, 0.5 + rnd() * 0.5), 7 + rnd() * 10, rnd() * 10 + (rnd() < 0.1 ? 10 : 0), (rnd() - 0.5) * 0.4);
+    }
+    for (i = 0; i < q.tubeRings; i++) {
+      var c = inside(), big = rnd() < 0.14, r = big ? 0.045 + rnd() * 0.03 : 0.015 + rnd() * 0.028;
+      var col = rnd() < 0.72 ? C.white : rnd() < 0.5 ? C.cyan : C.gold;
+      loop(L, c, r, onSphere(), col, big ? 0.8 : 0.45 + rnd() * 0.3, big ? 2 : 1, rnd() * 10 + (rnd() < 0.15 ? 10 : 0));
+    }
+    for (i = 0; i < q.tubeGlyphs; i++) glyph(L, inside(), 0.03 + rnd() * 0.03, onSphere(), C.white, 0.4 + rnd() * 0.4, rnd() * 10 + 10);
     return {points: P, lines: L};
   }
 
-  /** Lager D: den gyllene kärnan (ringar, markeringar, guld och vita partiklar, segment, mörkt yttre lager). */
+  /** Några större ringar i röret som snurrar var för sig (de ljusaste). */
+  function buildRing(r, s) {
+    reseed(s);
+    var L = new Builder(), P = new Builder();
+    loop(L, [0, 0, 0], r, [0, 1, 0], rnd() < 0.8 ? C.white : C.gold, 0.9, 3, rnd() * 10);
+    for (var i = 0; i < 6; i++) { var a = rnd() * Math.PI * 2; P.v([Math.cos(a) * r, 0, Math.sin(a) * r], C.white, 9, rnd() * 10, 0); }
+    return {points: P, lines: L};
+  }
+
+  /**
+   * Lager D: den gyllene kärnan som en tät skiva av små vita tecken och streck i koncentriska band, ett mörkt band,
+   * några guldbågar och en liten gul kärna (som i referensen, inte jämna banor).
+   */
   function buildGold(q) {
     reseed(77);
     var P = new Builder(), L = new Builder(), i, k;
-    glow(P, [0, 0, 0], 0.28, C.gold, 110, 0.08);
-    glow(P, [0, 0, 0], 0.08, C.warm, 36, 0.22);
-    P.v([0, 0, 0], [1, 1, 1], 34, 3.7, 0);
-    for (k = 1; k <= 9; k++) {
-      var r = 0.06 + k * 0.075, cnt = Math.round(24 + k * 22);
-      for (i = 0; i < cnt; i++) {
-        if (rnd() < 0.3) continue;
-        var a = i / cnt * Math.PI * 2, col = k < 4 ? (rnd() < 0.7 ? C.gold : C.warm) : rnd() < 0.25 ? C.gold : rnd() < 0.5 ? C.white : C.cyan;
-        P.v([Math.cos(a) * r, (rnd() - 0.5) * 0.015, Math.sin(a) * r], dim(col, k < 4 ? 1 : 0.7), 10 + rnd() * 8, rnd() * 10, 0);
-      }
-      if (k % 2 === 0) {
-        var from = rnd() * 6;
-        for (i = 0; i < 48; i++) {
-          var a0 = from + i / 48 * 3.2, a1 = from + (i + 1) / 48 * 3.2;
-          L.l([Math.cos(a0) * r, 0, Math.sin(a0) * r], [Math.cos(a1) * r, 0, Math.sin(a1) * r], k < 5 ? C.gold : C.blue, 0.5, k, 0);
-        }
+    glow(P, [0, 0, 0], 0.12, C.gold, 50, 0.18);
+    P.v([0, 0, 0], C.warm, 24, 1.1, 0);
+    P.v([0, 0, 0], [1, 1, 1], 14, 3.7, 0);
+    loop(L, [0, 0, 0], 0.07, [0, 1, 0], C.gold, 1, 4, 0);
+    loop(L, [0, 0, 0], 0.11, [0, 1, 0], C.warm, 0.6, 2, 1);
+    var bands = [[0.16, 0.24], [0.27, 0.36], [0.4, 0.5], [0.62, 0.72], [0.75, 0.86], [0.89, 0.98]];   // 0,5–0,62: det mörka bandet
+    for (k = 0; k < bands.length; k++) {
+      var n = Math.round(q.goldGlyphs * [0.5, 0.75, 0.7, 0.3, 0.25, 0.22][k]);
+      for (i = 0; i < n; i++) {
+        var a = rnd() * Math.PI * 2, r = bands[k][0] + rnd() * (bands[k][1] - bands[k][0]);
+        var c = [Math.cos(a) * r, (rnd() - 0.5) * 0.02, Math.sin(a) * r];
+        var dir = rnd() < 0.6 ? [-Math.sin(a), 0, Math.cos(a)] : [Math.cos(a), 0, Math.sin(a)];
+        var col = k < 2 && rnd() < 0.18 ? C.gold : rnd() < 0.08 ? C.cyan : C.white;
+        glyph(L, c, 0.018 + rnd() * 0.02, dir, col, 0.35 + rnd() * 0.45, rnd() * 10 + (rnd() < 0.2 ? 10 : 0));
+        if (rnd() < 0.35) P.v(c, dim(col, 0.7), 6 + rnd() * 4, rnd() * 10, 0);
       }
     }
-    for (i = 0; i < 160; i++) {
-      var t = i / 160 * Math.PI * 2, r0 = 0.74, r1 = i % 5 ? 0.77 : 0.8;
-      L.l([Math.cos(t) * r0, 0, Math.sin(t) * r0], [Math.cos(t) * r1, 0, Math.sin(t) * r1], C.white, 0.35, rnd() * 10, 0);
+    for (k = 0; k < 3; k++) {   // några bågar i guld och vitt
+      var r2 = [0.25, 0.52, 0.88][k], from = rnd() * 6, len = 1.5 + rnd() * 2.5;
+      for (i = 0; i < 60; i++) {
+        var a0 = from + i / 60 * len, a1 = from + (i + 1) / 60 * len;
+        L.l([Math.cos(a0) * r2, 0, Math.sin(a0) * r2], [Math.cos(a1) * r2, 0, Math.sin(a1) * r2], k === 0 ? C.gold : C.white, 0.45, k, 0);
+      }
     }
-    // det mörka, genomskinliga yttre lagret: många svaga, djupblå punkter
-    for (i = 0; i < q.goldOuter; i++) {
-      var rr = 0.8 + Math.sqrt(rnd()) * 0.32, b = rnd() * Math.PI * 2;
+    for (i = 0; i < 200; i++) {   // fin skala ytterst
+      var t = i / 200 * Math.PI * 2, r1 = i % 5 ? 1.0 : 1.04;
+      L.l([Math.cos(t) * 0.98, 0, Math.sin(t) * 0.98], [Math.cos(t) * r1, 0, Math.sin(t) * r1], C.white, 0.3, rnd() * 10, 0);
+    }
+    for (i = 0; i < q.goldOuter; i++) {   // det mörka, genomskinliga yttre lagret
+      var rr = 1.0 + Math.sqrt(rnd()) * 0.22, b = rnd() * Math.PI * 2;
       P.v([Math.cos(b) * rr, (rnd() - 0.5) * 0.04, Math.sin(b) * rr], dim(C.holo, 0.35), 6 + rnd() * 6, rnd() * 10, 0);
     }
     return {points: P, lines: L};
@@ -347,9 +401,9 @@ var OrtiScene = (function () {
   // MARK: - Kvalitetsnivåer
 
   var QUALITY = {
-    low: {res: 0.6, fps: 30, sphere: 9000, segs: 1800, radial: 120, coreRings: 5, rings: 12, goldOuter: 700, disc1: 3800, disc2: 3400, rim: 700, dust: 250},
-    medium: {res: 0.85, fps: 30, sphere: 22000, segs: 4200, radial: 220, coreRings: 6, rings: 16, goldOuter: 1600, disc1: 9000, disc2: 8000, rim: 1400, dust: 600},
-    ultra: {res: 1, fps: 60, sphere: 44000, segs: 8000, radial: 320, coreRings: 7, rings: 20, goldOuter: 3000, disc1: 18000, disc2: 16000, rim: 2600, dust: 1100}
+    low: {res: 0.6, fps: 30, sphere: 9000, segs: 1800, radial: 120, coreRings: 5, rings: 6, tubeRings: 100, tubeCloud: 2400, tubeGlyphs: 60, goldGlyphs: 260, goldOuter: 700, disc1: 3800, disc2: 3400, rim: 700, dust: 250},
+    medium: {res: 0.85, fps: 30, sphere: 22000, segs: 4200, radial: 220, coreRings: 6, rings: 9, tubeRings: 170, tubeCloud: 5500, tubeGlyphs: 120, goldGlyphs: 520, goldOuter: 1600, disc1: 9000, disc2: 8000, rim: 1400, dust: 600},
+    ultra: {res: 1, fps: 60, sphere: 44000, segs: 8000, radial: 320, coreRings: 7, rings: 12, tubeRings: 240, tubeCloud: 10000, tubeGlyphs: 200, goldGlyphs: 900, goldOuter: 3000, disc1: 18000, disc2: 16000, rim: 2600, dust: 1100}
   };
 
   // MARK: - Lägen (IDLE, LISTENING, THINKING, SPEAKING, SUCCESS, ALERT): mjuka övergångar
@@ -442,19 +496,25 @@ var OrtiScene = (function () {
       spark.v([0, 0, 0], [1, 1, 1], 30, 0.9, 0);
       var c3 = add(S, [0.95, -0.38, 0.45]);
       obj({points: spark}, function () { return Mat.trans(c3); }, {twinkle: 0.5, layer: 'core'});
-      // Kedjan av små ringar längs en kurva från sfären till den gyllene kärnan
+      // Röret mellan sfären och den gyllene kärnan: ett moln med många små ringar (snurrar långsamt kring sin axel),
+      // några större ringar som snurrar var för sig, och pulsernas väg genom mitten
+      var A = add(S, [1.4, -0.2, 0.1]), B = add(GOLD, [-0.45, 0.05, -0.05]);
+      var M = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2, (A[2] + B[2]) / 2], dir = [B[0] - A[0], B[1] - A[1], B[2] - A[2]];
+      var tubeLen = Math.sqrt(dot(dir, dir)), tubeAx = norm(dir), tubeM = Mat.alignY(tubeAx);
+      obj(buildTube(q, tubeLen), function (t) { return Mat.mul(Mat.trans(M), Mat.mul(tubeM, Mat.rot([0, 1, 0], t * 0.05))); }, {twinkle: 0.45, layer: 'ring'});
       chainPts = [];
-      var A = add(S, [1.55, -0.25, 0.1]);
-      for (var i = 0; i < q.rings; i++) {
-        var u = i / (q.rings - 1);
-        var p = [A[0] + (GOLD[0] - A[0] - 0.5) * u, A[1] + (GOLD[1] - A[1]) * u + Math.sin(u * Math.PI) * 0.18, A[2] + (GOLD[2] - A[2]) * u + Math.sin(u * 7) * 0.16];
-        chainPts.push(p);
-        (function (pos, k) {
+      for (var i = 0; i < 12; i++) {
+        var u = i / 11;
+        chainPts.push([A[0] + dir[0] * u, A[1] + dir[1] * u + Math.sin(u * Math.PI) * 0.06, A[2] + dir[2] * u]);
+      }
+      for (i = 0; i < q.rings; i++) {
+        (function (k) {
           reseed(300 + k);
-          var ax = norm([1, 0.3 + rnd() * 0.6, rnd() - 0.5]), spinAx = norm([rnd() - 0.5, 1, rnd() - 0.5]), sp = (rnd() - 0.5) * 0.9;
-          var sc = 0.1 + rnd() * 0.13;
+          var u = (k + 0.5) / q.rings, off = onSphere(), rr = 0.12 * rnd();
+          var pos = [A[0] + dir[0] * u + off[0] * rr, A[1] + dir[1] * u + off[1] * rr, A[2] + dir[2] * u + off[2] * rr];
+          var ax = onSphere(), spinAx = norm([rnd() - 0.5, 1, rnd() - 0.5]), sp = (rnd() - 0.5) * 0.8, sc = 0.05 + rnd() * 0.06;
           obj(buildRing(1, 400 + k), function (t) { return Mat.mul(Mat.trans(pos), Mat.mul(Mat.alignY(ax), Mat.mul(Mat.rot(spinAx, t * sp), Mat.scale(sc * (1 + cur.ring * 0.25 * Math.sin(t * 2 + k)))))); }, {twinkle: 0.3, layer: 'ring'});
-        })(p, i);
+        })(i);
       }
       var goldAx = norm([1, 0.2, 0.85]);
       obj(buildGold(q), function (t) { return Mat.mul(Mat.trans(GOLD), Mat.mul(Mat.alignY(goldAx), Mat.mul(Mat.rot([0, 1, 0], t * 0.09), Mat.scale(0.95)))); }, {twinkle: 0.5, layer: 'gold'});
@@ -463,7 +523,7 @@ var OrtiScene = (function () {
       obj(buildDust(q), function () { return Mat.ident(); }, {twinkle: 1});
       // Skenen: [plats, radie (världsenheter), färg, styrka, pulserar med ljudet/lägena]
       halos = [[S, 2.2, C.holo, 0.16, 0], [c1, 0.75, C.blue, 0.55, 1], [c1, 0.22, C.core, 0.7, 1], [c2, 0.65, C.cyan, 0.45, 1], [c2, 0.2, C.core, 0.65, 1],
-        [c3, 0.2, C.warm, 0.5, 1], [GOLD, 0.7, C.gold, 0.3, 0], [GOLD, 0.18, C.warm, 0.7, 0], [DISC1, 1.5, C.blue, 0.1, 0], [DISC2, 1.6, C.blue, 0.09, 0]];
+        [c3, 0.2, C.warm, 0.5, 1], [GOLD, 0.4, C.gold, 0.16, 0], [GOLD, 0.1, C.warm, 0.55, 0], [DISC1, 1.5, C.blue, 0.1, 0], [DISC2, 1.6, C.blue, 0.09, 0]];
       // Informationspulserna: åtta punkter som vandrar längs kedjan (uppdateras varje bildruta)
       pulseData = new Float32Array(8 * 2 * STRIDE);
       pulseBuf = gl.createBuffer();
